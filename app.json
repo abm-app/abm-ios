@@ -1,13 +1,21 @@
 {
   "expo": {
-    "name": "abm-ios",
-    "slug": "abm-ios",
+    "name": "ABM",
+    "slug": "abm-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
+    "scheme": "abm",
+    "splash": {
+      "backgroundColor": "#ffffff",
+      "resizeMode": "contain"
+    },
     "ios": {
-      "supportsTablet": true
-    }
+      "bundleIdentifier": "com.abm.app",
+      "supportsTablet": false,
+      "buildNumber": "1"
+    },
+    "newArchEnabled": true
   }
 }
