@@ -16,6 +16,12 @@
       "supportsTablet": false,
       "buildNumber": "1"
     },
-    "newArchEnabled": true
+    "newArchEnabled": true,
+    "extra": {
+      "eas": {
+        "projectId": "a427f36a-865c-49f5-bbf5-2a9e4b82219c"
+      }
+    },
+    "owner": "lplusdevelopers"
   }
 }
