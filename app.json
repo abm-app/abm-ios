@@ -22,6 +22,19 @@
         "projectId": "a427f36a-865c-49f5-bbf5-2a9e4b82219c"
       }
     },
-    "owner": "lplusdevelopers"
+    "owner": "lplusdevelopers",
+    "plugins": [
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "./assets/fonts/AncizarSerif-Regular.ttf",
+            "./assets/fonts/AncizarSerif-Italic.ttf",
+            "./assets/fonts/AncizarSerif-Bold.ttf",
+            "./assets/fonts/AncizarSerif-BoldItalic.ttf"
+          ]
+        }
+      ]
+    ]
   }
 }
