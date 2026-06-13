@@ -39,7 +39,7 @@ const tokens = {
     headingBold: 'AncizarSerif-Bold',
     headingBoldItalic: 'AncizarSerif-BoldItalic',
     sub: 'Inter_400Regular',
-    body: undefined as string | undefined,
+    body: 'SF Pro',
   },
   spacing: {
     xs: 4,
