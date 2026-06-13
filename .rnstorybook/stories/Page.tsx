@@ -2,6 +2,7 @@ import { useState } from 'react';
 
 import { Linking, StyleSheet, Text, View } from 'react-native';
 
+import tokens from '@/theme/tokens';
 import { Header } from './Header';
 
 export const Page = () => {
@@ -78,73 +79,73 @@ export const Page = () => {
 
 const styles = StyleSheet.create({
   section: {
-    fontFamily: "'Nunito Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
-    fontSize: 14,
-    lineHeight: 24,
-    paddingVertical: 48,
-    paddingHorizontal: 20,
-    marginHorizontal: 'auto',
+    fontFamily: tokens.fonts.body,
+    fontSize: tokens.typography.fontSize.md,
+    lineHeight: tokens.spacing.xl,
+    paddingVertical: tokens.spacing.xxxl,
+    paddingHorizontal: tokens.spacing.lgMd,
+    alignSelf: 'center',
     maxWidth: 600,
-    color: '#333',
+    color: tokens.colors.textSecondary,
   },
 
   h2: {
-    fontWeight: '900',
-    fontSize: 32,
+    fontWeight: tokens.fontWeights.black,
+    fontSize: tokens.typography.fontSize.xl,
     lineHeight: 1,
-    marginBottom: 4,
+    marginBottom: tokens.spacing.xs,
   },
 
   p: {
-    marginVertical: 16,
+    marginVertical: tokens.spacing.lg,
     marginHorizontal: 0,
   },
 
   a: {
-    color: '#1ea7fd',
+    color: tokens.colors.brand,
   },
   bold: {
-    fontWeight: 'bold',
+    fontWeight: tokens.fontWeights.bold,
   },
 
   ul: {
-    paddingLeft: 30,
-    marginVertical: 16,
+    paddingLeft: tokens.spacing.xlMd,
+    marginVertical: tokens.spacing.lg,
   },
 
   li: {
-    marginBottom: 8,
+    marginBottom: tokens.spacing.sm,
   },
 
   tip: {
     alignSelf: 'flex-start',
-    borderRadius: 16,
-    backgroundColor: '#e7fdd8',
-    paddingVertical: 4,
-    paddingHorizontal: 12,
-    marginRight: 10,
-    marginBottom: 4,
+    borderRadius: tokens.borderRadius.lg,
+    backgroundColor: tokens.colors.successLight,
+    paddingVertical: tokens.spacing.xs,
+    paddingHorizontal: tokens.spacing.md,
+    marginRight: tokens.spacing.smMd,
+    marginBottom: tokens.spacing.xs,
   },
   tipText: {
-    fontSize: 11,
-    lineHeight: 12,
-    fontWeight: '700',
-    color: '#66bf3c',
+    fontSize: tokens.typography.fontSize.label,
+    lineHeight: tokens.spacing.md,
+    fontWeight: tokens.fontWeights.bold,
+    color: tokens.colors.tipGreen,
   },
 
   tipWrapper: {
-    fontSize: 13,
-    lineHeight: 20,
-    marginTop: 40,
-    marginBottom: 40,
+    fontSize: tokens.typography.fontSize.sm,
+    lineHeight: tokens.spacing.lgMd,
+    marginTop: tokens.spacing.xxlMd,
+    marginBottom: tokens.spacing.xxlMd,
     flexDirection: 'row',
     flexWrap: 'wrap',
   },
 
   tipWrapperSvg: {
-    height: 12,
-    width: 12,
-    marginRight: 4,
-    marginTop: 3,
+    height: tokens.spacing.md,
+    width: tokens.spacing.md,
+    marginRight: tokens.spacing.xs,
+    marginTop: tokens.spacing.xs,
   },
 });

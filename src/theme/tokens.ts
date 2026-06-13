@@ -23,6 +23,8 @@ const tokens = {
     badgeLowText: '#27AE60',
     badgeCatBg: 'rgba(0,0,0,0.06)',
     badgeCatText: '#333333',
+    successLight: '#e7fdd8',
+    tipGreen: '#66bf3c',
   },
   typography: {
     fontSize: {
@@ -34,6 +36,7 @@ const tokens = {
       sm: 12,
       md: 14,
       lg: 16,
+      xl: 32,
       caption: 12,
       label: 11,
       numeric: 28,
@@ -64,7 +67,9 @@ const tokens = {
     lg: 16,
     lgMd: 20,
     xl: 24,
+    xlMd: 30,
     xxl: 32,
+    xxlMd: 40,
     xxxl: 48,
   },
   borderRadius: {
