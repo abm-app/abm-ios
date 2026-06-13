@@ -1,3 +1,4 @@
+import React from 'react';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
@@ -6,7 +7,7 @@ import { StyleSheet, Text, View } from 'react-native';
 
 SplashScreen.preventAutoHideAsync();
 
-export default function App() {
+function MainApp() {
   const [fontsLoaded] = useFonts({
     'AncizarSerif-Regular': require('./assets/fonts/AncizarSerif-Regular.ttf'),
     'AncizarSerif-Italic': require('./assets/fonts/AncizarSerif-Italic.ttf'),
@@ -40,3 +41,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
+
+let AppEntry: React.ComponentType = MainApp;
+
+if (process.env.STORYBOOK_ENABLED === 'true') {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  AppEntry = require('./.storybook').default;
+}
+
+export default AppEntry;
