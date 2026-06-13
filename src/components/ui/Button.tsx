@@ -30,7 +30,7 @@ const variantStyles: Record<ButtonVariant, { container: ViewStyle; label: string
   secondary: {
     container: {
       backgroundColor: tokens.colors.white,
-      borderWidth: tokens.borderWidth.hairline,
+      borderWidth: tokens.borderWidth.thin,
       borderColor: tokens.colors.primary,
     },
     label: tokens.colors.primary,
@@ -40,8 +40,8 @@ const variantStyles: Record<ButtonVariant, { container: ViewStyle; label: string
     label: tokens.colors.primary,
   },
   danger: {
-    container: { backgroundColor: tokens.colors.danger },
-    label: tokens.colors.white,
+    container: { backgroundColor: '#FEE2E2' },
+    label: '#991B1B',
   },
 };
 
@@ -64,7 +64,11 @@ export default function Button({
       activeOpacity={0.7}
       style={[
         styles.base,
-        { paddingVertical: s.paddingVertical, paddingHorizontal: s.paddingHorizontal },
+        {
+          paddingVertical: s.paddingVertical,
+          paddingHorizontal: s.paddingHorizontal,
+          borderRadius: size === 'sm' ? tokens.borderRadius.sm : tokens.borderRadius.md,
+        },
         vContainer,
         disabled && styles.disabled,
         style,
@@ -86,7 +90,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   label: {
-    fontWeight: '600',
+    fontWeight: '500',
   },
   disabled: {
     opacity: 0.4,
