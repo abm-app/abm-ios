@@ -1,5 +1,6 @@
 import { StyleSheet, Text, View } from 'react-native';
 
+import tokens from '@/theme/tokens';
 import { Button } from './Button';
 
 export type HeaderProps = {
@@ -43,20 +44,20 @@ export const Header = ({ user, onLogin, onLogout, onCreateAccount }: HeaderProps
 
 const styles = StyleSheet.create({
   wrapper: {
-    borderBottomWidth: 1,
-    borderBottomColor: 'rgba(0, 0, 0, 0.1)',
-    paddingVertical: 15,
-    paddingHorizontal: 20,
+    borderBottomWidth: tokens.borderWidth.thin,
+    borderBottomColor: tokens.colors.border,
+    paddingVertical: tokens.spacing.mdLg,
+    paddingHorizontal: tokens.spacing.lgMd,
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
   h1: {
-    fontWeight: '900',
-    fontSize: 20,
-    marginTop: 6,
-    marginBottom: 6,
-    marginLeft: 10,
-    color: 'black',
+    fontWeight: tokens.fontWeights.black,
+    fontSize: tokens.typography.fontSize.h2,
+    marginTop: tokens.spacing.s,
+    marginBottom: tokens.spacing.s,
+    marginLeft: tokens.spacing.smMd,
+    color: tokens.colors.primary,
     alignSelf: 'flex-start',
   },
   logoContainer: {
@@ -64,13 +65,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   button: {
-    marginLeft: 10,
+    marginLeft: tokens.spacing.smMd,
   },
   buttonContainer: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   userName: {
-    fontWeight: '700',
+    fontWeight: tokens.fontWeights.bold,
   },
 });

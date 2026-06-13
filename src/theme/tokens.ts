@@ -2,10 +2,13 @@ const tokens = {
   colors: {
     primary: '#000000',
     white: '#FFFFFF',
+    transparent: 'transparent',
+    brand: '#1ea7fd',
     surface: '#F9F9F9',
     border: 'rgba(0,0,0,0.10)',
     borderMd: 'rgba(0,0,0,0.18)',
     textPrimary: '#000000',
+    textSecondary: '#333333',
     textMuted: '#666666',
     textHint: '#999999',
     danger: '#C0392B',
@@ -28,10 +31,20 @@ const tokens = {
       h2: 20,
       subhead: 15,
       body: 15,
+      sm: 12,
+      md: 14,
+      lg: 16,
       caption: 12,
       label: 11,
       numeric: 28,
     },
+  },
+  fontWeights: {
+    regular: '400',
+    semibold: '600',
+    bold: '700',
+    extrabold: '800',
+    black: '900',
   },
   fonts: {
     heading: 'AncizarSerif-Regular',
@@ -43,9 +56,13 @@ const tokens = {
   },
   spacing: {
     xs: 4,
+    s: 6,
     sm: 8,
+    smMd: 10,
     md: 12,
+    mdLg: 15,
     lg: 16,
+    lgMd: 20,
     xl: 24,
     xxl: 32,
     xxxl: 48,
@@ -55,6 +72,7 @@ const tokens = {
     md: 10,
     lg: 16,
     xl: 24,
+    button: 48,
     pill: 100,
   },
   borderWidth: {
@@ -62,15 +80,20 @@ const tokens = {
     thin: 1,
   },
   button: {
-    md: {
+    sm: {
       paddingVertical: 10,
-      paddingHorizontal: 18,
+      paddingHorizontal: 16,
+      fontSize: 12,
+    },
+    md: {
+      paddingVertical: 11,
+      paddingHorizontal: 20,
       fontSize: 14,
     },
-    sm: {
-      paddingVertical: 6,
-      paddingHorizontal: 12,
-      fontSize: 13,
+    lg: {
+      paddingVertical: 12,
+      paddingHorizontal: 24,
+      fontSize: 16,
     },
   },
 } as const;

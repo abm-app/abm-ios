@@ -1,6 +1,8 @@
 import type { StyleProp, ViewStyle } from 'react-native';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
+import tokens from '@/theme/tokens';
+
 export interface ButtonProps {
   /** Is this the principal call to action on the page? */
   primary?: boolean;
@@ -55,45 +57,45 @@ export const Button = ({
 const styles = StyleSheet.create({
   button: {
     borderWidth: 0,
-    borderRadius: 48,
+    borderRadius: tokens.borderRadius.button,
   },
   primary: {
-    backgroundColor: '#1ea7fd',
+    backgroundColor: tokens.colors.brand,
   },
   primaryText: {
-    color: 'white',
+    color: tokens.colors.white,
   },
   secondary: {
-    backgroundColor: 'transparent',
-    borderColor: 'rgba(0, 0, 0, 0.15)',
-    borderWidth: 1,
+    backgroundColor: tokens.colors.transparent,
+    borderColor: tokens.colors.border,
+    borderWidth: tokens.borderWidth.thin,
   },
   secondaryText: {
-    color: '#333',
+    color: tokens.colors.textSecondary,
   },
   blackBorder: {
-    borderColor: 'black',
+    borderColor: tokens.colors.primary,
   },
   small: {
-    paddingVertical: 10,
-    paddingHorizontal: 16,
+    paddingVertical: tokens.button.sm.paddingVertical,
+    paddingHorizontal: tokens.button.sm.paddingHorizontal,
   },
   smallText: {
-    fontSize: 12,
+    fontSize: tokens.button.sm.fontSize,
   },
   medium: {
-    paddingVertical: 11,
-    paddingHorizontal: 20,
+    paddingVertical: tokens.button.md.paddingVertical,
+    paddingHorizontal: tokens.button.md.paddingHorizontal,
   },
   mediumText: {
-    fontSize: 14,
+    fontSize: tokens.button.md.fontSize,
   },
   large: {
-    paddingVertical: 12,
-    paddingHorizontal: 24,
+    paddingVertical: tokens.button.lg.paddingVertical,
+    paddingHorizontal: tokens.button.lg.paddingHorizontal,
   },
   largeText: {
-    fontSize: 16,
+    fontSize: tokens.button.lg.fontSize,
   },
 });
 
