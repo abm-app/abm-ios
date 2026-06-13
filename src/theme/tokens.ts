@@ -57,6 +57,22 @@ const tokens = {
     xl: 24,
     pill: 100,
   },
+  borderWidth: {
+    hairline: 0.5,
+    thin: 1,
+  },
+  button: {
+    md: {
+      paddingVertical: 10,
+      paddingHorizontal: 18,
+      fontSize: 14,
+    },
+    sm: {
+      paddingVertical: 6,
+      paddingHorizontal: 12,
+      fontSize: 13,
+    },
+  },
 } as const;
 
 export type Tokens = typeof tokens;
