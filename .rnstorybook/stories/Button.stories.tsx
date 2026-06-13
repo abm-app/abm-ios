@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-native';
 
-import { View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { fn } from 'storybook/test';
 
 import { Button } from './Button';
@@ -10,7 +10,7 @@ const meta = {
   component: Button,
   decorators: [
     (Story) => (
-      <View style={{ flex: 1, alignItems: 'flex-start' }}>
+      <View style={styles.decoratorContainer}>
         <Story />
       </View>
     ),
@@ -51,3 +51,10 @@ export const Small: Story = {
     label: 'Button',
   },
 };
+
+const styles = StyleSheet.create({
+  decoratorContainer: {
+    flex: 1,
+    alignItems: 'flex-start',
+  },
+});
