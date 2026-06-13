@@ -30,6 +30,10 @@ export const Button = ({
   const sizeStyle = styles[size];
   const textSizeStyle = textSizeStyles[size];
 
+  const dynamicBackground = backgroundColor
+    ? { backgroundColor }
+    : undefined;
+
   return (
     <TouchableOpacity accessibilityRole="button" activeOpacity={0.6} onPress={onPress}>
       <View
@@ -38,7 +42,7 @@ export const Button = ({
           modeStyle,
           sizeStyle,
           style,
-          !!backgroundColor && { backgroundColor },
+          dynamicBackground,
           styles.blackBorder,
         ]}
       >
@@ -52,10 +56,6 @@ const styles = StyleSheet.create({
   button: {
     borderWidth: 0,
     borderRadius: 48,
-  },
-  buttonText: {
-    fontWeight: '700',
-    lineHeight: 1,
   },
   primary: {
     backgroundColor: '#1ea7fd',
