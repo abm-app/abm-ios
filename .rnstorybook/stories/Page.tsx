@@ -23,7 +23,7 @@ export const Page = () => {
         <Text style={styles.p}>
           We recommend building UIs with a{' '}
           <Text
-            style={[styles.a, { fontWeight: 'bold' }]}
+            style={[styles.a, styles.bold]}
             role="link"
             onPress={() => {
               Linking.openURL('https://componentdriven.org');
@@ -102,6 +102,9 @@ const styles = StyleSheet.create({
 
   a: {
     color: '#1ea7fd',
+  },
+  bold: {
+    fontWeight: 'bold',
   },
 
   ul: {

@@ -39,7 +39,7 @@ export const Button = ({
           sizeStyle,
           style,
           !!backgroundColor && { backgroundColor },
-          { borderColor: 'black' },
+          styles.blackBorder,
         ]}
       >
         <Text style={[textModeStyle, textSizeStyle]}>{label}</Text>
@@ -70,6 +70,9 @@ const styles = StyleSheet.create({
   },
   secondaryText: {
     color: '#333',
+  },
+  blackBorder: {
+    borderColor: 'black',
   },
   small: {
     paddingVertical: 10,
