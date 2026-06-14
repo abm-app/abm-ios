@@ -9,7 +9,7 @@ import "@storybook/addon-ondevice-actions/register";
 const normalizedStories = [
   {
     titlePrefix: "",
-    directory: "../src/components/ui/stories",
+    directory: "./src/components/ui/stories",
     files: "**/*.stories.?(ts|tsx|js|jsx)",
     importPathMatcher: /^\.(?:(?:^|\/|(?:(?:(?!(?:^|\/)\.).)*?)\/)(?!\.)(?=.)[^/]*?\.stories\.(?:ts|tsx|js|jsx)?)$/,
     req: require.context(
@@ -20,7 +20,7 @@ const normalizedStories = [
   },
   {
     titlePrefix: "",
-    directory: "../src/components/shared/stories",
+    directory: "./src/components/shared/stories",
     files: "**/*.stories.?(ts|tsx|js|jsx)",
     importPathMatcher: /^\.(?:(?:^|\/|(?:(?:(?!(?:^|\/)\.).)*?)\/)(?!\.)(?=.)[^/]*?\.stories\.(?:ts|tsx|js|jsx)?)$/,
     req: require.context(

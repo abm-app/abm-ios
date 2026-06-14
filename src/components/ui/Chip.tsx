@@ -1,8 +1,16 @@
-import { StyleSheet, Text, TouchableOpacity, View, StyleProp, ViewStyle } from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  StyleProp,
+  ViewStyle,
+  TextStyle,
+} from 'react-native';
 
 import tokens from '@/theme/tokens';
 
-type ChipTone = 'default' | 'primary' | 'warning';
+export type ChipTone = 'default' | 'primary' | 'warning';
 
 export interface ChipProps {
   label: string;
@@ -12,23 +20,36 @@ export interface ChipProps {
   style?: StyleProp<ViewStyle>;
 }
 
-const activeStyles: Record<ChipTone, { bg: string; border: string; text: string }> = {
+// ─── Pre-created token-derived style maps (module-level, computed once) ──────
+
+const toneContainerStyles: Record<ChipTone, ViewStyle> = {
   default: {
-    bg: tokens.colors.background,
-    border: tokens.colors.borderMd,
-    text: tokens.colors.textSecondary,
+    backgroundColor: tokens.colors.background,
+    borderColor: tokens.colors.borderMd,
   },
   primary: {
-    bg: tokens.colors.primary,
-    border: tokens.colors.primary,
-    text: tokens.colors.background,
+    backgroundColor: tokens.colors.primary,
+    borderColor: tokens.colors.primary,
   },
   warning: {
-    bg: tokens.colors.warning,
-    border: tokens.colors.warning,
-    text: tokens.colors.background,
+    backgroundColor: tokens.colors.warning,
+    borderColor: tokens.colors.warning,
   },
 };
+
+const toneLabelStyles: Record<ChipTone, TextStyle> = {
+  default: {
+    color: tokens.colors.textSecondary,
+  },
+  primary: {
+    color: tokens.colors.background,
+  },
+  warning: {
+    color: tokens.colors.background,
+  },
+};
+
+// ─── Component ───────────────────────────────────────────────────────────────
 
 export default function Chip({
   label,
@@ -37,19 +58,8 @@ export default function Chip({
   onPress,
   style,
 }: ChipProps) {
-  const activeStyle = activeStyles[tone];
-
-  const containerStyle = active
-    ? {
-        backgroundColor: activeStyle.bg,
-        borderColor: activeStyle.border,
-      }
-    : {
-        backgroundColor: tokens.colors.background,
-        borderColor: tokens.colors.borderMd,
-      };
-
-  const textStyle = active ? { color: activeStyle.text } : { color: tokens.colors.textSecondary };
+  const containerStyle = active ? toneContainerStyles[tone] : toneContainerStyles.default;
+  const textStyle = active ? toneLabelStyles[tone] : toneLabelStyles.default;
 
   const content = <Text style={[styles.base, containerStyle, textStyle]}>{label}</Text>;
 
@@ -63,6 +73,8 @@ export default function Chip({
 
   return <View style={style}>{content}</View>;
 }
+
+// ─── Static base styles ──────────────────────────────────────────────────────
 
 const styles = StyleSheet.create({
   base: {

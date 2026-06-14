@@ -2,7 +2,7 @@ import { StyleSheet, Text, StyleProp, TextStyle } from 'react-native';
 
 import tokens from '@/theme/tokens';
 
-type BadgeVariant = 'high' | 'medium' | 'low' | 'category';
+export type BadgeVariant = 'high' | 'medium' | 'low' | 'category';
 
 export interface BadgeProps {
   label: string;
@@ -10,30 +10,34 @@ export interface BadgeProps {
   style?: StyleProp<TextStyle>;
 }
 
-const variantStyles: Record<BadgeVariant, { bg: string; text: string }> = {
+// ─── Pre-created token-derived style maps (module-level, computed once) ──────
+
+const variantStyles: Record<BadgeVariant, TextStyle> = {
   high: {
-    bg: tokens.colors.badgeHighBg,
-    text: tokens.colors.badgeHighText,
+    backgroundColor: tokens.colors.badgeHighBg,
+    color: tokens.colors.badgeHighText,
   },
   medium: {
-    bg: tokens.colors.badgeMedBg,
-    text: tokens.colors.badgeMedText,
+    backgroundColor: tokens.colors.badgeMedBg,
+    color: tokens.colors.badgeMedText,
   },
   low: {
-    bg: tokens.colors.badgeLowBg,
-    text: tokens.colors.badgeLowText,
+    backgroundColor: tokens.colors.badgeLowBg,
+    color: tokens.colors.badgeLowText,
   },
   category: {
-    bg: tokens.colors.badgeCatBg,
-    text: tokens.colors.badgeCatText,
+    backgroundColor: tokens.colors.badgeCatBg,
+    color: tokens.colors.badgeCatText,
   },
 };
 
-export default function Badge({ label, variant = 'category', style }: BadgeProps) {
-  const { bg, text } = variantStyles[variant];
+// ─── Component ───────────────────────────────────────────────────────────────
 
-  return <Text style={[styles.base, { backgroundColor: bg, color: text }, style]}>{label}</Text>;
+export default function Badge({ label, variant = 'category', style }: BadgeProps) {
+  return <Text style={[styles.base, variantStyles[variant], style]}>{label}</Text>;
 }
+
+// ─── Static base styles ──────────────────────────────────────────────────────
 
 const styles = StyleSheet.create({
   base: {
