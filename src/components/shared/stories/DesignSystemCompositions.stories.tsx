@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import type { Meta, StoryObj } from '@storybook/react-native';
 
@@ -5,6 +6,7 @@ import DesignSystemNavigationPreview from '../DesignSystemNavigationPreview';
 import DashboardScoreCard from '../DashboardScoreCard';
 import TaskItem from '../TaskItem';
 import QuickInsightsCard from '../QuickInsightsCard';
+import CreateTaskModalPreview from '../CreateTaskModalPreview';
 import type { DesignSystemNavigationPreviewProps } from '../DesignSystemNavigationPreview';
 import tokens from '@/theme/tokens';
 
@@ -62,6 +64,35 @@ export const AllCompositions: Story = {
           ]}
         />
       </View>
+    </View>
+  ),
+};
+
+function InteractiveCreateTaskModal() {
+  const [title, setTitle] = useState('');
+  const [priority, setPriority] = useState<'high' | 'medium' | 'low'>('high');
+  const [recurrence, setRecurrence] = useState<'daily' | 'weekly' | 'monthly'>('weekly');
+
+  return (
+    <CreateTaskModalPreview
+      outlet="Zan Zan Mini Budget, YMI"
+      title={title}
+      onTitleChange={setTitle}
+      selectedPriority={priority}
+      onPrioritySelect={setPriority}
+      selectedRecurrence={recurrence}
+      onRecurrenceSelect={setRecurrence}
+      onCancel={() => {}}
+      onCreateTask={() => {}}
+    />
+  );
+}
+
+export const CreateTaskModal: StoryObj = {
+  name: 'Create Task Modal',
+  render: () => (
+    <View style={compositionStyle.container}>
+      <InteractiveCreateTaskModal />
     </View>
   ),
 };
