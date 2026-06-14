@@ -3,6 +3,8 @@ import type { Meta, StoryObj } from '@storybook/react-native';
 
 import DesignSystemNavigationPreview from '../DesignSystemNavigationPreview';
 import DashboardScoreCard from '../DashboardScoreCard';
+import TaskItem from '../TaskItem';
+import QuickInsightsCard from '../QuickInsightsCard';
 import type { DesignSystemNavigationPreviewProps } from '../DesignSystemNavigationPreview';
 import tokens from '@/theme/tokens';
 
@@ -36,6 +38,27 @@ export const AllCompositions: Story = {
             { value: 25, label: 'Critical' },
             { value: 15, label: 'Open' },
             { value: 50, label: 'Closed' },
+          ]}
+        />
+      </View>
+      <View style={compositionStyle.section}>
+        <TaskItem
+          title="Restock Takeout Station"
+          priority="high"
+          categories={['Maintenance', 'Orders']}
+          dueText="Due Today"
+          recurrenceText="Weekly"
+          checked={false}
+          onToggle={() => {}}
+        />
+      </View>
+      <View style={compositionStyle.section}>
+        <QuickInsightsCard
+          items={[
+            { id: '1', label: '3 tasks overdue', tone: 'danger', percentage: 60 },
+            { id: '2', label: 'CSAT score slipping', tone: 'warning', percentage: 42 },
+            { id: '3', label: 'Response time up 12%', tone: 'info', percentage: 72 },
+            { id: '4', label: '14 reviews unactioned', tone: 'muted', percentage: 28 },
           ]}
         />
       </View>

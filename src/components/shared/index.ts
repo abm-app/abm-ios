@@ -7,3 +7,9 @@ export type {
 
 export { default as DashboardScoreCard } from './DashboardScoreCard';
 export type { DashboardScoreCardProps, MiniStat } from './DashboardScoreCard';
+
+export { default as TaskItem } from './TaskItem';
+export type { TaskItemProps } from './TaskItem';
+
+export { default as QuickInsightsCard } from './QuickInsightsCard';
+export type { QuickInsightsCardProps, InsightItem, InsightTone } from './QuickInsightsCard';
