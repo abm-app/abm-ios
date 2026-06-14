@@ -36,7 +36,7 @@ const variantStyles: Record<ButtonVariant, { container: ViewStyle; label: string
     label: tokens.colors.primary,
   },
   ghost: {
-    container: { backgroundColor: 'transparent' },
+    container: { backgroundColor: tokens.colors.transparent },
     label: tokens.colors.primary,
   },
   danger: {
@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   label: {
-    fontWeight: '500',
+    fontWeight: tokens.fontWeights.medium,
   },
   disabled: {
     opacity: 0.4,

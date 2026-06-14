@@ -44,6 +44,7 @@ const tokens = {
   },
   fontWeights: {
     regular: '400',
+    medium: '500',
     semibold: '600',
     bold: '700',
     extrabold: '800',
@@ -55,7 +56,6 @@ const tokens = {
     headingBold: 'AncizarSerif-Bold',
     headingBoldItalic: 'AncizarSerif-BoldItalic',
     sub: 'Inter_400Regular',
-    body: undefined,
   },
   spacing: {
     xs: 4,
