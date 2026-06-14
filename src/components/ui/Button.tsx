@@ -5,14 +5,16 @@ import {
   Text,
   TouchableOpacity,
   ViewStyle,
+  TextStyle,
 } from 'react-native';
 
 import tokens from '@/theme/tokens';
+import { useTokens } from '@/theme';
 
-type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger';
-type ButtonSize = 'md' | 'sm';
+export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger';
+export type ButtonSize = 'md' | 'sm';
 
-interface ButtonProps {
+export interface ButtonProps {
   label: string;
   onPress: () => void;
   variant?: ButtonVariant;
@@ -22,28 +24,55 @@ interface ButtonProps {
   style?: StyleProp<ViewStyle>;
 }
 
-const variantStyles: Record<ButtonVariant, { container: ViewStyle; label: string }> = {
+// ─── Pre-created token-derived style maps (module-level, computed once) ──────
+
+const variantContainerStyles: Record<ButtonVariant, ViewStyle> = {
   primary: {
-    container: { backgroundColor: tokens.colors.primary },
-    label: tokens.colors.background,
+    backgroundColor: tokens.colors.primary,
   },
   secondary: {
-    container: {
-      backgroundColor: tokens.colors.background,
-      borderWidth: tokens.borderWidth.thin,
-      borderColor: tokens.colors.borderMd,
-    },
-    label: tokens.colors.primary,
+    backgroundColor: tokens.colors.background,
+    borderWidth: tokens.borderWidth.thin,
+    borderColor: tokens.colors.borderMd,
   },
   ghost: {
-    container: { backgroundColor: tokens.colors.transparent },
-    label: tokens.colors.primary,
+    backgroundColor: tokens.colors.transparent,
   },
   danger: {
-    container: { backgroundColor: tokens.colors.badgeHighBg },
-    label: tokens.colors.badgeHighText,
+    backgroundColor: tokens.colors.badgeHighBg,
   },
 };
+
+const variantLabelStyles: Record<ButtonVariant, TextStyle> = {
+  primary: { color: tokens.colors.background },
+  secondary: { color: tokens.colors.primary },
+  ghost: { color: tokens.colors.primary },
+  danger: { color: tokens.colors.badgeHighText },
+};
+
+const sizeContainerStyles: Record<ButtonSize, ViewStyle> = {
+  md: {
+    paddingVertical: tokens.spacing.smMd,
+    paddingHorizontal: tokens.spacing.xl,
+    borderRadius: tokens.borderRadius.md,
+  },
+  sm: {
+    paddingVertical: tokens.spacing.xsMd,
+    paddingHorizontal: tokens.spacing.mdLg,
+    borderRadius: tokens.borderRadius.sm,
+  },
+};
+
+const sizeLabelStyles: Record<ButtonSize, TextStyle> = {
+  md: {
+    fontSize: tokens.typography.fontSize.button,
+  },
+  sm: {
+    fontSize: tokens.typography.fontSize.buttonSm,
+  },
+};
+
+// ─── Component ───────────────────────────────────────────────────────────────
 
 export default function Button({
   label,
@@ -54,8 +83,11 @@ export default function Button({
   loading = false,
   style,
 }: ButtonProps) {
-  const { container: vContainer, label: vLabel } = variantStyles[variant];
-  const s = tokens.button[size];
+  const t = useTokens();
+
+  // useTokens() provides dynamic token access — loading spinner color
+  // resolves from the module-level variantLabelStyles map.
+  const loadingColor = variantLabelStyles[variant].color ?? t.colors.primary;
 
   return (
     <TouchableOpacity
@@ -64,35 +96,36 @@ export default function Button({
       activeOpacity={0.7}
       style={[
         styles.base,
-        {
-          paddingVertical: s.paddingVertical,
-          paddingHorizontal: s.paddingHorizontal,
-          borderRadius: size === 'sm' ? tokens.borderRadius.sm : tokens.borderRadius.md,
-        },
-        vContainer,
+        sizeContainerStyles[size],
+        variantContainerStyles[variant],
         disabled && styles.disabled,
         style,
       ]}
     >
       {loading ? (
-        <ActivityIndicator size="small" color={vLabel} />
+        <ActivityIndicator size="small" color={loadingColor} />
       ) : (
-        <Text style={[styles.label, { color: vLabel, fontSize: s.fontSize }]}>{label}</Text>
+        <Text style={[styles.label, variantLabelStyles[variant], sizeLabelStyles[size]]}>
+          {label}
+        </Text>
       )}
     </TouchableOpacity>
   );
 }
 
+// ─── Static base styles ──────────────────────────────────────────────────────
+
 const styles = StyleSheet.create({
   base: {
-    borderRadius: tokens.borderRadius.md,
     alignItems: 'center',
     justifyContent: 'center',
+    flexDirection: 'row',
   },
   label: {
     fontWeight: tokens.typography.fontWeight.medium,
+    letterSpacing: tokens.typography.letterSpacing.button,
   },
   disabled: {
-    opacity: 0.4,
+    opacity: tokens.opacity.disabled,
   },
 });
