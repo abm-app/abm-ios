@@ -25,13 +25,13 @@ interface ButtonProps {
 const variantStyles: Record<ButtonVariant, { container: ViewStyle; label: string }> = {
   primary: {
     container: { backgroundColor: tokens.colors.primary },
-    label: tokens.colors.white,
+    label: tokens.colors.background,
   },
   secondary: {
     container: {
-      backgroundColor: tokens.colors.white,
+      backgroundColor: tokens.colors.background,
       borderWidth: tokens.borderWidth.thin,
-      borderColor: tokens.colors.primary,
+      borderColor: tokens.colors.borderMd,
     },
     label: tokens.colors.primary,
   },
@@ -40,8 +40,8 @@ const variantStyles: Record<ButtonVariant, { container: ViewStyle; label: string
     label: tokens.colors.primary,
   },
   danger: {
-    container: { backgroundColor: '#FEE2E2' },
-    label: '#991B1B',
+    container: { backgroundColor: tokens.colors.badgeHighBg },
+    label: tokens.colors.badgeHighText,
   },
 };
 
@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   label: {
-    fontWeight: tokens.fontWeights.medium,
+    fontWeight: tokens.typography.fontWeight.medium,
   },
   disabled: {
     opacity: 0.4,
