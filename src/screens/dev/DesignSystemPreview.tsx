@@ -6,10 +6,6 @@ import Badge from '@/components/ui/Badge';
 import Chip from '@/components/ui/Chip';
 import Input from '@/components/ui/Input';
 import DesignSystemNavigationPreview from '@/components/shared/DesignSystemNavigationPreview';
-import DashboardScoreCard from '@/components/shared/DashboardScoreCard';
-import TaskItem from '@/components/shared/TaskItem';
-import QuickInsightsCard from '@/components/shared/QuickInsightsCard';
-import CreateTaskModalPreview from '@/components/shared/CreateTaskModalPreview';
 
 import ColorTokensSection from './components/ColorTokensSection';
 import TypographyScaleSection from './components/TypographyScaleSection';
@@ -100,66 +96,6 @@ export default function DesignSystemPreview() {
         />
       </View>
 
-      {/* ── Components — Dashboard Score Card ─────────────────────────── */}
-      <View style={styles.section}>
-        <SectionLabel title="Components — Dashboard Score Card" />
-        <View style={styles.scoreCardWrapper}>
-          <DashboardScoreCard
-            score={4.8}
-            label="Overall Score"
-            miniStats={[
-              { id: 'critical', value: 25, label: 'Critical' },
-              { id: 'open', value: 15, label: 'Open' },
-              { id: 'closed', value: 50, label: 'Closed' },
-            ]}
-          />
-        </View>
-      </View>
-
-      {/* ── Components — Task Item ────────────────────────────────────── */}
-      <View style={styles.section}>
-        <SectionLabel title="Components — Task Item" />
-        <View style={styles.taskItemWrapper}>
-          <TaskItem
-            title="Restock Takeout Station"
-            priority="high"
-            categories={['Maintenance', 'Orders']}
-            dueText="Due Today"
-            recurrenceText="Weekly"
-            checked={false}
-            onToggle={() => {}}
-          />
-        </View>
-      </View>
-
-      {/* ── Components — Quick Insights ───────────────────────────────── */}
-      <View style={styles.section}>
-        <SectionLabel title="Components — Quick Insights" />
-        <View style={styles.insightsWrapper}>
-          <QuickInsightsCard
-            items={[
-              { id: '1', label: '3 tasks overdue', tone: 'danger', percentage: 60 },
-              { id: '2', label: 'CSAT score slipping', tone: 'warning', percentage: 42 },
-              { id: '3', label: 'Response time up 12%', tone: 'info', percentage: 72 },
-              { id: '4', label: '14 reviews unactioned', tone: 'muted', percentage: 28 },
-            ]}
-          />
-        </View>
-      </View>
-
-      {/* ── Components — Create Task Modal ────────────────────────────── */}
-      <View style={styles.section}>
-        <SectionLabel title="Components — Create Task Modal" />
-        <View style={styles.modalWrapper}>
-          <CreateTaskModalPreview
-            outlet="Zan Zan Mini Budget, YMI"
-            title=""
-            selectedPriority="high"
-            selectedRecurrence="weekly"
-          />
-        </View>
-      </View>
-
       {/* ── Token Reference ───────────────────────────────────────────── */}
       <TokenReferenceSection />
     </ScrollView>
@@ -238,25 +174,5 @@ const styles = StyleSheet.create({
   inputStack: {
     gap: tokens.spacing.md,
     maxWidth: 380,
-  },
-
-  /* Score card constrained width */
-  scoreCardWrapper: {
-    maxWidth: 300,
-  },
-
-  /* Task item constrained width */
-  taskItemWrapper: {
-    maxWidth: 360,
-  },
-
-  /* Insights constrained width */
-  insightsWrapper: {
-    maxWidth: 340,
-  },
-
-  /* Modal constrained width */
-  modalWrapper: {
-    maxWidth: 360,
   },
 });
