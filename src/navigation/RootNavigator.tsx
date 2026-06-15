@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -26,14 +26,14 @@ if (__DEV__) {
 
 export default function RootNavigator() {
   const isAuthenticated = useAuthStore(s => s.isAuthenticated);
-  const hydrate = useAuthStore(s => s.hydrate);
-  const [isHydrating, setIsHydrating] = useState(true);
+  const isRestoring = useAuthStore(s => s.isRestoring);
+  const restoreSession = useAuthStore(s => s.restoreSession);
 
   useEffect(() => {
-    void hydrate().finally(() => setIsHydrating(false));
-  }, [hydrate]);
+    void restoreSession();
+  }, [restoreSession]);
 
-  if (isHydrating) {
+  if (isRestoring) {
     return (
       <View style={styles.loading}>
         <ActivityIndicator size="large" color={tokens.colors.primary} />

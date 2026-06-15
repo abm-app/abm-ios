@@ -1,35 +1,33 @@
 import { create } from 'zustand';
 
-import type { AuthUser, ModuleKey, UserRole } from '@/types/auth';
+import type { AuthUser, ModuleKey } from '@/types/auth';
 import { saveAuthTokens, clearAuthTokens, getAccessToken, getRefreshToken } from '@/api/storage';
 
 // ─── State shape ─────────────────────────────────────────────────────────────
 
 interface AuthState {
-  /** JWT access token — null when logged out. */
   accessToken: string | null;
-  /** JWT refresh token — null when logged out. */
   refreshToken: string | null;
-  /** Current user profile — null when logged out. */
   user: AuthUser | null;
-
-  // ── Derived (convenience getters) ──────────────────────────────────────────
-  isAuthenticated: boolean;
-  role: UserRole | null;
   modules: ModuleKey[];
+  isAuthenticated: boolean;
+  isRestoring: boolean;
 }
 
 // ─── Actions ─────────────────────────────────────────────────────────────────
 
 interface AuthActions {
-  /** Persist tokens + user after a successful login. */
-  setAuth: (accessToken: string, refreshToken: string, user: AuthUser) => void;
-  /** Update user profile (e.g. after /auth/me). */
-  setUser: (user: AuthUser) => void;
-  /** Clear everything and remove tokens from secure-store. */
-  logout: () => void;
-  /** Hydrate store from secure-store on app launch. Returns true if tokens existed. */
-  hydrate: () => Promise<boolean>;
+  /** Write tokens to SecureStore then set authenticated state. */
+  setSession: (
+    accessToken: string,
+    refreshToken: string,
+    user: AuthUser,
+    modules: ModuleKey[],
+  ) => void;
+  /** Delete tokens from SecureStore and clear all auth state. */
+  clearSession: () => void;
+  /** Read SecureStore on app launch. Sets isRestoring false when done. */
+  restoreSession: () => Promise<void>;
 }
 
 // ─── Store ───────────────────────────────────────────────────────────────────
@@ -39,53 +37,51 @@ export const useAuthStore = create<AuthState & AuthActions>(set => ({
   accessToken: null,
   refreshToken: null,
   user: null,
-  isAuthenticated: false,
-  role: null,
   modules: [],
+  isAuthenticated: false,
+  isRestoring: true,
 
   // ── Actions ────────────────────────────────────────────────────────────────
 
-  setAuth: (accessToken, refreshToken, user) => {
+  setSession: (accessToken, refreshToken, user, modules) => {
     void saveAuthTokens(accessToken, refreshToken);
     set({
       accessToken,
       refreshToken,
       user,
+      modules,
       isAuthenticated: true,
-      role: user.role,
-      modules: user.modules,
     });
   },
 
-  setUser: user => {
-    set({
-      user,
-      role: user.role,
-      modules: user.modules,
-    });
-  },
-
-  logout: () => {
+  clearSession: () => {
     void clearAuthTokens();
     set({
       accessToken: null,
       refreshToken: null,
       user: null,
-      isAuthenticated: false,
-      role: null,
       modules: [],
+      isAuthenticated: false,
     });
   },
 
-  hydrate: async () => {
-    const accessToken = await getAccessToken();
-    const refreshToken = await getRefreshToken();
+  restoreSession: async () => {
+    try {
+      const accessToken = await getAccessToken();
+      const refreshToken = await getRefreshToken();
 
-    if (accessToken && refreshToken) {
-      set({ accessToken, refreshToken, isAuthenticated: true });
-      return true;
+      if (accessToken && refreshToken) {
+        // Mock phase: tokens exist but user/modules are not persisted in SecureStore.
+        // On a real backend, call /auth/me here to hydrate user and modules.
+        set({
+          accessToken,
+          refreshToken,
+          isAuthenticated: true,
+        });
+      }
+    } finally {
+      set({ isRestoring: false });
     }
-    return false;
   },
 }));
 

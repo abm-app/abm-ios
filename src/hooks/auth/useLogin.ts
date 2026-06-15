@@ -5,12 +5,12 @@ import { useAuthStore } from '@/store/authStore';
 import type { LoginRequest } from '@/types/auth';
 
 export function useLogin() {
-  const setAuth = useAuthStore(s => s.setAuth);
+  const setSession = useAuthStore(s => s.setSession);
 
   return useMutation({
     mutationFn: (payload: LoginRequest) => loginUser(payload),
     onSuccess: data => {
-      setAuth(data.accessToken, data.refreshToken, data.user);
+      setSession(data.accessToken, data.refreshToken, data.user, data.modules);
     },
   });
 }

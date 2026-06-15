@@ -1,7 +1,8 @@
 import axios from 'axios';
 
 import ENV from '@/config/env';
-import { getAccessToken, clearAuthTokens } from './storage';
+import { authStore } from '@/store/authStore';
+import { clearAuthTokens } from './storage';
 import logger from '@/utils/logger';
 
 const apiClient = axios.create({
@@ -12,8 +13,8 @@ const apiClient = axios.create({
 
 // ─── Request interceptor — attach access token ───────────────────────────────
 
-apiClient.interceptors.request.use(async config => {
-  const token = await getAccessToken();
+apiClient.interceptors.request.use(config => {
+  const token = authStore.getState().accessToken;
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
