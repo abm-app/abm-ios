@@ -11,12 +11,14 @@ const leftColumn = [
   { term: 'Font — Numeric', definition: 'Inter, 300' },
 ] as const;
 
+/* eslint-disable no-restricted-syntax -- display strings for the design-system preview */
 const rightColumn = [
   { term: 'Primary', definition: '#000000' },
   { term: 'Secondary', definition: 'rgba(0,0,0,0.15)' },
   { term: 'Border default', definition: 'rgba(0,0,0,0.10)' },
   { term: 'Border emphasis', definition: 'rgba(0,0,0,0.18)' },
 ] as const;
+/* eslint-enable no-restricted-syntax */
 
 // ─── Component ───────────────────────────────────────────────────────────────
 

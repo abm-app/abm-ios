@@ -12,12 +12,14 @@ const fontEntries = [
   { dt: 'Font — Numeric', dd: 'Inter, 300' },
 ];
 
+/* eslint-disable no-restricted-syntax -- display strings for the design-system preview */
 const colorEntries = [
   { dt: 'Primary', dd: '#000000' },
   { dt: 'Secondary', dd: 'rgba(0,0,0,0.15)' },
   { dt: 'Border default', dd: 'rgba(0,0,0,0.10)' },
   { dt: 'Border emphasis', dd: 'rgba(0,0,0,0.18)' },
 ];
+/* eslint-enable no-restricted-syntax */
 
 // ─── Component ───────────────────────────────────────────────────────────────
 

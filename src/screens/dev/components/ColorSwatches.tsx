@@ -4,6 +4,7 @@ import tokens from '@/theme/tokens';
 
 // ─── Swatch data ─────────────────────────────────────────────────────────────
 
+/* eslint-disable no-restricted-syntax -- display strings for the design-system preview */
 const swatches = [
   { name: 'Primary', value: '#000000', color: tokens.colors.primary, showBorder: false },
   { name: 'Secondary', value: '15% #000', color: tokens.colors.secondary, showBorder: false },
@@ -19,6 +20,7 @@ const swatches = [
   { name: 'Warning', value: '#F59E0B', color: tokens.colors.warning, showBorder: false },
   { name: 'Info', value: '#2471A3', color: tokens.colors.info, showBorder: false },
 ] as const;
+/* eslint-enable no-restricted-syntax */
 
 // ─── Component ───────────────────────────────────────────────────────────────
 

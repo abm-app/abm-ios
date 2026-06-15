@@ -5,6 +5,7 @@ import SectionLabel from './SectionLabel';
 
 // ─── Data ────────────────────────────────────────────────────────────────────
 
+/* eslint-disable no-restricted-syntax -- display strings for the design-system preview */
 const swatches = [
   { name: 'Primary', value: tokens.colors.primary, display: '#000000' },
   { name: 'Secondary', value: tokens.colors.secondary, display: '15% #000' },
@@ -20,6 +21,7 @@ const swatches = [
   { name: 'Warning', value: tokens.colors.warning, display: '#F59E0B' },
   { name: 'Info', value: tokens.colors.info, display: '#2471A3' },
 ] as const;
+/* eslint-enable no-restricted-syntax */
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
