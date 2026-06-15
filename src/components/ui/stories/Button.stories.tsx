@@ -1,6 +1,7 @@
 import { StyleSheet, View } from 'react-native';
 import type { Meta, StoryObj } from '@storybook/react-native';
 
+import tokens from '@/theme/tokens';
 import Button from '../Button';
 import type { ButtonProps } from '../Button';
 
@@ -102,7 +103,7 @@ const allButtonsStyle = StyleSheet.create({
   row: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 8,
+    gap: tokens.spacing.sm,
     alignItems: 'center',
   },
 });

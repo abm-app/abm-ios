@@ -69,29 +69,35 @@ export default function Chip({
   const containerStyle = active ? toneContainerStyles[tone] : toneContainerStyles.default;
   const textStyle = active ? toneLabelStyles[tone] : toneLabelStyles.default;
 
-  const content = <Text style={[styles.base, containerStyle, textStyle]}>{label}</Text>;
+  const content = <Text style={[styles.label, textStyle]}>{label}</Text>;
 
   if (onPress) {
     return (
-      <TouchableOpacity onPress={onPress} activeOpacity={0.7} style={style}>
+      <TouchableOpacity
+        onPress={onPress}
+        activeOpacity={0.7}
+        style={[style, styles.container, containerStyle]}
+      >
         {content}
       </TouchableOpacity>
     );
   }
 
-  return <View style={style}>{content}</View>;
+  return <View style={[style, styles.container, containerStyle]}>{content}</View>;
 }
 
 // ─── Static base styles ──────────────────────────────────────────────────────
 
 const styles = StyleSheet.create({
-  base: {
+  container: {
     overflow: 'hidden',
-    fontSize: tokens.chip.fontSize,
-    fontWeight: tokens.chip.fontWeight,
     paddingVertical: tokens.chip.paddingVertical,
     paddingHorizontal: tokens.chip.paddingHorizontal,
     borderRadius: tokens.borderRadius.pill,
     borderWidth: tokens.borderWidth.thin,
+  },
+  label: {
+    fontSize: tokens.chip.fontSize,
+    fontWeight: tokens.chip.fontWeight,
   },
 });
