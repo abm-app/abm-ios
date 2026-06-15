@@ -184,9 +184,9 @@ export const fontSize = {
 } as const;
 
 export const fontFamily = {
-  heading: 'Georgia',       // Fallback for Ancizar Serif until custom font loads
-  sub: 'Inter_400Regular',  // Inter via expo-google-fonts or system
-  body: undefined,          // System default — SF Pro on iOS
+  heading: 'Georgia', // Fallback for Ancizar Serif until custom font loads
+  sub: 'Inter_400Regular', // Inter via expo-google-fonts or system
+  body: undefined, // System default — SF Pro on iOS
 } as const;
 
 export const borderWidth = {
@@ -222,9 +222,9 @@ const styles = StyleSheet.create({
 // WRONG — never do this
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#F9F9F9',  // ❌ hardcoded
-    borderRadius: 16,             // ❌ hardcoded
-    padding: 16,                  // ❌ hardcoded
+    backgroundColor: '#F9F9F9', // ❌ hardcoded
+    borderRadius: 16, // ❌ hardcoded
+    padding: 16, // ❌ hardcoded
   },
 });
 ```
@@ -232,6 +232,7 @@ const styles = StyleSheet.create({
 ### Adding a new token
 
 If you need a value that does not exist in `tokens.ts`:
+
 1. Add it to the correct group in `tokens.ts` with a descriptive name.
 2. Commit the token addition separately from the component that uses it (or in the same PR, clearly noted).
 3. Never add a one-off value directly in a component file.
@@ -248,6 +249,7 @@ Primitive, single-purpose components that implement the design system directly. 
 Current UI primitives: `Button`, `Badge`, `Chip`, `Card`, `Input`.
 
 Rules for UI components:
+
 - Accept a `style` prop (typed as `StyleProp<ViewStyle>` or `StyleProp<TextStyle>`) so callers can extend layout without forking the component.
 - Never hardcode domain-specific labels or data.
 - All style values from tokens. No exceptions.
@@ -353,7 +355,7 @@ import apiClient from '../client';
 import type { AuditEvent, AuditEventsResponse, AuditFilters } from '@/types/audit';
 
 export const getAuditEvents = (filters: AuditFilters): Promise<AuditEventsResponse> =>
-  apiClient.get('/audit/events', { params: filters }).then(r => r.data);
+  apiClient.get('/audit/events', { params: filters }).then((r) => r.data);
 ```
 
 Always return the unwrapped data (`.then(r => r.data)`), never the raw `AxiosResponse`.
@@ -382,6 +384,7 @@ export function useAuditEvents(filters: AuditFilters) {
 ```
 
 Rules:
+
 - Query key arrays are defined in the hook file, not the endpoint file.
 - `useQuery` and `useMutation` only inside `src/hooks/`. Never directly in a screen.
 - For mutations: write-through the detail cache first (`setQueryData`), then `invalidateQueries`.
@@ -445,13 +448,13 @@ export default function AuditTrailScreen({ navigation, route }: Props) { ... }
 
 ### What goes where
 
-| State type | Where it lives |
-|---|---|
-| Server data (API responses) | TanStack Query (`useQuery`, `useMutation`) |
-| Auth (token, user, role, modules) | Zustand — `src/store/authStore.ts` |
-| Local UI state (open/closed, selected tab) | `useState` inside the component |
-| Shared UI state across sibling components | Lift to nearest common parent |
-| Persistent non-auth data | `AsyncStorage` via a dedicated store |
+| State type                                 | Where it lives                             |
+| ------------------------------------------ | ------------------------------------------ |
+| Server data (API responses)                | TanStack Query (`useQuery`, `useMutation`) |
+| Auth (token, user, role, modules)          | Zustand — `src/store/authStore.ts`         |
+| Local UI state (open/closed, selected tab) | `useState` inside the component            |
+| Shared UI state across sibling components  | Lift to nearest common parent              |
+| Persistent non-auth data                   | `AsyncStorage` via a dedicated store       |
 
 Do not create new Zustand stores unless auth-level persistence is genuinely needed. Most state is server state (TanStack Query) or local component state (`useState`).
 
@@ -527,6 +530,7 @@ import { Feather } from '@expo/vector-icons';
 If a specific icon does not exist in Feather, fall back to `Ionicons` from the same package. Do not install additional icon libraries.
 
 Icon sizes follow a consistent scale:
+
 - Tab bar icons: 22
 - In-content icons (alongside text): 16
 - Small inline icons (badges, labels): 13
@@ -583,15 +587,15 @@ If any check fails, fix the issue. Do not suppress errors with ignore comments.
 
 ## Common Mistakes to Avoid
 
-| Mistake | Correct approach |
-|---|---|
-| Hardcoding `'#000000'` in a StyleSheet | Use `tokens.colors.primary` |
-| Hardcoding `padding: 16` in a StyleSheet | Use `tokens.spacing.lg` |
-| Importing `apiClient` in a screen | Create an endpoint function in `src/api/endpoints/` |
-| Using `useQuery` directly in a screen | Create a hook in `src/hooks/{domain}/` |
-| Creating a component inside a screen folder when it's already needed elsewhere | Move to `src/components/shared/` |
-| Defining a style object inline in JSX | Move to `StyleSheet.create()` at the bottom of the file |
-| Creating a new Zustand store for server data | Use TanStack Query — it already handles loading/error/cache |
-| Using `Platform.OS === 'android'` | This is an iOS-only app — remove it |
-| Adding a token directly in a component | Add to `tokens.ts` first, then import |
-| Using `AsyncStorage` for auth tokens | Use `expo-secure-store` via `src/api/storage.ts` |
+| Mistake                                                                        | Correct approach                                            |
+| ------------------------------------------------------------------------------ | ----------------------------------------------------------- |
+| Hardcoding `'#000000'` in a StyleSheet                                         | Use `tokens.colors.primary`                                 |
+| Hardcoding `padding: 16` in a StyleSheet                                       | Use `tokens.spacing.lg`                                     |
+| Importing `apiClient` in a screen                                              | Create an endpoint function in `src/api/endpoints/`         |
+| Using `useQuery` directly in a screen                                          | Create a hook in `src/hooks/{domain}/`                      |
+| Creating a component inside a screen folder when it's already needed elsewhere | Move to `src/components/shared/`                            |
+| Defining a style object inline in JSX                                          | Move to `StyleSheet.create()` at the bottom of the file     |
+| Creating a new Zustand store for server data                                   | Use TanStack Query — it already handles loading/error/cache |
+| Using `Platform.OS === 'android'`                                              | This is an iOS-only app — remove it                         |
+| Adding a token directly in a component                                         | Add to `tokens.ts` first, then import                       |
+| Using `AsyncStorage` for auth tokens                                           | Use `expo-secure-store` via `src/api/storage.ts`            |

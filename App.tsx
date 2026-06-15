@@ -1,20 +1,15 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React from 'react';
 
-export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
+import ENV from '@/config/env';
+import RootNavigator from '@/navigation/RootNavigator';
+
+let AppEntry: React.ComponentType;
+
+if (ENV.STORYBOOK_ENABLED) {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  AppEntry = require('./.rnstorybook').default;
+} else {
+  AppEntry = RootNavigator;
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default AppEntry;
