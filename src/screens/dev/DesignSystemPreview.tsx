@@ -26,8 +26,8 @@ export default function DesignSystemPreview() {
       {/* ── Header ────────────────────────────────────────────────────── */}
       <View style={styles.header}>
         <Text style={styles.headerEyebrow}>Design System</Text>
-        <Text style={styles.headerTitle}>ZanZam</Text>
-        <Text style={styles.headerSubtitle}>Restaurant Operations Platform</Text>
+        <Text style={styles.headerTitle}>ABM</Text>
+        <Text style={styles.headerSubtitle}>Hotel Operations Platform</Text>
       </View>
 
       <View style={styles.headerDivider} />
