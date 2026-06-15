@@ -13,9 +13,16 @@ import {
 import tokens from '@/theme/tokens';
 
 export interface InputProps extends Omit<TextInputProps, 'style'> {
+  /** Optional label rendered above the input field using the Label typography style
+   * (Inter, 11, semibold, uppercase). */
   label?: string;
+  /** Error message rendered below the input. When present the field border switches to the
+   * danger color and the message appears in danger text. An empty or undefined value clears
+   * the error state. */
   error?: string;
+  /** Node rendered at the trailing edge of the input row (e.g. an icon). */
   rightIcon?: ReactNode;
+  /** Additional wrapper styles merged after the default layout. */
   style?: StyleProp<ViewStyle>;
 }
 

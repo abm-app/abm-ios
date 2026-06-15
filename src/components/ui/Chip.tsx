@@ -13,10 +13,18 @@ import tokens from '@/theme/tokens';
 export type ChipTone = 'default' | 'primary' | 'warning';
 
 export interface ChipProps {
+  /** Text displayed inside the chip. */
   label: string;
+  /** When true the chip renders with its active appearance (filled background and border).
+   * When false or omitted, the chip shows an inactive outline style. */
   active?: boolean;
+  /** Active color tone. `'primary'` fills black with white text; `'warning'` fills amber
+   * with white text; `'default'` uses the inactive outline palette regardless of `active`. */
   tone?: ChipTone;
+  /** When provided the chip renders as a pressable element; when omitted it renders as a
+   * static View. */
   onPress?: () => void;
+  /** Additional container styles merged after chip defaults. */
   style?: StyleProp<ViewStyle>;
 }
 

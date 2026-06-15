@@ -8,9 +8,14 @@ export interface MiniStat {
 }
 
 export interface DashboardScoreCardProps {
+  /** Numeric score displayed in large heading font (e.g. "4.8"). */
   score: string | number;
+  /** Uppercase subtitle below the score (e.g. "Overall Score"). */
   label: string;
+  /** Compact stats rendered in a horizontal row below the label. Each stat shows a value
+   * and an uppercase label on a muted surface background. */
   miniStats: MiniStat[];
+  /** Additional container styles merged after card defaults. */
   style?: import('react-native').StyleProp<import('react-native').ViewStyle>;
 }
 

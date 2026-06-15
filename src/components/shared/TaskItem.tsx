@@ -6,13 +6,25 @@ import Badge from '../ui/Badge';
 import type { BadgeVariant } from '../ui/Badge';
 
 export interface TaskItemProps {
+  /** Task heading displayed in the header row. Truncated to a single line. */
   title: string;
+  /** Priority level that determines the badge color: `'high'` (danger),
+   * `'medium'` (warning), or `'low'` (success). */
   priority: 'high' | 'medium' | 'low';
+  /** Category labels shown as muted pills below the header. Each string renders
+   * as a separate category badge. */
   categories: string[];
+  /** Due-date text shown next to a calendar icon in the metadata row
+   * (e.g. "Due Today"). */
   dueText: string;
+  /** Recurrence text shown next to a repeat icon in the metadata row
+   * (e.g. "Weekly"). */
   recurrenceText: string;
+  /** When true the checkbox shows a filled black check mark. */
   checked: boolean;
+  /** Called when the checkbox is toggled. Omit to render a non-interactive checkbox. */
   onToggle?: () => void;
+  /** Additional container styles merged after card defaults. */
   style?: import('react-native').StyleProp<import('react-native').ViewStyle>;
 }
 

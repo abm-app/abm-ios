@@ -15,12 +15,20 @@ export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger';
 export type ButtonSize = 'md' | 'sm';
 
 export interface ButtonProps {
+  /** Text displayed inside the button. */
   label: string;
+  /** Called when the button is pressed. Ignored when `disabled` or `loading` is true. */
   onPress: () => void;
+  /** Visual style. `'primary'` renders a solid black fill; `'secondary'` adds a borderMd outline;
+   * `'ghost'` is transparent with no border; `'danger'` uses the high-priority badge palette. */
   variant?: ButtonVariant;
+  /** Hit-target size. `'md'` (default) for standard buttons; `'sm'` for compact actions. */
   size?: ButtonSize;
+  /** Reduces opacity and blocks press events. @default false */
   disabled?: boolean;
+  /** Shows an ActivityIndicator spinner and blocks press events. @default false */
   loading?: boolean;
+  /** Additional container styles merged after layout defaults. */
   style?: StyleProp<ViewStyle>;
 }
 

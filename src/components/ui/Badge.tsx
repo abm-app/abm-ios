@@ -5,8 +5,13 @@ import tokens from '@/theme/tokens';
 export type BadgeVariant = 'high' | 'medium' | 'low' | 'category';
 
 export interface BadgeProps {
+  /** Short text displayed inside the pill (e.g. "High", "Maintenance"). */
   label: string;
+  /** Semantic color scheme. `'high'` renders the danger palette, `'medium'` the warning
+   * palette, `'low'` the success palette, `'category'` a muted neutral fill. */
   variant?: BadgeVariant;
+  /** Additional text styles merged after variant defaults. Useful for overriding padding
+   * when badges are used as interactive selectable elements. */
   style?: StyleProp<TextStyle>;
 }
 

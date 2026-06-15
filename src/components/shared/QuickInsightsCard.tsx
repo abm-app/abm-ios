@@ -12,7 +12,10 @@ export interface InsightItem {
 }
 
 export interface QuickInsightsCardProps {
+  /** Insight rows displayed inside the card. Each item shows a colored dot, label,
+   * and a progress bar whose width is clamped to 0–100%. */
   items: InsightItem[];
+  /** Additional container styles merged after card defaults. */
   style?: import('react-native').StyleProp<import('react-native').ViewStyle>;
 }
 

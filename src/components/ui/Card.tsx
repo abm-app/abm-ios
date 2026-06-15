@@ -4,9 +4,15 @@ import { StyleSheet, TouchableOpacity, View, StyleProp, ViewStyle } from 'react-
 import tokens from '@/theme/tokens';
 
 export interface CardProps {
+  /** Content rendered inside the card surface. */
   children: ReactNode;
+  /** When true, applies the standard stat-card padding (16v / 20h). When false (default),
+   * the card has no inner padding so callers can control layout. */
   padded?: boolean;
+  /** When provided, the card wraps its content in a pressable element. When omitted, the
+   * card renders as a static View. */
   onPress?: () => void;
+  /** Additional container styles merged after card defaults. */
   style?: StyleProp<ViewStyle>;
 }
 

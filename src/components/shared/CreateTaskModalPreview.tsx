@@ -10,15 +10,25 @@ export type Priority = 'high' | 'medium' | 'low';
 export type Recurrence = 'daily' | 'weekly' | 'monthly';
 
 export interface CreateTaskModalPreviewProps {
+  /** Outlet name displayed in the subtitle (e.g. "Zan Zan Mini Budget, YMI"). */
   outlet: string;
+  /** Current value of the task title input field. */
   title: string;
+  /** Called when the user types in the title field. Receives the updated text. */
   onTitleChange?: (text: string) => void;
+  /** Currently selected priority. The matching badge renders with a visible border. */
   selectedPriority: Priority;
+  /** Called when a priority badge is tapped. Receives the selected priority key. */
   onPrioritySelect?: (priority: Priority) => void;
+  /** Currently selected recurrence. The matching chip renders in its active tone. */
   selectedRecurrence: Recurrence;
+  /** Called when a recurrence chip is tapped. Receives the selected recurrence key. */
   onRecurrenceSelect?: (recurrence: Recurrence) => void;
+  /** Called when the Cancel button is pressed. If omitted, the button uses a no-op. */
   onCancel?: () => void;
+  /** Called when the Create Task button is pressed. If omitted, the button uses a no-op. */
   onCreateTask?: () => void;
+  /** Additional container styles merged after modal card defaults. */
   style?: import('react-native').StyleProp<import('react-native').ViewStyle>;
 }
 

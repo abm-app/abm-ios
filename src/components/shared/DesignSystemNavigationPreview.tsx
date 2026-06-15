@@ -12,8 +12,12 @@ export interface NavItem {
 }
 
 export interface DesignSystemNavigationPreviewProps {
+  /** Navigation items to render. Each item provides a key, label, and Feather icon name. */
   items: NavItem[];
+  /** Key of the currently active tab. The matching item receives the filled black
+   * background and inverted icon/text colors. */
   activeKey: NavItemKey;
+  /** Additional container styles merged after bar defaults. */
   style?: import('react-native').StyleProp<import('react-native').ViewStyle>;
 }
 
