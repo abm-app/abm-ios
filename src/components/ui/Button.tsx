@@ -9,7 +9,6 @@ import {
 } from 'react-native';
 
 import tokens from '@/theme/tokens';
-import { useTokens } from '@/theme';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger';
 export type ButtonSize = 'md' | 'sm';
@@ -91,11 +90,7 @@ export default function Button({
   loading = false,
   style,
 }: ButtonProps) {
-  const t = useTokens();
-
-  // useTokens() provides dynamic token access — loading spinner color
-  // resolves from the module-level variantLabelStyles map.
-  const loadingColor = variantLabelStyles[variant].color ?? t.colors.primary;
+  const loadingColor = variantLabelStyles[variant].color ?? tokens.colors.primary;
 
   return (
     <TouchableOpacity
