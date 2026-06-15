@@ -1,11 +1,15 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import type { RootStackParamList } from './types';
 import { ThemeProvider } from '@/theme';
+import { useAuthStore } from '@/store/authStore';
+import tokens from '@/theme/tokens';
 import MainScreen from '@/screens/main/MainScreen';
+import AuthNavigator from './AuthNavigator';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -21,25 +25,47 @@ if (__DEV__) {
 }
 
 export default function RootNavigator() {
+  const isAuthenticated = useAuthStore(s => s.isAuthenticated);
+  const hydrate = useAuthStore(s => s.hydrate);
+  const [isHydrating, setIsHydrating] = useState(true);
+
+  useEffect(() => {
+    void hydrate().finally(() => setIsHydrating(false));
+  }, [hydrate]);
+
+  if (isHydrating) {
+    return (
+      <View style={styles.loading}>
+        <ActivityIndicator size="large" color={tokens.colors.primary} />
+      </View>
+    );
+  }
+
   return (
     <SafeAreaProvider>
       <ThemeProvider>
         <NavigationContainer>
-          <Stack.Navigator>
-            <Stack.Screen name="Main" component={MainScreen} options={{ headerShown: false }} />
-            {DevMenuScreen && (
-              <Stack.Screen
-                name="DevMenu"
-                component={DevMenuScreen}
-                options={{ title: 'Developer' }}
-              />
-            )}
-            {DesignSystemPreviewScreen && (
-              <Stack.Screen
-                name="DesignSystemPreview"
-                component={DesignSystemPreviewScreen}
-                options={{ title: 'Design System' }}
-              />
+          <Stack.Navigator screenOptions={{ headerShown: false }}>
+            {isAuthenticated ? (
+              <>
+                <Stack.Screen name="Main" component={MainScreen} />
+                {DevMenuScreen && (
+                  <Stack.Screen
+                    name="DevMenu"
+                    component={DevMenuScreen}
+                    options={{ title: 'Developer' }}
+                  />
+                )}
+                {DesignSystemPreviewScreen && (
+                  <Stack.Screen
+                    name="DesignSystemPreview"
+                    component={DesignSystemPreviewScreen}
+                    options={{ title: 'Design System' }}
+                  />
+                )}
+              </>
+            ) : (
+              <Stack.Screen name="Auth" component={AuthNavigator} />
             )}
           </Stack.Navigator>
         </NavigationContainer>
@@ -47,3 +73,12 @@ export default function RootNavigator() {
     </SafeAreaProvider>
   );
 }
+
+const styles = StyleSheet.create({
+  loading: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: tokens.colors.background,
+  },
+});
