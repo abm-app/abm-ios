@@ -227,7 +227,7 @@ const styles = StyleSheet.create({
   chipRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: tokens.spacing.sm,
+    gap: tokens.spacing.s,
     alignItems: 'center',
   },
   chipSpacer: {
