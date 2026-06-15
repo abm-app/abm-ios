@@ -36,7 +36,7 @@ export const TasksActive: Story = {
 };
 
 export const AllNavItems: Story = {
-  name: 'All HTML Nav Items',
+  name: 'All Nav Items',
   args: {
     items: defaultNavItems,
     activeKey: 'dashboard',

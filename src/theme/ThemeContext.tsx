@@ -8,9 +8,10 @@ import {
   Inter_600SemiBold,
 } from '@expo-google-fonts/inter';
 
+import logger from '@/utils/logger';
 import tokens, { type Tokens } from './tokens';
 
-SplashScreen.preventAutoHideAsync();
+void SplashScreen.preventAutoHideAsync().catch(() => {});
 
 interface ThemeContextValue {
   tokens: Tokens;
@@ -23,7 +24,7 @@ interface ThemeProviderProps {
 }
 
 export function ThemeProvider({ children }: ThemeProviderProps) {
-  const [fontsLoaded] = useFonts({
+  const [fontsLoaded, fontError] = useFonts({
     // Ancizar Serif — local assets (require required by expo-font for .ttf assets)
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     'AncizarSerif-Regular': require('../../assets/fonts/AncizarSerif-Regular.ttf'),
@@ -41,14 +42,18 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
   });
 
   useEffect(() => {
-    if (fontsLoaded) {
-      SplashScreen.hideAsync();
+    if (fontsLoaded || fontError) {
+      SplashScreen.hideAsync().catch(() => {});
     }
-  }, [fontsLoaded]);
+  }, [fontsLoaded, fontError]);
 
   const value = useMemo(() => ({ tokens }), []);
 
-  if (!fontsLoaded) {
+  if (fontError) {
+    logger.warn('[ThemeContext] Font loading failed:', fontError.message);
+  }
+
+  if (!fontsLoaded && !fontError) {
     return null;
   }
 

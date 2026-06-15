@@ -3,6 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import tokens from '@/theme/tokens';
 
 export interface MiniStat {
+  id: string;
   value: string | number;
   label: string;
 }
@@ -33,7 +34,7 @@ export default function DashboardScoreCard({
       <Text style={styles.scoreLabel}>{label}</Text>
       <View style={styles.miniStatsRow}>
         {miniStats.map(stat => (
-          <View key={stat.label} style={styles.miniStat}>
+          <View key={stat.id} style={styles.miniStat}>
             <Text style={styles.miniStatValue}>{stat.value}</Text>
             <Text style={styles.miniStatLabel}>{stat.label}</Text>
           </View>

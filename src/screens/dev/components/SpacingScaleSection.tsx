@@ -8,10 +8,10 @@ import SectionLabel from './SectionLabel';
 const scale = [
   { name: 'xs', value: tokens.spacing.xs },
   { name: 'sm', value: tokens.spacing.sm },
-  { name: 'md', value: tokens.spacing.mdLg },
-  { name: 'lg', value: tokens.spacing.lgMd },
-  { name: 'xl', value: tokens.spacing.xxl },
-  { name: '2xl', value: tokens.spacing.xxlMd },
+  { name: 'md', value: tokens.spacing.md },
+  { name: 'lg', value: tokens.spacing.lg },
+  { name: 'xl', value: tokens.spacing.xl },
+  { name: '2xl', value: tokens.spacing.xlMd },
   { name: '3xl', value: tokens.spacing.xxxl },
 ];
 

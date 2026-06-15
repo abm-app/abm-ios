@@ -51,12 +51,13 @@ export default function Input({
   return (
     <View style={[styles.wrapper, style]}>
       {label ? <Text style={styles.label}>{label}</Text> : null}
-      <View style={[styles.inputRow, !editable && styles.inputRowDisabled]}>
+      <View
+        style={[styles.inputRow, hasError && errorInputStyle, !editable && styles.inputRowDisabled]}
+      >
         <TextInput
           style={[
             styles.input,
             rightIcon ? styles.inputWithIcon : null,
-            hasError ? errorInputStyle : null,
             !editable ? styles.inputDisabled : null,
           ]}
           placeholderTextColor={tokens.colors.textHint}

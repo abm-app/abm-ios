@@ -108,9 +108,9 @@ export default function DesignSystemPreview() {
             score={4.8}
             label="Overall Score"
             miniStats={[
-              { value: 25, label: 'Critical' },
-              { value: 15, label: 'Open' },
-              { value: 50, label: 'Closed' },
+              { id: 'critical', value: 25, label: 'Critical' },
+              { id: 'open', value: 15, label: 'Open' },
+              { id: 'closed', value: 50, label: 'Closed' },
             ]}
           />
         </View>

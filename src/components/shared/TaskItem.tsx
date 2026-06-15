@@ -55,7 +55,8 @@ export default function TaskItem({
       <View style={styles.header}>
         <TouchableOpacity
           onPress={onToggle}
-          activeOpacity={0.7}
+          activeOpacity={onToggle ? 0.7 : 1}
+          disabled={!onToggle}
           style={[styles.checkbox, checked && styles.checkboxChecked]}
         >
           {checked ? (
