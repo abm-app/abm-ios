@@ -93,7 +93,7 @@ const rows: TypographyRow[] = [
 
 // ─── Pre-computed sample styles ──────────────────────────────────────────────
 
-const sampleStyles = {
+const sampleStyles = StyleSheet.create({
   display: {
     fontFamily: tokens.typography.fontFamily.heading,
     fontSize: tokens.typography.fontSize.display,
@@ -132,7 +132,7 @@ const sampleStyles = {
     fontSize: tokens.typography.fontSize.label,
     fontWeight: tokens.typography.fontWeight.semibold,
     letterSpacing: tokens.typography.letterSpacing.label,
-    textTransform: 'uppercase' as const,
+    textTransform: 'uppercase',
     color: tokens.colors.textPrimary,
   },
   caption: {
@@ -146,7 +146,7 @@ const sampleStyles = {
     letterSpacing: tokens.typography.letterSpacing.numeric,
     color: tokens.colors.textPrimary,
   },
-} as const;
+});
 
 const sampleStyleMap: Record<string, object> = {
   Display: sampleStyles.display,
