@@ -253,6 +253,7 @@ const input = {
   paddingVertical: 10,
   paddingHorizontal: 14,
   fontSize: 13,
+  maxWidth: 380,
 } as const;
 
 /** Form geometry */

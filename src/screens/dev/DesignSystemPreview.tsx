@@ -173,6 +173,6 @@ const styles = StyleSheet.create({
   /* Inputs */
   inputStack: {
     gap: tokens.spacing.md,
-    maxWidth: 380,
+    maxWidth: tokens.input.maxWidth,
   },
 });
