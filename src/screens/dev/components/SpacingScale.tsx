@@ -5,13 +5,13 @@ import tokens from '@/theme/tokens';
 // ─── Spacing bar data ────────────────────────────────────────────────────────
 
 const spacingBars = [
-  { label: 'xs — 4px', width: tokens.spacing.xs },
-  { label: 'sm — 8px', width: tokens.spacing.sm },
-  { label: 'md — 12px', width: tokens.spacing.mdLg },
-  { label: 'lg — 16px', width: tokens.spacing.lgMd },
-  { label: 'xl — 24px', width: tokens.spacing.xxl },
-  { label: '2xl — 32px', width: tokens.spacing.xxlMd },
-  { label: '3xl — 48px', width: tokens.spacing.xxxl },
+  { label: 'xs — 4px', styleKey: 'barXs' as const },
+  { label: 'sm — 8px', styleKey: 'barSm' as const },
+  { label: 'md — 12px', styleKey: 'barMd' as const },
+  { label: 'lg — 16px', styleKey: 'barLg' as const },
+  { label: 'xl — 24px', styleKey: 'barXl' as const },
+  { label: '2xl — 32px', styleKey: 'bar2xl' as const },
+  { label: '3xl — 48px', styleKey: 'bar3xl' as const },
 ] as const;
 
 // ─── Component ───────────────────────────────────────────────────────────────
@@ -22,7 +22,7 @@ export default function SpacingScale() {
       {spacingBars.map(bar => (
         <View key={bar.label} style={styles.row}>
           <Text style={styles.label}>{bar.label}</Text>
-          <View style={[styles.bar, { width: bar.width }]} />
+          <View style={[styles.bar, styles[bar.styleKey]]} />
         </View>
       ))}
     </View>
@@ -50,5 +50,26 @@ const styles = StyleSheet.create({
     height: tokens.spacingRow.barHeight,
     borderRadius: tokens.spacingRow.barBorderRadius,
     backgroundColor: tokens.colors.primary,
+  },
+  barXs: {
+    width: tokens.spacing.xs,
+  },
+  barSm: {
+    width: tokens.spacing.sm,
+  },
+  barMd: {
+    width: tokens.spacing.mdLg,
+  },
+  barLg: {
+    width: tokens.spacing.lgMd,
+  },
+  barXl: {
+    width: tokens.spacing.xxl,
+  },
+  bar2xl: {
+    width: tokens.spacing.xxlMd,
+  },
+  bar3xl: {
+    width: tokens.spacing.xxxl,
   },
 });
