@@ -12,14 +12,12 @@ const fontEntries = [
   { dt: 'Font — Numeric', dd: 'Inter, 300' },
 ];
 
-/* eslint-disable no-restricted-syntax -- display strings for the design-system preview */
 const colorEntries = [
-  { dt: 'Primary', dd: '#000000' },
-  { dt: 'Secondary', dd: 'rgba(0,0,0,0.15)' },
-  { dt: 'Border default', dd: 'rgba(0,0,0,0.10)' },
-  { dt: 'Border emphasis', dd: 'rgba(0,0,0,0.18)' },
+  { dt: 'Primary', dd: tokens.colors.primary },
+  { dt: 'Secondary', dd: tokens.colors.secondary },
+  { dt: 'Border default', dd: tokens.colors.border },
+  { dt: 'Border emphasis', dd: tokens.colors.borderMd },
 ];
-/* eslint-enable no-restricted-syntax */
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
@@ -69,7 +67,7 @@ const styles = StyleSheet.create({
     fontSize: tokens.typography.fontSize.label,
     color: tokens.colors.textHint,
     textTransform: 'uppercase',
-    letterSpacing: 0.77, // 11 × 0.07
+    letterSpacing: tokens.typography.letterSpacing.label,
   },
   dd: {
     fontSize: tokens.typography.fontSize.label,
