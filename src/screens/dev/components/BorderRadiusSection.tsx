@@ -6,11 +6,11 @@ import SectionLabel from './SectionLabel';
 // ─── Data ────────────────────────────────────────────────────────────────────
 
 const radii = [
-  { name: 'sm', value: tokens.borderRadius.sm },
-  { name: 'md', value: tokens.borderRadius.md },
-  { name: 'lg', value: tokens.borderRadius.lg },
-  { name: 'xl', value: tokens.borderRadius.xl },
-  { name: 'pill', value: tokens.borderRadius.pill },
+  { name: 'sm', value: tokens.borderRadius.sm, styleKey: 'boxSm' as const },
+  { name: 'md', value: tokens.borderRadius.md, styleKey: 'boxMd' as const },
+  { name: 'lg', value: tokens.borderRadius.lg, styleKey: 'boxLg' as const },
+  { name: 'xl', value: tokens.borderRadius.xl, styleKey: 'boxXl' as const },
+  { name: 'pill', value: tokens.borderRadius.pill, styleKey: 'boxPill' as const },
 ];
 
 // ─── Component ───────────────────────────────────────────────────────────────
@@ -22,7 +22,7 @@ export default function BorderRadiusSection() {
       <View style={styles.grid}>
         {radii.map(r => (
           <View key={r.name} style={styles.item}>
-            <View style={[styles.box, { borderRadius: r.value }]} />
+            <View style={[styles.box, styles[r.styleKey]]} />
             <Text style={styles.label}>
               {r.name}
               {'\n'}
@@ -56,6 +56,21 @@ const styles = StyleSheet.create({
     backgroundColor: tokens.colors.secondary,
     borderWidth: tokens.borderWidth.thin,
     borderColor: tokens.colors.borderMd,
+  },
+  boxSm: {
+    borderRadius: tokens.borderRadius.sm,
+  },
+  boxMd: {
+    borderRadius: tokens.borderRadius.md,
+  },
+  boxLg: {
+    borderRadius: tokens.borderRadius.lg,
+  },
+  boxXl: {
+    borderRadius: tokens.borderRadius.xl,
+  },
+  boxPill: {
+    borderRadius: tokens.borderRadius.pill,
   },
   label: {
     fontSize: tokens.typography.fontSize.swatchValue,
