@@ -36,7 +36,9 @@
             "./assets/fonts/AncizarSerif-BoldItalic.ttf"
           ]
         }
-      ]
+      ],
+      "@react-native-community/datetimepicker",
+      "expo-secure-store"
     ]
   }
 }
