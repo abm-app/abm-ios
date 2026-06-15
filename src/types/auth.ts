@@ -1,8 +1,13 @@
 // ─── Roles ───────────────────────────────────────────────────────────────────
 
-export type UserRole = 'admin' | 'manager' | 'front_desk' | 'housekeeping' | 'accountant';
+export type UserRole = 'owner' | 'manager' | 'staff';
+
+// ─── Properties ──────────────────────────────────────────────────────────────
+
+export type UserProperty = 'express' | 'international' | 'both';
 
 // ─── Modules ─────────────────────────────────────────────────────────────────
+// Single source of truth — navigation imports ModuleKey from here.
 
 export type ModuleKey =
   | 'dashboard'
@@ -13,13 +18,6 @@ export type ModuleKey =
   | 'loyalty'
   | 'notifications'
   | 'user_management';
-
-// ─── Property ────────────────────────────────────────────────────────────────
-
-export interface UserProperty {
-  id: string;
-  name: string;
-}
 
 // ─── User ────────────────────────────────────────────────────────────────────
 
@@ -35,7 +33,7 @@ export interface AuthUser {
 
 // ─── Auth API payloads & responses ───────────────────────────────────────────
 
-export interface LoginPayload {
+export interface LoginRequest {
   email: string;
   password: string;
 }
@@ -44,8 +42,5 @@ export interface LoginResponse {
   accessToken: string;
   refreshToken: string;
   user: AuthUser;
-}
-
-export interface MeResponse {
-  user: AuthUser;
+  modules: ModuleKey[];
 }
