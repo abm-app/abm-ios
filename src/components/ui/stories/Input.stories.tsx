@@ -75,10 +75,12 @@ export const SecureInput: Story = {
 
 // ─── All HTML Inputs in a column ─────────────────────────────────────────────
 
+const STORY_COLUMN_MAX_WIDTH = tokens.spacing.xxlMd * 12;
+
 const allInputsStyle = StyleSheet.create({
   column: {
     gap: tokens.spacing.md,
-    maxWidth: tokens.spacing.xxlMd * 12,
+    maxWidth: STORY_COLUMN_MAX_WIDTH,
   },
 });
 
