@@ -78,10 +78,23 @@ function createPlaceholderScreen(title: string) {
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
+const AccessDeniedScreen = createPlaceholderScreen('Access Denied');
+
+const PLACEHOLDER_SCREENS = Object.fromEntries(
+  Object.entries(TAB_LABELS).map(([routeName, label]) => [
+    routeName,
+    createPlaceholderScreen(label as string),
+  ]),
+) as unknown as Record<keyof AppTabParamList, React.ComponentType>;
+
 export default function AppNavigator() {
   const modules = useAuthStore(s => s.modules);
 
   const enabledModules = MODULE_ORDER.filter(m => modules.includes(m));
+
+  if (enabledModules.length === 0) {
+    return <AccessDeniedScreen />;
+  }
 
   return (
     <Tab.Navigator
@@ -96,7 +109,7 @@ export default function AppNavigator() {
     >
       {enabledModules.map(moduleKey => {
         const routeName = MODULE_TO_TAB[moduleKey];
-        const Placeholder = createPlaceholderScreen(TAB_LABELS[routeName]);
+        const Placeholder = PLACEHOLDER_SCREENS[routeName];
 
         return (
           <Tab.Screen
@@ -160,6 +173,6 @@ const styles = StyleSheet.create({
   },
   logoutButton: {
     marginTop: tokens.spacing.xxxl,
-    minWidth: 200,
+    minWidth: tokens.button.minWidth,
   },
 });

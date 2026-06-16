@@ -244,6 +244,7 @@ const button = {
     fontSize: 13,
     borderRadius: 10,
   },
+  minWidth: 200,
 } as const;
 
 // ─── Component Dimensions ────────────────────────────────────────────────────
