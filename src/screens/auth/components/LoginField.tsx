@@ -16,7 +16,7 @@ interface LoginFieldProps extends TextInputProps {
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
-export function LoginField({
+function LoginField({
   designScale,
   label,
   isPassword = false,
@@ -114,3 +114,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
+
+export default LoginField;

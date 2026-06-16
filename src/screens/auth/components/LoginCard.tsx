@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import tokens from '@/theme/tokens';
-import { LoginField } from './LoginField';
+import LoginField from './LoginField';
 
 // ─── Props ───────────────────────────────────────────────────────────────────
 
