@@ -192,6 +192,8 @@ const spacing = {
   xxlMd: 32,
   /** 48px — section bottom spacing */
   xxxl: 48,
+  /** 200px — minimum width for standard buttons */
+  buttonMinWidth: 200,
 } as const;
 
 // ─── Border Radius ───────────────────────────────────────────────────────────
@@ -244,7 +246,6 @@ const button = {
     fontSize: 13,
     borderRadius: 10,
   },
-  minWidth: 200,
 } as const;
 
 // ─── Component Dimensions ────────────────────────────────────────────────────

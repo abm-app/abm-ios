@@ -173,6 +173,6 @@ const styles = StyleSheet.create({
   },
   logoutButton: {
     marginTop: tokens.spacing.xxxl,
-    minWidth: tokens.button.minWidth,
+    minWidth: tokens.spacing.buttonMinWidth,
   },
 });
