@@ -5,6 +5,8 @@ const ENV = {
   STORYBOOK_ENABLED: process.env.EXPO_PUBLIC_STORYBOOK_ENABLED === 'true',
 };
 
+export const USE_MOCK_AUTH = process.env.EXPO_PUBLIC_USE_MOCK_AUTH === 'true';
+
 if (!ENV.API_URL) {
   logger.warn('[env] EXPO_PUBLIC_API_URL is not set');
 }
