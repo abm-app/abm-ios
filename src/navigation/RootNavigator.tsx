@@ -8,8 +8,8 @@ import type { RootStackParamList } from './types';
 import { ThemeProvider } from '@/theme';
 import { useAuthStore } from '@/store/authStore';
 import tokens from '@/theme/tokens';
-import MainScreen from '@/screens/main/MainScreen';
 import AuthNavigator from './AuthNavigator';
+import AppNavigator from './AppNavigator';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -48,7 +48,7 @@ export default function RootNavigator() {
           <Stack.Navigator screenOptions={{ headerShown: false }}>
             {isAuthenticated ? (
               <>
-                <Stack.Screen name="Main" component={MainScreen} />
+                <Stack.Screen name="Main" component={AppNavigator} />
                 {DevMenuScreen && (
                   <Stack.Screen
                     name="DevMenu"
