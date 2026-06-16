@@ -2,6 +2,7 @@ import { create } from 'zustand';
 
 import type { AuthUser, ModuleKey } from '@/types/auth';
 import { saveAuthTokens, clearAuthTokens, getAccessToken, getRefreshToken } from '@/api/storage';
+import logger from '@/utils/logger';
 
 // ─── State shape ─────────────────────────────────────────────────────────────
 
@@ -23,9 +24,9 @@ interface AuthActions {
     refreshToken: string,
     user: AuthUser,
     modules: ModuleKey[],
-  ) => void;
+  ) => Promise<void>;
   /** Delete tokens from SecureStore and clear all auth state. */
-  clearSession: () => void;
+  clearSession: () => Promise<void>;
   /** Read SecureStore on app launch. Sets isRestoring false when done. */
   restoreSession: () => Promise<void>;
 }
@@ -43,26 +44,35 @@ export const useAuthStore = create<AuthState & AuthActions>(set => ({
 
   // ── Actions ────────────────────────────────────────────────────────────────
 
-  setSession: (accessToken, refreshToken, user, modules) => {
-    void saveAuthTokens(accessToken, refreshToken);
-    set({
-      accessToken,
-      refreshToken,
-      user,
-      modules,
-      isAuthenticated: true,
-    });
+  setSession: async (accessToken, refreshToken, user, modules) => {
+    try {
+      await saveAuthTokens(accessToken, refreshToken);
+      set({
+        accessToken,
+        refreshToken,
+        user,
+        modules,
+        isAuthenticated: true,
+      });
+    } catch (error) {
+      logger.error('Failed to save auth tokens:', error);
+      // Optionally handle the error (e.g., show an alert or throw)
+    }
   },
 
-  clearSession: () => {
-    void clearAuthTokens();
-    set({
-      accessToken: null,
-      refreshToken: null,
-      user: null,
-      modules: [],
-      isAuthenticated: false,
-    });
+  clearSession: async () => {
+    try {
+      await clearAuthTokens();
+      set({
+        accessToken: null,
+        refreshToken: null,
+        user: null,
+        modules: [],
+        isAuthenticated: false,
+      });
+    } catch (error) {
+      logger.error('Failed to clear auth tokens:', error);
+    }
   },
 
   restoreSession: async () => {
