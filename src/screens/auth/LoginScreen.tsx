@@ -1,96 +1,145 @@
-import { useState } from 'react';
-import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { Feather } from '@expo/vector-icons';
+import React, { useState } from 'react';
+import {
+  Alert,
+  KeyboardAvoidingView,
+  StyleSheet,
+  Text,
+  useWindowDimensions,
+  View,
+} from 'react-native';
 
 import tokens from '@/theme/tokens';
-import { Button, Input, Card } from '@/components/ui';
 import { useLogin } from '@/hooks/auth/useLogin';
+import LoginBackdrop from './components/LoginBackdrop';
+import { LoginCard } from './components/LoginCard';
+
+// ─── Layout reference (unscaled) ─────────────────────────────────────────────
+
+const REFERENCE_WIDTH = tokens.auth.referenceWidth;
+const REFERENCE_HEIGHT = tokens.auth.referenceHeight;
+
+// ─── Admin login mock mapping ────────────────────────────────────────────────
+// During mock phase, admin mode maps to the owner mock account.
+// Replace with a real ADMIN_EMAIL env value once the backend supports it.
+
+const MOCK_ADMIN_EMAIL = 'owner@abm.com';
+
+// ─── Component ───────────────────────────────────────────────────────────────
 
 export default function LoginScreen() {
-  const [email, setEmail] = useState('');
+  const { width, height } = useWindowDimensions();
+  const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
+  const [isAdminLogin, setIsAdminLogin] = useState(false);
 
   const loginMutation = useLogin();
 
-  const isValid = email.trim().length > 0 && password.length > 0;
-  const errorMessage = loginMutation.error
-    ? 'Invalid email or password. Please try again.'
-    : undefined;
+  const designScale = Math.min(width / REFERENCE_WIDTH, height / REFERENCE_HEIGHT, 1);
 
   function handleSubmit() {
-    if (!isValid) return;
-    loginMutation.mutate({ email: email.trim(), password });
+    const resolvedIdentifier = isAdminLogin ? MOCK_ADMIN_EMAIL : identifier.trim().toLowerCase();
+
+    if (!resolvedIdentifier || !password) {
+      return;
+    }
+
+    loginMutation.mutate(
+      { email: resolvedIdentifier, password },
+      {
+        onError: (error: Error) => {
+          Alert.alert('Login failed', error.message || 'Check your credentials and try again.');
+        },
+      },
+    );
   }
 
   return (
-    <KeyboardAvoidingView
-      style={styles.root}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-    >
-      <ScrollView
-        contentContainerStyle={styles.scrollContent}
-        keyboardShouldPersistTaps="handled"
-        showsVerticalScrollIndicator={false}
-      >
-        {/* ── Brand header ──────────────────────────────────────────────── */}
-        <View style={styles.header}>
-          <Text style={styles.brandName}>ABM</Text>
-          <Text style={styles.brandTagline}>Hotel Management</Text>
-        </View>
+    <View style={styles.root}>
+      <LoginBackdrop />
 
-        {/* ── Login card ───────────────────────────────────────────────── */}
-        <Card padded style={styles.card}>
-          <Text style={styles.cardTitle}>Sign in</Text>
-          <Text style={styles.cardSubtitle}>Enter your credentials to access your account.</Text>
+      <KeyboardAvoidingView style={styles.keyboardRoot} behavior="padding">
+        <View style={[styles.content, { height }]}>
+          {/* ── Brand area ──────────────────────────────────────────────── */}
+          <View
+            style={[
+              styles.brandRow,
+              {
+                top: tokens.auth.brandTop * designScale,
+              },
+            ]}
+          >
+            <Text
+              style={[
+                styles.brandName,
+                {
+                  fontSize: tokens.typography.fontSize.display * designScale,
+                  lineHeight: tokens.typography.fontSize.display * 1.1 * designScale,
+                },
+              ]}
+            >
+              ABM
+            </Text>
+            <Text
+              style={[
+                styles.brandTagline,
+                {
+                  fontSize: tokens.typography.fontSize.subhead * designScale,
+                  lineHeight: tokens.typography.fontSize.subhead * 1.6 * designScale,
+                },
+              ]}
+            >
+              Hotel Management
+            </Text>
+          </View>
 
-          <View style={styles.form}>
-            <Input
-              label="Email"
-              placeholder="you@example.com"
-              keyboardType="email-address"
-              autoCapitalize="none"
-              autoCorrect={false}
-              autoComplete="email"
-              textContentType="username"
-              value={email}
-              onChangeText={setEmail}
-              error={errorMessage}
-            />
-
-            <Input
-              label="Password"
-              placeholder="Enter password"
-              secureTextEntry={!showPassword}
-              autoCapitalize="none"
-              autoComplete="password"
-              textContentType="password"
-              value={password}
-              onChangeText={setPassword}
-              rightIcon={
-                <Feather
-                  name={showPassword ? 'eye-off' : 'eye'}
-                  size={tokens.iconSizes.inline}
-                  color={tokens.colors.textHint}
-                  onPress={() => setShowPassword(prev => !prev)}
-                />
-              }
-            />
-
-            <Button
-              label="Sign in"
-              onPress={handleSubmit}
-              disabled={!isValid}
-              loading={loginMutation.isPending}
-              style={styles.submitButton}
+          {/* ── Login card ──────────────────────────────────────────────── */}
+          <View
+            style={[
+              styles.cardPosition,
+              {
+                top: tokens.auth.cardTop * designScale,
+                width: tokens.auth.cardWidth * designScale,
+              },
+            ]}
+          >
+            <LoginCard
+              designScale={designScale}
+              identifier={identifier}
+              password={password}
+              isAdminLogin={isAdminLogin}
+              submitting={loginMutation.isPending}
+              onIdentifierChange={setIdentifier}
+              onPasswordChange={setPassword}
+              onAdminLoginChange={setIsAdminLogin}
+              onSubmit={handleSubmit}
             />
           </View>
-        </Card>
+        </View>
+      </KeyboardAvoidingView>
 
-        {/* ── Footer ───────────────────────────────────────────────────── */}
-        <Text style={styles.footer}>ABM Express &amp; ABM International</Text>
-      </ScrollView>
-    </KeyboardAvoidingView>
+      {/* ── Footer ─────────────────────────────────────────────────────── */}
+      <View style={styles.footer}>
+        <Text
+          style={[
+            styles.footerText,
+            { fontSize: tokens.typography.fontSize.caption * designScale },
+          ]}
+        >
+          Powered by
+        </Text>
+        <Text
+          style={[
+            styles.footerBrand,
+            {
+              fontSize: tokens.typography.fontSize.body * designScale,
+              lineHeight: tokens.typography.fontSize.body * 1.4 * designScale,
+            },
+          ]}
+        >
+          ABM
+        </Text>
+      </View>
+    </View>
   );
 }
 
@@ -99,62 +148,54 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: tokens.colors.background,
+    backgroundColor: tokens.colors.authBackdropBase,
   },
-  scrollContent: {
-    flexGrow: 1,
-    justifyContent: 'center',
-    paddingHorizontal: tokens.spacing.xlMd,
-    paddingVertical: tokens.spacing.xxxl,
+  keyboardRoot: {
+    flex: 1,
   },
-  header: {
+  content: {
+    flex: 1,
+    position: 'relative',
+  },
+  brandRow: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
     alignItems: 'center',
-    marginBottom: tokens.spacing.xxlMd,
+    justifyContent: 'center',
   },
   brandName: {
-    fontFamily: tokens.typography.fontFamily.heading,
-    fontSize: tokens.typography.fontSize.display,
-    fontWeight: tokens.typography.fontWeight.bold,
-    color: tokens.colors.textPrimary,
-    letterSpacing: tokens.typography.letterSpacing.display,
+    fontFamily: tokens.typography.fontFamily.headingBold,
+    color: tokens.colors.authBrandInk,
+    textAlign: 'center',
+    fontWeight: '700',
   },
   brandTagline: {
     fontFamily: tokens.typography.fontFamily.sub,
-    fontSize: tokens.typography.fontSize.subhead,
-    color: tokens.colors.textMuted,
+    color: tokens.colors.authLabel,
+    textAlign: 'center',
     marginTop: tokens.spacing.xs,
-    letterSpacing: tokens.typography.letterSpacing.subhead,
   },
-  card: {
-    width: '100%',
-    maxWidth: tokens.input.maxWidth,
+  cardPosition: {
+    position: 'absolute',
     alignSelf: 'center',
   },
-  cardTitle: {
-    fontFamily: tokens.typography.fontFamily.heading,
-    fontSize: tokens.typography.fontSize.modalTitle,
-    fontWeight: tokens.typography.fontWeight.semibold,
-    color: tokens.colors.textPrimary,
-    marginBottom: tokens.spacing.xs,
-  },
-  cardSubtitle: {
-    fontFamily: tokens.typography.fontFamily.sub,
-    fontSize: tokens.typography.fontSize.body,
-    color: tokens.colors.textMuted,
-    marginBottom: tokens.spacing.xlMd,
-  },
-  form: {
-    gap: tokens.form.groupBottomMargin,
-  },
-  submitButton: {
-    marginTop: tokens.spacing.sm,
-  },
   footer: {
+    position: 'absolute',
+    bottom: tokens.auth.footerBottom,
+    alignSelf: 'center',
+    alignItems: 'center',
+    gap: tokens.spacing.s,
+  },
+  footerText: {
     fontFamily: tokens.typography.fontFamily.sub,
-    fontSize: tokens.typography.fontSize.caption,
     color: tokens.colors.textHint,
     textAlign: 'center',
-    marginTop: tokens.spacing.xxlMd,
-    letterSpacing: tokens.typography.letterSpacing.subhead,
+  },
+  footerBrand: {
+    fontFamily: tokens.typography.fontFamily.headingBold,
+    color: tokens.colors.authInk,
+    textAlign: 'center',
+    fontWeight: '700',
   },
 });

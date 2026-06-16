@@ -3,6 +3,7 @@
 const colors = {
   // Core palette
   primary: '#000000',
+  white: '#FFFFFF',
   background: '#FFFFFF',
   transparent: 'transparent',
 
@@ -19,6 +20,7 @@ const colors = {
   textSecondary: '#333333',
   textMuted: '#666666',
   textHint: '#999999',
+  textInverse: '#FFFFFF',
 
   // Status
   danger: '#C0392B',
@@ -44,6 +46,20 @@ const colors = {
 
   // Insight progress
   insightTrackMuted: '#BBBBBB',
+
+  // Auth — Login screen
+  authBackdropBase: '#F5E6D8',
+  authInk: '#111111',
+  authBrandInk: '#1A1A1A',
+  authCardSurface: '#FFFFFF',
+  authLabel: '#6B7280',
+  authInputBg: '#F3F4F5',
+  authInputBorder: '#E0E1E3',
+  authInputTextMuted: '#B0B4BA',
+  authInputTextStrong: '#111111',
+  authIcon: '#1E1E1E',
+  authToggleTrack: '#E0E1E3',
+  authThumbSurface: '#F9F9F9',
 } as const;
 
 // ─── Typography ──────────────────────────────────────────────────────────────
@@ -393,6 +409,77 @@ const dsSection = {
   labelBottomPadding: 6,
 } as const;
 
+// ─── Auth — Login Screen Geometry ────────────────────────────────────────────
+
+const auth = {
+  /** Layout reference width (unscaled) */
+  referenceWidth: 440,
+  /** Layout reference height (unscaled) */
+  referenceHeight: 956,
+  /** Brand area top offset (unscaled) */
+  brandTop: 200,
+  /** Login card top offset (unscaled) */
+  cardTop: 300,
+  /** Login card width (unscaled) */
+  cardWidth: 400,
+  /** Login card height (unscaled) */
+  cardHeight: 416,
+  /** Login card border radius (unscaled) */
+  cardRadius: 28,
+  /** Login card horizontal padding (unscaled) */
+  cardPaddingHorizontal: 28,
+  /** Login card vertical padding (unscaled) */
+  cardPaddingVertical: 32,
+  /** Card title font size (unscaled) */
+  titleFontSize: 24,
+  /** Card title line height (unscaled) */
+  titleLineHeight: 30,
+  /** Card title bottom margin (unscaled) */
+  titleMarginBottom: 28,
+  /** Field height (unscaled) */
+  fieldHeight: 52,
+  /** Field border radius (unscaled) */
+  fieldRadius: 16,
+  /** Field horizontal padding (unscaled) */
+  fieldPaddingHorizontal: 18,
+  /** Field label font size (unscaled) */
+  fieldLabelFontSize: 14,
+  /** Field label line height (unscaled) */
+  fieldLabelLineHeight: 20,
+  /** Field label bottom margin (unscaled) */
+  fieldLabelMarginBottom: 7,
+  /** Gap between username and password fields (unscaled) */
+  fieldGap: 18,
+  /** Gap between password and admin row (unscaled) */
+  modeGap: 14,
+  /** Submit button top margin (unscaled) */
+  submitMarginTop: 28,
+  /** Submit button height (unscaled) */
+  submitHeight: 56,
+  /** Submit button border radius (unscaled) */
+  submitRadius: 28,
+  /** Submit button font size (unscaled) */
+  submitFontSize: 17,
+  /** Submit button line height (unscaled) */
+  submitLineHeight: 24,
+  /** Toggle track width (unscaled) */
+  toggleWidth: 34,
+  /** Toggle track height (unscaled) */
+  toggleHeight: 20,
+  /** Toggle thumb size (unscaled) */
+  toggleThumbSize: 16,
+  /** Toggle thumb inset from track edge (unscaled) */
+  toggleThumbInset: 2,
+  /** Password eye icon hit slop */
+  passwordIconHitSlop: 10,
+  /** Password eye icon touch target size (unscaled) */
+  passwordIconBox: 31,
+  /** Password eye icon visual size (unscaled) */
+  passwordIconSize: 27,
+  /** Footer bottom offset */
+  footerBottom: 48,
+} as const;
+
 // ─── Opacities ───────────────────────────────────────────────────────────────
 
 const opacity = {
@@ -402,6 +489,10 @@ const opacity = {
   secondarySurface: 0.15,
   /** Disabled state */
   disabled: 0.5,
+  /** Pressed button */
+  pressed: 0.82,
+  /** Disabled button */
+  buttonDisabled: 0.65,
 } as const;
 
 // ─── iOS Shadows ─────────────────────────────────────────────────────────────
@@ -413,6 +504,20 @@ const shadow = {
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.07,
     shadowRadius: 24,
+  },
+  /** Login card elevation */
+  authCard: {
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.08,
+    shadowRadius: 20,
+  },
+  /** Toggle thumb elevation */
+  toggleThumb: {
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3,
   },
 } as const;
 
@@ -430,6 +535,7 @@ const tokens = {
   chip,
   input,
   form,
+  auth,
   taskCheckbox,
   navigation,
   modal,
