@@ -18,7 +18,7 @@ interface LoginCardProps {
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
-export function LoginCard({
+export default function LoginCard({
   designScale,
   identifier,
   password,

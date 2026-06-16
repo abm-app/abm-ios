@@ -11,7 +11,7 @@ import {
 import tokens from '@/theme/tokens';
 import { useLogin } from '@/hooks/auth/useLogin';
 import LoginBackdrop from './components/LoginBackdrop';
-import { LoginCard } from './components/LoginCard';
+import LoginCard from './components/LoginCard';
 import LpaiLogo from '../../../assets/lpai.svg';
 
 // ─── Layout reference (unscaled) ─────────────────────────────────────────────
