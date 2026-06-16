@@ -5,6 +5,8 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 import tokens from '@/theme/tokens';
 import { useAuthStore } from '@/store/authStore';
+import { useLogout } from '@/hooks/auth/useLogout';
+import { Button } from '@/components/ui';
 import type { ModuleKey } from '@/types/auth';
 
 import type { AppTabParamList } from './types';
@@ -57,10 +59,18 @@ const MODULE_ORDER: ModuleKey[] = [
 
 function createPlaceholderScreen(title: string) {
   return function PlaceholderScreen() {
+    const logoutMutation = useLogout();
+
     return (
       <View style={styles.placeholder}>
         <Text style={styles.placeholderTitle}>{title}</Text>
         <Text style={styles.placeholderSubtitle}>Coming soon</Text>
+        <Button
+          label={logoutMutation.isPending ? 'Logging out...' : 'Logout'}
+          onPress={() => logoutMutation.mutate()}
+          style={styles.logoutButton}
+          disabled={logoutMutation.isPending}
+        />
       </View>
     );
   };
@@ -147,5 +157,9 @@ const styles = StyleSheet.create({
     fontSize: tokens.typography.fontSize.body,
     color: tokens.colors.textMuted,
     marginTop: tokens.spacing.xs,
+  },
+  logoutButton: {
+    marginTop: tokens.spacing.xxxl,
+    minWidth: 200,
   },
 });
