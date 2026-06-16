@@ -12,6 +12,7 @@ import tokens from '@/theme/tokens';
 import { useLogin } from '@/hooks/auth/useLogin';
 import LoginBackdrop from './components/LoginBackdrop';
 import { LoginCard } from './components/LoginCard';
+import LpaiLogo from '../../../assets/lpai.svg';
 
 // ─── Layout reference (unscaled) ─────────────────────────────────────────────
 
@@ -79,17 +80,6 @@ export default function LoginScreen() {
             >
               ABM
             </Text>
-            <Text
-              style={[
-                styles.brandTagline,
-                {
-                  fontSize: tokens.typography.fontSize.subhead * designScale,
-                  lineHeight: tokens.typography.fontSize.subhead * 1.6 * designScale,
-                },
-              ]}
-            >
-              Hotel Management
-            </Text>
           </View>
 
           {/* ── Login card ──────────────────────────────────────────────── */}
@@ -127,17 +117,7 @@ export default function LoginScreen() {
         >
           Powered by
         </Text>
-        <Text
-          style={[
-            styles.footerBrand,
-            {
-              fontSize: tokens.typography.fontSize.body * designScale,
-              lineHeight: tokens.typography.fontSize.body * 1.4 * designScale,
-            },
-          ]}
-        >
-          ABM
-        </Text>
+        <LpaiLogo width={78 * designScale} height={22 * designScale} />
       </View>
     </View>
   );
@@ -165,10 +145,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   brandName: {
-    fontFamily: tokens.typography.fontFamily.headingBold,
+    fontFamily: tokens.typography.fontFamily.heading,
     color: tokens.colors.authBrandInk,
     textAlign: 'center',
-    fontWeight: '700',
+    fontWeight: '400',
   },
   brandTagline: {
     fontFamily: tokens.typography.fontFamily.sub,
