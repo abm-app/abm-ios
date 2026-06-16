@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import tokens from '@/theme/tokens';
@@ -28,45 +28,11 @@ export default function LoginCard({
   onSubmit,
 }: LoginCardProps) {
   const [passwordVisible, setPasswordVisible] = useState(false);
-
-  const cardHeight = tokens.auth.cardHeight * designScale;
-  const cardRadius = tokens.auth.cardRadius * designScale;
-  const cardPaddingHorizontal = tokens.auth.cardPaddingHorizontal * designScale;
-  const cardPaddingVertical = tokens.auth.cardPaddingVertical * designScale;
-  const titleFontSize = tokens.auth.titleFontSize * designScale;
-  const titleLineHeight = tokens.auth.titleLineHeight * designScale;
-  const titleMarginBottom = tokens.auth.titleMarginBottom * designScale;
-  const fieldGap = tokens.auth.fieldGap * designScale;
-  const submitHeight = tokens.auth.submitHeight * designScale;
-  const submitRadius = tokens.auth.submitRadius * designScale;
-  const submitMarginTop = tokens.auth.submitMarginTop * designScale;
-  const submitFontSize = tokens.auth.submitFontSize * designScale;
-  const submitLineHeight = tokens.auth.submitLineHeight * designScale;
+  const dynamicStyles = useMemo(() => createDynamicStyles(designScale), [designScale]);
 
   return (
-    <View
-      style={[
-        styles.card,
-        {
-          height: cardHeight,
-          borderRadius: cardRadius,
-          paddingHorizontal: cardPaddingHorizontal,
-          paddingVertical: cardPaddingVertical,
-        },
-      ]}
-    >
-      <Text
-        style={[
-          styles.cardTitle,
-          {
-            fontSize: titleFontSize,
-            lineHeight: titleLineHeight,
-            marginBottom: titleMarginBottom,
-          },
-        ]}
-      >
-        Welcome Back!
-      </Text>
+    <View style={[styles.card, dynamicStyles.card]}>
+      <Text style={[styles.cardTitle, dynamicStyles.cardTitle]}>Welcome Back!</Text>
 
       <LoginField
         designScale={designScale}
@@ -80,7 +46,7 @@ export default function LoginCard({
         returnKeyType="next"
       />
 
-      <View style={{ height: fieldGap }} />
+      <View style={dynamicStyles.spacer} />
 
       <LoginField
         designScale={designScale}
@@ -98,11 +64,7 @@ export default function LoginCard({
       <Pressable
         style={({ pressed }) => [
           styles.submitButton,
-          {
-            height: submitHeight,
-            borderRadius: submitRadius,
-            marginTop: submitMarginTop,
-          },
+          dynamicStyles.submitButton,
           pressed && !submitting ? styles.submitButtonPressed : null,
           submitting ? styles.submitButtonDisabled : null,
         ]}
@@ -112,17 +74,7 @@ export default function LoginCard({
         {submitting ? (
           <ActivityIndicator color={tokens.colors.textInverse} />
         ) : (
-          <Text
-            style={[
-              styles.submitText,
-              {
-                fontSize: submitFontSize,
-                lineHeight: submitLineHeight,
-              },
-            ]}
-          >
-            Login
-          </Text>
+          <Text style={[styles.submitText, dynamicStyles.submitText]}>Login</Text>
         )}
       </Pressable>
     </View>
@@ -136,7 +88,6 @@ const styles = StyleSheet.create({
     width: '100%',
     backgroundColor: tokens.colors.authCardSurface,
     ...tokens.shadow.authCard,
-    elevation: 6,
   },
   cardTitle: {
     color: tokens.colors.authInk,
@@ -160,6 +111,33 @@ const styles = StyleSheet.create({
   },
   submitText: {
     color: tokens.colors.textInverse,
-    fontWeight: '600',
+    fontWeight: tokens.typography.fontWeight.semibold,
   },
 });
+
+const createDynamicStyles = (designScale: number) =>
+  StyleSheet.create({
+    card: {
+      height: tokens.auth.cardHeight * designScale,
+      borderRadius: tokens.auth.cardRadius * designScale,
+      paddingHorizontal: tokens.auth.cardPaddingHorizontal * designScale,
+      paddingVertical: tokens.auth.cardPaddingVertical * designScale,
+    },
+    cardTitle: {
+      fontSize: tokens.auth.titleFontSize * designScale,
+      lineHeight: tokens.auth.titleLineHeight * designScale,
+      marginBottom: tokens.auth.titleMarginBottom * designScale,
+    },
+    spacer: {
+      height: tokens.auth.fieldGap * designScale,
+    },
+    submitButton: {
+      height: tokens.auth.submitHeight * designScale,
+      borderRadius: tokens.auth.submitRadius * designScale,
+      marginTop: tokens.auth.submitMarginTop * designScale,
+    },
+    submitText: {
+      fontSize: tokens.auth.submitFontSize * designScale,
+      lineHeight: tokens.auth.submitLineHeight * designScale,
+    },
+  });
