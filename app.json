@@ -14,11 +14,9 @@
     "ios": {
       "bundleIdentifier": "com.abm.app",
       "supportsTablet": false,
-      "buildNumber": "1"
-    },
-    "extra": {
-      "eas": {
-        "projectId": "a427f36a-865c-49f5-bbf5-2a9e4b82219c"
+      "buildNumber": "1",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "owner": "lplusdevelopers",
@@ -36,6 +34,11 @@
       ],
       "@react-native-community/datetimepicker",
       "expo-secure-store"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "a427f36a-865c-49f5-bbf5-2a9e4b82219c"
+      }
+    }
   }
 }
