@@ -1,9 +1,8 @@
 import apiClient from '../client';
 import type { AuthUser, LoginRequest, LoginResponse, ModuleKey } from '@/types/auth';
+import { USE_MOCK_AUTH } from '@/config/env';
 
 // ─── Mock toggle ─────────────────────────────────────────────────────────────
-
-const USE_MOCK = true;
 
 // ─── Mock delay helper ───────────────────────────────────────────────────────
 
@@ -99,7 +98,7 @@ async function mockLogin(payload: LoginRequest): Promise<LoginResponse> {
 // ─── Public API ──────────────────────────────────────────────────────────────
 
 export const loginUser = (payload: LoginRequest): Promise<LoginResponse> => {
-  if (USE_MOCK) {
+  if (USE_MOCK_AUTH) {
     return mockLogin(payload);
   }
   return apiClient.post('/auth/login', payload).then(r => r.data);
