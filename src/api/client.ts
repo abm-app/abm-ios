@@ -2,7 +2,6 @@ import axios from 'axios';
 
 import ENV from '@/config/env';
 import { authStore } from '@/store/authStore';
-import { clearAuthTokens } from './storage';
 import logger from '@/utils/logger';
 
 const apiClient = axios.create({
@@ -33,8 +32,8 @@ apiClient.interceptors.response.use(
     const status = error.response?.status;
 
     if (status === 401) {
-      await clearAuthTokens().catch(() => {});
-      logger.warn('[apiClient] 401 — tokens cleared');
+      authStore.getState().clearSession();
+      logger.warn('[apiClient] 401 — session cleared');
     }
 
     return Promise.reject(error);
