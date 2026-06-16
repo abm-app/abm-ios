@@ -3,7 +3,6 @@ import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-nati
 
 import tokens from '@/theme/tokens';
 import { LoginField } from './LoginField';
-import { LoginModeRow } from './LoginModeRow';
 
 // ─── Props ───────────────────────────────────────────────────────────────────
 
@@ -11,11 +10,9 @@ interface LoginCardProps {
   designScale: number;
   identifier: string;
   password: string;
-  isAdminLogin: boolean;
   submitting: boolean;
   onIdentifierChange: (value: string) => void;
   onPasswordChange: (value: string) => void;
-  onAdminLoginChange: (value: boolean) => void;
   onSubmit: () => void;
 }
 
@@ -25,11 +22,9 @@ export function LoginCard({
   designScale,
   identifier,
   password,
-  isAdminLogin,
   submitting,
   onIdentifierChange,
   onPasswordChange,
-  onAdminLoginChange,
   onSubmit,
 }: LoginCardProps) {
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -42,7 +37,6 @@ export function LoginCard({
   const titleLineHeight = tokens.auth.titleLineHeight * designScale;
   const titleMarginBottom = tokens.auth.titleMarginBottom * designScale;
   const fieldGap = tokens.auth.fieldGap * designScale;
-  const modeGap = tokens.auth.modeGap * designScale;
   const submitHeight = tokens.auth.submitHeight * designScale;
   const submitRadius = tokens.auth.submitRadius * designScale;
   const submitMarginTop = tokens.auth.submitMarginTop * designScale;
@@ -77,14 +71,13 @@ export function LoginCard({
       <LoginField
         designScale={designScale}
         label="Username"
-        placeholder={isAdminLogin ? 'you@abm.com' : 'manager_username'}
-        keyboardType={isAdminLogin ? 'email-address' : 'default'}
+        placeholder="you@abm.com"
+        keyboardType="email-address"
         autoCapitalize="none"
         autoCorrect={false}
-        value={isAdminLogin ? '' : identifier}
+        value={identifier}
         onChangeText={onIdentifierChange}
         returnKeyType="next"
-        editable={!isAdminLogin}
       />
 
       <View style={{ height: fieldGap }} />
@@ -102,15 +95,6 @@ export function LoginCard({
         onSubmitEditing={onSubmit}
         onTogglePasswordVisibility={() => setPasswordVisible(current => !current)}
       />
-
-      <View style={{ height: modeGap }} />
-
-      <LoginModeRow
-        designScale={designScale}
-        isAdminLogin={isAdminLogin}
-        onAdminLoginChange={onAdminLoginChange}
-      />
-
       <Pressable
         style={({ pressed }) => [
           styles.submitButton,

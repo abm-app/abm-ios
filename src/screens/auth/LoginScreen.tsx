@@ -19,26 +19,19 @@ import LpaiLogo from '../../../assets/lpai.svg';
 const REFERENCE_WIDTH = tokens.auth.referenceWidth;
 const REFERENCE_HEIGHT = tokens.auth.referenceHeight;
 
-// ─── Admin login mock mapping ────────────────────────────────────────────────
-// During mock phase, admin mode maps to the owner mock account.
-// Replace with a real ADMIN_EMAIL env value once the backend supports it.
-
-const MOCK_ADMIN_EMAIL = 'owner@abm.com';
-
 // ─── Component ───────────────────────────────────────────────────────────────
 
 export default function LoginScreen() {
   const { width, height } = useWindowDimensions();
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
-  const [isAdminLogin, setIsAdminLogin] = useState(false);
 
   const loginMutation = useLogin();
 
   const designScale = Math.min(width / REFERENCE_WIDTH, height / REFERENCE_HEIGHT, 1);
 
   function handleSubmit() {
-    const resolvedIdentifier = isAdminLogin ? MOCK_ADMIN_EMAIL : identifier.trim().toLowerCase();
+    const resolvedIdentifier = identifier.trim().toLowerCase();
 
     if (!resolvedIdentifier || !password) {
       return;
@@ -96,11 +89,9 @@ export default function LoginScreen() {
               designScale={designScale}
               identifier={identifier}
               password={password}
-              isAdminLogin={isAdminLogin}
               submitting={loginMutation.isPending}
               onIdentifierChange={setIdentifier}
               onPasswordChange={setPassword}
-              onAdminLoginChange={setIsAdminLogin}
               onSubmit={handleSubmit}
             />
           </View>
