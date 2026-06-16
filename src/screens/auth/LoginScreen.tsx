@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
   Alert,
   KeyboardAvoidingView,
@@ -29,6 +29,10 @@ export default function LoginScreen() {
   const loginMutation = useLogin();
 
   const designScale = Math.min(width / REFERENCE_WIDTH, height / REFERENCE_HEIGHT, 1);
+  const dynamicStyles = useMemo(
+    () => createDynamicStyles(designScale, height),
+    [designScale, height],
+  );
 
   function handleSubmit() {
     const resolvedIdentifier = identifier.trim().toLowerCase();
@@ -52,39 +56,14 @@ export default function LoginScreen() {
       <LoginBackdrop />
 
       <KeyboardAvoidingView style={styles.keyboardRoot} behavior="padding">
-        <View style={[styles.content, { height }]}>
+        <View style={[styles.content, dynamicStyles.content]}>
           {/* ── Brand area ──────────────────────────────────────────────── */}
-          <View
-            style={[
-              styles.brandRow,
-              {
-                top: tokens.auth.brandTop * designScale,
-              },
-            ]}
-          >
-            <Text
-              style={[
-                styles.brandName,
-                {
-                  fontSize: tokens.typography.fontSize.display * designScale,
-                  lineHeight: tokens.typography.fontSize.display * 1.1 * designScale,
-                },
-              ]}
-            >
-              ABM
-            </Text>
+          <View style={[styles.brandRow, dynamicStyles.brandRow]}>
+            <Text style={[styles.brandName, dynamicStyles.brandName]}>ABM</Text>
           </View>
 
           {/* ── Login card ──────────────────────────────────────────────── */}
-          <View
-            style={[
-              styles.cardPosition,
-              {
-                top: tokens.auth.cardTop * designScale,
-                width: tokens.auth.cardWidth * designScale,
-              },
-            ]}
-          >
+          <View style={[styles.cardPosition, dynamicStyles.cardPosition]}>
             <LoginCard
               designScale={designScale}
               identifier={identifier}
@@ -100,15 +79,11 @@ export default function LoginScreen() {
 
       {/* ── Footer ─────────────────────────────────────────────────────── */}
       <View style={styles.footer}>
-        <Text
-          style={[
-            styles.footerText,
-            { fontSize: tokens.typography.fontSize.caption * designScale },
-          ]}
-        >
-          Powered by
-        </Text>
-        <LpaiLogo width={78 * designScale} height={22 * designScale} />
+        <Text style={[styles.footerText, dynamicStyles.footerText]}>Powered by</Text>
+        <LpaiLogo
+          width={tokens.auth.logoWidth * designScale}
+          height={tokens.auth.logoHeight * designScale}
+        />
       </View>
     </View>
   );
@@ -170,3 +145,24 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
 });
+
+const createDynamicStyles = (designScale: number, windowHeight: number) =>
+  StyleSheet.create({
+    content: {
+      height: windowHeight,
+    },
+    brandRow: {
+      top: tokens.auth.brandTop * designScale,
+    },
+    brandName: {
+      fontSize: tokens.typography.fontSize.display * designScale,
+      lineHeight: tokens.typography.fontSize.display * 1.1 * designScale,
+    },
+    cardPosition: {
+      top: tokens.auth.cardTop * designScale,
+      width: tokens.auth.cardWidth * designScale,
+    },
+    footerText: {
+      fontSize: tokens.typography.fontSize.caption * designScale,
+    },
+  });

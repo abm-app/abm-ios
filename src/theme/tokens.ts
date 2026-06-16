@@ -487,6 +487,10 @@ const auth = {
   passwordIconSize: 27,
   /** Footer bottom offset */
   footerBottom: 48,
+  /** Logo width (unscaled) */
+  logoWidth: 78,
+  /** Logo height (unscaled) */
+  logoHeight: 22,
 } as const;
 
 // ─── Opacities ───────────────────────────────────────────────────────────────
