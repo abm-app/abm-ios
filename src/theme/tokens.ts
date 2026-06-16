@@ -453,6 +453,10 @@ const auth = {
   fieldLabelLineHeight: 20,
   /** Field label bottom margin (unscaled) */
   fieldLabelMarginBottom: 7,
+  /** Field input font size (unscaled) */
+  fieldInputFontSize: 16,
+  /** Field input line height (unscaled) */
+  fieldInputLineHeight: 22,
   /** Gap between username and password fields (unscaled) */
   fieldGap: 18,
   /** Gap between password and admin row (unscaled) */

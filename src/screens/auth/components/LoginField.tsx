@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, TextInputProps, View } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 
@@ -25,50 +25,16 @@ function LoginField({
   style,
   ...inputProps
 }: LoginFieldProps) {
-  const labelFontSize = tokens.auth.fieldLabelFontSize * designScale;
-  const labelLineHeight = tokens.auth.fieldLabelLineHeight * designScale;
-  const fieldHeight = tokens.auth.fieldHeight * designScale;
-  const fieldRadius = tokens.auth.fieldRadius * designScale;
-  const fieldPaddingHorizontal = tokens.auth.fieldPaddingHorizontal * designScale;
-  const inputFontSize = 16 * designScale;
-  const inputLineHeight = 22 * designScale;
-  const iconBox = tokens.auth.passwordIconBox * designScale;
   const iconSize = tokens.auth.passwordIconSize * designScale;
+  const dynamicStyles = useMemo(() => createDynamicStyles(designScale), [designScale]);
 
   return (
     <View>
-      <Text
-        style={[
-          styles.label,
-          {
-            fontSize: labelFontSize,
-            lineHeight: labelLineHeight,
-            marginBottom: tokens.auth.fieldLabelMarginBottom * designScale,
-          },
-        ]}
-      >
-        {label}
-      </Text>
-      <View
-        style={[
-          styles.shell,
-          {
-            height: fieldHeight,
-            borderRadius: fieldRadius,
-            paddingHorizontal: fieldPaddingHorizontal,
-          },
-        ]}
-      >
+      <Text style={[styles.label, dynamicStyles.label]}>{label}</Text>
+      <View style={[styles.shell, dynamicStyles.shell]}>
         <TextInput
           {...inputProps}
-          style={[
-            styles.input,
-            {
-              fontSize: inputFontSize,
-              lineHeight: inputLineHeight,
-            },
-            style,
-          ]}
+          style={[styles.input, dynamicStyles.input, style]}
           placeholderTextColor={tokens.colors.authInputTextMuted}
           secureTextEntry={isPassword && !passwordVisible}
         />
@@ -76,7 +42,7 @@ function LoginField({
           <Pressable
             hitSlop={tokens.auth.passwordIconHitSlop}
             onPress={onTogglePasswordVisibility}
-            style={[styles.eyeButton, { width: iconBox, height: iconBox }]}
+            style={[styles.eyeButton, dynamicStyles.eyeButton]}
           >
             <Feather
               name={passwordVisible ? 'eye-off' : 'eye'}
@@ -114,5 +80,27 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
+
+const createDynamicStyles = (designScale: number) =>
+  StyleSheet.create({
+    label: {
+      fontSize: tokens.auth.fieldLabelFontSize * designScale,
+      lineHeight: tokens.auth.fieldLabelLineHeight * designScale,
+      marginBottom: tokens.auth.fieldLabelMarginBottom * designScale,
+    },
+    shell: {
+      height: tokens.auth.fieldHeight * designScale,
+      borderRadius: tokens.auth.fieldRadius * designScale,
+      paddingHorizontal: tokens.auth.fieldPaddingHorizontal * designScale,
+    },
+    input: {
+      fontSize: tokens.auth.fieldInputFontSize * designScale,
+      lineHeight: tokens.auth.fieldInputLineHeight * designScale,
+    },
+    eyeButton: {
+      width: tokens.auth.passwordIconBox * designScale,
+      height: tokens.auth.passwordIconBox * designScale,
+    },
+  });
 
 export default LoginField;
