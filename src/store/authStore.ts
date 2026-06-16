@@ -47,32 +47,32 @@ export const useAuthStore = create<AuthState & AuthActions>(set => ({
   setSession: async (accessToken, refreshToken, user, modules) => {
     try {
       await saveAuthTokens(accessToken, refreshToken);
-      set({
-        accessToken,
-        refreshToken,
-        user,
-        modules,
-        isAuthenticated: true,
-      });
     } catch (error) {
       logger.error('Failed to save auth tokens:', error);
       // Optionally handle the error (e.g., show an alert or throw)
     }
+    set({
+      accessToken,
+      refreshToken,
+      user,
+      modules,
+      isAuthenticated: true,
+    });
   },
 
   clearSession: async () => {
     try {
       await clearAuthTokens();
-      set({
-        accessToken: null,
-        refreshToken: null,
-        user: null,
-        modules: [],
-        isAuthenticated: false,
-      });
     } catch (error) {
       logger.error('Failed to clear auth tokens:', error);
     }
+    set({
+      accessToken: null,
+      refreshToken: null,
+      user: null,
+      modules: [],
+      isAuthenticated: false,
+    });
   },
 
   restoreSession: async () => {
