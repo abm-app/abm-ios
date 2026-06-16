@@ -1,7 +1,14 @@
 import { create } from 'zustand';
 
 import type { AuthUser, ModuleKey } from '@/types/auth';
-import { saveAuthTokens, clearAuthTokens, getAccessToken, getRefreshToken } from '@/api/storage';
+import {
+  saveAuthSession,
+  clearAuthSession,
+  getAccessToken,
+  getRefreshToken,
+  getAuthUser,
+  getAuthModules,
+} from '@/api/storage';
 
 // ─── State shape ─────────────────────────────────────────────────────────────
 
@@ -44,7 +51,7 @@ export const useAuthStore = create<AuthState & AuthActions>(set => ({
   // ── Actions ────────────────────────────────────────────────────────────────
 
   setSession: (accessToken, refreshToken, user, modules) => {
-    void saveAuthTokens(accessToken, refreshToken);
+    void saveAuthSession(accessToken, refreshToken, user, modules);
     set({
       accessToken,
       refreshToken,
@@ -55,7 +62,7 @@ export const useAuthStore = create<AuthState & AuthActions>(set => ({
   },
 
   clearSession: () => {
-    void clearAuthTokens();
+    void clearAuthSession();
     set({
       accessToken: null,
       refreshToken: null,
@@ -67,19 +74,23 @@ export const useAuthStore = create<AuthState & AuthActions>(set => ({
 
   restoreSession: async () => {
     try {
-      const accessToken = await getAccessToken();
-      const refreshToken = await getRefreshToken();
+      const [accessToken, refreshToken, user, modules] = await Promise.all([
+        getAccessToken(),
+        getRefreshToken(),
+        getAuthUser(),
+        getAuthModules(),
+      ]);
 
       if (accessToken && refreshToken) {
-        // Mock phase: tokens exist but user/modules are not persisted in SecureStore.
-        // On a real backend, call /auth/me here to hydrate user and modules.
         set({
           accessToken,
           refreshToken,
+          user,
+          modules: modules ?? [],
           isAuthenticated: true,
         });
       }
-    } finally {
+
       set({ isRestoring: false });
     }
   },
