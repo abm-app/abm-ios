@@ -16,7 +16,7 @@ const ROTATIONS = [0, 90, 180, 270, 360];
 type Point = { x: number; y: number };
 
 type EllipseConfig = {
-  rgb: [number, number, number];
+  color: string;
   baseW: number;
   baseH: number;
 };
@@ -33,19 +33,17 @@ function rotatePoint(point: Point, degrees: number): Point {
 
 // ─── Fog Ellipse (SVG) ──────────────────────────────────────────────────────
 
-function FogEllipse({ rgb, baseW, baseH }: EllipseConfig) {
-  const [red, green, blue] = rgb;
-  const id = `rg-${red}-${green}-${blue}`;
-  const stopColor = `rgb(${red},${green},${blue})`;
+function FogEllipse({ color, baseW, baseH }: EllipseConfig) {
+  const id = `fog-${color.replace('#', '')}`;
 
   return (
-    <Svg width={baseW} height={baseH} style={{ left: -baseW / 2, top: -baseH / 2 }}>
+    <Svg width={baseW} height={baseH}>
       <Defs>
         <RadialGradient id={id} cx="50%" cy="50%" rx="50%" ry="50%">
-          <Stop offset="0%" stopColor={stopColor} stopOpacity={0.72} />
-          <Stop offset="35%" stopColor={stopColor} stopOpacity={0.45} />
-          <Stop offset="65%" stopColor={stopColor} stopOpacity={0.15} />
-          <Stop offset="100%" stopColor={stopColor} stopOpacity={0} />
+          <Stop offset="0%" stopColor={color} stopOpacity={0.72} />
+          <Stop offset="35%" stopColor={color} stopOpacity={0.45} />
+          <Stop offset="65%" stopColor={color} stopOpacity={0.15} />
+          <Stop offset="100%" stopColor={color} stopOpacity={0} />
         </RadialGradient>
       </Defs>
       <Ellipse cx={baseW / 2} cy={baseH / 2} rx={baseW / 2} ry={baseH / 2} fill={`url(#${id})`} />
@@ -67,9 +65,9 @@ export default function LoginBackdrop() {
     ];
     const VARIANTS = BASE.map(basePos => ROTATIONS.map(degrees => rotatePoint(basePos, degrees)));
     const ELLIPSES: EllipseConfig[] = [
-      { rgb: [255, 175, 150], baseW: W * 1.5, baseH: H * 0.9 },
-      { rgb: [255, 145, 105], baseW: W * 1.4, baseH: H * 0.85 },
-      { rgb: [255, 210, 130], baseW: W * 1.45, baseH: H * 0.88 },
+      { color: tokens.colors.authFog1, baseW: W * 1.5, baseH: H * 0.9 },
+      { color: tokens.colors.authFog2, baseW: W * 1.4, baseH: H * 0.85 },
+      { color: tokens.colors.authFog3, baseW: W * 1.45, baseH: H * 0.88 },
     ];
     return { BASE, VARIANTS, ELLIPSES };
   }, [W, H]);
@@ -111,18 +109,10 @@ export default function LoginBackdrop() {
           outputRange: variants.map(point => point.y),
         });
 
+        const animatedStyle = { transform: [{ translateX }, { translateY }] };
+
         return (
-          <Animated.View
-            key={ellipse.rgb.join('-')}
-            style={[
-              styles.ellipseAnchor,
-              {
-                left: W / 2,
-                top: H / 2,
-                transform: [{ translateX }, { translateY }],
-              },
-            ]}
-          >
+          <Animated.View key={ellipse.color} style={[styles.ellipseAnchor, animatedStyle]}>
             <FogEllipse {...ellipse} />
           </Animated.View>
         );
@@ -141,5 +131,11 @@ const styles = StyleSheet.create({
   },
   ellipseAnchor: {
     position: 'absolute',
+    left: '50%',
+    top: '50%',
+    width: 0,
+    height: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

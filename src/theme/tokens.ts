@@ -49,6 +49,9 @@ const colors = {
 
   // Auth — Login screen
   authBackdropBase: '#F5E6D8',
+  authFog1: '#FFAF96',
+  authFog2: '#FF9169',
+  authFog3: '#FFD282',
   authInk: '#111111',
   authBrandInk: '#1A1A1A',
   authCardSurface: '#FFFFFF',
