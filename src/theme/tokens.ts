@@ -65,9 +65,12 @@ const colors = {
   authThumbSurface: '#F9F9F9',
 
   // Navigation
-  navActiveText: '#007AFF',
-  navActiveBg: 'rgba(0,0,0,0.06)',
-  navCapsuleBg: '#F7F7F7',
+  navActiveText: '#0088FF',
+  navInactiveText: '#1A1A1A',
+  navActiveBg: '#EDEDED',
+  navCapsuleBg: 'rgba(255, 255, 255, 0.65)',
+  navCapsuleGradientStart: '#F7F7F7',
+  navCapsuleGradientEnd: '#DDDDDD',
 } as const;
 
 // ─── Typography ──────────────────────────────────────────────────────────────
@@ -99,8 +102,8 @@ const fontSize = {
   chip: 12,
   badge: 10,
   input: 13,
-  navIcon: 18,
-  navLabel: 9,
+  navIcon: 24,
+  navLabel: 10,
   modalTitle: 19,
   score: 52,
   miniStatNumber: 18,
@@ -127,6 +130,8 @@ const lineHeight = {
   h2: 26,
   /** 15 × 1.6 = 24 */
   body: 24,
+  /** 10 × 1.2 = 12 — nav tab label */
+  navLabel: 12,
 } as const;
 
 // Letter-spacing — pre-computed point values for React Native (fontSize × em)
@@ -149,8 +154,8 @@ const letterSpacing = {
   sectionLabel: 1.2,
   /** 9 × 0.06 = 0.54 */
   miniStatLabel: 0.54,
-  /** 9 × 0.04 = 0.36 */
-  navLabel: 0.36,
+  /** 10 × -0.01 = -0.1 */
+  navLabel: -0.1,
   /** 13 × 0.01 = 0.13 */
   button: 0.13,
 } as const;
@@ -212,6 +217,7 @@ const borderRadius = {
   lg: 16,
   xl: 24,
   pill: 100,
+  navCapsule: 296,
 } as const;
 
 // ─── Border Width ────────────────────────────────────────────────────────────
@@ -226,7 +232,7 @@ const borderWidth = {
 
 const iconSizes = {
   /** Tab bar icons */
-  tabBar: 22,
+  tabBar: 24,
   /** In-content icons alongside text */
   content: 16,
   /** Small inline icons (badges, labels) */
@@ -298,13 +304,15 @@ const taskCheckbox = {
 
 /** Navigation bar geometry */
 const navigation = {
-  borderRadius: 24,
-  paddingVertical: 10,
-  paddingHorizontal: 20,
-  itemGap: 3,
-  itemPaddingVertical: 4,
-  itemPaddingHorizontal: 10,
-  itemBorderRadius: 10,
+  borderRadius: 296,
+  paddingVertical: 16,
+  paddingHorizontal: 25,
+  itemGap: 1,
+  itemPaddingTop: 6,
+  itemPaddingBottom: 7,
+  itemPaddingHorizontal: 8,
+  itemBorderRadius: 100,
+  height: 50,
 } as const;
 
 /** Modal card geometry */
@@ -541,8 +549,9 @@ const shadow = {
   navCapsule: {
     shadowColor: '#000000',
     shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.15,
+    shadowOpacity: 0.12,
     shadowRadius: 40,
+    elevation: 10,
   },
 } as const;
 

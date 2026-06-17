@@ -76,7 +76,8 @@ const styles = StyleSheet.create({
   item: {
     alignItems: 'center',
     gap: tokens.navigation.itemGap,
-    paddingVertical: tokens.navigation.itemPaddingVertical,
+    paddingTop: tokens.navigation.itemPaddingTop,
+    paddingBottom: tokens.navigation.itemPaddingBottom,
     paddingHorizontal: tokens.navigation.itemPaddingHorizontal,
     borderRadius: tokens.navigation.itemBorderRadius,
   },
