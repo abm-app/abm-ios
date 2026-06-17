@@ -26,22 +26,16 @@ export default function TokenReferenceSection() {
     <View style={styles.section}>
       <SectionLabel title="Token Reference" />
       <View style={styles.columns}>
-        <View style={styles.column}>
-          {fontEntries.map(entry => (
-            <View key={entry.dt} style={styles.entry}>
-              <Text style={styles.dt}>{entry.dt}</Text>
-              <Text style={styles.dd}>{entry.dd}</Text>
-            </View>
-          ))}
-        </View>
-        <View style={styles.column}>
-          {colorEntries.map(entry => (
-            <View key={entry.dt} style={styles.entry}>
-              <Text style={styles.dt}>{entry.dt}</Text>
-              <Text style={styles.dd}>{entry.dd}</Text>
-            </View>
-          ))}
-        </View>
+        {[fontEntries, colorEntries].map((entries, idx) => (
+          <View key={idx} style={styles.column}>
+            {entries.map(entry => (
+              <View key={entry.dt} style={styles.entry}>
+                <Text style={styles.dt}>{entry.dt}</Text>
+                <Text style={styles.dd}>{entry.dd}</Text>
+              </View>
+            ))}
+          </View>
+        ))}
       </View>
     </View>
   );
