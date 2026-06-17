@@ -12,57 +12,63 @@ export default function FloatingTabBar({ state, descriptors, navigation }: Botto
     <View
       style={[styles.container, { paddingBottom: Math.max(insets.bottom, tokens.spacing.xlMd) }]}
     >
-      <View style={styles.capsule}>
-        {state.routes.map((route, index) => {
-          const { options } = descriptors[route.key];
-          const label =
-            options.tabBarLabel !== undefined
-              ? options.tabBarLabel
-              : options.title !== undefined
-                ? options.title
-                : route.name;
+      <View style={styles.capsuleWrapper}>
+        <View style={styles.capsule}>
+          {state.routes.map((route, index) => {
+            const { options } = descriptors[route.key];
+            const label =
+              options.tabBarLabel !== undefined
+                ? options.tabBarLabel
+                : options.title !== undefined
+                  ? options.title
+                  : route.name;
 
-          const isFocused = state.index === index;
+            const isFocused = state.index === index;
 
-          const onPress = () => {
-            const event = navigation.emit({
-              type: 'tabPress',
-              target: route.key,
-              canPreventDefault: true,
-            });
+            const onPress = () => {
+              const event = navigation.emit({
+                type: 'tabPress',
+                target: route.key,
+                canPreventDefault: true,
+              });
 
-            if (!isFocused && !event.defaultPrevented) {
-              navigation.navigate(route.name);
-            }
-          };
+              if (!isFocused && !event.defaultPrevented) {
+                navigation.navigate(route.name);
+              }
+            };
 
-          const onLongPress = () => {
-            navigation.emit({
-              type: 'tabLongPress',
-              target: route.key,
-            });
-          };
+            const onLongPress = () => {
+              navigation.emit({
+                type: 'tabLongPress',
+                target: route.key,
+              });
+            };
 
-          const color = isFocused ? tokens.colors.navActiveText : tokens.colors.textPrimary;
+            const color = isFocused ? tokens.colors.navActiveText : tokens.colors.textPrimary;
 
-          return (
-            <TouchableOpacity
-              key={route.key}
-              accessibilityRole="button"
-              accessibilityState={isFocused ? { selected: true } : {}}
-              onPress={onPress}
-              onLongPress={onLongPress}
-              style={[styles.tabItem, isFocused && styles.tabItemActive]}
-              activeOpacity={0.8}
-            >
-              <View style={styles.iconContainer}>
-                {options.tabBarIcon &&
-                  options.tabBarIcon({ focused: isFocused, color, size: tokens.iconSizes.tabBar })}
-              </View>
-              <Text style={[styles.tabLabel, { color }]}>{label as string}</Text>
-            </TouchableOpacity>
-          );
-        })}
+            return (
+              <TouchableOpacity
+                key={route.key}
+                accessibilityRole="button"
+                accessibilityState={isFocused ? { selected: true } : {}}
+                onPress={onPress}
+                onLongPress={onLongPress}
+                style={[styles.tabItem, isFocused && styles.tabItemActive]}
+                activeOpacity={0.8}
+              >
+                <View style={styles.iconContainer}>
+                  {options.tabBarIcon &&
+                    options.tabBarIcon({
+                      focused: isFocused,
+                      color,
+                      size: tokens.iconSizes.tabBar,
+                    })}
+                </View>
+                <Text style={[styles.tabLabel, { color }]}>{label as string}</Text>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
       </View>
     </View>
   );
@@ -78,14 +84,22 @@ const styles = StyleSheet.create({
     paddingHorizontal: tokens.spacing.xl,
     backgroundColor: 'transparent',
   },
+  capsuleWrapper: {
+    borderRadius: tokens.borderRadius.pill,
+    backgroundColor: tokens.colors.white,
+    ...tokens.shadow.navCapsule,
+    paddingTop: 1.5,
+    paddingHorizontal: 1.5,
+    paddingBottom: 0,
+    width: '100%',
+  },
   capsule: {
     flexDirection: 'row',
-    backgroundColor: tokens.colors.background,
+    backgroundColor: tokens.colors.navCapsuleBg,
     borderRadius: tokens.borderRadius.pill,
     padding: tokens.spacing.xs,
     width: '100%',
     justifyContent: 'space-between',
-    ...tokens.shadow.navCapsule,
   },
   tabItem: {
     flex: 1,

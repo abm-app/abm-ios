@@ -67,6 +67,7 @@ const colors = {
   // Navigation
   navActiveText: '#007AFF',
   navActiveBg: 'rgba(0,0,0,0.06)',
+  navCapsuleBg: '#F7F7F7',
 } as const;
 
 // ─── Typography ──────────────────────────────────────────────────────────────
@@ -540,8 +541,8 @@ const shadow = {
   navCapsule: {
     shadowColor: '#000000',
     shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.12,
-    shadowRadius: 24,
+    shadowOpacity: 0.15,
+    shadowRadius: 40,
   },
 } as const;
 
