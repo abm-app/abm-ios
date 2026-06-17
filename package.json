@@ -60,7 +60,7 @@
     "do": "pnpm format && pnpm lint && pnpm type-check && git add .",
     "storybook:ios": "cross-env EXPO_PUBLIC_STORYBOOK_ENABLED=true expo start --ios",
     "storybook": "cross-env EXPO_PUBLIC_STORYBOOK_ENABLED=true expo start",
-    "lh": "adb reverse tcp:8081 tcp:8081 && adb reverse tcp:3000 tcp:3000 && npx expo start --localhost",
+    "lh": "adb reverse tcp:8081 tcp:8081 && adb reverse tcp:3000 tcp:3000 && pnpm dlx expo start --localhost",
     "sb": "adb reverse tcp:8081 tcp:8081 && adb reverse tcp:3000 tcp:3000 && cross-env EXPO_PUBLIC_STORYBOOK_ENABLED=true expo start --localhost"
   },
   "private": true
