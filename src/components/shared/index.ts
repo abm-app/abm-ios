@@ -1,3 +1,4 @@
+export { default as FloatingTabBar } from './FloatingTabBar';
 export { default as DesignSystemNavigationPreview } from './DesignSystemNavigationPreview';
 export type {
   DesignSystemNavigationPreviewProps,

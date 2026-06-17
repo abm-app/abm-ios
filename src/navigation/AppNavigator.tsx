@@ -7,6 +7,7 @@ import tokens from '@/theme/tokens';
 import { useAuthStore } from '@/store/authStore';
 import { useLogout } from '@/hooks/auth/useLogout';
 import { Button } from '@/components/ui';
+import { FloatingTabBar } from '@/components/shared';
 import type { ModuleKey } from '@/types/auth';
 
 import type { AppTabParamList } from './types';
@@ -21,13 +22,13 @@ const Tab = createBottomTabNavigator<AppTabParamList>();
 type FeatherIconName = React.ComponentProps<typeof Feather>['name'];
 
 const TAB_ICONS: Record<keyof AppTabParamList, FeatherIconName> = {
-  Dashboard: 'layout',
+  Dashboard: 'layers',
   LiveStatus: 'list',
-  AuditTrail: 'file-text',
-  Revenue: 'dollar-sign',
-  Reports: 'bar-chart-2',
-  Loyalty: 'heart',
-  Notifications: 'bell',
+  AuditTrail: 'star',
+  Revenue: 'trending-up',
+  // Reports: 'bar-chart-2',
+  // Loyalty: 'heart',
+  // Notifications: 'bell',
   UserManagement: 'users',
 };
 
@@ -36,9 +37,9 @@ const TAB_LABELS: Record<keyof AppTabParamList, string> = {
   LiveStatus: 'Live Status',
   AuditTrail: 'Audit Trail',
   Revenue: 'Revenue',
-  Reports: 'Reports',
-  Loyalty: 'Loyalty',
-  Notifications: 'Notifs',
+  // Reports: 'Reports',
+  // Loyalty: 'Loyalty',
+  // Notifications: 'Notifs',
   UserManagement: 'Users',
 };
 
@@ -49,9 +50,9 @@ const MODULE_ORDER: ModuleKey[] = [
   'live_status',
   'audit_trail',
   'revenue',
-  'reports',
-  'loyalty',
-  'notifications',
+  // 'reports',
+  // 'loyalty',
+  // 'notifications',
   'user_management',
 ];
 
@@ -98,13 +99,9 @@ export default function AppNavigator() {
 
   return (
     <Tab.Navigator
+      tabBar={props => <FloatingTabBar {...props} />}
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: tokens.colors.textPrimary,
-        tabBarInactiveTintColor: tokens.colors.textHint,
-        tabBarLabelStyle: styles.tabBarLabel,
-        tabBarItemStyle: styles.tabBarItem,
-        tabBarStyle: styles.tabBar,
       }}
     >
       {enabledModules.map(moduleKey => {

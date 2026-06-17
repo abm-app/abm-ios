@@ -47,26 +47,35 @@ export default function Input({
   ...rest
 }: InputProps) {
   const hasError = Boolean(error);
+  const hasLabel = Boolean(label);
+  const hasRightIcon = Boolean(rightIcon);
+  const isDisabled = !editable;
+
+  const rowStyle = [
+    styles.inputRow,
+    hasError && errorInputStyle,
+    isDisabled && styles.inputRowDisabled,
+  ];
+
+  const inputStyle = [
+    styles.input,
+    hasRightIcon && styles.inputWithIcon,
+    isDisabled && styles.inputDisabled,
+  ];
 
   return (
     <View style={[styles.wrapper, style]}>
-      {label ? <Text style={styles.label}>{label}</Text> : null}
-      <View
-        style={[styles.inputRow, hasError && errorInputStyle, !editable && styles.inputRowDisabled]}
-      >
+      {hasLabel && <Text style={styles.label}>{label}</Text>}
+      <View style={rowStyle}>
         <TextInput
-          style={[
-            styles.input,
-            rightIcon ? styles.inputWithIcon : null,
-            !editable ? styles.inputDisabled : null,
-          ]}
+          style={inputStyle}
           placeholderTextColor={tokens.colors.textHint}
           editable={editable}
           {...rest}
         />
-        {rightIcon ? <View style={styles.iconWrapper}>{rightIcon}</View> : null}
+        {hasRightIcon && <View style={styles.iconWrapper}>{rightIcon}</View>}
       </View>
-      {hasError ? <Text style={errorTextStyle}>{error}</Text> : null}
+      {hasError && <Text style={errorTextStyle}>{error}</Text>}
     </View>
   );
 }

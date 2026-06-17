@@ -20,9 +20,9 @@ export type AppTabParamList = {
   LiveStatus: undefined;
   AuditTrail: undefined;
   Revenue: undefined;
-  Reports: undefined;
-  Loyalty: undefined;
-  Notifications: undefined;
+  // Reports: undefined;
+  // Loyalty: undefined;
+  // Notifications: undefined;
   UserManagement: undefined;
 };
 
@@ -32,9 +32,9 @@ export const MODULE_TO_TAB: Record<ModuleKey, keyof AppTabParamList> = {
   live_status: 'LiveStatus',
   audit_trail: 'AuditTrail',
   revenue: 'Revenue',
-  reports: 'Reports',
-  loyalty: 'Loyalty',
-  notifications: 'Notifications',
+  // reports: 'Reports',
+  // loyalty: 'Loyalty',
+  // notifications: 'Notifications',
   user_management: 'UserManagement',
 };
 
