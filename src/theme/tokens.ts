@@ -63,6 +63,10 @@ const colors = {
   authIcon: '#1E1E1E',
   authToggleTrack: '#E0E1E3',
   authThumbSurface: '#F9F9F9',
+
+  // Navigation
+  navActiveText: '#007AFF',
+  navActiveBg: 'rgba(0,0,0,0.06)',
 } as const;
 
 // ─── Typography ──────────────────────────────────────────────────────────────
@@ -531,6 +535,13 @@ const shadow = {
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.25,
     shadowRadius: 3,
+  },
+  /** Floating navigation bar elevation */
+  navCapsule: {
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.12,
+    shadowRadius: 24,
   },
 } as const;
 

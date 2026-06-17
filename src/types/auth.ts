@@ -9,15 +9,10 @@ export type UserProperty = 'express' | 'international' | 'both';
 // ─── Modules ─────────────────────────────────────────────────────────────────
 // Single source of truth — navigation imports ModuleKey from here.
 
-export type ModuleKey =
-  | 'dashboard'
-  | 'live_status'
-  | 'audit_trail'
-  | 'revenue'
-  | 'reports'
-  | 'loyalty'
-  | 'notifications'
-  | 'user_management';
+export type ModuleKey = 'dashboard' | 'live_status' | 'audit_trail' | 'revenue' | 'user_management';
+// | 'reports'
+// | 'loyalty'
+// | 'notifications';
 
 // ─── User ────────────────────────────────────────────────────────────────────
 

@@ -15,15 +15,15 @@ const ALL_MODULES: ModuleKey[] = [
   'live_status',
   'audit_trail',
   'revenue',
-  'reports',
-  'loyalty',
-  'notifications',
+  // 'reports',
+  // 'loyalty',
+  // 'notifications',
   'user_management',
 ];
 
 const MANAGER_MODULES: ModuleKey[] = ALL_MODULES.filter(m => m !== 'user_management');
 
-const STAFF_MODULES: ModuleKey[] = ['dashboard', 'live_status', 'notifications'];
+const STAFF_MODULES: ModuleKey[] = ['dashboard', 'live_status'];
 
 // ─── Mock users ──────────────────────────────────────────────────────────────
 
