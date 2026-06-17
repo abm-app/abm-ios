@@ -9,16 +9,15 @@ import tokens from '@/theme/tokens';
 export default function FloatingTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
   const insets = useSafeAreaInsets();
 
+  const dynamicStyles = StyleSheet.create({
+    safeArea: {
+      paddingBottom: Math.max(insets.bottom, tokens.navigation.paddingVertical),
+      paddingTop: tokens.navigation.paddingVertical,
+    },
+  });
+
   return (
-    <View
-      style={[
-        styles.container,
-        {
-          paddingBottom: Math.max(insets.bottom, tokens.navigation.paddingVertical),
-          paddingTop: tokens.navigation.paddingVertical,
-        },
-      ]}
-    >
+    <View style={[styles.container, dynamicStyles.safeArea]}>
       <View style={styles.shadowContainer}>
         <LinearGradient
           colors={[tokens.colors.navCapsuleGradientStart, tokens.colors.navCapsuleGradientEnd]}
@@ -29,14 +28,22 @@ export default function FloatingTabBar({ state, descriptors, navigation }: Botto
           <View style={styles.capsule}>
             {state.routes.map((route, index) => {
               const { options } = descriptors[route.key];
+              const isFocused = state.index === index;
+              const color = isFocused ? tokens.colors.navActiveText : tokens.colors.navInactiveText;
+
               const label =
                 options.tabBarLabel !== undefined
-                  ? options.tabBarLabel
+                  ? typeof options.tabBarLabel === 'function'
+                    ? options.tabBarLabel({
+                        focused: isFocused,
+                        color,
+                        position: 'below-icon',
+                        children: '',
+                      })
+                    : options.tabBarLabel
                   : options.title !== undefined
                     ? options.title
                     : route.name;
-
-              const isFocused = state.index === index;
 
               const onPress = () => {
                 const event = navigation.emit({
@@ -57,8 +64,6 @@ export default function FloatingTabBar({ state, descriptors, navigation }: Botto
                 });
               };
 
-              const color = isFocused ? tokens.colors.navActiveText : tokens.colors.navInactiveText;
-
               return (
                 <TouchableOpacity
                   key={route.key}
@@ -77,7 +82,14 @@ export default function FloatingTabBar({ state, descriptors, navigation }: Botto
                         size: tokens.iconSizes.tabBar,
                       })}
                   </View>
-                  <Text style={[styles.tabLabel, { color }]}>{label as string}</Text>
+                  <Text
+                    style={[
+                      styles.tabLabel,
+                      isFocused ? styles.tabLabelActive : styles.tabLabelInactive,
+                    ]}
+                  >
+                    {label as string}
+                  </Text>
                 </TouchableOpacity>
               );
             })}
@@ -104,7 +116,7 @@ const styles = StyleSheet.create({
     ...tokens.shadow.navCapsule,
   },
   gradientBorder: {
-    padding: 2,
+    padding: tokens.spacing.xxs,
     borderRadius: tokens.navigation.borderRadius,
     width: '100%',
   },
@@ -113,7 +125,7 @@ const styles = StyleSheet.create({
     backgroundColor: tokens.colors.navCapsuleBg,
     borderRadius: tokens.navigation.borderRadius,
     height: tokens.navigation.height,
-    paddingHorizontal: 2,
+    paddingHorizontal: tokens.spacing.xxs,
     width: '100%',
     justifyContent: 'space-between',
     alignItems: 'stretch',
@@ -135,7 +147,7 @@ const styles = StyleSheet.create({
     marginBottom: tokens.navigation.itemGap,
     alignItems: 'center',
     justifyContent: 'center',
-    height: 24,
+    height: tokens.iconSizes.tabBar,
   },
   tabLabel: {
     fontFamily: tokens.typography.fontFamily.sub,
@@ -143,5 +155,11 @@ const styles = StyleSheet.create({
     lineHeight: tokens.typography.lineHeight.navLabel,
     letterSpacing: tokens.typography.letterSpacing.navLabel,
     fontWeight: tokens.typography.fontWeight.semibold,
+  },
+  tabLabelActive: {
+    color: tokens.colors.navActiveText,
+  },
+  tabLabelInactive: {
+    color: tokens.colors.navInactiveText,
   },
 });

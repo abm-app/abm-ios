@@ -551,7 +551,6 @@ const shadow = {
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.12,
     shadowRadius: 40,
-    elevation: 10,
   },
 } as const;
 
