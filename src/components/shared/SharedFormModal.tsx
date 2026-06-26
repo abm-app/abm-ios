@@ -36,6 +36,7 @@ const ModalFooter = ({
   onSecondarySubmit,
   isSubmitting,
   bottomInset,
+  onBack,
 }: {
   buttonLabel: string;
   onSubmit: () => void;
@@ -43,8 +44,19 @@ const ModalFooter = ({
   onSecondarySubmit?: () => void;
   isSubmitting?: boolean;
   bottomInset: number;
+  onBack?: () => void;
 }) => (
   <View style={[styles.footer, { paddingBottom: Math.max(bottomInset, 24) }]}>
+    {onBack && (
+      <TouchableOpacity
+        style={styles.backButton}
+        onPress={onBack}
+        activeOpacity={0.7}
+        disabled={isSubmitting}
+      >
+        <Feather name="arrow-left" size={20} color={tokens.colors.textPrimary} />
+      </TouchableOpacity>
+    )}
     {secondaryButtonLabel && onSecondarySubmit && (
       <Button
         label={secondaryButtonLabel}
@@ -52,7 +64,7 @@ const ModalFooter = ({
         variant="secondary"
         size="md"
         disabled={isSubmitting}
-        style={[styles.submitBtn, styles.flexBtn, styles.marginRight]}
+        style={styles.marginRight}
       />
     )}
     <Button
@@ -62,7 +74,7 @@ const ModalFooter = ({
       size="md"
       disabled={isSubmitting}
       loading={isSubmitting}
-      style={[styles.submitBtn, secondaryButtonLabel ? styles.flexBtn : undefined]}
+      style={[styles.flexBtn]}
     />
   </View>
 );
@@ -78,6 +90,7 @@ interface SharedFormModalProps {
   secondaryButtonLabel?: string;
   onSecondarySubmit?: () => void;
   isSubmitting?: boolean;
+  onBack?: () => void;
   children: React.ReactNode;
 }
 
@@ -92,6 +105,7 @@ export const SharedFormModal = React.forwardRef<ScrollView, SharedFormModalProps
       secondaryButtonLabel,
       onSecondarySubmit,
       isSubmitting,
+      onBack,
       children,
     },
     ref,
@@ -172,6 +186,7 @@ export const SharedFormModal = React.forwardRef<ScrollView, SharedFormModalProps
               secondaryButtonLabel={secondaryButtonLabel}
               onSecondarySubmit={onSecondarySubmit}
               isSubmitting={isSubmitting}
+              onBack={onBack}
               bottomInset={insets.bottom}
             />
           </Animated.View>
@@ -224,6 +239,15 @@ const styles = StyleSheet.create({
     backgroundColor: tokens.colors.surface,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  backButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: tokens.colors.surface,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
   },
   scrollArea: {
     flexShrink: 1,

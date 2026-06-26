@@ -61,8 +61,18 @@ export const fetchMetaTemplates = async (): Promise<import('@/types/campaign').M
   return new Promise(resolve => {
     setTimeout(() => {
       resolve([
-        { id: 'tpl_monsoon', label: 'Monsoon Flash Sale', vars: ['Guest_Name'] },
-        { id: 'tpl_weekend', label: 'Weekend Upgrade', vars: [] },
+        {
+          id: 'tpl_monsoon',
+          label: 'Monsoon Flash Sale',
+          vars: ['Guest_Name'],
+          body: 'Hi {{Guest_Name}}, the Monsoons are here! Enjoy an exclusive 20% off your next stay at Lamax Properties. Valid for 48 hours.',
+        },
+        {
+          id: 'tpl_weekend',
+          label: 'Weekend Upgrade',
+          vars: [],
+          body: 'Dear Guest, upgrade your weekend stay to a suite for just $50 more! Reply YES to claim this exclusive offer.',
+        },
       ]);
     }, 600);
   });

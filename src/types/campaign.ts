@@ -27,4 +27,5 @@ export interface MetaTemplate {
   id: string;
   label: string;
   vars: string[];
+  body: string;
 }

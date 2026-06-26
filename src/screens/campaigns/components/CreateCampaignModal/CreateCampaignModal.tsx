@@ -159,6 +159,7 @@ export default function CreateCampaignModal({ visible, onClose, onSuccess }: Pro
         onSecondarySubmit={() => submitPayload(true)}
         isSubmitting={isSubmitting}
         onClose={handleClose}
+        onBack={currentPage === 2 ? () => setCurrentPage(1) : undefined}
       >
         {currentPage === 1 ? (
           <TargetAudienceStep
@@ -181,6 +182,7 @@ export default function CreateCampaignModal({ visible, onClose, onSuccess }: Pro
             templateVars={templateVars}
             onChangeTemplateVar={handleChangeTemplateVar}
             currentTemplate={currentTemplate}
+            reachCount={reachCount}
           />
         )}
       </SharedFormModal>

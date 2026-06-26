@@ -44,6 +44,13 @@ const colors = {
   badgeCatBg: 'rgba(0,0,0,0.15)',
   badgeCatText: '#333333',
 
+  // Chat Preview
+  waWallpaperBg: '#EFEAE2',
+
+  // Banners
+  bannerWarningBg: 'rgba(230,126,34,0.08)',
+  bannerWarningBorder: 'rgba(230,126,34,0.15)',
+
   // Insight progress
   insightTrackMuted: '#BBBBBB',
 
@@ -551,6 +558,14 @@ const shadow = {
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.12,
     shadowRadius: 40,
+  },
+  // Chat bubble elevation
+  chatBubble: {
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+    elevation: 1,
   },
 } as const;
 
