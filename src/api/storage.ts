@@ -1,3 +1,4 @@
+import { AuthUser, ModuleKey } from '@/types/auth';
 import * as SecureStore from 'expo-secure-store';
 
 const KEYS = {
@@ -33,6 +34,34 @@ export async function deleteRefreshToken(): Promise<void> {
   await SecureStore.deleteItemAsync(KEYS.REFRESH_TOKEN);
 }
 
+// ─── User and Modules (Mock phase persistence) ───────────────────────────────
+
+export async function getAuthUser(): Promise<AuthUser | null> {
+  const userStr = await SecureStore.getItemAsync('auth_user');
+  return userStr ? JSON.parse(userStr) : null;
+}
+
+export async function setAuthUser(user: AuthUser): Promise<void> {
+  await SecureStore.setItemAsync('auth_user', JSON.stringify(user));
+}
+
+export async function deleteAuthUser(): Promise<void> {
+  await SecureStore.deleteItemAsync('auth_user');
+}
+
+export async function getAuthModules(): Promise<ModuleKey[]> {
+  const modStr = await SecureStore.getItemAsync('auth_modules');
+  return modStr ? JSON.parse(modStr) : [];
+}
+
+export async function setAuthModules(modules: ModuleKey[]): Promise<void> {
+  await SecureStore.setItemAsync('auth_modules', JSON.stringify(modules));
+}
+
+export async function deleteAuthModules(): Promise<void> {
+  await SecureStore.deleteItemAsync('auth_modules');
+}
+
 // ─── Bulk helpers ────────────────────────────────────────────────────────────
 
 export async function saveAuthTokens(accessToken: string, refreshToken: string): Promise<void> {
@@ -40,5 +69,10 @@ export async function saveAuthTokens(accessToken: string, refreshToken: string):
 }
 
 export async function clearAuthTokens(): Promise<void> {
-  await Promise.all([deleteAccessToken(), deleteRefreshToken()]);
+  await Promise.all([
+    deleteAccessToken(),
+    deleteRefreshToken(),
+    deleteAuthUser(),
+    deleteAuthModules(),
+  ]);
 }
