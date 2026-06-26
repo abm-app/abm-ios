@@ -10,6 +10,7 @@ export interface PendingAction {
   title: string;
   audience: string;
   creator: string;
+  status: string;
 }
 
 interface ActionRequiredCardProps {
@@ -19,14 +20,16 @@ interface ActionRequiredCardProps {
 export default function ActionRequiredCard({ action }: ActionRequiredCardProps) {
   return (
     <Card padded style={styles.card}>
-      <View style={styles.chipRow}>
-        <Chip
-          label="Pending Senior Approval"
-          active
-          tone="warning"
-          textColor={tokens.colors.primary}
-        />
-      </View>
+      {action.status === 'pending' && (
+        <View style={styles.chipRow}>
+          <Chip
+            label="Pending Senior Approval"
+            active
+            tone="warning"
+            textColor={tokens.colors.primary}
+          />
+        </View>
+      )}
       <Text style={styles.title}>{action.title}</Text>
       <View style={styles.metaRow}>
         <Feather name="users" size={tokens.iconSizes.content} color={tokens.colors.textMuted} />

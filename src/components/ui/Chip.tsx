@@ -81,14 +81,14 @@ export default function Chip({
       <TouchableOpacity
         onPress={onPress}
         activeOpacity={0.7}
-        style={[style, styles.container, containerStyle]}
+        style={[styles.container, containerStyle, style]}
       >
         {content}
       </TouchableOpacity>
     );
   }
 
-  return <View style={[style, styles.container, containerStyle]}>{content}</View>;
+  return <View style={[styles.container, containerStyle, style]}>{content}</View>;
 }
 
 // ─── Static base styles ──────────────────────────────────────────────────────

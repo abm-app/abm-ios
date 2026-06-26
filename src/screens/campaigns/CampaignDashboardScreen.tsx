@@ -31,6 +31,7 @@ function mapCampaignToPendingAction(c: Campaign): PendingAction {
     title: c.name,
     audience: audienceStr,
     creator: c.createdBy,
+    status: c.status,
   };
 }
 

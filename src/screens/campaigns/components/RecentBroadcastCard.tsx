@@ -21,7 +21,11 @@ export default function RecentBroadcastCard({ broadcast }: RecentBroadcastCardPr
   return (
     <Card padded style={styles.card}>
       <View style={styles.chipRow}>
-        <Chip label={broadcast.status} />
+        <Chip
+          label={broadcast.status}
+          textColor={tokens.colors.primary}
+          style={{ backgroundColor: tokens.colors.authInputBg }}
+        />
       </View>
       <Text style={styles.title}>{broadcast.title}</Text>
       <Text style={styles.subtitle}>{broadcast.audienceCount.toLocaleString()} Guests</Text>
