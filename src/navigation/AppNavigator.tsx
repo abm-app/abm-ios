@@ -12,6 +12,7 @@ import type { ModuleKey } from '@/types/auth';
 
 import type { AppTabParamList } from './types';
 import { MODULE_TO_TAB } from './types';
+import CampaignDashboardScreen from '@/screens/campaigns/CampaignDashboardScreen';
 
 // ─── Tab Navigator ───────────────────────────────────────────────────────────
 
@@ -109,13 +110,14 @@ export default function AppNavigator() {
     >
       {enabledModules.map(moduleKey => {
         const routeName = MODULE_TO_TAB[moduleKey];
-        const Placeholder = PLACEHOLDER_SCREENS[routeName];
+        const ScreenComponent =
+          routeName === 'Campaigns' ? CampaignDashboardScreen : PLACEHOLDER_SCREENS[routeName];
 
         return (
           <Tab.Screen
             key={moduleKey}
             name={routeName}
-            component={Placeholder}
+            component={ScreenComponent}
             options={{
               tabBarLabel: TAB_LABELS[routeName],
               tabBarIcon: ({ color, focused }) => (

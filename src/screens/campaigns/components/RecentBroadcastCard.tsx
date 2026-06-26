@@ -1,0 +1,79 @@
+import React from 'react';
+import { View, Text, StyleSheet } from 'react-native';
+import { Feather } from '@expo/vector-icons';
+
+import tokens from '@/theme/tokens';
+import { Card, Chip } from '@/components/ui';
+
+export interface Broadcast {
+  id: string;
+  title: string;
+  status: 'Scheduled' | 'Sent';
+  audienceCount: number;
+  dateStr: string;
+}
+
+interface RecentBroadcastCardProps {
+  broadcast: Broadcast;
+}
+
+export default function RecentBroadcastCard({ broadcast }: RecentBroadcastCardProps) {
+  return (
+    <Card padded style={styles.card}>
+      <View style={styles.chipRow}>
+        <Chip label={broadcast.status} />
+      </View>
+      <Text style={styles.title}>{broadcast.title}</Text>
+      <Text style={styles.subtitle}>{broadcast.audienceCount.toLocaleString()} Guests</Text>
+
+      <View style={styles.divider} />
+
+      <View style={styles.footerRow}>
+        <Feather name="calendar" size={tokens.iconSizes.taskMeta} color={tokens.colors.textMuted} />
+        <Text style={styles.footerText}>
+          {broadcast.status === 'Sent' ? 'Sent on: ' : 'Fires on: '}
+          {broadcast.dateStr}
+        </Text>
+      </View>
+    </Card>
+  );
+}
+
+const styles = StyleSheet.create({
+  card: {
+    marginBottom: tokens.spacing.mdLg,
+  },
+  chipRow: {
+    alignItems: 'flex-start',
+    marginBottom: tokens.spacing.sm,
+  },
+  title: {
+    fontFamily: tokens.typography.fontFamily.sub,
+    fontSize: tokens.typography.fontSize.h2,
+    fontWeight: '600',
+    color: tokens.colors.textPrimary,
+    marginBottom: tokens.spacing.xs,
+  },
+  subtitle: {
+    fontFamily: tokens.typography.fontFamily.sub,
+    fontSize: tokens.typography.fontSize.body,
+    color: tokens.colors.textMuted,
+    marginBottom: tokens.spacing.lg,
+  },
+  divider: {
+    height: tokens.borderWidth.thin,
+    backgroundColor: tokens.colors.border,
+    marginBottom: tokens.spacing.mdLg,
+  },
+  footerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: tokens.spacing.sm,
+  },
+  footerText: {
+    fontFamily: tokens.typography.fontFamily.sub,
+    fontSize: tokens.typography.fontSize.caption,
+    color: tokens.colors.textMuted,
+    fontWeight: '500',
+  },
+});
