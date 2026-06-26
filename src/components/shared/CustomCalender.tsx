@@ -36,6 +36,48 @@ const MONTHS = [
 
 const WEEK_DAYS = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
 
+// ─── Sub-Components ─────────────────────────────────────────────────────────
+
+const CalendarHeader = ({
+  month,
+  year,
+  onPrevMonth,
+  onNextMonth,
+}: {
+  month: number;
+  year: number;
+  onPrevMonth: () => void;
+  onNextMonth: () => void;
+}) => (
+  <View style={styles.header}>
+    <View style={styles.headerTitleContainer}>
+      <Text style={styles.headerTitle}>
+        {MONTHS[month]} {year}
+      </Text>
+    </View>
+    <View style={styles.navContainer}>
+      <TouchableOpacity onPress={onPrevMonth} style={styles.navButton}>
+        <Ionicons name="chevron-back" size={24} color={CALENDAR_COLORS.primaryBlue} />
+      </TouchableOpacity>
+      <TouchableOpacity onPress={onNextMonth} style={styles.navButton}>
+        <Ionicons name="chevron-forward" size={24} color={CALENDAR_COLORS.primaryBlue} />
+      </TouchableOpacity>
+    </View>
+  </View>
+);
+
+const WeekdaysRow = () => (
+  <View style={styles.weekDaysContainer}>
+    {WEEK_DAYS.map(day => (
+      <Text key={day} style={styles.weekDayText}>
+        {day}
+      </Text>
+    ))}
+  </View>
+);
+
+// ─── Main Component ─────────────────────────────────────────────────────────
+
 export function CustomCalender({
   visible,
   onClose,
@@ -111,29 +153,14 @@ export function CustomCalender({
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
       <Pressable style={styles.overlay} onPress={onClose}>
         <Pressable style={styles.card} onPress={e => e.stopPropagation()}>
-          <View style={styles.header}>
-            <View style={styles.headerTitleContainer}>
-              <Text style={styles.headerTitle}>
-                {MONTHS[month]} {year}
-              </Text>
-            </View>
-            <View style={styles.navContainer}>
-              <TouchableOpacity onPress={handlePrevMonth} style={styles.navButton}>
-                <Ionicons name="chevron-back" size={24} color={CALENDAR_COLORS.primaryBlue} />
-              </TouchableOpacity>
-              <TouchableOpacity onPress={handleNextMonth} style={styles.navButton}>
-                <Ionicons name="chevron-forward" size={24} color={CALENDAR_COLORS.primaryBlue} />
-              </TouchableOpacity>
-            </View>
-          </View>
+          <CalendarHeader
+            month={month}
+            year={year}
+            onPrevMonth={handlePrevMonth}
+            onNextMonth={handleNextMonth}
+          />
 
-          <View style={styles.weekDaysContainer}>
-            {WEEK_DAYS.map(day => (
-              <Text key={day} style={styles.weekDayText}>
-                {day}
-              </Text>
-            ))}
-          </View>
+          <WeekdaysRow />
 
           <View style={styles.daysGrid}>{renderDays()}</View>
         </Pressable>

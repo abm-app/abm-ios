@@ -19,6 +19,24 @@ import LpaiLogo from '../../../assets/lpai.svg';
 const REFERENCE_WIDTH = tokens.auth.referenceWidth;
 const REFERENCE_HEIGHT = tokens.auth.referenceHeight;
 
+// ─── Sub-Components ─────────────────────────────────────────────────────────
+
+const LoginFooter = ({
+  designScale,
+  dynamicStyles,
+}: {
+  designScale: number;
+  dynamicStyles: ReturnType<typeof createDynamicStyles>;
+}) => (
+  <View style={styles.footer}>
+    <Text style={[styles.footerText, dynamicStyles.footerText]}>Powered by</Text>
+    <LpaiLogo
+      width={tokens.auth.logoWidth * designScale}
+      height={tokens.auth.logoHeight * designScale}
+    />
+  </View>
+);
+
 // ─── Component ───────────────────────────────────────────────────────────────
 
 export default function LoginScreen() {
@@ -78,13 +96,7 @@ export default function LoginScreen() {
       </KeyboardAvoidingView>
 
       {/* ── Footer ─────────────────────────────────────────────────────── */}
-      <View style={styles.footer}>
-        <Text style={[styles.footerText, dynamicStyles.footerText]}>Powered by</Text>
-        <LpaiLogo
-          width={tokens.auth.logoWidth * designScale}
-          height={tokens.auth.logoHeight * designScale}
-        />
-      </View>
+      <LoginFooter designScale={designScale} dynamicStyles={dynamicStyles} />
     </View>
   );
 }

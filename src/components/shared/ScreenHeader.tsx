@@ -6,6 +6,72 @@ import tokens from '@/theme/tokens';
 
 import { Button } from '@/components/ui';
 
+// ─── Sub-Components ─────────────────────────────────────────────────────────
+
+const SearchInput = ({
+  searchValue,
+  onSearchChange,
+  onBlur,
+}: {
+  searchValue?: string;
+  onSearchChange?: (text: string) => void;
+  onBlur: () => void;
+}) => (
+  <TextInput
+    style={styles.searchInput}
+    placeholder="Search..."
+    placeholderTextColor={tokens.colors.textMuted}
+    autoFocus
+    onBlur={onBlur}
+    value={searchValue}
+    onChangeText={onSearchChange}
+  />
+);
+
+const ActionButtons = ({
+  showSearch,
+  isSearching,
+  showFilter,
+  showRightButton,
+  rightButtonText,
+  onSearchPress,
+  onFilterPress,
+  onRightButtonPress,
+}: {
+  showSearch: boolean;
+  isSearching: boolean;
+  showFilter: boolean;
+  showRightButton: boolean;
+  rightButtonText: string;
+  onSearchPress: () => void;
+  onFilterPress?: () => void;
+  onRightButtonPress?: () => void;
+}) => (
+  <View style={styles.rightRow}>
+    {showSearch && !isSearching && (
+      <TouchableOpacity style={styles.iconButton} onPress={onSearchPress} activeOpacity={0.7}>
+        <Feather name="search" size={20} color={tokens.colors.textPrimary} />
+      </TouchableOpacity>
+    )}
+    {showFilter && (
+      <TouchableOpacity style={styles.iconButton} onPress={onFilterPress} activeOpacity={0.7}>
+        <Feather name="filter" size={20} color={tokens.colors.textPrimary} />
+      </TouchableOpacity>
+    )}
+    {showRightButton && (
+      <Button
+        label={rightButtonText}
+        variant="primary"
+        size="md"
+        onPress={onRightButtonPress || (() => console.warn('Right button pressed'))}
+        style={styles.actionButton}
+      />
+    )}
+  </View>
+);
+
+// ─── Main Component ─────────────────────────────────────────────────────────
+
 export interface ScreenHeaderProps {
   title: string;
   subtitle?: string;
@@ -44,14 +110,10 @@ export function ScreenHeaderV2({
     <View style={styles.container}>
       <View style={styles.leftCol}>
         {isSearching ? (
-          <TextInput
-            style={styles.searchInput}
-            placeholder="Search..."
-            placeholderTextColor={tokens.colors.textMuted}
-            autoFocus
+          <SearchInput
+            searchValue={searchValue}
+            onSearchChange={onSearchChange}
             onBlur={() => setIsSearching(false)}
-            value={searchValue}
-            onChangeText={onSearchChange}
           />
         ) : (
           <>
@@ -60,31 +122,16 @@ export function ScreenHeaderV2({
           </>
         )}
       </View>
-      <View style={styles.rightRow}>
-        {showSearch && !isSearching && (
-          <TouchableOpacity
-            style={styles.iconButton}
-            onPress={handleSearchPress}
-            activeOpacity={0.7}
-          >
-            <Feather name="search" size={20} color={tokens.colors.textPrimary} />
-          </TouchableOpacity>
-        )}
-        {showFilter && (
-          <TouchableOpacity style={styles.iconButton} onPress={onFilterPress} activeOpacity={0.7}>
-            <Feather name="filter" size={20} color={tokens.colors.textPrimary} />
-          </TouchableOpacity>
-        )}
-        {showRightButton && (
-          <Button
-            label={rightButtonText}
-            variant="primary"
-            size="md"
-            onPress={onRightButtonPress || (() => console.warn('Right button pressed'))}
-            style={styles.actionButton}
-          />
-        )}
-      </View>
+      <ActionButtons
+        showSearch={showSearch}
+        isSearching={isSearching}
+        showFilter={showFilter}
+        showRightButton={showRightButton}
+        rightButtonText={rightButtonText}
+        onSearchPress={handleSearchPress}
+        onFilterPress={onFilterPress}
+        onRightButtonPress={onRightButtonPress}
+      />
     </View>
   );
 }

@@ -18,6 +18,43 @@ import tokens from '@/theme/tokens';
 
 import { Button } from '@/components/ui';
 
+// ─── Sub-Components ─────────────────────────────────────────────────────────
+
+const ModalHeader = ({ title, onClose }: { title: string; onClose: () => void }) => (
+  <View style={styles.header}>
+    <Text style={styles.title}>{title}</Text>
+    <TouchableOpacity style={styles.closeButton} onPress={onClose} activeOpacity={0.7}>
+      <Feather name="x" size={20} color={tokens.colors.textPrimary} />
+    </TouchableOpacity>
+  </View>
+);
+
+const ModalFooter = ({
+  buttonLabel,
+  onSubmit,
+  isSubmitting,
+  bottomInset,
+}: {
+  buttonLabel: string;
+  onSubmit: () => void;
+  isSubmitting?: boolean;
+  bottomInset: number;
+}) => (
+  <View style={[styles.footer, { paddingBottom: Math.max(bottomInset, 24) }]}>
+    <Button
+      label={buttonLabel}
+      onPress={onSubmit}
+      variant="primary"
+      size="md"
+      disabled={isSubmitting}
+      loading={isSubmitting}
+      style={styles.submitBtn}
+    />
+  </View>
+);
+
+// ─── Main Component ─────────────────────────────────────────────────────────
+
 interface SharedFormModalProps {
   visible: boolean;
   title: string;
@@ -74,12 +111,7 @@ export const SharedFormModal = React.forwardRef<ScrollView, SharedFormModalProps
 
           <View style={styles.modalCard}>
             {/* Header */}
-            <View style={styles.header}>
-              <Text style={styles.title}>{title}</Text>
-              <TouchableOpacity style={styles.closeButton} onPress={onClose} activeOpacity={0.7}>
-                <Feather name="x" size={20} color={tokens.colors.textPrimary} />
-              </TouchableOpacity>
-            </View>
+            <ModalHeader title={title} onClose={onClose} />
 
             {/* Content Area */}
             <ScrollView
@@ -93,17 +125,12 @@ export const SharedFormModal = React.forwardRef<ScrollView, SharedFormModalProps
             </ScrollView>
 
             {/* Footer */}
-            <View style={[styles.footer, { paddingBottom: Math.max(insets.bottom, 24) }]}>
-              <Button
-                label={buttonLabel}
-                onPress={onSubmit}
-                variant="primary"
-                size="md"
-                disabled={isSubmitting}
-                loading={isSubmitting}
-                style={styles.submitBtn}
-              />
-            </View>
+            <ModalFooter
+              buttonLabel={buttonLabel}
+              onSubmit={onSubmit}
+              isSubmitting={isSubmitting}
+              bottomInset={insets.bottom}
+            />
           </View>
         </Animated.View>
       </Modal>

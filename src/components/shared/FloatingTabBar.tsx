@@ -8,6 +8,33 @@ import { Feather } from '@expo/vector-icons';
 import tokens from '@/theme/tokens';
 import ENV from '@/config/env';
 
+// ─── Helpers ─────────────────────────────────────────────────────────────────
+
+function resolveTabLabel(
+  options: BottomTabBarProps['descriptors'][string]['options'],
+  isFocused: boolean,
+  color: string,
+  routeName: string,
+) {
+  if (options.tabBarLabel !== undefined) {
+    if (typeof options.tabBarLabel === 'function') {
+      return options.tabBarLabel({
+        focused: isFocused,
+        color,
+        position: 'below-icon',
+        children: '',
+      });
+    }
+    return options.tabBarLabel;
+  }
+  if (options.title !== undefined) {
+    return options.title;
+  }
+  return routeName;
+}
+
+// ─── Component ───────────────────────────────────────────────────────────────
+
 export default function FloatingTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
   const insets = useSafeAreaInsets();
 
@@ -33,19 +60,7 @@ export default function FloatingTabBar({ state, descriptors, navigation }: Botto
               const isFocused = state.index === index;
               const color = isFocused ? tokens.colors.navActiveText : tokens.colors.navInactiveText;
 
-              const label =
-                options.tabBarLabel !== undefined
-                  ? typeof options.tabBarLabel === 'function'
-                    ? options.tabBarLabel({
-                        focused: isFocused,
-                        color,
-                        position: 'below-icon',
-                        children: '',
-                      })
-                    : options.tabBarLabel
-                  : options.title !== undefined
-                    ? options.title
-                    : route.name;
+              const label = resolveTabLabel(options, isFocused, color, route.name);
 
               const onPress = () => {
                 const event = navigation.emit({
