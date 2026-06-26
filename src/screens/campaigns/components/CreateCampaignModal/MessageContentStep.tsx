@@ -1,8 +1,9 @@
 import React from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, ImageBackground } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import tokens from '@/theme/tokens';
 import { Input, Chip, Card } from '@/components/ui';
 import type { MetaTemplate } from '@/types/campaign';
+import { MetaContent } from '@/components/shared';
 
 interface MessageContentStepProps {
   templates: MetaTemplate[] | undefined;
@@ -14,9 +15,6 @@ interface MessageContentStepProps {
   currentTemplate: MetaTemplate | undefined;
   reachCount: number | null;
 }
-
-const WA_BG_URL =
-  'https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png';
 
 export default function MessageContentStep({
   templates,
@@ -51,21 +49,7 @@ export default function MessageContentStep({
         </View>
       )}
 
-      {currentTemplate ? (
-        <View style={styles.previewSection}>
-          <ImageBackground
-            source={{ uri: WA_BG_URL }}
-            style={styles.previewBg}
-            imageStyle={styles.previewBgImage}
-          >
-            <View style={styles.bubble}>
-              <View style={styles.tail} />
-              <Text style={styles.bubbleText}>{previewText}</Text>
-              <Text style={styles.bubbleTime}>09:41 AM</Text>
-            </View>
-          </ImageBackground>
-        </View>
-      ) : null}
+      {currentTemplate ? <MetaContent body={previewText} /> : null}
 
       {currentTemplate?.vars.length ? (
         <Card padded style={styles.varsCard}>
@@ -107,52 +91,6 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     gap: tokens.spacing.sm,
     marginBottom: tokens.spacing.mdLg,
-  },
-  previewSection: {
-    marginBottom: tokens.spacing.mdLg,
-    borderRadius: tokens.borderRadius.lg,
-    overflow: 'hidden',
-    borderWidth: tokens.borderWidth.thin,
-    borderColor: tokens.colors.border,
-  },
-  previewBg: {
-    padding: tokens.spacing.xl,
-    backgroundColor: tokens.colors.waWallpaperBg,
-  },
-  previewBgImage: {
-    opacity: 0.4,
-  },
-  bubble: {
-    backgroundColor: tokens.colors.white,
-    padding: tokens.spacing.lg,
-    borderRadius: tokens.borderRadius.lg,
-    borderTopLeftRadius: 0,
-    position: 'relative',
-    ...tokens.shadow.chatBubble,
-  },
-  tail: {
-    position: 'absolute',
-    top: 0,
-    left: -10,
-    width: 0,
-    height: 0,
-    borderTopWidth: 12,
-    borderLeftWidth: 10,
-    borderTopColor: tokens.colors.white,
-    borderLeftColor: 'transparent',
-  },
-  bubbleText: {
-    fontFamily: tokens.typography.fontFamily.sub,
-    fontSize: tokens.typography.fontSize.body,
-    color: tokens.colors.textPrimary,
-    lineHeight: 22,
-    marginBottom: tokens.spacing.md,
-  },
-  bubbleTime: {
-    fontFamily: tokens.typography.fontFamily.sub,
-    fontSize: 10,
-    color: tokens.colors.textHint,
-    alignSelf: 'flex-end',
   },
   varsCard: {
     marginBottom: tokens.spacing.mdLg,
