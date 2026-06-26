@@ -34,25 +34,25 @@ interface MockUser {
 }
 
 const MOCK_USERS: Record<string, MockUser> = {
-  'owner@abm.com': {
-    password: 'owner123',
+  'owner@abm': {
+    password: '1234',
     modules: ALL_MODULES,
     user: {
       id: 'usr_001',
-      email: 'owner@abm.com',
-      firstName: 'Raj',
-      lastName: 'Mehta',
+      email: 'owner@abm',
+      firstName: 'Tanvir',
+      lastName: 'O',
       role: 'owner',
       property: 'both',
       modules: ALL_MODULES,
     },
   },
-  'manager@abm.com': {
-    password: 'manager123',
+  'manager@abm': {
+    password: '1234',
     modules: MANAGER_MODULES,
     user: {
       id: 'usr_002',
-      email: 'manager@abm.com',
+      email: 'manager@abm',
       firstName: 'Priya',
       lastName: 'Sharma',
       role: 'manager',
@@ -60,12 +60,12 @@ const MOCK_USERS: Record<string, MockUser> = {
       modules: MANAGER_MODULES,
     },
   },
-  'staff@abm.com': {
-    password: 'staff123',
+  'staff@abm': {
+    password: '1234',
     modules: STAFF_MODULES,
     user: {
       id: 'usr_003',
-      email: 'staff@abm.com',
+      email: 'staff@abm',
       firstName: 'Amit',
       lastName: 'Kumar',
       role: 'staff',
