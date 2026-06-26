@@ -9,6 +9,7 @@ import { useAuthStore } from '@/store/authStore';
 
 import ActionRequiredCard, { PendingAction } from './components/ActionRequiredCard';
 import RecentBroadcastCard, { Broadcast } from './components/RecentBroadcastCard';
+import CreateCampaignModal from './components/CreateCampaignModal/CreateCampaignModal';
 import { useCampaigns } from '@/hooks/campaigns/useCampaigns';
 import { LoadingSpinner, ErrorState } from '@/components/shared';
 import type { Campaign } from '@/types/campaign';
@@ -58,6 +59,7 @@ function mapCampaignToBroadcast(c: Campaign): Broadcast {
 
 export default function CampaignDashboardScreen() {
   const [activeTab, setActiveTab] = useState('broadcasts');
+  const [isCreateModalVisible, setIsCreateModalVisible] = useState(false);
   const user = useAuthStore(state => state.user);
   const insets = useSafeAreaInsets();
 
@@ -83,8 +85,13 @@ export default function CampaignDashboardScreen() {
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
-      <ScreenHeaderV2 title="Campaigns" showFilter showRightButton rightButtonText="+ New" />
-
+      <ScreenHeaderV2
+        title="Campaigns"
+        showFilter
+        showRightButton
+        rightButtonText="+ New"
+        onRightButtonPress={() => setIsCreateModalVisible(true)}
+      />
       <View style={styles.tabsContainer}>
         <SegmentedControl tabs={TABS} activeTab={activeTab} onChange={setActiveTab} />
       </View>
@@ -124,6 +131,12 @@ export default function CampaignDashboardScreen() {
           </View>
         </View>
       )}
+
+      <CreateCampaignModal
+        visible={isCreateModalVisible}
+        onClose={() => setIsCreateModalVisible(false)}
+        onSuccess={() => refetch()}
+      />
     </View>
   );
 }

@@ -17,8 +17,14 @@ export interface Campaign {
   sentAt?: string;
   createdAt: string;
   updatedAt: string;
+  offerExpiry?: string;
   metadata: {
-    offerExpiry?: string;
     [key: string]: unknown;
   };
+}
+
+export interface MetaTemplate {
+  id: string;
+  label: string;
+  vars: string[];
 }

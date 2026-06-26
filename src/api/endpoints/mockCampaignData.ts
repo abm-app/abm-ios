@@ -18,9 +18,8 @@ export const mockCampaigns: Campaign[] = [
     createdBy: 'usr_sarah',
     createdAt: now,
     updatedAt: now,
-    metadata: {
-      offerExpiry: '2026-08-01T00:00:00Z',
-    },
+    offerExpiry: '2026-08-01T00:00:00Z',
+    metadata: {},
   },
   {
     _id: 'cmp_2',
@@ -93,8 +92,7 @@ export const mockCampaigns: Campaign[] = [
     sentAt: '2026-06-20T12:00:02Z',
     createdAt: '2026-06-18T10:00:00Z',
     updatedAt: '2026-06-20T12:00:02Z',
-    metadata: {
-      offerExpiry: '2026-07-01T00:00:00Z',
-    },
+    offerExpiry: '2026-07-01T00:00:00Z',
+    metadata: {},
   },
 ];

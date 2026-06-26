@@ -12,3 +12,10 @@ export function useCampaigns() {
     queryFn: () => fetchCampaigns(),
   });
 }
+
+export function useMetaTemplates() {
+  return useQuery({
+    queryKey: [...campaignKeys.all, 'templates'] as const,
+    queryFn: () => import('@/api/endpoints/campaignApi').then(m => m.fetchMetaTemplates()),
+  });
+}

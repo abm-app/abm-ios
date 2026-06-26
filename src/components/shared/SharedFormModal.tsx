@@ -32,15 +32,29 @@ const ModalHeader = ({ title, onClose }: { title: string; onClose: () => void })
 const ModalFooter = ({
   buttonLabel,
   onSubmit,
+  secondaryButtonLabel,
+  onSecondarySubmit,
   isSubmitting,
   bottomInset,
 }: {
   buttonLabel: string;
   onSubmit: () => void;
+  secondaryButtonLabel?: string;
+  onSecondarySubmit?: () => void;
   isSubmitting?: boolean;
   bottomInset: number;
 }) => (
   <View style={[styles.footer, { paddingBottom: Math.max(bottomInset, 24) }]}>
+    {secondaryButtonLabel && onSecondarySubmit && (
+      <Button
+        label={secondaryButtonLabel}
+        onPress={onSecondarySubmit}
+        variant="secondary"
+        size="md"
+        disabled={isSubmitting}
+        style={[styles.submitBtn, styles.flexBtn, styles.marginRight]}
+      />
+    )}
     <Button
       label={buttonLabel}
       onPress={onSubmit}
@@ -48,7 +62,7 @@ const ModalFooter = ({
       size="md"
       disabled={isSubmitting}
       loading={isSubmitting}
-      style={styles.submitBtn}
+      style={[styles.submitBtn, secondaryButtonLabel ? styles.flexBtn : undefined]}
     />
   </View>
 );
@@ -61,12 +75,27 @@ interface SharedFormModalProps {
   buttonLabel: string;
   onClose: () => void;
   onSubmit: () => void;
+  secondaryButtonLabel?: string;
+  onSecondarySubmit?: () => void;
   isSubmitting?: boolean;
   children: React.ReactNode;
 }
 
 export const SharedFormModal = React.forwardRef<ScrollView, SharedFormModalProps>(
-  ({ visible, title, buttonLabel, onClose, onSubmit, isSubmitting, children }, ref) => {
+  (
+    {
+      visible,
+      title,
+      buttonLabel,
+      onClose,
+      onSubmit,
+      secondaryButtonLabel,
+      onSecondarySubmit,
+      isSubmitting,
+      children,
+    },
+    ref,
+  ) => {
     const insets = useSafeAreaInsets();
     const [keyboardHeight] = React.useState(() => new Animated.Value(0));
     const [slideAnim] = React.useState(() => new Animated.Value(600));
@@ -140,6 +169,8 @@ export const SharedFormModal = React.forwardRef<ScrollView, SharedFormModalProps
             <ModalFooter
               buttonLabel={buttonLabel}
               onSubmit={onSubmit}
+              secondaryButtonLabel={secondaryButtonLabel}
+              onSecondarySubmit={onSecondarySubmit}
               isSubmitting={isSubmitting}
               bottomInset={insets.bottom}
             />
@@ -204,8 +235,15 @@ const styles = StyleSheet.create({
   footer: {
     paddingHorizontal: 24,
     paddingTop: 8,
+    flexDirection: 'row',
   },
   submitBtn: {
     width: '100%',
+  },
+  flexBtn: {
+    flex: 1,
+  },
+  marginRight: {
+    marginRight: 16,
   },
 });
