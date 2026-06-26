@@ -22,7 +22,8 @@ const Tab = createBottomTabNavigator<AppTabParamList>();
 type FeatherIconName = React.ComponentProps<typeof Feather>['name'];
 
 const TAB_ICONS: Record<keyof AppTabParamList, FeatherIconName> = {
-  Dashboard: 'layers',
+  // Dashboard: 'layers',
+  Campaigns: 'target',
   LiveStatus: 'list',
   AuditTrail: 'star',
   Revenue: 'trending-up',
@@ -33,7 +34,8 @@ const TAB_ICONS: Record<keyof AppTabParamList, FeatherIconName> = {
 };
 
 const TAB_LABELS: Record<keyof AppTabParamList, string> = {
-  Dashboard: 'Dashboard',
+  // Dashboard: 'Dashboard',
+  Campaigns: 'Campaigns',
   LiveStatus: 'Live Status',
   AuditTrail: 'Audit Trail',
   Revenue: 'Revenue',
@@ -46,7 +48,8 @@ const TAB_LABELS: Record<keyof AppTabParamList, string> = {
 // ─── Ordered ModuleKeys (determines tab order) ───────────────────────────────
 
 const MODULE_ORDER: ModuleKey[] = [
-  'dashboard',
+  // 'dashboard',
+  'campaigns',
   'live_status',
   'audit_trail',
   'revenue',

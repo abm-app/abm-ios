@@ -11,7 +11,8 @@ const delay = (ms: number): Promise<void> => new Promise(resolve => setTimeout(r
 // ─── Module sets per role ────────────────────────────────────────────────────
 
 const ALL_MODULES: ModuleKey[] = [
-  'dashboard',
+  // 'dashboard',
+  'campaigns',
   'live_status',
   'audit_trail',
   'revenue',
@@ -23,7 +24,7 @@ const ALL_MODULES: ModuleKey[] = [
 
 const MANAGER_MODULES: ModuleKey[] = ALL_MODULES.filter(m => m !== 'user_management');
 
-const STAFF_MODULES: ModuleKey[] = ['dashboard', 'live_status'];
+const STAFF_MODULES: ModuleKey[] = [/* 'dashboard', */ 'campaigns', 'live_status'];
 
 // ─── Mock users ──────────────────────────────────────────────────────────────
 
