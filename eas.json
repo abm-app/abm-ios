@@ -18,7 +18,11 @@
       }
     },
     "production": {
-      "autoIncrement": true
+      "autoIncrement": true,
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://api.example.com",
+        "EXPO_PUBLIC_USE_MOCK_AUTH": "true"
+      }
     }
   },
   "submit": {
