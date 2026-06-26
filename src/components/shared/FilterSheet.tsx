@@ -1,5 +1,13 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView, Modal, TouchableWithoutFeedback } from 'react-native';
+import React, { useEffect } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  Modal,
+  TouchableWithoutFeedback,
+  Animated,
+} from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import tokens from '@/theme/tokens';
@@ -25,11 +33,24 @@ export function FilterSheet({
 }: FilterSheetProps) {
   const insets = useSafeAreaInsets();
 
+  const [slideAnim] = React.useState(() => new Animated.Value(600));
+
+  useEffect(() => {
+    if (visible) {
+      slideAnim.setValue(600);
+      Animated.spring(slideAnim, {
+        toValue: 0,
+        useNativeDriver: true,
+        bounciness: 0,
+      }).start();
+    }
+  }, [visible, slideAnim]);
+
   return (
     <Modal
       visible={visible}
       transparent
-      animationType="slide"
+      animationType="fade"
       onRequestClose={onClose}
       statusBarTranslucent
     >
@@ -37,7 +58,7 @@ export function FilterSheet({
         <TouchableWithoutFeedback onPress={onClose}>
           <View style={styles.backdrop} />
         </TouchableWithoutFeedback>
-        <View style={styles.sheetContainer}>
+        <Animated.View style={[styles.sheetContainer, { transform: [{ translateY: slideAnim }] }]}>
           {showDragIndicator && (
             <View style={styles.dragIndicatorContainer}>
               <View style={styles.dragIndicator} />
@@ -60,7 +81,7 @@ export function FilterSheet({
               {footer}
             </View>
           )}
-        </View>
+        </Animated.View>
       </View>
     </Modal>
   );

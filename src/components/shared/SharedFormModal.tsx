@@ -69,6 +69,7 @@ export const SharedFormModal = React.forwardRef<ScrollView, SharedFormModalProps
   ({ visible, title, buttonLabel, onClose, onSubmit, isSubmitting, children }, ref) => {
     const insets = useSafeAreaInsets();
     const [keyboardHeight] = React.useState(() => new Animated.Value(0));
+    const [slideAnim] = React.useState(() => new Animated.Value(600));
 
     React.useEffect(() => {
       const showEvent = Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow';
@@ -96,11 +97,22 @@ export const SharedFormModal = React.forwardRef<ScrollView, SharedFormModalProps
       };
     }, [keyboardHeight]);
 
+    React.useEffect(() => {
+      if (visible) {
+        slideAnim.setValue(600);
+        Animated.spring(slideAnim, {
+          toValue: 0,
+          useNativeDriver: true,
+          bounciness: 0,
+        }).start();
+      }
+    }, [visible, slideAnim]);
+
     return (
       <Modal
         visible={visible}
         transparent
-        animationType="slide"
+        animationType="fade"
         onRequestClose={onClose}
         statusBarTranslucent
       >
@@ -109,7 +121,7 @@ export const SharedFormModal = React.forwardRef<ScrollView, SharedFormModalProps
             <View style={styles.backdrop} />
           </TouchableWithoutFeedback>
 
-          <View style={styles.modalCard}>
+          <Animated.View style={[styles.modalCard, { transform: [{ translateY: slideAnim }] }]}>
             {/* Header */}
             <ModalHeader title={title} onClose={onClose} />
 
@@ -131,7 +143,7 @@ export const SharedFormModal = React.forwardRef<ScrollView, SharedFormModalProps
               isSubmitting={isSubmitting}
               bottomInset={insets.bottom}
             />
-          </View>
+          </Animated.View>
         </Animated.View>
       </Modal>
     );
