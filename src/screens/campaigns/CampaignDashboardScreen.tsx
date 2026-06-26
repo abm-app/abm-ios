@@ -9,39 +9,49 @@ import { useAuthStore } from '@/store/authStore';
 
 import ActionRequiredCard, { PendingAction } from './components/ActionRequiredCard';
 import RecentBroadcastCard, { Broadcast } from './components/RecentBroadcastCard';
-
-// ─── Mock Data ───────────────────────────────────────────────────────────────
-
-const PENDING_ACTIONS: PendingAction[] = [
-  {
-    id: '1',
-    title: 'Monsoon Flash Sale',
-    audience: '850 Guests • Suites & Execs',
-    creator: 'Sarah J.',
-  },
-];
-
-const RECENT_BROADCASTS: Broadcast[] = [
-  {
-    id: '1',
-    title: 'Diwali Early Access',
-    status: 'Scheduled',
-    audienceCount: 1200,
-    dateStr: '10 Nov, 09:00 AM',
-  },
-  {
-    id: '2',
-    title: 'Weekend Upgrade Offer',
-    status: 'Sent',
-    audienceCount: 620,
-    dateStr: '17 Nov, 12:00 AM',
-  },
-];
+import { useCampaigns } from '@/hooks/campaigns/useCampaigns';
+import { LoadingSpinner, ErrorState } from '@/components/shared';
+import type { Campaign } from '@/types/campaign';
 
 const TABS = [
   { id: 'broadcasts', label: 'Broadcasts' },
   { id: 'automations', label: 'Automations' },
 ];
+
+function mapCampaignToPendingAction(c: Campaign): PendingAction {
+  let audienceStr = `${c.recipientCount} Guests`;
+  if (c.filters?.tier) {
+    audienceStr += ` • ${c.filters.tier}`;
+  } else if (c.filters?.property) {
+    audienceStr += ` • ${c.filters.property}`;
+  }
+
+  return {
+    id: c._id,
+    title: c.name,
+    audience: audienceStr,
+    creator: c.createdBy,
+  };
+}
+
+function mapCampaignToBroadcast(c: Campaign): Broadcast {
+  let dateStr = c.scheduledAt || c.sentAt || '';
+  if (dateStr && dateStr.includes('T')) {
+    // Simple format '2026-06-15T09:00:00Z' -> '15 Jun, 09:00 AM'
+    const d = new Date(dateStr);
+    const day = d.getDate();
+    const month = d.toLocaleString('en-US', { month: 'short' });
+    const time = d.toLocaleString('en-US', { hour: '2-digit', minute: '2-digit' });
+    dateStr = `${day} ${month}, ${time}`;
+  }
+  return {
+    id: c._id,
+    title: c.name,
+    status: c.status === 'sent' ? 'Sent' : 'Scheduled',
+    audienceCount: c.recipientCount,
+    dateStr,
+  };
+}
 
 // ─── Screen Component ────────────────────────────────────────────────────────
 
@@ -49,6 +59,8 @@ export default function CampaignDashboardScreen() {
   const [activeTab, setActiveTab] = useState('broadcasts');
   const user = useAuthStore(state => state.user);
   const insets = useSafeAreaInsets();
+
+  const { data: campaigns, isLoading, isError, error, refetch } = useCampaigns();
 
   const isOwner = user?.role === 'owner';
 
@@ -58,6 +70,15 @@ export default function CampaignDashboardScreen() {
     tokens.navigation.paddingVertical +
     Math.max(insets.bottom, tokens.navigation.paddingVertical) +
     tokens.spacing.lg;
+
+  if (isLoading) return <LoadingSpinner />;
+  if (isError)
+    return <ErrorState message={error?.message || 'Failed to load campaigns.'} onRetry={refetch} />;
+
+  const pendingCampaigns =
+    campaigns?.filter(c => c.status === 'pending' || c.status === 'draft') || [];
+  const recentCampaigns =
+    campaigns?.filter(c => c.status === 'scheduled' || c.status === 'sent') || [];
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
@@ -77,9 +98,11 @@ export default function CampaignDashboardScreen() {
             <View style={styles.topSectionContainer}>
               <Text style={styles.sectionTitle}>ACTION REQUIRED</Text>
               <FlatList
-                data={PENDING_ACTIONS}
-                keyExtractor={item => item.id}
-                renderItem={({ item }) => <ActionRequiredCard action={item} />}
+                data={pendingCampaigns}
+                keyExtractor={item => item._id}
+                renderItem={({ item }) => (
+                  <ActionRequiredCard action={mapCampaignToPendingAction(item)} />
+                )}
                 contentContainerStyle={styles.listContent}
                 showsVerticalScrollIndicator={false}
               />
@@ -89,9 +112,11 @@ export default function CampaignDashboardScreen() {
           <View style={styles.bottomSectionContainer}>
             <Text style={styles.sectionTitle}>RECENT BROADCASTS</Text>
             <FlatList
-              data={RECENT_BROADCASTS}
-              keyExtractor={item => item.id}
-              renderItem={({ item }) => <RecentBroadcastCard broadcast={item} />}
+              data={recentCampaigns}
+              keyExtractor={item => item._id}
+              renderItem={({ item }) => (
+                <RecentBroadcastCard broadcast={mapCampaignToBroadcast(item)} />
+              )}
               contentContainerStyle={[styles.listContent, { paddingBottom: bottomPadding }]}
               showsVerticalScrollIndicator={false}
             />
