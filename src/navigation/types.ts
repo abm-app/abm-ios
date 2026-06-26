@@ -45,7 +45,7 @@ export const MODULE_TO_TAB: Record<ModuleKey, keyof AppTabParamList> = {
 export type RootStackParamList = {
   Auth: undefined;
   Main: undefined;
-  DevMenu: undefined;
+
   DesignSystemPreview: undefined;
 };
 

@@ -1,6 +1,8 @@
 import React from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Feather } from '@expo/vector-icons';
 
 import tokens from '@/theme/tokens';
 import { Button } from '@/components/ui';
@@ -19,18 +21,25 @@ import MigratedComponentsSection from './components/MigratedComponentsSection';
 // ─── Component ───────────────────────────────────────────────────────────────
 
 export default function DesignSystemPreview() {
+  const navigation = useNavigation();
+
   return (
     <SafeAreaView style={styles.safeArea}>
+      {/* ── Fixed Header ────────────────────────────────────────────────────── */}
+      <View style={styles.fixedHeader}>
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          style={styles.backButton}
+          activeOpacity={0.7}
+        >
+          <Feather name="arrow-left" size={24} color={tokens.colors.textPrimary} />
+        </TouchableOpacity>
+        <Text style={styles.headerTitleH1}>Design System</Text>
+      </View>
+
+      <View style={styles.headerDivider} />
+
       <ScrollView style={styles.root} contentContainerStyle={styles.content}>
-        {/* ── Header ────────────────────────────────────────────────────── */}
-        <View style={styles.header}>
-          <Text style={styles.headerEyebrow}>Design System</Text>
-          <Text style={styles.headerTitle}>ABM</Text>
-          <Text style={styles.headerSubtitle}>Hotel Operations Platform</Text>
-        </View>
-
-        <View style={styles.headerDivider} />
-
         {/* ── Foundations ────────────────────────────────────────────────── */}
         <ColorTokensSection />
         <TypographyScaleSection />
@@ -112,35 +121,28 @@ const styles = StyleSheet.create({
   },
 
   /* Header */
-  header: {
-    paddingTop: tokens.dsHeader.topPadding,
-    paddingBottom: tokens.dsHeader.bottomPadding,
+  fixedHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: tokens.spacing.lgMd,
+    paddingTop: tokens.spacing.md,
+    paddingBottom: tokens.spacing.md,
+    backgroundColor: tokens.colors.background,
   },
-  headerEyebrow: {
-    fontSize: tokens.typography.fontSize.label,
-    fontWeight: tokens.typography.fontWeight.semibold,
-    letterSpacing: tokens.typography.letterSpacing.label,
-    textTransform: 'uppercase',
-    color: tokens.colors.textHint,
-    marginBottom: tokens.dsHeader.eyebrowMarginBottom,
+  backButton: {
+    marginRight: tokens.spacing.md,
   },
-  headerTitle: {
+  headerTitleH1: {
     fontFamily: tokens.typography.fontFamily.heading,
-    fontSize: tokens.typography.fontSize.display,
-    fontWeight: tokens.typography.fontWeight.regular,
-    lineHeight: tokens.typography.lineHeight.display,
-    letterSpacing: tokens.typography.letterSpacing.display,
+    fontSize: tokens.typography.fontSize.h1,
+    fontWeight: tokens.typography.fontWeight.semibold,
+    lineHeight: tokens.typography.lineHeight.h1,
     color: tokens.colors.textPrimary,
-  },
-  headerSubtitle: {
-    fontSize: tokens.typography.fontSize.button,
-    color: tokens.colors.textMuted,
-    marginTop: tokens.dsHeader.subtitleMarginTop,
   },
   headerDivider: {
     height: 1,
     backgroundColor: tokens.colors.border,
-    marginBottom: tokens.dsHeader.dividerMarginBottom,
+    marginBottom: tokens.spacing.md,
   },
 
   /* Generic section wrapper */
