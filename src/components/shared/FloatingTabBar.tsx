@@ -98,7 +98,7 @@ export default function FloatingTabBar({ state, descriptors, navigation }: Botto
             {ENV.DEV_MODE_ENABLED && (
               <TouchableOpacity
                 accessibilityRole="button"
-                onPress={() => navigation.navigate('DevMenu' as never)}
+                onPress={() => navigation.navigate('DesignSystemPreview' as never)}
                 style={styles.tabItem}
                 activeOpacity={0.8}
               >

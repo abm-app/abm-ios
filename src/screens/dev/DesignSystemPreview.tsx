@@ -1,4 +1,5 @@
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import tokens from '@/theme/tokens';
 import { Button } from '@/components/ui';
@@ -18,93 +19,99 @@ import SectionLabel from './components/SectionLabel';
 
 export default function DesignSystemPreview() {
   return (
-    <ScrollView style={styles.root} contentContainerStyle={styles.content}>
-      {/* ── Header ────────────────────────────────────────────────────── */}
-      <View style={styles.header}>
-        <Text style={styles.headerEyebrow}>Design System</Text>
-        <Text style={styles.headerTitle}>ABM</Text>
-        <Text style={styles.headerSubtitle}>Hotel Operations Platform</Text>
-      </View>
-
-      <View style={styles.headerDivider} />
-
-      {/* ── Foundations ────────────────────────────────────────────────── */}
-      <ColorTokensSection />
-      <TypographyScaleSection />
-      <SpacingScaleSection />
-      <BorderRadiusSection />
-
-      {/* ── Components — Buttons ──────────────────────────────────────── */}
-      <View style={styles.section}>
-        <SectionLabel title="Components — Buttons" />
-        <View style={styles.buttonRow}>
-          <Button label="Create Task" variant="primary" onPress={() => {}} />
-          <Button label="Edit" variant="secondary" onPress={() => {}} />
-          <Button label="Cancel" variant="ghost" onPress={() => {}} />
-          <Button label="Delete" variant="danger" onPress={() => {}} />
-          <Button label="+ New" variant="primary" size="sm" onPress={() => {}} />
-          <Button label="Delegate" variant="secondary" size="sm" onPress={() => {}} />
+    <SafeAreaView style={styles.safeArea}>
+      <ScrollView style={styles.root} contentContainerStyle={styles.content}>
+        {/* ── Header ────────────────────────────────────────────────────── */}
+        <View style={styles.header}>
+          <Text style={styles.headerEyebrow}>Design System</Text>
+          <Text style={styles.headerTitle}>ABM</Text>
+          <Text style={styles.headerSubtitle}>Hotel Operations Platform</Text>
         </View>
-      </View>
 
-      {/* ── Components — Priority & Category Chips ────────────────────── */}
-      <View style={styles.section}>
-        <SectionLabel title="Components — Priority & Category Chips" />
-        <View style={styles.chipRow}>
-          <Chip label="Open" active tone="primary" />
-          <Chip label="Recurring" />
-          <Chip label="Done" />
-        </View>
-        <View style={styles.chipSpacer} />
-        <View style={styles.chipRow}>
-          <Badge label="High" variant="high" />
-          <Badge label="Medium" variant="medium" />
-          <Badge label="Low" variant="low" />
-          <Badge label="Maintenance" variant="category" />
-          <Badge label="Orders" variant="category" />
-          <Badge label="Management" variant="category" />
-        </View>
-        <View style={styles.chipSpacer} />
-        <View style={styles.chipRow}>
-          <Chip label="Daily" active tone="warning" />
-          <Chip label="Weekly" active tone="primary" />
-          <Chip label="Monthly" />
-        </View>
-      </View>
+        <View style={styles.headerDivider} />
 
-      {/* ── Components — Form Inputs ──────────────────────────────────── */}
-      <View style={styles.section}>
-        <SectionLabel title="Components — Form Inputs" />
-        <View style={styles.inputStack}>
-          <Input label="Task title" placeholder="e.g. Restock seafood station" />
-          <Input label="Due date" placeholder="2026-06-11" />
-          <Input label="Search" placeholder="Search tasks..." />
+        {/* ── Foundations ────────────────────────────────────────────────── */}
+        <ColorTokensSection />
+        <TypographyScaleSection />
+        <SpacingScaleSection />
+        <BorderRadiusSection />
+
+        {/* ── Components — Buttons ──────────────────────────────────────── */}
+        <View style={styles.section}>
+          <SectionLabel title="Components — Buttons" />
+          <View style={styles.buttonRow}>
+            <Button label="Create Task" variant="primary" onPress={() => {}} />
+            <Button label="Edit" variant="secondary" onPress={() => {}} />
+            <Button label="Cancel" variant="ghost" onPress={() => {}} />
+            <Button label="Delete" variant="danger" onPress={() => {}} />
+            <Button label="+ New" variant="primary" size="sm" onPress={() => {}} />
+            <Button label="Delegate" variant="secondary" size="sm" onPress={() => {}} />
+          </View>
         </View>
-      </View>
 
-      {/* ── Components — Navigation Bar ───────────────────────────────── */}
-      <View style={styles.section}>
-        <SectionLabel title="Components — Navigation Bar" />
-        <DesignSystemNavigationPreview
-          items={[
-            { key: 'dashboard', label: 'Dashboard', icon: 'grid' },
-            { key: 'tasks', label: 'Tasks', icon: 'check-square' },
-            { key: 'reviews', label: 'Reviews', icon: 'star' },
-            { key: 'profile', label: 'Profile', icon: 'user' },
-          ]}
-          activeKey="dashboard"
-        />
-      </View>
+        {/* ── Components — Priority & Category Chips ────────────────────── */}
+        <View style={styles.section}>
+          <SectionLabel title="Components — Priority & Category Chips" />
+          <View style={styles.chipRow}>
+            <Chip label="Open" active tone="primary" />
+            <Chip label="Recurring" />
+            <Chip label="Done" />
+          </View>
+          <View style={styles.chipSpacer} />
+          <View style={styles.chipRow}>
+            <Badge label="High" variant="high" />
+            <Badge label="Medium" variant="medium" />
+            <Badge label="Low" variant="low" />
+            <Badge label="Maintenance" variant="category" />
+            <Badge label="Orders" variant="category" />
+            <Badge label="Management" variant="category" />
+          </View>
+          <View style={styles.chipSpacer} />
+          <View style={styles.chipRow}>
+            <Chip label="Daily" active tone="warning" />
+            <Chip label="Weekly" active tone="primary" />
+            <Chip label="Monthly" />
+          </View>
+        </View>
 
-      {/* ── Token Reference ───────────────────────────────────────────── */}
-      <TokenReferenceSection />
-    </ScrollView>
+        {/* ── Components — Form Inputs ──────────────────────────────────── */}
+        <View style={styles.section}>
+          <SectionLabel title="Components — Form Inputs" />
+          <View style={styles.inputStack}>
+            <Input label="Task title" placeholder="e.g. Restock seafood station" />
+            <Input label="Due date" placeholder="2026-06-11" />
+            <Input label="Search" placeholder="Search tasks..." />
+          </View>
+        </View>
+
+        {/* ── Components — Navigation Bar ───────────────────────────────── */}
+        <View style={styles.section}>
+          <SectionLabel title="Components — Navigation Bar" />
+          <DesignSystemNavigationPreview
+            items={[
+              { key: 'dashboard', label: 'Dashboard', icon: 'grid' },
+              { key: 'tasks', label: 'Tasks', icon: 'check-square' },
+              { key: 'reviews', label: 'Reviews', icon: 'star' },
+              { key: 'profile', label: 'Profile', icon: 'user' },
+            ]}
+            activeKey="dashboard"
+          />
+        </View>
+
+        {/* ── Token Reference ───────────────────────────────────────────── */}
+        <TokenReferenceSection />
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 // ─── Styles ──────────────────────────────────────────────────────────────────
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: tokens.colors.background,
+  },
   root: {
     flex: 1,
     backgroundColor: tokens.colors.background,
