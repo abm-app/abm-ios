@@ -26,6 +26,8 @@ export interface ChipProps {
   onPress?: () => void;
   /** Additional container styles merged after chip defaults. */
   style?: StyleProp<ViewStyle>;
+  /** Custom text color override. */
+  textColor?: string;
 }
 
 // ─── Pre-created token-derived style maps (module-level, computed once) ──────
@@ -65,11 +67,14 @@ export default function Chip({
   tone = 'default',
   onPress,
   style,
+  textColor,
 }: ChipProps) {
   const containerStyle = active ? toneContainerStyles[tone] : toneContainerStyles.default;
   const textStyle = active ? toneLabelStyles[tone] : toneLabelStyles.default;
 
-  const content = <Text style={[styles.label, textStyle]}>{label}</Text>;
+  const content = (
+    <Text style={[styles.label, textStyle, textColor ? { color: textColor } : null]}>{label}</Text>
+  );
 
   if (onPress) {
     return (

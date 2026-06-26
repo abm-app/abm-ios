@@ -20,7 +20,12 @@ export default function ActionRequiredCard({ action }: ActionRequiredCardProps) 
   return (
     <Card padded style={styles.card}>
       <View style={styles.chipRow}>
-        <Chip label="Pending Senior Approval" active tone="warning" />
+        <Chip
+          label="Pending Senior Approval"
+          active
+          tone="warning"
+          textColor={tokens.colors.primary}
+        />
       </View>
       <Text style={styles.title}>{action.title}</Text>
       <View style={styles.metaRow}>

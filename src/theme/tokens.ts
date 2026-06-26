@@ -24,7 +24,7 @@ const colors = {
 
   // Status
   danger: '#C0392B',
-  warning: '#F59E0B',
+  warning: '#FFD9B2',
   success: '#27AE60',
   info: '#2471A3',
 
