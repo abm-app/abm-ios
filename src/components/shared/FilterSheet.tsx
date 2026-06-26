@@ -45,10 +45,9 @@ export function FilterSheet({
           )}
           <View style={[styles.header, showDragIndicator && styles.headerWithDrag]}>
             <Text style={styles.title}>{title}</Text>
-            {headerRight && <View style={styles.headerRight}>{headerRight}</View>}
+            {headerRight && <View>{headerRight}</View>}
           </View>
           <ScrollView
-            style={styles.content}
             contentContainerStyle={styles.contentContainer}
             showsVerticalScrollIndicator={false}
           >
@@ -80,7 +79,7 @@ const styles = StyleSheet.create({
     backgroundColor: tokens.colors.background,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
-    maxHeight: '90%', // Ensures the scrollview is scrollable if content overflows
+    maxHeight: '90%',
     ...tokens.shadow.modal,
     elevation: 24,
   },
@@ -111,15 +110,9 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: tokens.colors.textPrimary,
   },
-  headerRight: {
-    // Optional alignment
-  },
-  content: {
-    // Scrollable area
-  },
   contentContainer: {
     paddingHorizontal: 24,
-    paddingBottom: 24, // Added padding for better scroll end feel
+    paddingBottom: 24,
   },
   footer: {
     paddingHorizontal: 24,

@@ -7,7 +7,6 @@ import { Button } from '@/components/ui';
 import Badge from '@/components/ui/Badge';
 import Chip from '@/components/ui/Chip';
 import Input from '@/components/ui/Input';
-import DesignSystemNavigationPreview from '@/components/shared/DesignSystemNavigationPreview';
 
 import ColorTokensSection from './components/ColorTokensSection';
 import TypographyScaleSection from './components/TypographyScaleSection';
@@ -18,7 +17,7 @@ import SectionLabel from './components/SectionLabel';
 
 import { ConfirmationModal } from '@/components/shared/ConfirmationModal';
 import { CustomCalender } from '@/components/shared/CustomCalender';
-import { ScreenHeaderV2 } from '@/components/shared/ScreenHeader-v2';
+import { ScreenHeaderV2 } from '@/components/shared/ScreenHeader';
 import { SharedFormModal } from '@/components/shared/SharedFormModal';
 import { Avatar } from '@/components/shared/Avatar';
 import { FilterSheet } from '@/components/shared/FilterSheet';
@@ -95,20 +94,6 @@ export default function DesignSystemPreview() {
             <Input label="Due date" placeholder="2026-06-11" />
             <Input label="Search" placeholder="Search tasks..." />
           </View>
-        </View>
-
-        {/* ── Components — Navigation Bar ───────────────────────────────── */}
-        <View style={styles.section}>
-          <SectionLabel title="Components — Navigation Bar" />
-          <DesignSystemNavigationPreview
-            items={[
-              { key: 'dashboard', label: 'Dashboard', icon: 'grid' },
-              { key: 'tasks', label: 'Tasks', icon: 'check-square' },
-              { key: 'reviews', label: 'Reviews', icon: 'star' },
-              { key: 'profile', label: 'Profile', icon: 'user' },
-            ]}
-            activeKey="dashboard"
-          />
         </View>
 
         {/* ── Components — Migrated ─────────────────────────────────────── */}
