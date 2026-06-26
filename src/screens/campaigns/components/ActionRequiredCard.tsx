@@ -20,7 +20,7 @@ interface ActionRequiredCardProps {
 export default function ActionRequiredCard({ action }: ActionRequiredCardProps) {
   return (
     <Card padded style={styles.card}>
-      {action.status === 'pending' && (
+      {action.status === 'pending_approval' && (
         <View style={styles.chipRow}>
           <Chip
             label="Pending Senior Approval"

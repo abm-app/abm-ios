@@ -1,10 +1,13 @@
 import type { Campaign } from '@/types/campaign';
 
+const now = new Date().toISOString();
+
 export const mockCampaigns: Campaign[] = [
   {
     _id: 'cmp_1',
     name: 'Summer VIP Outreach',
     templateId: 'tpl_101',
+    templateVariables: { '1': 'FirstName' },
     type: 'manual',
     filters: {
       tier: 'Platinum',
@@ -13,38 +16,52 @@ export const mockCampaigns: Campaign[] = [
     recipientCount: 1450,
     status: 'draft',
     createdBy: 'usr_sarah',
-    scheduledAt: null,
+    createdAt: now,
+    updatedAt: now,
+    metadata: {
+      offerExpiry: '2026-08-01T00:00:00Z',
+    },
   },
   {
     _id: 'cmp_2',
     name: 'Post-Checkout Thank You',
     templateId: 'tpl_102',
-    type: 'automated',
+    templateVariables: { '1': 'GuestName', '2': 'PropertyName' },
+    type: 'trigger',
     filters: {
       property: 'ABM Grand Hotel',
     },
-    recipientCount: 0, // Automated campaigns might calculate at runtime
-    status: 'pending',
+    recipientCount: 0,
+    status: 'pending_approval',
     createdBy: 'usr_system',
     scheduledAt: '2026-07-01T10:00:00Z',
+    createdAt: now,
+    updatedAt: now,
+    metadata: {},
   },
   {
     _id: 'cmp_3',
     name: 'Lapsed Guest Re-engagement',
     templateId: 'tpl_103',
-    type: 'manual',
+    templateVariables: { '1': 'Name' },
+    type: 'scheduled',
     filters: {
       lapsedDays: 180,
     },
     recipientCount: 3200,
-    status: 'scheduled',
+    status: 'approved',
     createdBy: 'usr_sarah',
+    approvedBy: 'usr_manager',
     scheduledAt: '2026-06-30T14:30:00Z',
+    createdAt: now,
+    updatedAt: now,
+    metadata: {},
   },
   {
     _id: 'cmp_4',
     name: 'Gold Member Double Points',
     templateId: 'tpl_104',
+    templateVariables: {},
     type: 'manual',
     filters: {
       tier: 'Gold',
@@ -52,13 +69,18 @@ export const mockCampaigns: Campaign[] = [
     recipientCount: 5600,
     status: 'sent',
     createdBy: 'usr_mark',
+    approvedBy: 'usr_manager',
     scheduledAt: '2026-06-15T09:00:00Z',
     sentAt: '2026-06-15T09:00:05Z',
+    createdAt: '2026-06-14T10:00:00Z',
+    updatedAt: '2026-06-15T09:00:05Z',
+    metadata: {},
   },
   {
     _id: 'cmp_5',
     name: 'Weekend Spa Promo',
     templateId: 'tpl_105',
+    templateVariables: { '1': 'Discount' },
     type: 'manual',
     filters: {
       property: 'ABM Resort Spa',
@@ -66,7 +88,13 @@ export const mockCampaigns: Campaign[] = [
     recipientCount: 890,
     status: 'sent',
     createdBy: 'usr_jessica',
+    approvedBy: 'usr_manager',
     scheduledAt: '2026-06-20T12:00:00Z',
     sentAt: '2026-06-20T12:00:02Z',
+    createdAt: '2026-06-18T10:00:00Z',
+    updatedAt: '2026-06-20T12:00:02Z',
+    metadata: {
+      offerExpiry: '2026-07-01T00:00:00Z',
+    },
   },
 ];

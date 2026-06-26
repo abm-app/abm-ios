@@ -77,9 +77,9 @@ export default function CampaignDashboardScreen() {
     return <ErrorState message={error?.message || 'Failed to load campaigns.'} onRetry={refetch} />;
 
   const pendingCampaigns =
-    campaigns?.filter(c => c.status === 'pending' || c.status === 'draft') || [];
+    campaigns?.filter(c => c.status === 'pending_approval' || c.status === 'draft') || [];
   const recentCampaigns =
-    campaigns?.filter(c => c.status === 'scheduled' || c.status === 'sent') || [];
+    campaigns?.filter(c => c.status === 'approved' || c.status === 'sent') || [];
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
