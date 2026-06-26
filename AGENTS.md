@@ -18,7 +18,7 @@ The backend is a NestJS API. The app is a rendering layer only — no business l
 These apply to every task, no exceptions. Violating any of these is grounds to reject the output.
 
 1. **iOS only.** Never add Android-specific code, config, plugins, or `Platform.OS === 'android'` checks. Do not modify `app.json` for Android. If a library requires Android-specific setup, note it and skip that part.
-2. **TypeScript strict.** `noImplicitAny` and `strictNullChecks` are enabled. Never use `any` unless genuinely unavoidable — if you must, add an inline comment explaining why. Never use `// @ts-ignore` or `// @ts-expect-error` without a comment.
+2. **TypeScript strict.** `noImplicitAny` and `strictNullChecks` are enabled. Never use `any` as a type. Always use proper types. Never suppress lint errors using lint comments (like `// @ts-ignore`, `// @ts-expect-error`, or `// eslint-disable`). Always resolve them correctly.
 3. **No inline styles.** Every style value must come from `StyleSheet.create()`. No style objects defined inline in JSX (`style={{ color: 'red' }}`). No hardcoded hex values, spacing numbers, or font sizes in component files — use tokens (see Design System section).
 4. **No hardcoded design values.** Colors, spacing, border radius, font sizes, and font families must always be read from `src/theme/tokens.ts`. If a value is not in tokens, add it to tokens first, then use it.
 5. **Reuse before creating.** Before building a new component, check `src/components/ui/` and `src/components/shared/` for something that already does the job. If a component is used in more than one screen, it must live in `src/components/` — not inside a screen folder.
@@ -27,6 +27,7 @@ These apply to every task, no exceptions. Violating any of these is grounds to r
 8. **No `process.env` outside `src/config/env.ts`.** All environment variable access is centralised there.
 9. **Tokens are stored in `expo-secure-store`.** Never in `AsyncStorage`, never in memory alone. Use the helpers in `src/api/storage.ts`.
 10. **pnpm only.** Never use `npm install` or `yarn add`. Package manager is pnpm with `node-linker=hoisted`.
+11. **Rule Enforcement.** Read this `AGENTS.md` file every time after making any changes to ensure the rules are followed.
 
 ---
 
