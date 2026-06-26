@@ -1,7 +1,7 @@
 {
   "name": "abm-ios",
   "version": "1.0.0",
-  "main": "index.ts",
+  "main": "expo/AppEntry.js",
   "dependencies": {
     "@babel/core": "^7.29.7",
     "@expo-google-fonts/inter": "^0.4.2",
@@ -28,7 +28,6 @@
     "@types/react": "~19.1.17",
     "@typescript-eslint/eslint-plugin": "^8.61.0",
     "@typescript-eslint/parser": "^8.61.0",
-    "babel-plugin-module-resolver": "^5.0.3",
     "eslint": "^8.57.1",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.6",
@@ -47,7 +46,7 @@
     "format": "prettier --write src/**/*.{ts,tsx}",
     "type-check": "tsc --noEmit",
     "do": "pnpm format && pnpm lint && pnpm type-check && git add .",
-    "lh": "adb reverse tcp:8081 tcp:8081 && adb reverse tcp:3000 tcp:3000 && pnpm dlx expo start --localhost"
+    "lh": "adb reverse tcp:8081 tcp:8081 && adb reverse tcp:3000 tcp:3000 && pnpm exec expo start --localhost"
   },
   "private": true
 }

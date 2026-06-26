@@ -10,16 +10,12 @@ import { useAuthStore } from '@/store/authStore';
 import tokens from '@/theme/tokens';
 import AuthNavigator from './AuthNavigator';
 import AppNavigator from './AppNavigator';
+import DesignSystemPreviewScreen from '@/screens/dev/DesignSystemPreview';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
-// Dev-only screens — conditional require so Metro strips them in production builds.
-let DesignSystemPreviewScreen: React.ComponentType | null = null;
-
-if (__DEV__) {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  DesignSystemPreviewScreen = require('@/screens/dev/DesignSystemPreview').default;
-}
+// We use a static import because dynamic require() breaks Fast Refresh.
+// The screen is only rendered conditionally below when __DEV__ is true.
 
 export default function RootNavigator() {
   const isAuthenticated = useAuthStore(s => s.isAuthenticated);
@@ -46,7 +42,7 @@ export default function RootNavigator() {
             {isAuthenticated ? (
               <>
                 <Stack.Screen name="Main" component={AppNavigator} />
-                {DesignSystemPreviewScreen && (
+                {__DEV__ && (
                   <Stack.Screen
                     name="DesignSystemPreview"
                     component={DesignSystemPreviewScreen}
