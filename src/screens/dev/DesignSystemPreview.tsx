@@ -1,11 +1,14 @@
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import React from 'react';
+import { useNavigation } from '@react-navigation/native';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Feather } from '@expo/vector-icons';
 
 import tokens from '@/theme/tokens';
 import { Button } from '@/components/ui';
 import Badge from '@/components/ui/Badge';
 import Chip from '@/components/ui/Chip';
 import Input from '@/components/ui/Input';
-import DesignSystemNavigationPreview from '@/components/shared/DesignSystemNavigationPreview';
 
 import ColorTokensSection from './components/ColorTokensSection';
 import TypographyScaleSection from './components/TypographyScaleSection';
@@ -13,98 +16,101 @@ import SpacingScaleSection from './components/SpacingScaleSection';
 import BorderRadiusSection from './components/BorderRadiusSection';
 import TokenReferenceSection from './components/TokenReferenceSection';
 import SectionLabel from './components/SectionLabel';
+import MigratedComponentsSection from './components/MigratedComponentsSection';
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
 export default function DesignSystemPreview() {
+  const navigation = useNavigation();
+
   return (
-    <ScrollView style={styles.root} contentContainerStyle={styles.content}>
-      {/* ── Header ────────────────────────────────────────────────────── */}
-      <View style={styles.header}>
-        <Text style={styles.headerEyebrow}>Design System</Text>
-        <Text style={styles.headerTitle}>ABM</Text>
-        <Text style={styles.headerSubtitle}>Hotel Operations Platform</Text>
+    <SafeAreaView style={styles.safeArea}>
+      {/* ── Fixed Header ────────────────────────────────────────────────────── */}
+      <View style={styles.fixedHeader}>
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          style={styles.backButton}
+          activeOpacity={0.7}
+        >
+          <Feather name="arrow-left" size={24} color={tokens.colors.textPrimary} />
+        </TouchableOpacity>
+        <Text style={styles.headerTitleH1}>Design System</Text>
       </View>
 
       <View style={styles.headerDivider} />
 
-      {/* ── Foundations ────────────────────────────────────────────────── */}
-      <ColorTokensSection />
-      <TypographyScaleSection />
-      <SpacingScaleSection />
-      <BorderRadiusSection />
+      <ScrollView style={styles.root} contentContainerStyle={styles.content}>
+        {/* ── Foundations ────────────────────────────────────────────────── */}
+        <ColorTokensSection />
+        <TypographyScaleSection />
+        <SpacingScaleSection />
+        <BorderRadiusSection />
 
-      {/* ── Components — Buttons ──────────────────────────────────────── */}
-      <View style={styles.section}>
-        <SectionLabel title="Components — Buttons" />
-        <View style={styles.buttonRow}>
-          <Button label="Create Task" variant="primary" onPress={() => {}} />
-          <Button label="Edit" variant="secondary" onPress={() => {}} />
-          <Button label="Cancel" variant="ghost" onPress={() => {}} />
-          <Button label="Delete" variant="danger" onPress={() => {}} />
-          <Button label="+ New" variant="primary" size="sm" onPress={() => {}} />
-          <Button label="Delegate" variant="secondary" size="sm" onPress={() => {}} />
+        {/* ── Components — Buttons ──────────────────────────────────────── */}
+        <View style={styles.section}>
+          <SectionLabel title="Components — Buttons" />
+          <View style={styles.buttonRow}>
+            <Button label="Create Task" variant="primary" onPress={() => {}} />
+            <Button label="Edit" variant="secondary" onPress={() => {}} />
+            <Button label="Cancel" variant="ghost" onPress={() => {}} />
+            <Button label="Delete" variant="danger" onPress={() => {}} />
+            <Button label="+ New" variant="primary" size="sm" onPress={() => {}} />
+            <Button label="Delegate" variant="secondary" size="sm" onPress={() => {}} />
+          </View>
         </View>
-      </View>
 
-      {/* ── Components — Priority & Category Chips ────────────────────── */}
-      <View style={styles.section}>
-        <SectionLabel title="Components — Priority & Category Chips" />
-        <View style={styles.chipRow}>
-          <Chip label="Open" active tone="primary" />
-          <Chip label="Recurring" />
-          <Chip label="Done" />
+        {/* ── Components — Priority & Category Chips ────────────────────── */}
+        <View style={styles.section}>
+          <SectionLabel title="Components — Priority & Category Chips" />
+          <View style={styles.chipRow}>
+            <Chip label="Open" active tone="primary" />
+            <Chip label="Recurring" />
+            <Chip label="Done" />
+          </View>
+          <View style={styles.chipSpacer} />
+          <View style={styles.chipRow}>
+            <Badge label="High" variant="high" />
+            <Badge label="Medium" variant="medium" />
+            <Badge label="Low" variant="low" />
+            <Badge label="Maintenance" variant="category" />
+            <Badge label="Orders" variant="category" />
+            <Badge label="Management" variant="category" />
+          </View>
+          <View style={styles.chipSpacer} />
+          <View style={styles.chipRow}>
+            <Chip label="Daily" active tone="warning" />
+            <Chip label="Weekly" active tone="primary" />
+            <Chip label="Monthly" />
+          </View>
         </View>
-        <View style={styles.chipSpacer} />
-        <View style={styles.chipRow}>
-          <Badge label="High" variant="high" />
-          <Badge label="Medium" variant="medium" />
-          <Badge label="Low" variant="low" />
-          <Badge label="Maintenance" variant="category" />
-          <Badge label="Orders" variant="category" />
-          <Badge label="Management" variant="category" />
-        </View>
-        <View style={styles.chipSpacer} />
-        <View style={styles.chipRow}>
-          <Chip label="Daily" active tone="warning" />
-          <Chip label="Weekly" active tone="primary" />
-          <Chip label="Monthly" />
-        </View>
-      </View>
 
-      {/* ── Components — Form Inputs ──────────────────────────────────── */}
-      <View style={styles.section}>
-        <SectionLabel title="Components — Form Inputs" />
-        <View style={styles.inputStack}>
-          <Input label="Task title" placeholder="e.g. Restock seafood station" />
-          <Input label="Due date" placeholder="2026-06-11" />
-          <Input label="Search" placeholder="Search tasks..." />
+        {/* ── Components — Form Inputs ──────────────────────────────────── */}
+        <View style={styles.section}>
+          <SectionLabel title="Components — Form Inputs" />
+          <View style={styles.inputStack}>
+            <Input label="Task title" placeholder="e.g. Restock seafood station" />
+            <Input label="Due date" placeholder="2026-06-11" />
+            <Input label="Search" placeholder="Search tasks..." />
+          </View>
         </View>
-      </View>
 
-      {/* ── Components — Navigation Bar ───────────────────────────────── */}
-      <View style={styles.section}>
-        <SectionLabel title="Components — Navigation Bar" />
-        <DesignSystemNavigationPreview
-          items={[
-            { key: 'dashboard', label: 'Dashboard', icon: 'grid' },
-            { key: 'tasks', label: 'Tasks', icon: 'check-square' },
-            { key: 'reviews', label: 'Reviews', icon: 'star' },
-            { key: 'profile', label: 'Profile', icon: 'user' },
-          ]}
-          activeKey="dashboard"
-        />
-      </View>
+        {/* ── Components — Migrated ─────────────────────────────────────── */}
+        <MigratedComponentsSection />
 
-      {/* ── Token Reference ───────────────────────────────────────────── */}
-      <TokenReferenceSection />
-    </ScrollView>
+        {/* ── Token Reference ───────────────────────────────────────────── */}
+        <TokenReferenceSection />
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 // ─── Styles ──────────────────────────────────────────────────────────────────
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: tokens.colors.background,
+  },
   root: {
     flex: 1,
     backgroundColor: tokens.colors.background,
@@ -115,35 +121,28 @@ const styles = StyleSheet.create({
   },
 
   /* Header */
-  header: {
-    paddingTop: tokens.dsHeader.topPadding,
-    paddingBottom: tokens.dsHeader.bottomPadding,
+  fixedHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: tokens.spacing.lgMd,
+    paddingTop: tokens.spacing.md,
+    paddingBottom: tokens.spacing.md,
+    backgroundColor: tokens.colors.background,
   },
-  headerEyebrow: {
-    fontSize: tokens.typography.fontSize.label,
-    fontWeight: tokens.typography.fontWeight.semibold,
-    letterSpacing: tokens.typography.letterSpacing.label,
-    textTransform: 'uppercase',
-    color: tokens.colors.textHint,
-    marginBottom: tokens.dsHeader.eyebrowMarginBottom,
+  backButton: {
+    marginRight: tokens.spacing.md,
   },
-  headerTitle: {
+  headerTitleH1: {
     fontFamily: tokens.typography.fontFamily.heading,
-    fontSize: tokens.typography.fontSize.display,
-    fontWeight: tokens.typography.fontWeight.regular,
-    lineHeight: tokens.typography.lineHeight.display,
-    letterSpacing: tokens.typography.letterSpacing.display,
+    fontSize: tokens.typography.fontSize.h1,
+    fontWeight: tokens.typography.fontWeight.semibold,
+    lineHeight: tokens.typography.lineHeight.h1,
     color: tokens.colors.textPrimary,
-  },
-  headerSubtitle: {
-    fontSize: tokens.typography.fontSize.button,
-    color: tokens.colors.textMuted,
-    marginTop: tokens.dsHeader.subtitleMarginTop,
   },
   headerDivider: {
     height: 1,
     backgroundColor: tokens.colors.border,
-    marginBottom: tokens.dsHeader.dividerMarginBottom,
+    marginBottom: tokens.spacing.md,
   },
 
   /* Generic section wrapper */
@@ -174,5 +173,11 @@ const styles = StyleSheet.create({
   inputStack: {
     gap: tokens.spacing.md,
     maxWidth: tokens.input.maxWidth,
+  },
+  componentWrapper: {
+    marginBottom: 16,
+  },
+  buttonRowMargin: {
+    marginTop: 16,
   },
 });

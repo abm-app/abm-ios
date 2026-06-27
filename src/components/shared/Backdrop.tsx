@@ -51,26 +51,10 @@ function FogEllipse({ color, baseW, baseH }: EllipseConfig) {
   );
 }
 
-// ─── Component ───────────────────────────────────────────────────────────────
+// ─── Hooks ───────────────────────────────────────────────────────────────────
 
-export default function LoginBackdrop() {
-  const { width: W, height: H } = useWindowDimensions();
+function useFogAnimation() {
   const [phase] = useState(() => new Animated.Value(0));
-
-  const { VARIANTS, ELLIPSES } = useMemo(() => {
-    const BASE: Point[] = [
-      { x: -W * 0.35, y: -H * 0.38 },
-      { x: W * 0.35, y: -H * 0.15 },
-      { x: W * 0.05, y: H * 0.4 },
-    ];
-    const VARIANTS = BASE.map(basePos => ROTATIONS.map(degrees => rotatePoint(basePos, degrees)));
-    const ELLIPSES: EllipseConfig[] = [
-      { color: tokens.colors.authFog1, baseW: W * 1.5, baseH: H * 0.9 },
-      { color: tokens.colors.authFog2, baseW: W * 1.4, baseH: H * 0.85 },
-      { color: tokens.colors.authFog3, baseW: W * 1.45, baseH: H * 0.88 },
-    ];
-    return { BASE, VARIANTS, ELLIPSES };
-  }, [W, H]);
 
   useEffect(() => {
     const animation = Animated.loop(
@@ -95,6 +79,30 @@ export default function LoginBackdrop() {
     animation.start();
     return () => animation.stop();
   }, [phase]);
+
+  return phase;
+}
+
+// ─── Component ───────────────────────────────────────────────────────────────
+
+export default function Backdrop() {
+  const { width: W, height: H } = useWindowDimensions();
+  const phase = useFogAnimation();
+
+  const { VARIANTS, ELLIPSES } = useMemo(() => {
+    const BASE: Point[] = [
+      { x: -W * 0.35, y: -H * 0.38 },
+      { x: W * 0.35, y: -H * 0.15 },
+      { x: W * 0.05, y: H * 0.4 },
+    ];
+    const VARIANTS = BASE.map(basePos => ROTATIONS.map(degrees => rotatePoint(basePos, degrees)));
+    const ELLIPSES: EllipseConfig[] = [
+      { color: tokens.colors.authFog1, baseW: W * 1.5, baseH: H * 0.9 },
+      { color: tokens.colors.authFog2, baseW: W * 1.4, baseH: H * 0.85 },
+      { color: tokens.colors.authFog3, baseW: W * 1.45, baseH: H * 0.88 },
+    ];
+    return { BASE, VARIANTS, ELLIPSES };
+  }, [W, H]);
 
   return (
     <View pointerEvents="none" style={styles.root}>

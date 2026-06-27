@@ -14,7 +14,6 @@ The app is a rendering layer for the ABM backend API. Business logic belongs on 
 - Axios
 - React Navigation
 - Expo SecureStore
-- Storybook for React Native
 - pnpm with hoisted node linker
 
 ## Requirements
@@ -75,7 +74,6 @@ The app reads environment variables only from `src/config/env.ts`.
 | Variable | Required | Description |
 | --- | --- | --- |
 | `EXPO_PUBLIC_API_URL` | Yes | Base URL for the ABM backend API. |
-| `EXPO_PUBLIC_STORYBOOK_ENABLED` | No | Set to `true` to load Storybook instead of the app navigator. |
 | `EXPO_PUBLIC_USE_MOCK_AUTH` | No | Set to `true` only when using the local mock auth flow. |
 
 Never read `process.env` directly outside `src/config/env.ts`.
@@ -89,8 +87,6 @@ Never read `process.env` directly outside `src/config/env.ts`.
 | `pnpm lint` | Run ESLint with zero warnings allowed. |
 | `pnpm type-check` | Run TypeScript checks without emitting files. |
 | `pnpm format` | Format TypeScript source files with Prettier. |
-| `pnpm storybook` | Start Expo with Storybook enabled. |
-| `pnpm storybook:ios` | Start Storybook on the iOS Simulator. |
 
 Before submitting code, run:
 
@@ -158,16 +154,6 @@ Components must use `StyleSheet.create()`. Do not use inline style objects in JS
 - Auth state belongs in `src/store/authStore.ts`.
 - Most UI state should stay local with React state.
 - Do not create new Zustand stores unless persistent shared state is genuinely required.
-
-## Storybook
-
-Run Storybook with:
-
-```bash
-pnpm storybook:ios
-```
-
-This sets `EXPO_PUBLIC_STORYBOOK_ENABLED=true`, causing `App.tsx` to load the Storybook entry instead of the main navigator.
 
 ## iOS Builds
 

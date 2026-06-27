@@ -1,7 +1,16 @@
 import { create } from 'zustand';
 
 import type { AuthUser, ModuleKey } from '@/types/auth';
-import { saveAuthTokens, clearAuthTokens, getAccessToken, getRefreshToken } from '@/api/storage';
+import {
+  saveAuthTokens,
+  clearAuthTokens,
+  getAccessToken,
+  getRefreshToken,
+  getAuthUser,
+  getAuthModules,
+  setAuthUser,
+  setAuthModules,
+} from '@/api/storage';
 import logger from '@/utils/logger';
 
 // ─── State shape ─────────────────────────────────────────────────────────────
@@ -47,8 +56,10 @@ export const useAuthStore = create<AuthState & AuthActions>(set => ({
   setSession: async (accessToken, refreshToken, user, modules) => {
     try {
       await saveAuthTokens(accessToken, refreshToken);
+      await setAuthUser(user);
+      await setAuthModules(modules);
     } catch (error) {
-      logger.error('Failed to save auth tokens:', error);
+      logger.error('Failed to save auth tokens/user:', error);
       // Optionally handle the error (e.g., show an alert or throw)
     }
     set({
@@ -81,11 +92,16 @@ export const useAuthStore = create<AuthState & AuthActions>(set => ({
       const refreshToken = await getRefreshToken();
 
       if (accessToken && refreshToken) {
-        // Mock phase: tokens exist but user/modules are not persisted in SecureStore.
-        // On a real backend, call /auth/me here to hydrate user and modules.
+        // Mock phase: Hydrating user and modules directly from SecureStore
+        // On a real backend, you could call /auth/me here instead if preferred
+        const user = await getAuthUser();
+        const modules = await getAuthModules();
+
         set({
           accessToken,
           refreshToken,
+          user,
+          modules,
           isAuthenticated: true,
         });
       }

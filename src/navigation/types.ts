@@ -16,7 +16,8 @@ export type AuthStackScreenProps<T extends keyof AuthStackParamList> = NativeSta
 // ─── App Tabs ────────────────────────────────────────────────────────────────
 
 export type AppTabParamList = {
-  Dashboard: undefined;
+  // Dashboard: undefined;
+  Campaigns: undefined;
   LiveStatus: undefined;
   AuditTrail: undefined;
   Revenue: undefined;
@@ -28,7 +29,8 @@ export type AppTabParamList = {
 
 /** Maps each backend ModuleKey to the corresponding tab route name. */
 export const MODULE_TO_TAB: Record<ModuleKey, keyof AppTabParamList> = {
-  dashboard: 'Dashboard',
+  // dashboard: 'Dashboard',
+  campaigns: 'Campaigns',
   live_status: 'LiveStatus',
   audit_trail: 'AuditTrail',
   revenue: 'Revenue',
@@ -43,7 +45,8 @@ export const MODULE_TO_TAB: Record<ModuleKey, keyof AppTabParamList> = {
 export type RootStackParamList = {
   Auth: undefined;
   Main: undefined;
-  DevMenu: undefined;
+  CampaignDetails: { id: string };
+
   DesignSystemPreview: undefined;
 };
 

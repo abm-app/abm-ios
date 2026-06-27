@@ -11,6 +11,11 @@ import {
 import logger from '@/utils/logger';
 import tokens, { type Tokens } from './tokens';
 
+import ancizarRegular from '../../assets/fonts/AncizarSerif-Regular.ttf';
+import ancizarItalic from '../../assets/fonts/AncizarSerif-Italic.ttf';
+import ancizarBold from '../../assets/fonts/AncizarSerif-Bold.ttf';
+import ancizarBoldItalic from '../../assets/fonts/AncizarSerif-BoldItalic.ttf';
+
 void SplashScreen.preventAutoHideAsync().catch(() => {});
 
 interface ThemeContextValue {
@@ -25,15 +30,11 @@ interface ThemeProviderProps {
 
 export function ThemeProvider({ children }: ThemeProviderProps) {
   const [fontsLoaded, fontError] = useFonts({
-    // Ancizar Serif — local assets (require required by expo-font for .ttf assets)
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    'AncizarSerif-Regular': require('../../assets/fonts/AncizarSerif-Regular.ttf'),
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    'AncizarSerif-Italic': require('../../assets/fonts/AncizarSerif-Italic.ttf'),
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    'AncizarSerif-Bold': require('../../assets/fonts/AncizarSerif-Bold.ttf'),
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    'AncizarSerif-BoldItalic': require('../../assets/fonts/AncizarSerif-BoldItalic.ttf'),
+    // Ancizar Serif — local assets
+    'AncizarSerif-Regular': ancizarRegular,
+    'AncizarSerif-Italic': ancizarItalic,
+    'AncizarSerif-Bold': ancizarBold,
+    'AncizarSerif-BoldItalic': ancizarBoldItalic,
     // Inter — Google Fonts via @expo-google-fonts/inter
     Inter_300Light,
     Inter_400Regular,

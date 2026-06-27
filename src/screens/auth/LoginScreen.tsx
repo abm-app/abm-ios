@@ -10,7 +10,7 @@ import {
 
 import tokens from '@/theme/tokens';
 import { useLogin } from '@/hooks/auth/useLogin';
-import LoginBackdrop from './components/LoginBackdrop';
+import { Backdrop } from '@/components/shared';
 import LoginCard from './components/LoginCard';
 import LpaiLogo from '../../../assets/lpai.svg';
 
@@ -18,6 +18,24 @@ import LpaiLogo from '../../../assets/lpai.svg';
 
 const REFERENCE_WIDTH = tokens.auth.referenceWidth;
 const REFERENCE_HEIGHT = tokens.auth.referenceHeight;
+
+// ─── Sub-Components ─────────────────────────────────────────────────────────
+
+const LoginFooter = ({
+  designScale,
+  dynamicStyles,
+}: {
+  designScale: number;
+  dynamicStyles: ReturnType<typeof createDynamicStyles>;
+}) => (
+  <View style={styles.footer}>
+    <Text style={[styles.footerText, dynamicStyles.footerText]}>Powered by</Text>
+    <LpaiLogo
+      width={tokens.auth.logoWidth * designScale}
+      height={tokens.auth.logoHeight * designScale}
+    />
+  </View>
+);
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
@@ -53,7 +71,7 @@ export default function LoginScreen() {
 
   return (
     <View style={styles.root}>
-      <LoginBackdrop />
+      <Backdrop />
 
       <KeyboardAvoidingView style={styles.keyboardRoot} behavior="padding">
         <View style={[styles.content, dynamicStyles.content]}>
@@ -78,13 +96,7 @@ export default function LoginScreen() {
       </KeyboardAvoidingView>
 
       {/* ── Footer ─────────────────────────────────────────────────────── */}
-      <View style={styles.footer}>
-        <Text style={[styles.footerText, dynamicStyles.footerText]}>Powered by</Text>
-        <LpaiLogo
-          width={tokens.auth.logoWidth * designScale}
-          height={tokens.auth.logoHeight * designScale}
-        />
-      </View>
+      <LoginFooter designScale={designScale} dynamicStyles={dynamicStyles} />
     </View>
   );
 }
