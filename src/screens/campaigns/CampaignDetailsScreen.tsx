@@ -16,6 +16,7 @@ import type { RootStackParamList } from '@/navigation/types';
 import { useCampaign, useMetaTemplates } from '@/hooks/campaigns/useCampaigns';
 import { deleteCampaign } from '@/api/endpoints/campaignApi';
 import { Alert } from 'react-native';
+import LoginBackdrop from '@/screens/auth/components/LoginBackdrop';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 type DetailsRouteProp = RouteProp<RootStackParamList, 'CampaignDetails'>;
@@ -76,6 +77,7 @@ export default function CampaignDetailsScreen() {
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
+      <LoginBackdrop />
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity
@@ -152,7 +154,6 @@ export default function CampaignDetailsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: tokens.colors.surfaceLight,
   },
   header: {
     flexDirection: 'row',

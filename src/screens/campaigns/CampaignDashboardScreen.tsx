@@ -13,6 +13,7 @@ import CreateCampaignModal from './components/CreateCampaignModal/CreateCampaign
 import { useCampaigns } from '@/hooks/campaigns/useCampaigns';
 import { LoadingSpinner, ErrorState } from '@/components/shared';
 import type { Campaign } from '@/types/campaign';
+import LoginBackdrop from '@/screens/auth/components/LoginBackdrop';
 
 const TABS = [
   { id: 'broadcasts', label: 'Broadcasts' },
@@ -83,6 +84,7 @@ export default function CampaignDashboardScreen() {
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
+      <LoginBackdrop />
       <ScreenHeaderV2
         title="Campaigns"
         showFilter
@@ -144,7 +146,6 @@ export default function CampaignDashboardScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: tokens.colors.background,
   },
   tabsContainer: {
     paddingHorizontal: tokens.spacing.xlMd,
