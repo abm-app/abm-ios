@@ -11,7 +11,7 @@ import type { RootStackParamList } from '@/navigation/types';
 export interface Broadcast {
   id: string;
   title: string;
-  status: 'Scheduled' | 'Sent';
+  status: string;
   audienceCount: number;
   dateStr: string;
 }

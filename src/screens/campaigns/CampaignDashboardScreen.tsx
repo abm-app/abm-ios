@@ -37,7 +37,7 @@ function mapCampaignToPendingAction(c: Campaign): PendingAction {
 }
 
 function mapCampaignToBroadcast(c: Campaign): Broadcast {
-  let dateStr = c.scheduledAt || c.sentAt || '';
+  let dateStr = c.scheduledAt || c.sentAt || c.createdAt || '';
   if (dateStr && dateStr.includes('T')) {
     // Simple format '2026-06-15T09:00:00Z' -> '15 Jun, 09:00 AM'
     const d = new Date(dateStr);
@@ -49,7 +49,7 @@ function mapCampaignToBroadcast(c: Campaign): Broadcast {
   return {
     id: c._id,
     title: c.name,
-    status: c.status === 'sent' ? 'Sent' : 'Scheduled',
+    status: c.status.replace('_', ' ').replace(/\b\w/g, char => char.toUpperCase()),
     audienceCount: c.recipientCount,
     dateStr,
   };
@@ -78,10 +78,8 @@ export default function CampaignDashboardScreen() {
   if (isError)
     return <ErrorState message={error?.message || 'Failed to load campaigns.'} onRetry={refetch} />;
 
-  const pendingCampaigns =
-    campaigns?.filter(c => c.status === 'pending_approval' || c.status === 'draft') || [];
-  const recentCampaigns =
-    campaigns?.filter(c => c.status === 'approved' || c.status === 'sent') || [];
+  const pendingCampaigns = campaigns?.filter(c => c.status === 'pending_approval') || [];
+  const recentCampaigns = campaigns?.filter(c => c.status !== 'pending_approval') || [];
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
