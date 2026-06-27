@@ -3,6 +3,7 @@ import { Alert } from 'react-native';
 import { SharedFormModal, CustomCalender } from '@/components/shared';
 import {
   createCampaign,
+  updateCampaign,
   getEstimatedReach,
   CreateCampaignPayload,
 } from '@/api/endpoints/campaignApi';
@@ -145,11 +146,18 @@ export default function CreateCampaignModal({ visible, onClose, onSuccess, initi
     }
 
     try {
-      await createCampaign(payload);
+      if (initialData?._id) {
+        await updateCampaign(initialData._id, payload);
+      } else {
+        await createCampaign(payload);
+      }
       if (onSuccess) onSuccess();
       onClose();
     } catch {
-      Alert.alert('Error', 'Failed to create campaign.');
+      Alert.alert(
+        'Error',
+        initialData?._id ? 'Failed to update campaign.' : 'Failed to create campaign.',
+      );
     } finally {
       setIsSubmitting(false);
     }

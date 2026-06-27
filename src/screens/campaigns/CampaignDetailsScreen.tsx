@@ -14,6 +14,8 @@ import CampaignBottomBar from './components/CampaignDetailsScreen/CampaignBottom
 import CreateCampaignModal from './components/CreateCampaignModal/CreateCampaignModal';
 import type { RootStackParamList } from '@/navigation/types';
 import { useCampaign, useMetaTemplates } from '@/hooks/campaigns/useCampaigns';
+import { deleteCampaign } from '@/api/endpoints/campaignApi';
+import { Alert } from 'react-native';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 type DetailsRouteProp = RouteProp<RootStackParamList, 'CampaignDetails'>;
@@ -60,10 +62,16 @@ export default function CampaignDetailsScreen() {
     minute: 'numeric',
   });
 
-  const handleDelete = () => {
-    // Delete API call would go here
-    setIsDeleteModalVisible(false);
-    navigation.goBack();
+  const handleDelete = async () => {
+    if (!campaign) return;
+    try {
+      await deleteCampaign(campaign._id);
+      setIsDeleteModalVisible(false);
+      navigation.goBack();
+    } catch {
+      Alert.alert('Error', 'Failed to delete campaign');
+      setIsDeleteModalVisible(false);
+    }
   };
 
   return (

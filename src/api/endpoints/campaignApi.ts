@@ -45,11 +45,75 @@ export const fetchCampaignById = async (id: string): Promise<Campaign> => {
  */
 export const createCampaign = async (
   payload: CreateCampaignPayload,
-): Promise<{ success: boolean; data: unknown }> => {
+): Promise<{ success: boolean; data: Campaign }> => {
   return new Promise(resolve => {
     setTimeout(() => {
-      console.log('Mock API: createCampaign payload:', payload);
-      resolve({ success: true, data: payload });
+      const newCampaign: Campaign = {
+        _id: `camp_${Math.random().toString(36).substring(7)}`,
+        name: payload.name,
+        type: payload.type,
+        status: 'pending_approval',
+        templateId: payload.templateId,
+        templateVariables: payload.templateVariables,
+        filters: payload.filters,
+        recipientCount: payload.recipientCount,
+        scheduledAt: payload.scheduledAt,
+        offerExpiry: payload.offerExpiry,
+        metadata: payload.metadata,
+        createdBy: 'Admin',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+
+      // Mutate the mock array in-memory so it shows up in the dashboard
+      mockCampaigns.unshift(newCampaign);
+
+      console.log('Mock API: created campaign', newCampaign._id);
+      resolve({ success: true, data: newCampaign });
+    }, 800);
+  });
+};
+
+export const updateCampaign = async (
+  id: string,
+  payload: Partial<CreateCampaignPayload>,
+): Promise<{ success: boolean; data: Campaign }> => {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      const idx = mockCampaigns.findIndex(c => c._id === id);
+      if (idx === -1) {
+        reject(new Error('Campaign not found'));
+        return;
+      }
+      const updatedCampaign = {
+        ...mockCampaigns[idx],
+        ...payload,
+        updatedAt: new Date().toISOString(),
+      };
+
+      // Mutate the mock array
+      mockCampaigns[idx] = updatedCampaign;
+
+      console.log('Mock API: updated campaign', id);
+      resolve({ success: true, data: updatedCampaign });
+    }, 800);
+  });
+};
+
+export const deleteCampaign = async (id: string): Promise<{ success: boolean }> => {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      const idx = mockCampaigns.findIndex(c => c._id === id);
+      if (idx === -1) {
+        reject(new Error('Campaign not found'));
+        return;
+      }
+
+      // Remove from mock array
+      mockCampaigns.splice(idx, 1);
+
+      console.log('Mock API: deleted campaign', id);
+      resolve({ success: true });
     }, 800);
   });
 };
