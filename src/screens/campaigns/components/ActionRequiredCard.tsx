@@ -1,9 +1,12 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Feather } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 import tokens from '@/theme/tokens';
 import { Card, Chip, Button } from '@/components/ui';
+import type { RootStackParamList } from '@/navigation/types';
 
 export interface PendingAction {
   id: string;
@@ -18,31 +21,43 @@ interface ActionRequiredCardProps {
 }
 
 export default function ActionRequiredCard({ action }: ActionRequiredCardProps) {
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+
   return (
-    <Card padded style={styles.card}>
-      {action.status === 'pending_approval' && (
-        <View style={styles.chipRow}>
-          <Chip
-            label="Pending Senior Approval"
-            active
-            tone="warning"
-            textColor={tokens.colors.primary}
+    <TouchableOpacity
+      activeOpacity={0.8}
+      onPress={() => navigation.navigate('CampaignDetails', { id: action.id })}
+    >
+      <Card padded style={styles.card}>
+        {action.status === 'pending_approval' && (
+          <View style={styles.chipRow}>
+            <Chip
+              label="Pending Senior Approval"
+              active
+              tone="warning"
+              textColor={tokens.colors.primary}
+            />
+          </View>
+        )}
+        <Text style={styles.title}>{action.title}</Text>
+        <View style={styles.metaRow}>
+          <Feather name="users" size={tokens.iconSizes.content} color={tokens.colors.textMuted} />
+          <Text style={styles.metaText}>{action.audience}</Text>
+        </View>
+
+        <View style={styles.divider} />
+
+        <View style={styles.footerRow}>
+          <Text style={styles.footerText}>Created by {action.creator}</Text>
+          <Button
+            label="Review"
+            variant="primary"
+            size="sm"
+            onPress={() => navigation.navigate('CampaignDetails', { id: action.id })}
           />
         </View>
-      )}
-      <Text style={styles.title}>{action.title}</Text>
-      <View style={styles.metaRow}>
-        <Feather name="users" size={tokens.iconSizes.content} color={tokens.colors.textMuted} />
-        <Text style={styles.metaText}>{action.audience}</Text>
-      </View>
-
-      <View style={styles.divider} />
-
-      <View style={styles.footerRow}>
-        <Text style={styles.footerText}>Created by {action.creator}</Text>
-        <Button label="Review" variant="primary" size="sm" onPress={() => {}} />
-      </View>
-    </Card>
+      </Card>
+    </TouchableOpacity>
   );
 }
 

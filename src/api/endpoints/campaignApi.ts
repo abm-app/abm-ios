@@ -27,6 +27,19 @@ export const fetchCampaigns = async (): Promise<Campaign[]> => {
   });
 };
 
+export const fetchCampaignById = async (id: string): Promise<Campaign> => {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      const campaign = mockCampaigns.find(c => c._id === id);
+      if (campaign) {
+        resolve(campaign);
+      } else {
+        reject(new Error('Campaign not found'));
+      }
+    }, 800);
+  });
+};
+
 /**
  * Mock implementation for creating a campaign.
  */

@@ -13,6 +13,14 @@ export function useCampaigns() {
   });
 }
 
+export function useCampaign(id: string) {
+  return useQuery({
+    queryKey: [...campaignKeys.all, 'detail', id] as const,
+    queryFn: () => import('@/api/endpoints/campaignApi').then(m => m.fetchCampaignById(id)),
+    enabled: !!id,
+  });
+}
+
 export function useMetaTemplates() {
   return useQuery({
     queryKey: [...campaignKeys.all, 'templates'] as const,

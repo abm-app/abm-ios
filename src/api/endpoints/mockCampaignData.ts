@@ -6,8 +6,8 @@ export const mockCampaigns: Campaign[] = [
   {
     _id: 'cmp_1',
     name: 'Summer VIP Outreach',
-    templateId: 'tpl_101',
-    templateVariables: { '1': 'FirstName' },
+    templateId: 'tpl_monsoon',
+    templateVariables: { Guest_Name: 'John' },
     type: 'manual',
     filters: {
       tier: 'Platinum',
@@ -24,8 +24,8 @@ export const mockCampaigns: Campaign[] = [
   {
     _id: 'cmp_2',
     name: 'Post-Checkout Thank You',
-    templateId: 'tpl_102',
-    templateVariables: { '1': 'GuestName', '2': 'PropertyName' },
+    templateId: 'tpl_weekend',
+    templateVariables: {},
     type: 'trigger',
     filters: {
       property: 'ABM Grand Hotel',
@@ -41,8 +41,8 @@ export const mockCampaigns: Campaign[] = [
   {
     _id: 'cmp_3',
     name: 'Lapsed Guest Re-engagement',
-    templateId: 'tpl_103',
-    templateVariables: { '1': 'Name' },
+    templateId: 'tpl_monsoon',
+    templateVariables: { Guest_Name: 'Sarah' },
     type: 'scheduled',
     filters: {
       lapsedDays: 180,
@@ -59,7 +59,7 @@ export const mockCampaigns: Campaign[] = [
   {
     _id: 'cmp_4',
     name: 'Gold Member Double Points',
-    templateId: 'tpl_104',
+    templateId: 'tpl_weekend',
     templateVariables: {},
     type: 'manual',
     filters: {
@@ -78,8 +78,8 @@ export const mockCampaigns: Campaign[] = [
   {
     _id: 'cmp_5',
     name: 'Weekend Spa Promo',
-    templateId: 'tpl_105',
-    templateVariables: { '1': 'Discount' },
+    templateId: 'tpl_monsoon',
+    templateVariables: { Guest_Name: 'Mike' },
     type: 'manual',
     filters: {
       property: 'ABM Resort Spa',

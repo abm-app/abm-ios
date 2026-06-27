@@ -1,9 +1,12 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Feather } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 import tokens from '@/theme/tokens';
 import { Card, Chip } from '@/components/ui';
+import type { RootStackParamList } from '@/navigation/types';
 
 export interface Broadcast {
   id: string;
@@ -18,28 +21,39 @@ interface RecentBroadcastCardProps {
 }
 
 export default function RecentBroadcastCard({ broadcast }: RecentBroadcastCardProps) {
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+
   return (
-    <Card padded style={styles.card}>
-      <View style={styles.chipRow}>
-        <Chip
-          label={broadcast.status}
-          textColor={tokens.colors.primary}
-          style={{ backgroundColor: tokens.colors.authInputBg }}
-        />
-      </View>
-      <Text style={styles.title}>{broadcast.title}</Text>
-      <Text style={styles.subtitle}>{broadcast.audienceCount.toLocaleString()} Guests</Text>
+    <TouchableOpacity
+      activeOpacity={0.8}
+      onPress={() => navigation.navigate('CampaignDetails', { id: broadcast.id })}
+    >
+      <Card padded style={styles.card}>
+        <View style={styles.chipRow}>
+          <Chip
+            label={broadcast.status}
+            textColor={tokens.colors.primary}
+            style={{ backgroundColor: tokens.colors.authInputBg }}
+          />
+        </View>
+        <Text style={styles.title}>{broadcast.title}</Text>
+        <Text style={styles.subtitle}>{broadcast.audienceCount.toLocaleString()} Guests</Text>
 
-      <View style={styles.divider} />
+        <View style={styles.divider} />
 
-      <View style={styles.footerRow}>
-        <Feather name="calendar" size={tokens.iconSizes.taskMeta} color={tokens.colors.textMuted} />
-        <Text style={styles.footerText}>
-          {broadcast.status === 'Sent' ? 'Sent on: ' : 'Fires on: '}
-          {broadcast.dateStr}
-        </Text>
-      </View>
-    </Card>
+        <View style={styles.footerRow}>
+          <Feather
+            name="calendar"
+            size={tokens.iconSizes.taskMeta}
+            color={tokens.colors.textMuted}
+          />
+          <Text style={styles.footerText}>
+            {broadcast.status === 'Sent' ? 'Sent on: ' : 'Fires on: '}
+            {broadcast.dateStr}
+          </Text>
+        </View>
+      </Card>
+    </TouchableOpacity>
   );
 }
 

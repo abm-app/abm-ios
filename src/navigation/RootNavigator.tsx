@@ -11,6 +11,7 @@ import tokens from '@/theme/tokens';
 import AuthNavigator from './AuthNavigator';
 import AppNavigator from './AppNavigator';
 import DesignSystemPreviewScreen from '@/screens/dev/DesignSystemPreview';
+import CampaignDetailsScreen from '@/screens/campaigns/CampaignDetailsScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -42,6 +43,7 @@ export default function RootNavigator() {
             {isAuthenticated ? (
               <>
                 <Stack.Screen name="Main" component={AppNavigator} />
+                <Stack.Screen name="CampaignDetails" component={CampaignDetailsScreen} />
                 {__DEV__ && (
                   <Stack.Screen
                     name="DesignSystemPreview"

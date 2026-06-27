@@ -9,6 +9,7 @@ const colors = {
 
   // Semantic surfaces
   surface: 'rgba(0,0,0,0.06)',
+  surfaceLight: '#F9F9F9',
   secondary: 'rgba(0,0,0,0.15)',
 
   // Borders
