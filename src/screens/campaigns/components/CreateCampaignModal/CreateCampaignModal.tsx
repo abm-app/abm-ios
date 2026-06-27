@@ -6,6 +6,7 @@ import {
   getEstimatedReach,
   CreateCampaignPayload,
 } from '@/api/endpoints/campaignApi';
+import type { Campaign } from '@/types/campaign';
 import { useMetaTemplates } from '@/hooks/campaigns/useCampaigns';
 import TargetAudienceStep from './TargetAudienceStep';
 import MessageContentStep from './MessageContentStep';
@@ -14,19 +15,28 @@ interface Props {
   visible: boolean;
   onClose: () => void;
   onSuccess?: () => void;
+  initialData?: Campaign;
 }
 
-export default function CreateCampaignModal({ visible, onClose, onSuccess }: Props) {
+export default function CreateCampaignModal({ visible, onClose, onSuccess, initialData }: Props) {
   const { data: templates, isLoading: isLoadingTemplates } = useMetaTemplates();
   const [currentPage, setCurrentPage] = useState<1 | 2>(1);
-  const [name, setName] = useState('');
-  const [templateId, setTemplateId] = useState('');
-  const [templateVars, setTemplateVars] = useState<Record<string, string>>({});
+  const [name, setName] = useState(initialData?.name || '');
+  const [templateId, setTemplateId] = useState(initialData?.templateId || '');
+  const [templateVars, setTemplateVars] = useState<Record<string, string>>(
+    initialData?.templateVariables || {},
+  );
 
-  const [selectedTiers, setSelectedTiers] = useState<string[]>(['All']);
+  const [selectedTiers, setSelectedTiers] = useState<string[]>(
+    (initialData?.filters?.tier as string[]) || ['All'],
+  );
 
-  const [scheduledAt, setScheduledAt] = useState('');
-  const [offerExpiry, setOfferExpiry] = useState('');
+  const [scheduledAt, setScheduledAt] = useState(
+    initialData?.scheduledAt ? initialData.scheduledAt.split('T')[0] : '',
+  );
+  const [offerExpiry, setOfferExpiry] = useState(
+    initialData?.offerExpiry ? initialData.offerExpiry.split('T')[0] : '',
+  );
 
   const [reachCount, setReachCount] = useState<number | null>(null);
   const [isLoadingReach, setIsLoadingReach] = useState(false);

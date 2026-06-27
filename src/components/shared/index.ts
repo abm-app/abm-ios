@@ -5,3 +5,4 @@ export { default as ErrorState } from './ErrorState';
 export * from './SharedFormModal';
 export * from './CustomCalender';
 export { default as MetaContent } from './MetaContent';
+export * from './ConfirmationModal';

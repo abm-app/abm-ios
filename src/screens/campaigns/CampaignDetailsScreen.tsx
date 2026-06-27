@@ -7,10 +7,11 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 import tokens from '@/theme/tokens';
 import { Chip } from '@/components/ui';
-import { LoadingSpinner, ErrorState } from '@/components/shared';
+import { LoadingSpinner, ErrorState, ConfirmationModal } from '@/components/shared';
 import CampaignTargetAudience from './components/CampaignDetailsScreen/CampaignTargetAudience';
 import CampaignMessageContent from './components/CampaignDetailsScreen/CampaignMessageContent';
 import CampaignBottomBar from './components/CampaignDetailsScreen/CampaignBottomBar';
+import CreateCampaignModal from './components/CreateCampaignModal/CreateCampaignModal';
 import type { RootStackParamList } from '@/navigation/types';
 import { useCampaign, useMetaTemplates } from '@/hooks/campaigns/useCampaigns';
 
@@ -21,6 +22,9 @@ export default function CampaignDetailsScreen() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<NavigationProp>();
   const route = useRoute<DetailsRouteProp>();
+
+  const [isEditModalVisible, setIsEditModalVisible] = React.useState(false);
+  const [isDeleteModalVisible, setIsDeleteModalVisible] = React.useState(false);
 
   const {
     data: campaign,
@@ -56,6 +60,12 @@ export default function CampaignDetailsScreen() {
     minute: 'numeric',
   });
 
+  const handleDelete = () => {
+    // Delete API call would go here
+    setIsDeleteModalVisible(false);
+    navigation.goBack();
+  };
+
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
       {/* Header */}
@@ -76,12 +86,22 @@ export default function CampaignDetailsScreen() {
         <Text style={styles.title}>{campaign.name}</Text>
 
         <View style={styles.chipRow}>
-          <Chip
-            label={statusLabel}
-            active={isPending}
-            tone={isPending ? 'warning' : 'primary'}
-            textColor={isPending ? tokens.colors.primary : undefined}
-          />
+          <View style={styles.chipContainer}>
+            <Chip
+              label={statusLabel}
+              active={isPending}
+              tone={isPending ? 'warning' : 'primary'}
+              textColor={isPending ? tokens.colors.primary : undefined}
+            />
+          </View>
+          <View style={styles.actionIcons}>
+            <TouchableOpacity onPress={() => setIsEditModalVisible(true)} style={styles.iconBtn}>
+              <Feather name="edit-2" size={20} color={tokens.colors.textSecondary} />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => setIsDeleteModalVisible(true)} style={styles.iconBtn}>
+              <Feather name="trash-2" size={20} color={tokens.colors.danger} />
+            </TouchableOpacity>
+          </View>
         </View>
 
         <Text style={styles.subtitle}>
@@ -95,6 +115,28 @@ export default function CampaignDetailsScreen() {
 
       {/* Bottom Bar */}
       {isPending && <CampaignBottomBar />}
+
+      {/* Modals */}
+      {isEditModalVisible && (
+        <CreateCampaignModal
+          visible={isEditModalVisible}
+          onClose={() => setIsEditModalVisible(false)}
+          initialData={campaign}
+          onSuccess={refetch}
+        />
+      )}
+      {isDeleteModalVisible && (
+        <ConfirmationModal
+          visible={isDeleteModalVisible}
+          onClose={() => setIsDeleteModalVisible(false)}
+          onConfirm={handleDelete}
+          title="Delete Campaign"
+          content="Are you sure you want to delete this campaign? This action cannot be undone."
+          confirmLabel="Delete"
+          iconVariant="danger"
+          icon={<Feather name="trash-2" size={32} color={tokens.colors.danger} />}
+        />
+      )}
     </View>
   );
 }
@@ -137,8 +179,22 @@ const styles = StyleSheet.create({
     marginBottom: tokens.spacing.sm,
   },
   chipRow: {
-    alignItems: 'flex-start',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     marginBottom: tokens.spacing.smMd,
+  },
+  chipContainer: {
+    flex: 1,
+    flexDirection: 'row',
+  },
+  actionIcons: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: tokens.spacing.sm,
+  },
+  iconBtn: {
+    padding: tokens.spacing.xs,
   },
   subtitle: {
     fontFamily: tokens.typography.fontFamily.sub,
