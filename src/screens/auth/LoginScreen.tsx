@@ -10,7 +10,7 @@ import {
 
 import tokens from '@/theme/tokens';
 import { useLogin } from '@/hooks/auth/useLogin';
-import LoginBackdrop from './components/LoginBackdrop';
+import { Backdrop } from '@/components/shared';
 import LoginCard from './components/LoginCard';
 import LpaiLogo from '../../../assets/lpai.svg';
 
@@ -71,7 +71,7 @@ export default function LoginScreen() {
 
   return (
     <View style={styles.root}>
-      <LoginBackdrop />
+      <Backdrop />
 
       <KeyboardAvoidingView style={styles.keyboardRoot} behavior="padding">
         <View style={[styles.content, dynamicStyles.content]}>

@@ -7,7 +7,7 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 import tokens from '@/theme/tokens';
 import { Chip } from '@/components/ui';
-import { LoadingSpinner, ErrorState, ConfirmationModal } from '@/components/shared';
+import { LoadingSpinner, ErrorState, ConfirmationModal, Backdrop } from '@/components/shared';
 import CampaignTargetAudience from './components/CampaignDetailsScreen/CampaignTargetAudience';
 import CampaignMessageContent from './components/CampaignDetailsScreen/CampaignMessageContent';
 import CampaignBottomBar from './components/CampaignDetailsScreen/CampaignBottomBar';
@@ -16,7 +16,6 @@ import type { RootStackParamList } from '@/navigation/types';
 import { useCampaign, useMetaTemplates } from '@/hooks/campaigns/useCampaigns';
 import { deleteCampaign } from '@/api/endpoints/campaignApi';
 import { Alert } from 'react-native';
-import LoginBackdrop from '@/screens/auth/components/LoginBackdrop';
 import { useAuthStore } from '@/store/authStore';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
@@ -79,7 +78,7 @@ export default function CampaignDetailsScreen() {
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
-      <LoginBackdrop />
+      <Backdrop />
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity

@@ -11,9 +11,8 @@ import ActionRequiredCard, { PendingAction } from './components/ActionRequiredCa
 import RecentBroadcastCard, { Broadcast } from './components/RecentBroadcastCard';
 import CreateCampaignModal from './components/CreateCampaignModal/CreateCampaignModal';
 import { useCampaigns } from '@/hooks/campaigns/useCampaigns';
-import { LoadingSpinner, ErrorState } from '@/components/shared';
+import { LoadingSpinner, ErrorState, Backdrop } from '@/components/shared';
 import type { Campaign } from '@/types/campaign';
-import LoginBackdrop from '@/screens/auth/components/LoginBackdrop';
 
 const TABS = [
   { id: 'broadcasts', label: 'Broadcasts' },
@@ -84,7 +83,7 @@ export default function CampaignDashboardScreen() {
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
-      <LoginBackdrop />
+      <Backdrop />
       <ScreenHeaderV2
         title="Campaigns"
         showFilter

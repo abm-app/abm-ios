@@ -85,7 +85,7 @@ function useFogAnimation() {
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
-export default function LoginBackdrop() {
+export default function Backdrop() {
   const { width: W, height: H } = useWindowDimensions();
   const phase = useFogAnimation();
 
