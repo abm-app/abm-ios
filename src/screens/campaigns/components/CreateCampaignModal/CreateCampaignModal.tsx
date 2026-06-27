@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Alert } from 'react-native';
-import { SharedFormModal, CustomCalender } from '@/components/shared';
+import { SharedFormModal, CustomCalender, AlertModal } from '@/components/shared';
 import {
   createCampaign,
   updateCampaign,
@@ -24,9 +23,7 @@ export default function CreateCampaignModal({ visible, onClose, onSuccess, initi
   const [currentPage, setCurrentPage] = useState<1 | 2>(1);
   const [name, setName] = useState(initialData?.name || '');
   const [templateId, setTemplateId] = useState(initialData?.templateId || '');
-  const [templateVars, setTemplateVars] = useState<Record<string, string>>(
-    initialData?.templateVariables || {},
-  );
+  const [templateVars] = useState<Record<string, string>>(initialData?.templateVariables || {});
 
   const [selectedTiers, setSelectedTiers] = useState<string[]>(
     (initialData?.filters?.tier as string[]) || ['All'],
@@ -46,8 +43,27 @@ export default function CreateCampaignModal({ visible, onClose, onSuccess, initi
   const [isCalendarVisible, setIsCalendarVisible] = useState(false);
   const [calendarTarget, setCalendarTarget] = useState<'start' | 'end' | null>(null);
 
-  const handleClose = () => {
+  const [alertConfig, setAlertConfig] = useState({ visible: false, title: '', content: '' });
+
+  const showAlert = (title: string, content: string) => {
+    setAlertConfig({ visible: true, title, content });
+  };
+
+  const resetState = () => {
     setCurrentPage(1);
+    setName(initialData?.name || '');
+    if (templates && templates.length > 0) {
+      setTemplateId(initialData?.templateId || templates[0].id);
+    } else {
+      setTemplateId(initialData?.templateId || '');
+    }
+    setSelectedTiers((initialData?.filters?.tier as string[]) || ['All']);
+    setScheduledAt(initialData?.scheduledAt ? initialData.scheduledAt.split('T')[0] : '');
+    setOfferExpiry(initialData?.offerExpiry ? initialData.offerExpiry.split('T')[0] : '');
+  };
+
+  const handleClose = () => {
+    resetState();
     onClose();
   };
 
@@ -114,13 +130,13 @@ export default function CreateCampaignModal({ visible, onClose, onSuccess, initi
 
   const currentTemplate = templates?.find(t => t.id === templateId);
 
-  const handleChangeTemplateVar = (v: string, text: string) => {
-    setTemplateVars(prev => ({ ...prev, [v]: text }));
-  };
-
   const submitPayload = async (_isDraft: boolean = false) => {
     if (!name.trim()) {
-      Alert.alert('Validation Error', 'Campaign name is required.');
+      showAlert('Error', 'Campaign name is required.');
+      return;
+    }
+    if (!scheduledAt) {
+      showAlert('Error', 'Start date is required.');
       return;
     }
 
@@ -152,9 +168,10 @@ export default function CreateCampaignModal({ visible, onClose, onSuccess, initi
         await createCampaign(payload);
       }
       if (onSuccess) onSuccess();
+      resetState();
       onClose();
     } catch {
-      Alert.alert(
+      showAlert(
         'Error',
         initialData?._id ? 'Failed to update campaign.' : 'Failed to create campaign.',
       );
@@ -170,11 +187,22 @@ export default function CreateCampaignModal({ visible, onClose, onSuccess, initi
         title={currentPage === 1 ? 'Target Audience' : 'Message Content'}
         buttonLabel={currentPage === 1 ? 'Select Template' : 'Submit for Approval'}
         onSubmit={() => {
-          if (currentPage === 1) setCurrentPage(2);
-          else submitPayload(false);
+          if (currentPage === 1) {
+            if (!name.trim()) {
+              showAlert('Error', 'Campaign name is required.');
+              return;
+            }
+            if (!scheduledAt) {
+              showAlert('Error', 'Start date is required.');
+              return;
+            }
+            setCurrentPage(2);
+          } else {
+            submitPayload(false);
+          }
         }}
-        secondaryButtonLabel="Save Draft"
-        onSecondarySubmit={() => submitPayload(true)}
+        secondaryButtonLabel={currentPage === 2 ? 'Save Draft' : undefined}
+        onSecondarySubmit={currentPage === 2 ? () => submitPayload(true) : undefined}
         isSubmitting={isSubmitting}
         onClose={handleClose}
         onBack={currentPage === 2 ? () => setCurrentPage(1) : undefined}
@@ -198,7 +226,6 @@ export default function CreateCampaignModal({ visible, onClose, onSuccess, initi
             templateId={templateId}
             onChangeTemplateId={setTemplateId}
             templateVars={templateVars}
-            onChangeTemplateVar={handleChangeTemplateVar}
             currentTemplate={currentTemplate}
             reachCount={reachCount}
           />
@@ -210,6 +237,15 @@ export default function CreateCampaignModal({ visible, onClose, onSuccess, initi
         onClose={() => setIsCalendarVisible(false)}
         disablePastDates
         onSelectDate={handleSelectDate}
+        minDate={calendarTarget === 'end' && scheduledAt ? new Date(scheduledAt) : undefined}
+      />
+
+      <AlertModal
+        visible={alertConfig.visible}
+        onClose={() => setAlertConfig(prev => ({ ...prev, visible: false }))}
+        title={alertConfig.title}
+        content={alertConfig.content}
+        iconVariant="danger"
       />
     </>
   );

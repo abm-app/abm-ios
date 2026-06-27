@@ -55,9 +55,10 @@ export default function TargetAudienceStep({
         <View style={styles.dateCol}>
           <Text style={styles.inputLabel}>End Date (Optional)</Text>
           <TouchableOpacity
-            style={styles.dateInput}
+            style={[styles.dateInput, !scheduledAt && styles.dateInputDisabled]}
             onPress={() => onOpenCalendar('end')}
             activeOpacity={0.7}
+            disabled={!scheduledAt}
           >
             <Text style={offerExpiry ? styles.dateText : styles.datePlaceholder}>
               {offerExpiry || 'Select Date'}
@@ -161,6 +162,10 @@ const styles = StyleSheet.create({
     height: 44,
     justifyContent: 'center',
     backgroundColor: tokens.colors.background,
+  },
+  dateInputDisabled: {
+    opacity: 0.5,
+    backgroundColor: tokens.colors.surface,
   },
   dateText: {
     fontFamily: tokens.typography.fontFamily.sub,

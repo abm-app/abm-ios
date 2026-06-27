@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import tokens from '@/theme/tokens';
-import { Input, Chip, Card } from '@/components/ui';
+import { Chip } from '@/components/ui';
 import type { MetaTemplate } from '@/types/campaign';
 import { MetaContent } from '@/components/shared';
 
@@ -11,7 +11,6 @@ interface MessageContentStepProps {
   templateId: string;
   onChangeTemplateId: (id: string) => void;
   templateVars: Record<string, string>;
-  onChangeTemplateVar: (v: string, text: string) => void;
   currentTemplate: MetaTemplate | undefined;
   reachCount: number | null;
 }
@@ -22,7 +21,6 @@ export default function MessageContentStep({
   templateId,
   onChangeTemplateId,
   templateVars,
-  onChangeTemplateVar,
   currentTemplate,
 }: MessageContentStepProps) {
   // Replace variables in the template body or leave as {{var}} if not filled
@@ -50,22 +48,6 @@ export default function MessageContentStep({
       )}
 
       {currentTemplate ? <MetaContent body={previewText} /> : null}
-
-      {currentTemplate?.vars.length ? (
-        <Card padded style={styles.varsCard}>
-          <Text style={styles.cardTitle}>Dynamic Variables</Text>
-          {currentTemplate.vars.map(v => (
-            <Input
-              key={v}
-              label={v}
-              placeholder={`Enter value for ${v}`}
-              value={templateVars[v] || ''}
-              onChangeText={text => onChangeTemplateVar(v, text)}
-              style={styles.field}
-            />
-          ))}
-        </Card>
-      ) : null}
     </View>
   );
 }
@@ -92,20 +74,7 @@ const styles = StyleSheet.create({
     gap: tokens.spacing.sm,
     marginBottom: tokens.spacing.mdLg,
   },
-  varsCard: {
-    marginBottom: tokens.spacing.mdLg,
-    backgroundColor: tokens.colors.surface,
-  },
-  cardTitle: {
-    fontFamily: tokens.typography.fontFamily.sub,
-    fontSize: tokens.typography.fontSize.body,
-    fontWeight: '600',
-    color: tokens.colors.textPrimary,
-    marginBottom: tokens.spacing.md,
-  },
-  field: {
-    marginBottom: tokens.spacing.mdLg,
-  },
+
   infoBanner: {
     flexDirection: 'row',
     backgroundColor: tokens.colors.bannerWarningBg,

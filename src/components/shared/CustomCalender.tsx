@@ -9,6 +9,7 @@ interface CustomCalenderProps {
   onClose: () => void;
   disablePastDates?: boolean;
   selectedDate?: Date;
+  minDate?: Date;
   onSelectDate?: (date: Date) => void;
 }
 
@@ -83,6 +84,7 @@ export function CustomCalender({
   onClose,
   disablePastDates = false,
   selectedDate,
+  minDate,
   onSelectDate,
 }: CustomCalenderProps) {
   const [currentDate, setCurrentDate] = useState(selectedDate || new Date());
@@ -120,7 +122,11 @@ export function CustomCalender({
 
     for (let day = 1; day <= daysInMonth; day++) {
       const dateToCheck = new Date(year, month, day);
-      const isPast = disablePastDates && dateToCheck < today;
+      let isPast = disablePastDates && dateToCheck < today;
+      if (minDate && minDate > dateToCheck) {
+        isPast = true;
+      }
+
       const isSelected =
         activeDate &&
         activeDate.getDate() === day &&
