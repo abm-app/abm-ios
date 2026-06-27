@@ -17,6 +17,7 @@ import { useCampaign, useMetaTemplates } from '@/hooks/campaigns/useCampaigns';
 import { deleteCampaign } from '@/api/endpoints/campaignApi';
 import { Alert } from 'react-native';
 import LoginBackdrop from '@/screens/auth/components/LoginBackdrop';
+import { useAuthStore } from '@/store/authStore';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 type DetailsRouteProp = RouteProp<RootStackParamList, 'CampaignDetails'>;
@@ -25,6 +26,7 @@ export default function CampaignDetailsScreen() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<NavigationProp>();
   const route = useRoute<DetailsRouteProp>();
+  const user = useAuthStore(state => state.user);
 
   const [isEditModalVisible, setIsEditModalVisible] = React.useState(false);
   const [isDeleteModalVisible, setIsDeleteModalVisible] = React.useState(false);
@@ -104,14 +106,19 @@ export default function CampaignDetailsScreen() {
               textColor={isPending ? tokens.colors.primary : undefined}
             />
           </View>
-          <View style={styles.actionIcons}>
-            <TouchableOpacity onPress={() => setIsEditModalVisible(true)} style={styles.iconBtn}>
-              <Feather name="edit-2" size={20} color={tokens.colors.textSecondary} />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => setIsDeleteModalVisible(true)} style={styles.iconBtn}>
-              <Feather name="trash-2" size={20} color={tokens.colors.danger} />
-            </TouchableOpacity>
-          </View>
+          {user?.role !== 'staff' && (
+            <View style={styles.actionIcons}>
+              <TouchableOpacity onPress={() => setIsEditModalVisible(true)} style={styles.iconBtn}>
+                <Feather name="edit-2" size={20} color={tokens.colors.textSecondary} />
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => setIsDeleteModalVisible(true)}
+                style={styles.iconBtn}
+              >
+                <Feather name="trash-2" size={20} color={tokens.colors.danger} />
+              </TouchableOpacity>
+            </View>
+          )}
         </View>
 
         <Text style={styles.subtitle}>
