@@ -443,6 +443,38 @@ const emptyState = {
   actionButtonMinWidth: 120,
 } as const;
 
+/** Shared form modal geometry */
+const sharedFormModal = {
+  cornerRadius: 25,
+  paddingHorizontal: 24,
+  paddingTop: 24,
+  paddingBottom: 20,
+  titleFontSize: 24,
+  closeButtonSize: 36,
+  closeButtonRadius: 18,
+  closeButtonMarginRight: 12,
+  contentPaddingHorizontal: 24,
+  contentPaddingBottom: 16,
+  footerPaddingHorizontal: 24,
+  footerPaddingTop: 8,
+  footerMarginRight: 16,
+} as const;
+
+/** Calendar geometry */
+const calendar = {
+  borderRadius: 24,
+  padding: 24,
+  width: 340,
+  headerMarginBottom: 12,
+  headerFontSize: 20,
+  navPadding: 4,
+  weekdayFontSize: 13,
+  weekdayMarginBottom: 16,
+  dayHeight: 40,
+  dayRadius: 20,
+  dayFontSize: 18,
+} as const;
+
 // ─── Auth — Login Screen Geometry ────────────────────────────────────────────
 
 const auth = {
@@ -484,8 +516,10 @@ const auth = {
   fieldLabelMarginBottom: 7,
   /** Field input font size (unscaled) */
   fieldInputFontSize: 16,
-  /** Field input line height (unscaled) */
+  /** 22px */
   fieldInputLineHeight: 22,
+  /** 44px */
+  dateInputHeight: 44,
   /** Gap between username and password fields (unscaled) */
   fieldGap: 18,
   /** Gap between password and admin row (unscaled) */
@@ -607,6 +641,8 @@ const tokens = {
   dsHeader,
   dsSection,
   emptyState,
+  sharedFormModal,
+  calendar,
   opacity,
   shadow,
 } as const;

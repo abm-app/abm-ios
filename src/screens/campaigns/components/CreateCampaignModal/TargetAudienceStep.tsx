@@ -158,7 +158,7 @@ const styles = StyleSheet.create({
     borderColor: tokens.colors.borderMd,
     borderRadius: tokens.borderRadius.md,
     paddingHorizontal: tokens.spacing.md,
-    height: 44,
+    height: tokens.auth.dateInputHeight,
     justifyContent: 'center',
     backgroundColor: tokens.colors.background,
   },
