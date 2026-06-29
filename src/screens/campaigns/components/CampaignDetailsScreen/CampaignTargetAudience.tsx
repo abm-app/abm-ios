@@ -13,28 +13,28 @@ export default function CampaignTargetAudience({ campaign }: Props) {
 
   const tiers = filters?.tier ? String(filters.tier) : 'All';
   const behavior = filters?.lapsedDays ? `Lapsed > ${filters.lapsedDays} days` : 'Active';
-  const systemRules = filters?.property ? `Property: ${filters.property}` : 'No specific rules';
 
   return (
     <Card padded style={styles.card}>
       <Text style={styles.sectionTitle}>TARGET AUDIENCE</Text>
 
-      <Text style={styles.label}>Estimated Reach</Text>
-      <Text style={styles.reachValue}>~{recipientCount.toLocaleString()} Guests</Text>
+      <View style={styles.row}>
+        <Text style={styles.rowLabel}>Estimated Reach</Text>
+        <Text style={styles.rowValue}>~{recipientCount.toLocaleString()} Guests</Text>
+      </View>
+
+      <View style={styles.divider} />
 
       <View style={styles.row}>
         <Text style={styles.rowLabel}>Tiers</Text>
         <Text style={styles.rowValue}>{tiers}</Text>
       </View>
 
+      <View style={styles.divider} />
+
       <View style={styles.row}>
         <Text style={styles.rowLabel}>Behavior</Text>
         <Text style={styles.rowValue}>{behavior}</Text>
-      </View>
-
-      <View style={styles.row}>
-        <Text style={styles.rowLabel}>System Rules</Text>
-        <Text style={styles.rowValue}>{systemRules}</Text>
       </View>
     </Card>
   );
@@ -48,22 +48,14 @@ const styles = StyleSheet.create({
     fontFamily: tokens.typography.fontFamily.sub,
     fontSize: tokens.typography.fontSize.sectionLabel,
     fontWeight: '700',
-    color: tokens.colors.textSecondary,
+    color: tokens.colors.textPrimary,
     letterSpacing: tokens.typography.letterSpacing.sectionLabel,
     marginBottom: tokens.spacing.md,
   },
-  label: {
-    fontFamily: tokens.typography.fontFamily.sub,
-    fontSize: tokens.typography.fontSize.caption,
-    color: tokens.colors.textMuted,
-    marginBottom: tokens.spacing.xxs,
-  },
-  reachValue: {
-    fontFamily: tokens.typography.fontFamily.sub,
-    fontSize: tokens.typography.fontSize.h2,
-    fontWeight: '700',
-    color: tokens.colors.textPrimary,
-    marginBottom: tokens.spacing.md,
+  divider: {
+    height: StyleSheet.hairlineWidth,
+    backgroundColor: tokens.colors.border,
+    marginTop: tokens.spacing.lg,
   },
   row: {
     flexDirection: 'row',

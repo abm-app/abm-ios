@@ -6,8 +6,8 @@ import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 import tokens from '@/theme/tokens';
-import { Chip } from '@/components/ui';
-import { LoadingSpinner, ErrorState, ConfirmationModal, Backdrop } from '@/components/shared';
+import { Chip, Button } from '@/components/ui';
+import { LoadingSpinner, ErrorState, ConfirmationModal } from '@/components/shared';
 import CampaignTargetAudience from './components/CampaignDetailsScreen/CampaignTargetAudience';
 import CampaignMessageContent from './components/CampaignDetailsScreen/CampaignMessageContent';
 import CampaignBottomBar from './components/CampaignDetailsScreen/CampaignBottomBar';
@@ -78,18 +78,37 @@ export default function CampaignDetailsScreen() {
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
-      <Backdrop />
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => navigation.goBack()}
-          style={styles.backButton}
-          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-        >
-          <Feather name="arrow-left" size={24} color={tokens.colors.textPrimary} />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>CAMPAIGN DETAILS</Text>
-        <View style={styles.headerRight} />
+        <View style={styles.headerLeftContainer}>
+          <TouchableOpacity
+            onPress={() => navigation.goBack()}
+            style={styles.backButton}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          >
+            <Feather name="chevron-left" size={24} color={tokens.colors.textPrimary} />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>Campaign Details</Text>
+        </View>
+
+        {user?.role !== 'staff' && (
+          <View style={styles.actionsContainer}>
+            <Button
+              label="Edit"
+              variant="secondary"
+              size="sm"
+              onPress={() => setIsEditModalVisible(true)}
+              style={styles.pillButton}
+            />
+            <Button
+              label="Delete"
+              variant="danger"
+              size="sm"
+              onPress={() => setIsDeleteModalVisible(true)}
+              style={[styles.pillButton, styles.deleteButtonBorder]}
+            />
+          </View>
+        )}
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
@@ -105,19 +124,6 @@ export default function CampaignDetailsScreen() {
               textColor={isPending ? tokens.colors.primary : undefined}
             />
           </View>
-          {user?.role !== 'staff' && (
-            <View style={styles.actionIcons}>
-              <TouchableOpacity onPress={() => setIsEditModalVisible(true)} style={styles.iconBtn}>
-                <Feather name="edit-2" size={20} color={tokens.colors.textSecondary} />
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => setIsDeleteModalVisible(true)}
-                style={styles.iconBtn}
-              >
-                <Feather name="trash-2" size={20} color={tokens.colors.danger} />
-              </TouchableOpacity>
-            </View>
-          )}
         </View>
 
         <Text style={styles.subtitle}>
@@ -160,6 +166,7 @@ export default function CampaignDetailsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: tokens.colors.background,
   },
   header: {
     flexDirection: 'row',
@@ -168,19 +175,31 @@ const styles = StyleSheet.create({
     paddingHorizontal: tokens.spacing.xlMd,
     paddingVertical: tokens.spacing.mdLg,
   },
+  headerLeftContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
   backButton: {
-    padding: tokens.spacing.xs,
+    paddingRight: tokens.spacing.sm,
+    paddingVertical: tokens.spacing.xs,
   },
   headerTitle: {
-    fontFamily: tokens.typography.fontFamily.sub,
-    fontSize: tokens.typography.fontSize.label,
-    fontWeight: '700',
-    letterSpacing: tokens.typography.letterSpacing.label,
-    color: tokens.colors.textSecondary,
-    textTransform: 'uppercase',
+    fontSize: 17,
+    fontWeight: '600',
+    color: tokens.colors.textPrimary,
   },
-  headerRight: {
-    width: 32,
+  actionsContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: tokens.spacing.sm,
+  },
+  pillButton: {
+    borderRadius: tokens.borderRadius.pill,
+  },
+  deleteButtonBorder: {
+    borderWidth: tokens.borderWidth.thin,
+    borderColor: tokens.colors.badgeHighText,
   },
   scrollContent: {
     paddingHorizontal: tokens.spacing.xlMd,
@@ -202,14 +221,6 @@ const styles = StyleSheet.create({
   chipContainer: {
     flex: 1,
     flexDirection: 'row',
-  },
-  actionIcons: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: tokens.spacing.sm,
-  },
-  iconBtn: {
-    padding: tokens.spacing.xs,
   },
   subtitle: {
     fontFamily: tokens.typography.fontFamily.sub,
