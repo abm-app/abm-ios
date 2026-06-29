@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, FlatList } from 'react-native';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import tokens from '@/theme/tokens';
@@ -11,7 +11,7 @@ import ActionRequiredCard, { PendingAction } from './components/ActionRequiredCa
 import RecentBroadcastCard, { Broadcast } from './components/RecentBroadcastCard';
 import CreateCampaignModal from './components/CreateCampaignModal/CreateCampaignModal';
 import { useCampaigns } from '@/hooks/campaigns/useCampaigns';
-import { LoadingSpinner, ErrorState, Backdrop } from '@/components/shared';
+import { LoadingSpinner, ErrorState, Backdrop, Accordion } from '@/components/shared';
 import type { Campaign } from '@/types/campaign';
 
 const TABS = [
@@ -91,45 +91,43 @@ export default function CampaignDashboardScreen() {
         rightButtonText="+ New"
         onRightButtonPress={() => setIsCreateModalVisible(true)}
       />
-      <View style={styles.tabsContainer}>
-        <SegmentedControl tabs={TABS} activeTab={activeTab} onChange={setActiveTab} />
-      </View>
-
-      {activeTab === 'automations' ? (
-        <View style={styles.centerContainer}>
-          <Text style={styles.emptyText}>Coming soon</Text>
-        </View>
-      ) : (
-        <View style={styles.contentContainer}>
-          {isOwner && (
-            <View style={styles.topSectionContainer}>
-              <Text style={styles.sectionTitle}>ACTION REQUIRED</Text>
-              <FlatList
-                data={pendingCampaigns}
-                keyExtractor={item => item._id}
-                renderItem={({ item }) => (
-                  <ActionRequiredCard action={mapCampaignToPendingAction(item)} />
-                )}
-                contentContainerStyle={styles.listContent}
-                showsVerticalScrollIndicator={false}
-              />
-            </View>
-          )}
-
-          <View style={styles.bottomSectionContainer}>
-            <Text style={styles.sectionTitle}>RECENT BROADCASTS</Text>
-            <FlatList
-              data={recentCampaigns}
-              keyExtractor={item => item._id}
-              renderItem={({ item }) => (
-                <RecentBroadcastCard broadcast={mapCampaignToBroadcast(item)} />
-              )}
-              contentContainerStyle={[styles.listContent, { paddingBottom: bottomPadding }]}
-              showsVerticalScrollIndicator={false}
-            />
+      <View style={[styles.mainWrapper, { paddingBottom: bottomPadding }]}>
+        <View style={styles.surface}>
+          <View style={styles.tabsContainer}>
+            <SegmentedControl tabs={TABS} activeTab={activeTab} onChange={setActiveTab} />
           </View>
+
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.scrollInner}
+          >
+            {activeTab === 'automations' ? (
+              <View style={styles.centerContainer}>
+                <Text style={styles.emptyText}>Coming soon</Text>
+              </View>
+            ) : (
+              <View style={styles.contentContainer}>
+                {isOwner && pendingCampaigns.length > 0 && (
+                  <Accordion title="Pending Approval" count={pendingCampaigns.length}>
+                    {pendingCampaigns.map(item => (
+                      <ActionRequiredCard
+                        key={item._id}
+                        action={mapCampaignToPendingAction(item)}
+                      />
+                    ))}
+                  </Accordion>
+                )}
+
+                <Accordion title="Recent Broadcasts">
+                  {recentCampaigns.map(item => (
+                    <RecentBroadcastCard key={item._id} broadcast={mapCampaignToBroadcast(item)} />
+                  ))}
+                </Accordion>
+              </View>
+            )}
+          </ScrollView>
         </View>
-      )}
+      </View>
 
       <CreateCampaignModal
         visible={isCreateModalVisible}
@@ -146,12 +144,32 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  tabsContainer: {
+  mainWrapper: {
+    flex: 1,
     paddingHorizontal: tokens.spacing.xlMd,
+    paddingTop: tokens.spacing.md,
+  },
+  scrollInner: {
+    flexGrow: 1,
+  },
+  surface: {
+    flex: 1,
+    backgroundColor: tokens.colors.background,
+    borderRadius: tokens.borderRadius.xl,
+    padding: tokens.spacing.xlMd,
+    shadowColor: tokens.shadow.modal.shadowColor,
+    shadowOffset: tokens.shadow.modal.shadowOffset,
+    shadowOpacity: tokens.shadow.modal.shadowOpacity,
+    shadowRadius: tokens.shadow.modal.shadowRadius,
+    elevation: 2,
+    borderWidth: tokens.borderWidth.hairline,
+    borderColor: tokens.colors.border,
+  },
+  tabsContainer: {
     paddingBottom: tokens.spacing.lgMd,
   },
   centerContainer: {
-    flex: 1,
+    height: 200,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -161,26 +179,6 @@ const styles = StyleSheet.create({
     color: tokens.colors.textMuted,
   },
   contentContainer: {
-    flex: 1,
-    paddingHorizontal: tokens.spacing.xlMd,
-  },
-  topSectionContainer: {
-    paddingTop: tokens.spacing.mdLg,
-    maxHeight: '50%',
-  },
-  bottomSectionContainer: {
-    flex: 1,
-    paddingTop: tokens.spacing.mdLg,
-  },
-  sectionTitle: {
-    fontFamily: tokens.typography.fontFamily.sub,
-    fontSize: tokens.typography.fontSize.sectionLabel,
-    fontWeight: '700',
-    color: tokens.colors.textSecondary,
-    letterSpacing: tokens.typography.letterSpacing.sectionLabel,
-    marginBottom: tokens.spacing.mdLg,
-  },
-  listContent: {
-    paddingBottom: tokens.spacing.xxl,
+    paddingTop: tokens.spacing.md,
   },
 });

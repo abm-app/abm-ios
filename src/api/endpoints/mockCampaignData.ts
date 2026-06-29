@@ -28,7 +28,7 @@ export const mockCampaigns: Campaign[] = [
     templateVariables: {},
     type: 'trigger',
     filters: {
-      property: 'ABM Grand Hotel',
+      property: 'Hotel ABM International',
     },
     recipientCount: 0,
     status: 'pending_approval',
