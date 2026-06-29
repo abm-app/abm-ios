@@ -113,6 +113,7 @@ const fontSize = {
   navIcon: 24,
   navLabel: 10,
   modalTitle: 19,
+  headerTitle: 17,
   score: 52,
   miniStatNumber: 18,
   miniStatLabel: 9,

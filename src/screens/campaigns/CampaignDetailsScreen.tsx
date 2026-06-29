@@ -187,7 +187,8 @@ const styles = StyleSheet.create({
     paddingVertical: tokens.spacing.xs,
   },
   headerTitle: {
-    fontSize: 17,
+    fontFamily: tokens.typography.fontFamily.sub,
+    fontSize: tokens.typography.fontSize.headerTitle,
     fontWeight: '600',
     color: tokens.colors.textPrimary,
   },

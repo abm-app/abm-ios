@@ -11,13 +11,8 @@ import ActionRequiredCard, { PendingAction } from './components/ActionRequiredCa
 import RecentBroadcastCard, { Broadcast } from './components/RecentBroadcastCard';
 import CreateCampaignModal from './components/CreateCampaignModal/CreateCampaignModal';
 import { useCampaigns } from '@/hooks/campaigns/useCampaigns';
-import {
-  LoadingSpinner,
-  ErrorState,
-  Backdrop,
-  AccordionHeader,
-  EmptyState,
-} from '@/components/shared';
+import { LoadingSpinner, ErrorState, Backdrop, EmptyState } from '@/components/shared';
+import { AccordionHeader } from './components/Accordion';
 import type { Campaign } from '@/types/campaign';
 
 const TABS = [
