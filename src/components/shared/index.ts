@@ -9,3 +9,4 @@ export { default as MetaContent } from './MetaContent';
 export * from './ConfirmationModal';
 export * from './Alert';
 export * from './Accordion';
+export { default as EmptyState } from './EmptyState';

@@ -84,6 +84,8 @@ export default function CampaignDetailsScreen() {
           <TouchableOpacity
             onPress={() => navigation.goBack()}
             style={styles.backButton}
+            accessibilityRole="button"
+            accessibilityLabel="Go back"
             hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
           >
             <Feather name="chevron-left" size={24} color={tokens.colors.textPrimary} />

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, SectionList, LayoutAnimation, ScrollView } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import tokens from '@/theme/tokens';
@@ -11,7 +11,13 @@ import ActionRequiredCard, { PendingAction } from './components/ActionRequiredCa
 import RecentBroadcastCard, { Broadcast } from './components/RecentBroadcastCard';
 import CreateCampaignModal from './components/CreateCampaignModal/CreateCampaignModal';
 import { useCampaigns } from '@/hooks/campaigns/useCampaigns';
-import { LoadingSpinner, ErrorState, Backdrop, Accordion } from '@/components/shared';
+import {
+  LoadingSpinner,
+  ErrorState,
+  Backdrop,
+  AccordionHeader,
+  EmptyState,
+} from '@/components/shared';
 import type { Campaign } from '@/types/campaign';
 
 const TABS = [
@@ -60,6 +66,10 @@ function mapCampaignToBroadcast(c: Campaign): Broadcast {
 export default function CampaignDashboardScreen() {
   const [activeTab, setActiveTab] = useState('broadcasts');
   const [isCreateModalVisible, setIsCreateModalVisible] = useState(false);
+  const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
+    pending: true,
+    recent: true,
+  });
   const user = useAuthStore(state => state.user);
   const insets = useSafeAreaInsets();
 
@@ -97,35 +107,71 @@ export default function CampaignDashboardScreen() {
             <SegmentedControl tabs={TABS} activeTab={activeTab} onChange={setActiveTab} />
           </View>
 
-          <ScrollView
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={styles.scrollInner}
-          >
-            {activeTab === 'automations' ? (
+          {activeTab === 'automations' ? (
+            <ScrollView
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={styles.scrollInner}
+            >
               <View style={styles.centerContainer}>
                 <Text style={styles.emptyText}>Coming soon</Text>
               </View>
-            ) : (
-              <View style={styles.contentContainer}>
-                {isOwner && pendingCampaigns.length > 0 && (
-                  <Accordion title="Pending Approval" count={pendingCampaigns.length}>
-                    {pendingCampaigns.map(item => (
-                      <ActionRequiredCard
-                        key={item._id}
-                        action={mapCampaignToPendingAction(item)}
-                      />
-                    ))}
-                  </Accordion>
-                )}
-
-                <Accordion title="Recent Broadcasts">
-                  {recentCampaigns.map(item => (
-                    <RecentBroadcastCard key={item._id} broadcast={mapCampaignToBroadcast(item)} />
-                  ))}
-                </Accordion>
-              </View>
-            )}
-          </ScrollView>
+            </ScrollView>
+          ) : (
+            <SectionList
+              sections={[
+                ...(isOwner && pendingCampaigns.length > 0
+                  ? [
+                      {
+                        key: 'pending',
+                        title: 'Pending Approval',
+                        count: pendingCampaigns.length,
+                        data: expandedSections.pending ? pendingCampaigns : [],
+                        renderItem: ({ item }: { item: Campaign }) => (
+                          <ActionRequiredCard action={mapCampaignToPendingAction(item)} />
+                        ),
+                      },
+                    ]
+                  : []),
+                ...(recentCampaigns.length > 0
+                  ? [
+                      {
+                        key: 'recent',
+                        title: 'Recent Broadcasts',
+                        data: expandedSections.recent ? recentCampaigns : [],
+                        renderItem: ({ item }: { item: Campaign }) => (
+                          <RecentBroadcastCard broadcast={mapCampaignToBroadcast(item)} />
+                        ),
+                      },
+                    ]
+                  : []),
+              ]}
+              keyExtractor={item => item._id}
+              ListEmptyComponent={
+                <EmptyState
+                  icon="list"
+                  title="No Campaigns"
+                  subtitle="You don't have any pending or recent campaigns yet."
+                />
+              }
+              renderSectionHeader={({ section }) => (
+                <AccordionHeader
+                  title={section.title}
+                  count={section.count}
+                  expanded={!!expandedSections[section.key]}
+                  onToggle={() => {
+                    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+                    setExpandedSections(prev => ({
+                      ...prev,
+                      [section.key]: !prev[section.key],
+                    }));
+                  }}
+                />
+              )}
+              contentContainerStyle={styles.scrollInner}
+              showsVerticalScrollIndicator={false}
+              stickySectionHeadersEnabled={false}
+            />
+          )}
         </View>
       </View>
 
@@ -161,7 +207,6 @@ const styles = StyleSheet.create({
     shadowOffset: tokens.shadow.modal.shadowOffset,
     shadowOpacity: tokens.shadow.modal.shadowOpacity,
     shadowRadius: tokens.shadow.modal.shadowRadius,
-    elevation: 2,
     borderWidth: tokens.borderWidth.hairline,
     borderColor: tokens.colors.border,
   },
@@ -169,7 +214,7 @@ const styles = StyleSheet.create({
     paddingBottom: tokens.spacing.lgMd,
   },
   centerContainer: {
-    height: 200,
+    minHeight: tokens.emptyState.minHeight,
     justifyContent: 'center',
     alignItems: 'center',
   },

@@ -216,7 +216,15 @@ export default function CreateCampaignModal({ visible, onClose, onSuccess, initi
               onClose={() => setIsCalendarVisible(false)}
               disablePastDates
               onSelectDate={handleSelectDate}
-              minDate={calendarTarget === 'end' && scheduledAt ? new Date(scheduledAt) : undefined}
+              minDate={
+                calendarTarget === 'end' && scheduledAt
+                  ? new Date(
+                      Number(scheduledAt.split('-')[0]),
+                      Number(scheduledAt.split('-')[1]) - 1,
+                      Number(scheduledAt.split('-')[2]),
+                    )
+                  : undefined
+              }
               useModal={false}
             />
 

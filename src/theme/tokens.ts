@@ -435,6 +435,11 @@ const dsSection = {
   labelBottomPadding: 6,
 } as const;
 
+/** Empty state geometry */
+const emptyState = {
+  minHeight: 200,
+} as const;
+
 // ─── Auth — Login Screen Geometry ────────────────────────────────────────────
 
 const auth = {
@@ -598,6 +603,7 @@ const tokens = {
   radiusExample,
   dsHeader,
   dsSection,
+  emptyState,
   opacity,
   shadow,
 } as const;

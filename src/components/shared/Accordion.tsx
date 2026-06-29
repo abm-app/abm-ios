@@ -10,6 +10,29 @@ interface AccordionProps {
   children: React.ReactNode;
 }
 
+export interface AccordionHeaderProps {
+  title: string;
+  count?: number;
+  expanded: boolean;
+  onToggle: () => void;
+}
+
+export function AccordionHeader({ title, count, expanded, onToggle }: AccordionHeaderProps) {
+  return (
+    <TouchableOpacity onPress={onToggle} style={styles.header} activeOpacity={0.7}>
+      <View style={styles.titleRow}>
+        <Text style={styles.title}>{title}</Text>
+        {count !== undefined && <Text style={styles.count}>({count})</Text>}
+      </View>
+      <Feather
+        name={expanded ? 'chevron-up' : 'chevron-down'}
+        size={tokens.iconSizes.content}
+        color={tokens.colors.textSecondary}
+      />
+    </TouchableOpacity>
+  );
+}
+
 export function Accordion({ title, count, initialExpanded = true, children }: AccordionProps) {
   const [expanded, setExpanded] = useState(initialExpanded);
 
@@ -20,17 +43,7 @@ export function Accordion({ title, count, initialExpanded = true, children }: Ac
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity onPress={toggle} style={styles.header} activeOpacity={0.7}>
-        <View style={styles.titleRow}>
-          <Text style={styles.title}>{title}</Text>
-          {count !== undefined && <Text style={styles.count}>({count})</Text>}
-        </View>
-        <Feather
-          name={expanded ? 'chevron-up' : 'chevron-down'}
-          size={20}
-          color={tokens.colors.textSecondary}
-        />
-      </TouchableOpacity>
+      <AccordionHeader title={title} count={count} expanded={expanded} onToggle={toggle} />
       {expanded && <View style={styles.content}>{children}</View>}
     </View>
   );
