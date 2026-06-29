@@ -28,9 +28,14 @@ export default function TargetAudienceStep({
   isLoadingReach,
   onOpenCalendar,
 }: TargetAudienceStepProps) {
+  const formatDate = (isoStr?: string) => {
+    if (!isoStr) return null;
+    const [year, month, day] = isoStr.split('-');
+    return `${day}/${month}/${year}`;
+  };
+
   return (
     <View>
-      <Text style={styles.sectionLabel}>CONFIGURATION</Text>
       <Input
         label="Campaign Name"
         placeholder="e.g. Summer VIP Offer"
@@ -48,7 +53,7 @@ export default function TargetAudienceStep({
             activeOpacity={0.7}
           >
             <Text style={scheduledAt ? styles.dateText : styles.datePlaceholder}>
-              {scheduledAt || 'Select Date'}
+              {formatDate(scheduledAt) || 'Select Date'}
             </Text>
           </TouchableOpacity>
         </View>
@@ -61,13 +66,12 @@ export default function TargetAudienceStep({
             disabled={!scheduledAt}
           >
             <Text style={offerExpiry ? styles.dateText : styles.datePlaceholder}>
-              {offerExpiry || 'Select Date'}
+              {formatDate(offerExpiry) || 'Select Date'}
             </Text>
           </TouchableOpacity>
         </View>
       </View>
 
-      <Text style={[styles.sectionLabel, { marginTop: tokens.spacing.xl }]}>TARGET AUDIENCE</Text>
       <Text style={styles.subLabel}>GUEST TIERS</Text>
       <View style={styles.chipGroup}>
         {GUEST_TIERS.map(tier => (
@@ -111,6 +115,7 @@ const styles = StyleSheet.create({
   },
   field: {
     marginBottom: tokens.spacing.mdLg,
+    fontFamily: tokens.typography.fontFamily.sub,
   },
   chipGroup: {
     flexDirection: 'row',

@@ -206,6 +206,27 @@ export default function CreateCampaignModal({ visible, onClose, onSuccess, initi
         isSubmitting={isSubmitting}
         onClose={handleClose}
         onBack={currentPage === 2 ? () => setCurrentPage(1) : undefined}
+        overlay={
+          <>
+            <CustomCalender
+              visible={isCalendarVisible}
+              onClose={() => setIsCalendarVisible(false)}
+              disablePastDates
+              onSelectDate={handleSelectDate}
+              minDate={calendarTarget === 'end' && scheduledAt ? new Date(scheduledAt) : undefined}
+              useModal={false}
+            />
+
+            <AlertModal
+              visible={alertConfig.visible}
+              onClose={() => setAlertConfig(prev => ({ ...prev, visible: false }))}
+              title={alertConfig.title}
+              content={alertConfig.content}
+              iconVariant="danger"
+              useModal={false}
+            />
+          </>
+        }
       >
         {currentPage === 1 ? (
           <TargetAudienceStep
@@ -231,22 +252,6 @@ export default function CreateCampaignModal({ visible, onClose, onSuccess, initi
           />
         )}
       </SharedFormModal>
-
-      <CustomCalender
-        visible={isCalendarVisible}
-        onClose={() => setIsCalendarVisible(false)}
-        disablePastDates
-        onSelectDate={handleSelectDate}
-        minDate={calendarTarget === 'end' && scheduledAt ? new Date(scheduledAt) : undefined}
-      />
-
-      <AlertModal
-        visible={alertConfig.visible}
-        onClose={() => setAlertConfig(prev => ({ ...prev, visible: false }))}
-        title={alertConfig.title}
-        content={alertConfig.content}
-        iconVariant="danger"
-      />
     </>
   );
 }

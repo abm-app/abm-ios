@@ -11,6 +11,7 @@ export interface AlertModalProps {
   content?: string | React.ReactNode;
   buttonLabel?: string;
   iconVariant?: 'success' | 'danger';
+  useModal?: boolean;
 }
 
 export function AlertModal({
@@ -21,44 +22,51 @@ export function AlertModal({
   content,
   buttonLabel = 'Okay',
   iconVariant,
+  useModal = true,
 }: AlertModalProps) {
-  return (
-    <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
-      <View style={styles.modalOverlay}>
-        <View style={styles.modalCard}>
-          {icon && (
-            <View
-              style={[
-                styles.iconContainer,
-                iconVariant === 'success' && styles.successIconWrapper,
-                iconVariant === 'danger' && styles.dangerIconWrapper,
-              ]}
-            >
-              {icon}
-            </View>
-          )}
+  if (!visible) return null;
 
-          <View style={styles.messageBlock}>
-            {title && <Text style={styles.modalTitle}>{title}</Text>}
-            {content &&
-              (typeof content === 'string' ? (
-                <Text style={styles.modalDesc}>{content}</Text>
-              ) : (
-                content
-              ))}
+  const contentBlock = (
+    <View style={[styles.modalOverlay, !useModal && styles.absoluteOverlay]}>
+      <View style={styles.modalCard}>
+        {icon && (
+          <View
+            style={[
+              styles.iconContainer,
+              iconVariant === 'success' && styles.successIconWrapper,
+              iconVariant === 'danger' && styles.dangerIconWrapper,
+            ]}
+          >
+            {icon}
           </View>
+        )}
 
-          <View style={styles.btnRow}>
-            <TouchableOpacity
-              style={styles.confirmBtn}
-              onPress={onClose}
-              accessibilityRole="button"
-            >
-              <Text style={styles.confirmBtnText}>{buttonLabel}</Text>
-            </TouchableOpacity>
-          </View>
+        <View style={styles.messageBlock}>
+          {title && <Text style={styles.modalTitle}>{title}</Text>}
+          {content &&
+            (typeof content === 'string' ? (
+              <Text style={styles.modalDesc}>{content}</Text>
+            ) : (
+              content
+            ))}
+        </View>
+
+        <View style={styles.btnRow}>
+          <TouchableOpacity style={styles.confirmBtn} onPress={onClose} accessibilityRole="button">
+            <Text style={styles.confirmBtnText}>{buttonLabel}</Text>
+          </TouchableOpacity>
         </View>
       </View>
+    </View>
+  );
+
+  if (useModal === false) {
+    return contentBlock;
+  }
+
+  return (
+    <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
+      {contentBlock}
     </Modal>
   );
 }
@@ -69,6 +77,16 @@ const styles = StyleSheet.create({
     backgroundColor: tokens.colors.secondary,
     justifyContent: 'center',
     alignItems: 'center',
+    padding: tokens.spacing.xlMd,
+  },
+  absoluteOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 9999,
+    elevation: 9999,
   },
   modalCard: {
     width: 320,

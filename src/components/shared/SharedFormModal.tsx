@@ -92,6 +92,7 @@ interface SharedFormModalProps {
   isSubmitting?: boolean;
   onBack?: () => void;
   children: React.ReactNode;
+  overlay?: React.ReactNode;
 }
 
 export const SharedFormModal = React.forwardRef<ScrollView, SharedFormModalProps>(
@@ -107,6 +108,7 @@ export const SharedFormModal = React.forwardRef<ScrollView, SharedFormModalProps
       isSubmitting,
       onBack,
       children,
+      overlay,
     },
     ref,
   ) => {
@@ -191,6 +193,7 @@ export const SharedFormModal = React.forwardRef<ScrollView, SharedFormModalProps
             />
           </Animated.View>
         </Animated.View>
+        {overlay}
       </Modal>
     );
   },

@@ -11,6 +11,7 @@ interface CustomCalenderProps {
   selectedDate?: Date;
   minDate?: Date;
   onSelectDate?: (date: Date) => void;
+  useModal?: boolean;
 }
 
 const CALENDAR_COLORS = {
@@ -86,6 +87,7 @@ export function CustomCalender({
   selectedDate,
   minDate,
   onSelectDate,
+  useModal = true,
 }: CustomCalenderProps) {
   const [currentDate, setCurrentDate] = useState(selectedDate || new Date());
   const [activeDate, setActiveDate] = useState<Date | undefined>(selectedDate);
@@ -155,22 +157,32 @@ export function CustomCalender({
     return days;
   };
 
+  if (!visible) return null;
+
+  const content = (
+    <Pressable style={[styles.overlay, !useModal && styles.absoluteOverlay]} onPress={onClose}>
+      <Pressable style={styles.card} onPress={e => e.stopPropagation()}>
+        <CalendarHeader
+          month={month}
+          year={year}
+          onPrevMonth={handlePrevMonth}
+          onNextMonth={handleNextMonth}
+        />
+
+        <WeekdaysRow />
+
+        <View style={styles.daysGrid}>{renderDays()}</View>
+      </Pressable>
+    </Pressable>
+  );
+
+  if (useModal === false) {
+    return content;
+  }
+
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
-      <Pressable style={styles.overlay} onPress={onClose}>
-        <Pressable style={styles.card} onPress={e => e.stopPropagation()}>
-          <CalendarHeader
-            month={month}
-            year={year}
-            onPrevMonth={handlePrevMonth}
-            onNextMonth={handleNextMonth}
-          />
-
-          <WeekdaysRow />
-
-          <View style={styles.daysGrid}>{renderDays()}</View>
-        </Pressable>
-      </Pressable>
+      {content}
     </Modal>
   );
 }
@@ -181,6 +193,15 @@ const styles = StyleSheet.create({
     backgroundColor: tokens.colors.secondary,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  absoluteOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 9999,
+    elevation: 9999,
   },
   card: {
     backgroundColor: tokens.colors.background,
