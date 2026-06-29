@@ -31,7 +31,22 @@ export default function TargetAudienceStep({
   const formatDate = (isoStr?: string) => {
     if (!isoStr) return null;
     const [year, month, day] = isoStr.split('-');
-    return `${day}/${month}/${year}`;
+    const monthNames = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
+    const monthName = monthNames[parseInt(month, 10) - 1];
+    return `${day} ${monthName}, ${year}`;
   };
 
   return (

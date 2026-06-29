@@ -119,7 +119,10 @@ export default function CreateCampaignModal({ visible, onClose, onSuccess, initi
   };
 
   const handleSelectDate = (date: Date) => {
-    const dateStr = date.toISOString().split('T')[0];
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const dateStr = `${year}-${month}-${day}`;
     if (calendarTarget === 'start') {
       setScheduledAt(dateStr);
     } else if (calendarTarget === 'end') {
