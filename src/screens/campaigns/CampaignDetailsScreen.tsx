@@ -13,8 +13,7 @@ import CampaignMessageContent from './components/CampaignDetailsScreen/CampaignM
 import CampaignBottomBar from './components/CampaignDetailsScreen/CampaignBottomBar';
 import CreateCampaignModal from './components/CreateCampaignModal/CreateCampaignModal';
 import type { RootStackParamList } from '@/navigation/types';
-import { useCampaign, useMetaTemplates } from '@/hooks/campaigns/useCampaigns';
-import { deleteCampaign } from '@/api/endpoints/campaignApi';
+import { useCampaign, useMetaTemplates, useDeleteCampaign } from '@/hooks/campaigns/useCampaigns';
 import { Alert } from 'react-native';
 import { useAuthStore } from '@/store/authStore';
 
@@ -38,6 +37,7 @@ export default function CampaignDetailsScreen() {
     refetch,
   } = useCampaign(route.params.id);
   const { data: templates, isLoading: isTplLoading } = useMetaTemplates();
+  const deleteMutation = useDeleteCampaign();
 
   if (isCampLoading || isTplLoading) return <LoadingSpinner />;
   if (isCampError || !campaign)
@@ -67,7 +67,7 @@ export default function CampaignDetailsScreen() {
   const handleDelete = async () => {
     if (!campaign) return;
     try {
-      await deleteCampaign(campaign._id);
+      await deleteMutation.mutateAsync(campaign._id);
       setIsDeleteModalVisible(false);
       navigation.goBack();
     } catch {

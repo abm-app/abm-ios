@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { SharedFormModal, CustomCalender, AlertModal } from '@/components/shared';
-import {
-  createCampaign,
-  updateCampaign,
-  getEstimatedReach,
-  CreateCampaignPayload,
-} from '@/api/endpoints/campaignApi';
+import { CreateCampaignPayload } from '@/api/endpoints/campaignApi';
 import type { Campaign } from '@/types/campaign';
-import { useMetaTemplates } from '@/hooks/campaigns/useCampaigns';
+import {
+  useMetaTemplates,
+  useCreateCampaign,
+  useUpdateCampaign,
+  useEstimatedReach,
+} from '@/hooks/campaigns/useCampaigns';
 import { getCalendarDateString, parseDateString } from '@/utils/dateUtils';
 import TargetAudienceStep from './TargetAudienceStep';
 import MessageContentStep from './MessageContentStep';
@@ -21,6 +21,10 @@ interface Props {
 
 export default function CreateCampaignModal({ visible, onClose, onSuccess, initialData }: Props) {
   const { data: templates, isLoading: isLoadingTemplates } = useMetaTemplates();
+  const createMutation = useCreateCampaign();
+  const updateMutation = useUpdateCampaign();
+  const reachMutation = useEstimatedReach();
+
   const [currentPage, setCurrentPage] = useState<1 | 2>(1);
   const [name, setName] = useState(initialData?.name || '');
   const [templateId, setTemplateId] = useState(initialData?.templateId || '');
@@ -73,7 +77,8 @@ export default function CreateCampaignModal({ visible, onClose, onSuccess, initi
     const fetchReach = async () => {
       setIsLoadingReach(true);
       try {
-        const count = await getEstimatedReach(selectedTiers);
+        setReachCount(null);
+        const count = await reachMutation.mutateAsync(selectedTiers);
         if (isMounted) setReachCount(count);
       } catch {
         if (isMounted) setReachCount(0);
@@ -85,7 +90,7 @@ export default function CreateCampaignModal({ visible, onClose, onSuccess, initi
     return () => {
       isMounted = false;
     };
-  }, [selectedTiers]);
+  }, [selectedTiers, reachMutation]);
 
   useEffect(() => {
     if (templates && templates.length > 0 && !templateId) {
@@ -164,14 +169,16 @@ export default function CreateCampaignModal({ visible, onClose, onSuccess, initi
 
     try {
       if (initialData?._id) {
-        await updateCampaign(initialData._id, payload);
+        await updateMutation.mutateAsync({ id: initialData._id, payload });
       } else {
-        await createCampaign(payload);
+        await createMutation.mutateAsync(payload);
       }
+      setIsSubmitting(false);
       if (onSuccess) onSuccess();
       resetState();
       onClose();
     } catch {
+      setIsSubmitting(false);
       showAlert(
         'Error',
         initialData?._id ? 'Failed to update campaign.' : 'Failed to create campaign.',
