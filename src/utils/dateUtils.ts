@@ -1,22 +1,33 @@
+const MONTH_NAMES = [
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
+  'May',
+  'Jun',
+  'Jul',
+  'Aug',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dec',
+];
+
 export const formatDate = (isoStr?: string): string | null => {
   if (!isoStr) return null;
   const [year, month, day] = isoStr.split('-');
-  const monthNames = [
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'May',
-    'Jun',
-    'Jul',
-    'Aug',
-    'Sep',
-    'Oct',
-    'Nov',
-    'Dec',
-  ];
-  const monthName = monthNames[parseInt(month, 10) - 1];
-  return `${day} ${monthName}, ${year}`;
+  if (!year || !month || !day) return null;
+  const monthIndex = Number(month) - 1;
+  const dayNumber = Number(day);
+  if (
+    !Number.isInteger(monthIndex + 1) ||
+    monthIndex < 0 ||
+    monthIndex > 11 ||
+    !Number.isInteger(dayNumber)
+  ) {
+    return null;
+  }
+  return `${dayNumber} ${MONTH_NAMES[monthIndex]}, ${year}`;
 };
 
 export const getCalendarDateString = (date: Date): string => {

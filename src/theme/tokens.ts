@@ -438,6 +438,8 @@ const dsSection = {
 /** Empty state geometry */
 const emptyState = {
   minHeight: 200,
+  subtitleLineHeight: 22,
+  actionButtonMinWidth: 120,
 } as const;
 
 // ─── Auth — Login Screen Geometry ────────────────────────────────────────────

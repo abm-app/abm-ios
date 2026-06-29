@@ -62,9 +62,9 @@ const styles = StyleSheet.create({
     color: tokens.colors.textSecondary,
     textAlign: 'center',
     marginBottom: tokens.spacing.lg,
-    lineHeight: 22,
+    lineHeight: tokens.emptyState.subtitleLineHeight,
   },
   actionButton: {
-    minWidth: 120,
+    minWidth: tokens.emptyState.actionButtonMinWidth,
   },
 });
