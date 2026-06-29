@@ -92,6 +92,7 @@ interface SharedFormModalProps {
   isSubmitting?: boolean;
   onBack?: () => void;
   children: React.ReactNode;
+  overlay?: React.ReactNode;
 }
 
 export const SharedFormModal = React.forwardRef<ScrollView, SharedFormModalProps>(
@@ -107,6 +108,7 @@ export const SharedFormModal = React.forwardRef<ScrollView, SharedFormModalProps
       isSubmitting,
       onBack,
       children,
+      overlay,
     },
     ref,
   ) => {
@@ -191,6 +193,7 @@ export const SharedFormModal = React.forwardRef<ScrollView, SharedFormModalProps
             />
           </Animated.View>
         </Animated.View>
+        {overlay}
       </Modal>
     );
   },
@@ -211,8 +214,8 @@ const styles = StyleSheet.create({
     width: '100%',
     maxHeight: '90%',
     backgroundColor: tokens.colors.background,
-    borderTopLeftRadius: 25,
-    borderTopRightRadius: 25,
+    borderTopLeftRadius: tokens.sharedFormModal.cornerRadius,
+    borderTopRightRadius: tokens.sharedFormModal.cornerRadius,
     ...tokens.shadow.modal,
     overflow: 'hidden',
     display: 'flex',
@@ -222,43 +225,43 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 24,
-    paddingTop: 24,
-    paddingBottom: 20,
+    paddingHorizontal: tokens.sharedFormModal.paddingHorizontal,
+    paddingTop: tokens.sharedFormModal.paddingTop,
+    paddingBottom: tokens.sharedFormModal.paddingBottom,
   },
   title: {
     fontFamily: tokens.typography.fontFamily.heading,
-    fontSize: 24,
+    fontSize: tokens.sharedFormModal.titleFontSize,
     fontWeight: '600',
     color: tokens.colors.textPrimary,
   },
   closeButton: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+    width: tokens.sharedFormModal.closeButtonSize,
+    height: tokens.sharedFormModal.closeButtonSize,
+    borderRadius: tokens.sharedFormModal.closeButtonRadius,
     backgroundColor: tokens.colors.surface,
     justifyContent: 'center',
     alignItems: 'center',
   },
   backButton: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+    width: tokens.sharedFormModal.closeButtonSize,
+    height: tokens.sharedFormModal.closeButtonSize,
+    borderRadius: tokens.sharedFormModal.closeButtonRadius,
     backgroundColor: tokens.colors.surface,
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 12,
+    marginRight: tokens.sharedFormModal.closeButtonMarginRight,
   },
   scrollArea: {
     flexShrink: 1,
   },
   scrollContent: {
-    paddingHorizontal: 24,
-    paddingBottom: 16,
+    paddingHorizontal: tokens.sharedFormModal.contentPaddingHorizontal,
+    paddingBottom: tokens.sharedFormModal.contentPaddingBottom,
   },
   footer: {
-    paddingHorizontal: 24,
-    paddingTop: 8,
+    paddingHorizontal: tokens.sharedFormModal.footerPaddingHorizontal,
+    paddingTop: tokens.sharedFormModal.footerPaddingTop,
     flexDirection: 'row',
   },
   submitBtn: {
@@ -268,6 +271,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   marginRight: {
-    marginRight: 16,
+    marginRight: tokens.sharedFormModal.footerMarginRight,
   },
 });

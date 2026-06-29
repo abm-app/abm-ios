@@ -34,7 +34,6 @@ const styles = StyleSheet.create({
   },
   rejectBtn: {
     flex: 1,
-    borderColor: tokens.colors.danger,
   },
   approveBtn: {
     flex: 2,

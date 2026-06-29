@@ -11,6 +11,7 @@ interface CustomCalenderProps {
   selectedDate?: Date;
   minDate?: Date;
   onSelectDate?: (date: Date) => void;
+  useModal?: boolean;
 }
 
 const CALENDAR_COLORS = {
@@ -86,6 +87,7 @@ export function CustomCalender({
   selectedDate,
   minDate,
   onSelectDate,
+  useModal = true,
 }: CustomCalenderProps) {
   const [currentDate, setCurrentDate] = useState(selectedDate || new Date());
   const [activeDate, setActiveDate] = useState<Date | undefined>(selectedDate);
@@ -155,22 +157,32 @@ export function CustomCalender({
     return days;
   };
 
+  if (!visible) return null;
+
+  const content = (
+    <Pressable style={[styles.overlay, !useModal && styles.absoluteOverlay]} onPress={onClose}>
+      <Pressable style={styles.card} onPress={e => e.stopPropagation()}>
+        <CalendarHeader
+          month={month}
+          year={year}
+          onPrevMonth={handlePrevMonth}
+          onNextMonth={handleNextMonth}
+        />
+
+        <WeekdaysRow />
+
+        <View style={styles.daysGrid}>{renderDays()}</View>
+      </Pressable>
+    </Pressable>
+  );
+
+  if (useModal === false) {
+    return content;
+  }
+
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
-      <Pressable style={styles.overlay} onPress={onClose}>
-        <Pressable style={styles.card} onPress={e => e.stopPropagation()}>
-          <CalendarHeader
-            month={month}
-            year={year}
-            onPrevMonth={handlePrevMonth}
-            onNextMonth={handleNextMonth}
-          />
-
-          <WeekdaysRow />
-
-          <View style={styles.daysGrid}>{renderDays()}</View>
-        </Pressable>
-      </Pressable>
+      {content}
     </Modal>
   );
 }
@@ -182,74 +194,97 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  absoluteOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 9999,
+    elevation: 9999,
+  },
   card: {
     backgroundColor: tokens.colors.background,
-    borderRadius: 24,
-    padding: 24,
-    width: 340,
-    ...tokens.shadow.modal,
+    borderRadius: tokens.calendar.borderRadius,
+    padding: tokens.calendar.padding,
+    width: tokens.calendar.width,
+    maxWidth: '100%',
+    shadowColor: tokens.shadow.modal.shadowColor,
+    shadowOffset: tokens.shadow.modal.shadowOffset,
+    shadowOpacity: tokens.shadow.modal.shadowOpacity,
+    shadowRadius: tokens.shadow.modal.shadowRadius,
+    elevation: 10,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 12,
+    marginBottom: tokens.calendar.headerMarginBottom,
   },
   headerTitleContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-  },
-  headerTitle: {
-    fontFamily: tokens.typography.fontFamily.sub,
-    fontSize: 20,
-    fontWeight: '400',
-    color: tokens.colors.textPrimary,
   },
   navContainer: {
     flexDirection: 'row',
     gap: 16,
   },
   navButton: {
-    padding: 4,
+    padding: tokens.spacing.sm,
+  },
+  headerTitle: {
+    fontFamily: tokens.typography.fontFamily.sub,
+    fontSize: tokens.calendar.headerFontSize,
+    fontWeight: '600',
+    color: tokens.colors.textPrimary,
   },
   weekDaysContainer: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: tokens.calendar.navPadding,
   },
   weekDayText: {
     fontFamily: tokens.typography.fontFamily.sub,
-    fontSize: 13,
-    fontWeight: '600',
-    color: CALENDAR_COLORS.textGrey,
-    width: '14.28%',
+    fontSize: tokens.calendar.weekdayFontSize,
+    color: tokens.colors.textMuted,
+    width: 40,
     textAlign: 'center',
-    marginBottom: 16,
+    marginBottom: tokens.calendar.weekdayMarginBottom,
   },
   daysGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'flex-start',
-    rowGap: 8,
   },
   dayCell: {
     width: '14.28%',
-    height: 40,
+    height: tokens.calendar.dayHeight,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  selectedDayCell: {
-    backgroundColor: CALENDAR_COLORS.lightBlueBg,
-    borderRadius: 20,
+    marginBottom: tokens.spacing.xs,
   },
   dayText: {
     fontFamily: tokens.typography.fontFamily.sub,
-    fontSize: 18,
+    fontSize: tokens.typography.fontSize.subhead,
     color: tokens.colors.textPrimary,
   },
   pastDayText: {
-    color: CALENDAR_COLORS.disabledGrey,
+    color: tokens.colors.textHint,
+  },
+  selectedDayCell: {
+    backgroundColor: tokens.colors.primary,
+    borderRadius: tokens.calendar.dayRadius,
   },
   selectedDayText: {
-    color: CALENDAR_COLORS.primaryBlue,
+    color: tokens.colors.background,
+    fontWeight: '600',
+  },
+  dayCellToday: {
+    borderWidth: tokens.borderWidth.thin,
+    borderColor: tokens.colors.primary,
+    borderRadius: tokens.calendar.dayRadius,
+  },
+  dayTextToday: {
+    color: tokens.colors.primary,
     fontWeight: '600',
   },
 });

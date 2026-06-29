@@ -32,7 +32,7 @@ export default function ActionRequiredCard({ action }: ActionRequiredCardProps) 
         {action.status === 'pending_approval' && (
           <View style={styles.chipRow}>
             <Chip
-              label="Pending Senior Approval"
+              label="Pending Approval"
               active
               tone="warning"
               textColor={tokens.colors.primary}

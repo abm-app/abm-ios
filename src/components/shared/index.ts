@@ -8,3 +8,4 @@ export * from './CustomCalender';
 export { default as MetaContent } from './MetaContent';
 export * from './ConfirmationModal';
 export * from './Alert';
+export { default as EmptyState } from './EmptyState';
