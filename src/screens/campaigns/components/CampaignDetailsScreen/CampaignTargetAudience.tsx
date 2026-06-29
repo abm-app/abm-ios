@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
     marginBottom: tokens.spacing.md,
   },
   divider: {
-    height: StyleSheet.hairlineWidth,
+    height: tokens.borderWidth.hairline,
     backgroundColor: tokens.colors.border,
     marginTop: tokens.spacing.lg,
   },
