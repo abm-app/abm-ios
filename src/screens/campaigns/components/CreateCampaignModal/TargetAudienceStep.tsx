@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, ActivityIndicator, TouchableOpacity } from 'react-native';
 import tokens from '@/theme/tokens';
 import { Input, Chip } from '@/components/ui';
-
+import { formatDate } from '@/utils/dateUtils';
 interface TargetAudienceStepProps {
   name: string;
   onChangeName: (val: string) => void;
@@ -28,27 +28,6 @@ export default function TargetAudienceStep({
   isLoadingReach,
   onOpenCalendar,
 }: TargetAudienceStepProps) {
-  const formatDate = (isoStr?: string) => {
-    if (!isoStr) return null;
-    const [year, month, day] = isoStr.split('-');
-    const monthNames = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
-    ];
-    const monthName = monthNames[parseInt(month, 10) - 1];
-    return `${day} ${monthName}, ${year}`;
-  };
-
   return (
     <View>
       <Input

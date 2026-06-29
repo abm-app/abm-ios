@@ -8,6 +8,7 @@ import {
 } from '@/api/endpoints/campaignApi';
 import type { Campaign } from '@/types/campaign';
 import { useMetaTemplates } from '@/hooks/campaigns/useCampaigns';
+import { getCalendarDateString, parseDateString } from '@/utils/dateUtils';
 import TargetAudienceStep from './TargetAudienceStep';
 import MessageContentStep from './MessageContentStep';
 
@@ -119,10 +120,7 @@ export default function CreateCampaignModal({ visible, onClose, onSuccess, initi
   };
 
   const handleSelectDate = (date: Date) => {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    const dateStr = `${year}-${month}-${day}`;
+    const dateStr = getCalendarDateString(date);
     if (calendarTarget === 'start') {
       setScheduledAt(dateStr);
     } else if (calendarTarget === 'end') {
@@ -217,13 +215,7 @@ export default function CreateCampaignModal({ visible, onClose, onSuccess, initi
               disablePastDates
               onSelectDate={handleSelectDate}
               minDate={
-                calendarTarget === 'end' && scheduledAt
-                  ? new Date(
-                      Number(scheduledAt.split('-')[0]),
-                      Number(scheduledAt.split('-')[1]) - 1,
-                      Number(scheduledAt.split('-')[2]),
-                    )
-                  : undefined
+                calendarTarget === 'end' && scheduledAt ? parseDateString(scheduledAt) : undefined
               }
               useModal={false}
             />
