@@ -45,6 +45,13 @@ const colors = {
   badgeCatBg: 'rgba(0,0,0,0.15)',
   badgeCatText: '#333333',
 
+  // Badge — Suite
+  badgeSuiteBg: '#EAD3B7',
+  badgeSuiteText: '#8A5A2B',
+
+  // Cards
+  cardDarkBg: '#0F0F0F',
+
   // Chat Preview
   waWallpaperBg: '#EFEAE2',
 

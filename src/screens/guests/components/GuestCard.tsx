@@ -1,10 +1,13 @@
 import React from 'react';
 import { View, Text, StyleSheet, StyleProp, ViewStyle } from 'react-native';
 import { Feather } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 import tokens from '@/theme/tokens';
 import { Card, Badge } from '@/components/ui';
 import type { Guest } from '@/types/guest';
+import type { RootStackParamList } from '@/navigation/types';
 import type { BadgeVariant } from '@/components/ui/Badge';
 import { formatDate } from '@/utils/dateUtils';
 
@@ -27,8 +30,18 @@ const getTierVariant = (tier: string): BadgeVariant => {
 };
 
 export default function GuestCard({ guest, onPress, style }: GuestCardProps) {
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+
+  const handlePress = () => {
+    if (onPress) {
+      onPress();
+    } else {
+      navigation.navigate('GuestProfile', { id: guest._id });
+    }
+  };
+
   return (
-    <Card padded onPress={onPress} style={[styles.container, style]}>
+    <Card padded onPress={handlePress} style={[styles.container, style]}>
       <View style={styles.header}>
         <Text style={styles.name} numberOfLines={1}>
           {guest.name}

@@ -147,3 +147,35 @@ export const fetchMockGuests = async (filters: GuestFilters): Promise<GuestRespo
     limit,
   };
 };
+
+export const fetchGuestById = async (
+  id: string,
+): Promise<import('@/types/guest').GuestProfileResponse> => {
+  await new Promise(resolve => setTimeout(resolve, 400));
+
+  const guest = mockGuests.find(g => g._id === id);
+  if (!guest) {
+    throw new Error('Guest not found');
+  }
+
+  // Generate mock bookings based on guest stays
+  const bookings: import('@/types/booking').Booking[] = [];
+  const roomCodes = ['DLX_CV', 'EXEC_SU', 'STD_Q', 'STD_K', 'PREM_SU', 'PRES_SU'];
+
+  for (let i = 0; i < guest.totalStays; i++) {
+    const d = new Date(guest.lastStayDate);
+    d.setMonth(d.getMonth() - i * 3); // fake spread out dates
+
+    bookings.push({
+      id: `b_${id}_${i}`,
+      guestId: id,
+      rmCode: roomCodes[Math.floor(Math.random() * roomCodes.length)],
+      checkoutDate: d.toISOString(),
+      pointsEarned: Math.floor(Math.random() * 500) + 50,
+      folioNumber: `#${Math.floor(Math.random() * 90000) + 10000}`,
+      notes: i % 3 === 0 ? 'Anniversary Trip' : undefined,
+    });
+  }
+
+  return { guest, bookings };
+};

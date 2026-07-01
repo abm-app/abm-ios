@@ -30,3 +30,8 @@ export interface GuestFilters {
   page?: number;
   limit?: number;
 }
+
+export interface GuestProfileResponse {
+  guest: Guest;
+  bookings: import('./booking').Booking[];
+}

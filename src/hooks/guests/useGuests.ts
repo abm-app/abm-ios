@@ -1,10 +1,11 @@
-import { useInfiniteQuery } from '@tanstack/react-query';
-import { getGuests } from '@/api/endpoints/guestsApi';
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
+import { getGuests, getGuestById } from '@/api/endpoints/guestsApi';
 import type { GuestFilters } from '@/types/guest';
 
 export const guestsKeys = {
   all: ['guests'] as const,
   list: (filters: GuestFilters) => [...guestsKeys.all, 'list', filters] as const,
+  detail: (id: string) => [...guestsKeys.all, 'detail', id] as const,
 };
 
 export function useInfiniteGuests(filters: Omit<GuestFilters, 'page'>) {
@@ -17,5 +18,12 @@ export function useInfiniteGuests(filters: Omit<GuestFilters, 'page'>) {
       const hasMore = page * limit < total;
       return hasMore ? page + 1 : undefined;
     },
+  });
+}
+
+export function useGuest(id: string) {
+  return useQuery({
+    queryKey: guestsKeys.detail(id),
+    queryFn: () => getGuestById(id),
   });
 }

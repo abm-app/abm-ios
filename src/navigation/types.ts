@@ -27,6 +27,7 @@ export type RootStackParamList = {
   Auth: undefined;
   Main: undefined;
   CampaignDetails: { id: string };
+  GuestProfile: { id: string };
 
   DesignSystemPreview: undefined;
 };

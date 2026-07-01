@@ -12,3 +12,4 @@ export { default as EmptyState } from './EmptyState';
 export * from './ScreenHeader';
 export * from './FilterSheet';
 export { default as ListSurface } from './ListSurface';
+export * from './Avatar';
