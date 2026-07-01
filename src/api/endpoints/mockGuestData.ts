@@ -120,9 +120,17 @@ export const fetchMockGuests = async (filters: GuestFilters): Promise<GuestRespo
   }
 
   if (filters.lapsed) {
-    const thirtyDaysAgo = new Date();
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-    filtered = filtered.filter(g => new Date(g.lastStayDate) < thirtyDaysAgo);
+    const cutoffDate = new Date();
+    if (filters.lapsed === '30_days' || filters.lapsed === true) {
+      cutoffDate.setDate(cutoffDate.getDate() - 30);
+    } else if (filters.lapsed === '3_months') {
+      cutoffDate.setMonth(cutoffDate.getMonth() - 3);
+    } else if (filters.lapsed === '6_months') {
+      cutoffDate.setMonth(cutoffDate.getMonth() - 6);
+    } else if (filters.lapsed === '12_months') {
+      cutoffDate.setFullYear(cutoffDate.getFullYear() - 1);
+    }
+    filtered = filtered.filter(g => new Date(g.lastStayDate) < cutoffDate);
   }
 
   const limit = filters.limit || 10;

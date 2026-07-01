@@ -26,7 +26,7 @@ export interface GuestResponse {
 export interface GuestFilters {
   search?: string;
   tier?: string;
-  lapsed?: boolean; // Lapsed > 30 Days
+  lapsed?: string | boolean; // e.g. '30_days', '3_months', '6_months', '12_months'
   page?: number;
   limit?: number;
 }

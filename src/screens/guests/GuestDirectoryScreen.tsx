@@ -54,7 +54,7 @@ export default function GuestDirectoryScreen() {
     return {
       search: debouncedSearch,
       tier: activeTier,
-      lapsed: activeLapsed === '30_days', // Using only the 30 days boolean in mock for now, can be expanded
+      lapsed: activeLapsed || undefined,
     };
   }, [debouncedSearch, activeTier, activeLapsed]);
 
