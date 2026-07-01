@@ -1,5 +1,5 @@
-import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
-import { getGuests, getGuestById } from '@/api/endpoints/guestsApi';
+import { useInfiniteQuery, useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { getGuests, getGuestById, updateGuestDnc } from '@/api/endpoints/guestsApi';
 import type { GuestFilters } from '@/types/guest';
 
 export const guestsKeys = {
@@ -25,5 +25,18 @@ export function useGuest(id: string) {
   return useQuery({
     queryKey: guestsKeys.detail(id),
     queryFn: () => getGuestById(id),
+  });
+}
+
+export function useUpdateGuestDnc() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, doNotContact }: { id: string; doNotContact: boolean }) =>
+      updateGuestDnc(id, doNotContact),
+    onSuccess: (data, variables) => {
+      queryClient.setQueryData(guestsKeys.detail(variables.id), data);
+      queryClient.invalidateQueries({ queryKey: guestsKeys.list({}) }); // Invalidate all list queries
+    },
   });
 }

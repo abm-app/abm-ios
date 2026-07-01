@@ -179,3 +179,22 @@ export const fetchGuestById = async (
 
   return { guest, bookings };
 };
+
+export const updateGuestDnc = async (
+  id: string,
+  doNotContact: boolean,
+): Promise<import('@/types/guest').GuestProfileResponse> => {
+  await new Promise(resolve => setTimeout(resolve, 500));
+  const guestIndex = mockGuests.findIndex(g => g._id === id);
+  if (guestIndex === -1) {
+    throw new Error('Guest not found');
+  }
+
+  mockGuests[guestIndex] = {
+    ...mockGuests[guestIndex],
+    doNotContact,
+  };
+
+  // Re-fetch to return full profile
+  return fetchGuestById(id);
+};

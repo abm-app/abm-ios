@@ -6,12 +6,18 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import tokens from '@/theme/tokens';
 import { RootStackParamList } from '@/navigation/types';
-import { useGuest } from '@/hooks/guests/useGuests';
+import { useGuest, useUpdateGuestDnc } from '@/hooks/guests/useGuests';
 import { useAuthStore } from '@/store/authStore';
 import { ROOMS_DB } from '@/types/room';
 import { formatDate } from '@/utils/dateUtils';
 
-import { Avatar, ErrorState, LoadingSpinner, SegmentedControl } from '@/components/shared';
+import {
+  Avatar,
+  ErrorState,
+  LoadingSpinner,
+  SegmentedControl,
+  ConfirmationModal,
+} from '@/components/shared';
 import { Badge, Button } from '@/components/ui';
 import GuestProfileHeader from './components/GuestProfileHeader';
 
@@ -20,7 +26,11 @@ type Props = NativeStackScreenProps<RootStackParamList, 'GuestProfile'>;
 export default function GuestProfileScreen({ route }: Props) {
   const { id } = route.params;
   const { data, isLoading, isError, error, refetch } = useGuest(id);
+  const updateDncMutation = useUpdateGuestDnc();
   const [activeTab, setActiveTab] = useState('stays');
+
+  const [dncModalVisible, setDncModalVisible] = useState(false);
+  const [pendingDncValue, setPendingDncValue] = useState(false);
 
   const userRole = useAuthStore(s => s.user?.role);
 
@@ -47,6 +57,16 @@ export default function GuestProfileScreen({ route }: Props) {
 
   const isStaff = userRole === 'staff';
   const canIssueReward = !isStaff && spendableBalance >= 2000;
+
+  const handleDncChange = (newValue: boolean) => {
+    setPendingDncValue(newValue);
+    setDncModalVisible(true);
+  };
+
+  const confirmDncChange = () => {
+    updateDncMutation.mutate({ id, doNotContact: pendingDncValue });
+    setDncModalVisible(false);
+  };
 
   const renderStayHistory = () => {
     if (bookings.length === 0) {
@@ -100,7 +120,7 @@ export default function GuestProfileScreen({ route }: Props) {
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
-      <GuestProfileHeader doNotContact={guest.doNotContact} />
+      <GuestProfileHeader doNotContact={guest.doNotContact} onDncChange={handleDncChange} />
 
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         {/* Profile Info */}
@@ -164,6 +184,28 @@ export default function GuestProfileScreen({ route }: Props) {
           style={styles.actionButton}
         />
       </View>
+
+      <ConfirmationModal
+        visible={dncModalVisible}
+        onClose={() => setDncModalVisible(false)}
+        onConfirm={confirmDncChange}
+        title={pendingDncValue ? 'Enable Do Not Contact?' : 'Disable Do Not Contact?'}
+        content={
+          pendingDncValue
+            ? 'This will prevent marketing and promotional communications to this guest.'
+            : 'The guest will begin receiving promotional communications again.'
+        }
+        confirmLabel={pendingDncValue ? 'Enable DNC' : 'Disable DNC'}
+        iconVariant={pendingDncValue ? 'danger' : 'success'}
+        icon={
+          <Feather
+            name={pendingDncValue ? 'slash' : 'check'}
+            size={32}
+            color={pendingDncValue ? tokens.colors.danger : tokens.colors.success}
+          />
+        }
+        confirmDisabled={updateDncMutation.isPending}
+      />
     </SafeAreaView>
   );
 }

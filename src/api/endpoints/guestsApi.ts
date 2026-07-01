@@ -1,5 +1,5 @@
 import type { GuestFilters, GuestResponse, GuestProfileResponse } from '@/types/guest';
-import { fetchMockGuests, fetchGuestById } from './mockGuestData';
+import { fetchMockGuests, fetchGuestById, updateGuestDnc as updateMockDnc } from './mockGuestData';
 
 // import apiClient from '../client';
 //
@@ -13,4 +13,11 @@ export const getGuests = (filters: GuestFilters): Promise<GuestResponse> => {
 
 export const getGuestById = (id: string): Promise<GuestProfileResponse> => {
   return fetchGuestById(id);
+};
+
+export const updateGuestDnc = (
+  id: string,
+  doNotContact: boolean,
+): Promise<GuestProfileResponse> => {
+  return updateMockDnc(id, doNotContact);
 };
