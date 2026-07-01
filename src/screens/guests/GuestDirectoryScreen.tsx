@@ -1,26 +1,13 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { View, StyleSheet, FlatList, Text, ActivityIndicator } from 'react-native';
+import { View, StyleSheet, FlatList, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import tokens from '@/theme/tokens';
 import { useInfiniteGuests } from '@/hooks/guests/useGuests';
 import { useLoyaltyConfig } from '@/hooks/loyalty/useLoyaltyConfig';
-import {
-  EmptyState,
-  ErrorState,
-  LoadingSpinner,
-  ScreenHeaderV2,
-  FilterSheet,
-} from '@/components/shared';
-import { Button, Chip } from '@/components/ui';
+import { EmptyState, ErrorState, LoadingSpinner, ScreenHeaderV2 } from '@/components/shared';
 import GuestCard from './components/GuestCard';
-
-const LAPSED_OPTIONS = [
-  { label: 'Above 30 days', value: '30_days' },
-  { label: '3 months', value: '3_months' },
-  { label: '6 months', value: '6_months' },
-  { label: '12 months', value: '12_months' },
-];
+import GuestFilterSheet from './components/GuestFilterSheet';
 
 export default function GuestDirectoryScreen() {
   const [searchInput, setSearchInput] = useState('');
@@ -131,66 +118,15 @@ export default function GuestDirectoryScreen() {
 
       {renderContent()}
 
-      <FilterSheet
-        title="Filters"
+      <GuestFilterSheet
         visible={isFilterVisible}
         onClose={() => setIsFilterVisible(false)}
-        showDragIndicator
-        footer={
-          <View style={styles.filterFooter}>
-            <Button
-              label="Clear All"
-              variant="secondary"
-              style={styles.filterButton}
-              onPress={() => {
-                setActiveTier('All');
-                setActiveLapsed(null);
-                setIsFilterVisible(false);
-              }}
-            />
-            <Button
-              label="Apply"
-              variant="primary"
-              style={styles.filterButton}
-              onPress={() => setIsFilterVisible(false)}
-            />
-          </View>
-        }
-      >
-        <View style={styles.filterSection}>
-          <Text style={styles.filterSectionTitle}>Tier</Text>
-          <View style={styles.chipGroup}>
-            {tierOptions.map(tier => (
-              <Chip
-                key={tier}
-                label={tier}
-                active={activeTier === tier}
-                tone={activeTier === tier ? 'primary' : 'default'}
-                onPress={() => setActiveTier(tier)}
-                style={styles.filterChip}
-              />
-            ))}
-          </View>
-        </View>
-
-        <View style={styles.filterSection}>
-          <Text style={styles.filterSectionTitle}>Lapsed</Text>
-          <View style={styles.chipGroup}>
-            {LAPSED_OPTIONS.map(option => (
-              <Chip
-                key={option.value}
-                label={option.label}
-                active={activeLapsed === option.value}
-                tone={activeLapsed === option.value ? 'primary' : 'default'}
-                onPress={() =>
-                  setActiveLapsed(prev => (prev === option.value ? null : option.value))
-                }
-                style={styles.filterChip}
-              />
-            ))}
-          </View>
-        </View>
-      </FilterSheet>
+        activeTier={activeTier}
+        setActiveTier={setActiveTier}
+        activeLapsed={activeLapsed}
+        setActiveLapsed={setActiveLapsed}
+        tierOptions={tierOptions}
+      />
     </SafeAreaView>
   );
 }
@@ -203,36 +139,10 @@ const styles = StyleSheet.create({
   listContent: {
     paddingHorizontal: tokens.spacing.xlMd,
     paddingTop: tokens.spacing.sm,
-    paddingBottom: tokens.spacing.xxxl * 2, // Extra space for tab bar
+    paddingBottom: tokens.spacing.xxxl * 2,
   },
   footerLoader: {
     paddingVertical: tokens.spacing.xl,
     alignItems: 'center',
-  },
-  filterFooter: {
-    flex: 1,
-    flexDirection: 'row',
-    gap: tokens.spacing.md,
-  },
-  filterButton: {
-    flex: 1,
-  },
-  filterSection: {
-    marginBottom: tokens.spacing.xl,
-  },
-  filterSectionTitle: {
-    fontFamily: tokens.typography.fontFamily.sub,
-    fontSize: tokens.typography.fontSize.subhead,
-    fontWeight: '600',
-    color: tokens.colors.textPrimary,
-    marginBottom: tokens.spacing.md,
-  },
-  chipGroup: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: tokens.spacing.sm,
-  },
-  filterChip: {
-    marginBottom: tokens.spacing.xs,
   },
 });
