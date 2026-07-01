@@ -1,15 +1,23 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { View, StyleSheet, FlatList, ActivityIndicator } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import tokens from '@/theme/tokens';
 import { useInfiniteGuests } from '@/hooks/guests/useGuests';
 import { useLoyaltyConfig } from '@/hooks/loyalty/useLoyaltyConfig';
-import { EmptyState, ErrorState, LoadingSpinner, ScreenHeaderV2 } from '@/components/shared';
+import {
+  EmptyState,
+  ErrorState,
+  LoadingSpinner,
+  ScreenHeaderV2,
+  ListSurface,
+  Backdrop,
+} from '@/components/shared';
 import GuestCard from './components/GuestCard';
 import GuestFilterSheet from './components/GuestFilterSheet';
 
 export default function GuestDirectoryScreen() {
+  const insets = useSafeAreaInsets();
   const [searchInput, setSearchInput] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [activeTier, setActiveTier] = useState('All');
@@ -56,6 +64,12 @@ export default function GuestDirectoryScreen() {
     isFetchingNextPage,
   } = useInfiniteGuests(filters);
 
+  const bottomPadding =
+    tokens.navigation.height +
+    tokens.navigation.paddingVertical +
+    Math.max(insets.bottom, tokens.navigation.paddingVertical) +
+    tokens.spacing.lg;
+
   const guests = useMemo(() => {
     return data?.pages.flatMap(page => page.guests) || [];
   }, [data]);
@@ -85,27 +99,33 @@ export default function GuestDirectoryScreen() {
     }
 
     return (
-      <FlatList
-        data={guests}
-        keyExtractor={item => item._id}
-        renderItem={({ item }) => <GuestCard guest={item} />}
-        contentContainerStyle={styles.listContent}
-        onEndReached={handleEndReached}
-        onEndReachedThreshold={0.5}
-        ListFooterComponent={renderFooter}
-        ListEmptyComponent={
-          <EmptyState
-            icon="users"
-            title="No guests found"
-            subtitle="Try adjusting your search or filters."
+      <View style={[styles.mainWrapper, { paddingBottom: bottomPadding }]}>
+        <ListSurface>
+          <FlatList
+            data={guests}
+            keyExtractor={item => item._id}
+            renderItem={({ item }) => <GuestCard guest={item} />}
+            contentContainerStyle={styles.listContent}
+            showsVerticalScrollIndicator={false}
+            onEndReached={handleEndReached}
+            onEndReachedThreshold={0.5}
+            ListFooterComponent={renderFooter}
+            ListEmptyComponent={
+              <EmptyState
+                icon="users"
+                title="No guests found"
+                subtitle="Try adjusting your search or filters."
+              />
+            }
           />
-        }
-      />
+        </ListSurface>
+      </View>
     );
   };
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
+      <Backdrop />
       <ScreenHeaderV2
         title="Guest Directory"
         showSearch
@@ -136,10 +156,13 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: tokens.colors.background,
   },
-  listContent: {
+  mainWrapper: {
+    flex: 1,
     paddingHorizontal: tokens.spacing.xlMd,
+    paddingTop: tokens.spacing.md,
+  },
+  listContent: {
     paddingTop: tokens.spacing.sm,
-    paddingBottom: tokens.spacing.xxxl * 2,
   },
   footerLoader: {
     paddingVertical: tokens.spacing.xl,
