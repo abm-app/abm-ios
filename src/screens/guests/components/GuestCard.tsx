@@ -49,13 +49,15 @@ export default function GuestCard({ guest, onPress, style }: GuestCardProps) {
         </View>
       </View>
 
+      <View style={styles.divider} />
+
       <View style={styles.footer}>
         <View style={styles.phoneContainer}>
           <Feather name="phone" size={tokens.iconSizes.inline} color={tokens.colors.textMuted} />
           <Text style={styles.phoneText}>{guest.phone}</Text>
         </View>
         {guest.lastStayDate ? (
-          <Text style={styles.dateText}>{formatDate(guest.lastStayDate)}</Text>
+          <Text style={styles.dateText}>Last Visit: {formatDate(guest.lastStayDate)}</Text>
         ) : null}
       </View>
     </Card>
