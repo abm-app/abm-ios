@@ -1,19 +1,12 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { View, StyleSheet, FlatList, ActivityIndicator } from 'react-native';
+import React, { useState, useEffect, useMemo } from 'react';
+import { StyleSheet } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import tokens from '@/theme/tokens';
 import { useInfiniteGuests } from '@/hooks/guests/useGuests';
 import { useLoyaltyConfig } from '@/hooks/loyalty/useLoyaltyConfig';
-import {
-  EmptyState,
-  ErrorState,
-  LoadingSpinner,
-  ScreenHeaderV2,
-  ListSurface,
-  Backdrop,
-} from '@/components/shared';
-import GuestCard from './components/GuestCard';
+import { ScreenHeaderV2, Backdrop } from '@/components/shared';
+import GuestList from './components/GuestList';
 import GuestFilterSheet from './components/GuestFilterSheet';
 
 export default function GuestDirectoryScreen() {
@@ -74,55 +67,6 @@ export default function GuestDirectoryScreen() {
     return data?.pages.flatMap(page => page.guests) || [];
   }, [data]);
 
-  const handleEndReached = useCallback(() => {
-    if (hasNextPage && !isFetchingNextPage) {
-      fetchNextPage();
-    }
-  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
-
-  const renderFooter = () => {
-    if (!isFetchingNextPage) return null;
-    return (
-      <View style={styles.footerLoader}>
-        <ActivityIndicator size="small" color={tokens.colors.primary} />
-      </View>
-    );
-  };
-
-  const renderContent = () => {
-    if (isLoading) {
-      return <LoadingSpinner />;
-    }
-
-    if (isError) {
-      return <ErrorState message={error?.message || 'Failed to load guests'} onRetry={refetch} />;
-    }
-
-    return (
-      <View style={[styles.mainWrapper, { paddingBottom: bottomPadding }]}>
-        <ListSurface>
-          <FlatList
-            data={guests}
-            keyExtractor={item => item._id}
-            renderItem={({ item }) => <GuestCard guest={item} />}
-            contentContainerStyle={styles.listContent}
-            showsVerticalScrollIndicator={false}
-            onEndReached={handleEndReached}
-            onEndReachedThreshold={0.5}
-            ListFooterComponent={renderFooter}
-            ListEmptyComponent={
-              <EmptyState
-                icon="users"
-                title="No guests found"
-                subtitle="Try adjusting your search or filters."
-              />
-            }
-          />
-        </ListSurface>
-      </View>
-    );
-  };
-
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
       <Backdrop />
@@ -136,7 +80,17 @@ export default function GuestDirectoryScreen() {
         showRightButton={false}
       />
 
-      {renderContent()}
+      <GuestList
+        guests={guests}
+        isLoading={isLoading}
+        isError={isError}
+        error={error}
+        refetch={refetch}
+        hasNextPage={hasNextPage}
+        isFetchingNextPage={isFetchingNextPage}
+        fetchNextPage={fetchNextPage}
+        bottomPadding={bottomPadding}
+      />
 
       <GuestFilterSheet
         visible={isFilterVisible}
@@ -155,17 +109,5 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: tokens.colors.background,
-  },
-  mainWrapper: {
-    flex: 1,
-    paddingHorizontal: tokens.spacing.xlMd,
-    paddingTop: tokens.spacing.md,
-  },
-  listContent: {
-    paddingTop: tokens.spacing.sm,
-  },
-  footerLoader: {
-    paddingVertical: tokens.spacing.xl,
-    alignItems: 'center',
   },
 });
