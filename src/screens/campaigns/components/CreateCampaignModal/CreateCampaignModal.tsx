@@ -23,7 +23,7 @@ export default function CreateCampaignModal({ visible, onClose, onSuccess, initi
   const { data: templates, isLoading: isLoadingTemplates } = useMetaTemplates();
   const createMutation = useCreateCampaign();
   const updateMutation = useUpdateCampaign();
-  const reachMutation = useEstimatedReach();
+  const { mutateAsync: fetchReachAsync } = useEstimatedReach();
 
   const [currentPage, setCurrentPage] = useState<1 | 2>(1);
   const [name, setName] = useState(initialData?.name || '');
@@ -78,7 +78,7 @@ export default function CreateCampaignModal({ visible, onClose, onSuccess, initi
       setIsLoadingReach(true);
       try {
         setReachCount(null);
-        const count = await reachMutation.mutateAsync(selectedTiers);
+        const count = await fetchReachAsync(selectedTiers);
         if (isMounted) setReachCount(count);
       } catch {
         if (isMounted) setReachCount(0);
@@ -90,7 +90,7 @@ export default function CreateCampaignModal({ visible, onClose, onSuccess, initi
     return () => {
       isMounted = false;
     };
-  }, [selectedTiers, reachMutation]);
+  }, [selectedTiers, fetchReachAsync]);
 
   useEffect(() => {
     if (templates && templates.length > 0 && !templateId) {
