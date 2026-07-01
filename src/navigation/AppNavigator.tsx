@@ -13,6 +13,7 @@ import type { ModuleKey } from '@/types/auth';
 import type { AppTabParamList } from './types';
 import { MODULE_TO_TAB } from './types';
 import CampaignDashboardScreen from '@/screens/campaigns/CampaignDashboardScreen';
+import GuestDirectoryScreen from '@/screens/guests/GuestDirectoryScreen';
 
 // ─── Tab Navigator ───────────────────────────────────────────────────────────
 
@@ -29,7 +30,7 @@ const TAB_ICONS: Record<keyof AppTabParamList, FeatherIconName> = {
   AuditTrail: 'star',
   Revenue: 'trending-up',
   // Reports: 'bar-chart-2',
-  // Loyalty: 'heart',
+  Guests: 'users',
   // Notifications: 'bell',
   UserManagement: 'users',
 };
@@ -41,7 +42,7 @@ const TAB_LABELS: Record<keyof AppTabParamList, string> = {
   AuditTrail: 'Audit Trail',
   Revenue: 'Revenue',
   // Reports: 'Reports',
-  // Loyalty: 'Loyalty',
+  Guests: 'Guests',
   // Notifications: 'Notifs',
   UserManagement: 'Users',
 };
@@ -55,7 +56,7 @@ const MODULE_ORDER: ModuleKey[] = [
   'audit_trail',
   'revenue',
   // 'reports',
-  // 'loyalty',
+  'loyalty',
   // 'notifications',
   'user_management',
 ];
@@ -111,7 +112,11 @@ export default function AppNavigator() {
       {enabledModules.map(moduleKey => {
         const routeName = MODULE_TO_TAB[moduleKey];
         const ScreenComponent =
-          routeName === 'Campaigns' ? CampaignDashboardScreen : PLACEHOLDER_SCREENS[routeName];
+          routeName === 'Campaigns'
+            ? CampaignDashboardScreen
+            : routeName === 'Guests'
+              ? GuestDirectoryScreen
+              : PLACEHOLDER_SCREENS[routeName];
 
         return (
           <Tab.Screen

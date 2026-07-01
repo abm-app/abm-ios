@@ -17,7 +17,7 @@ const ALL_MODULES: ModuleKey[] = [
   'audit_trail',
   'revenue',
   // 'reports',
-  // 'loyalty',
+  'loyalty',
   // 'notifications',
   'user_management',
 ];
