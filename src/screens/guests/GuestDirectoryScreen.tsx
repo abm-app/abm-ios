@@ -71,7 +71,7 @@ export default function GuestDirectoryScreen() {
     <SafeAreaView style={styles.safeArea} edges={['top']}>
       <Backdrop />
       <ScreenHeaderV2
-        title="Guest Directory"
+        title="Guest List"
         showSearch
         searchValue={searchInput}
         onSearchChange={setSearchInput}

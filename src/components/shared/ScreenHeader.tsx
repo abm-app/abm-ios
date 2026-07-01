@@ -33,19 +33,23 @@ const ActionButtons = ({
   isSearching,
   showFilter,
   showRightButton,
+  showNotifications,
   rightButtonText,
   onSearchPress,
   onFilterPress,
   onRightButtonPress,
+  onNotificationsPress,
 }: {
   showSearch: boolean;
   isSearching: boolean;
   showFilter: boolean;
   showRightButton: boolean;
+  showNotifications?: boolean;
   rightButtonText: string;
   onSearchPress: () => void;
   onFilterPress?: () => void;
   onRightButtonPress?: () => void;
+  onNotificationsPress?: () => void;
 }) => (
   <View style={styles.rightRow}>
     {showSearch && !isSearching && (
@@ -56,6 +60,17 @@ const ActionButtons = ({
     {showFilter && (
       <TouchableOpacity style={styles.iconButton} onPress={onFilterPress} activeOpacity={0.7}>
         <Feather name="filter" size={20} color={tokens.colors.textPrimary} />
+      </TouchableOpacity>
+    )}
+    {showNotifications && (
+      <TouchableOpacity
+        style={styles.iconButton}
+        onPress={onNotificationsPress || (() => console.log('Notifications pressed'))}
+        activeOpacity={0.7}
+      >
+        <Feather name="bell" size={20} color={tokens.colors.textPrimary} />
+        {/* Placeholder for notification badge */}
+        <View style={styles.notificationBadge} />
       </TouchableOpacity>
     )}
     {showRightButton && (
@@ -77,12 +92,14 @@ export interface ScreenHeaderProps {
   subtitle?: string;
   showSearch?: boolean;
   showFilter?: boolean;
+  showNotifications?: boolean;
   showRightButton?: boolean;
   rightButtonText?: string;
   searchValue?: string;
   onSearchChange?: (text: string) => void;
   onSearchPress?: () => void;
   onFilterPress?: () => void;
+  onNotificationsPress?: () => void;
   onRightButtonPress?: () => void;
 }
 
@@ -91,12 +108,14 @@ export function ScreenHeaderV2({
   subtitle,
   showSearch = false,
   showFilter = false,
+  showNotifications = true,
   showRightButton = true,
   rightButtonText = 'New',
   searchValue,
   onSearchChange,
   onSearchPress,
   onFilterPress,
+  onNotificationsPress,
   onRightButtonPress,
 }: ScreenHeaderProps) {
   const [isSearching, setIsSearching] = useState(false);
@@ -126,10 +145,12 @@ export function ScreenHeaderV2({
         showSearch={showSearch}
         isSearching={isSearching}
         showFilter={showFilter}
+        showNotifications={showNotifications}
         showRightButton={showRightButton}
         rightButtonText={rightButtonText}
         onSearchPress={handleSearchPress}
         onFilterPress={onFilterPress}
+        onNotificationsPress={onNotificationsPress}
         onRightButtonPress={onRightButtonPress}
       />
     </View>
@@ -191,5 +212,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     borderWidth: 1,
     borderColor: tokens.colors.border,
+  },
+  notificationBadge: {
+    position: 'absolute',
+    top: 10,
+    right: 12,
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: tokens.colors.danger,
+    borderWidth: 1.5,
+    borderColor: tokens.colors.background,
   },
 });
