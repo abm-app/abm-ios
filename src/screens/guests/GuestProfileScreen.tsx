@@ -4,10 +4,13 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
+import { useQueryClient } from '@tanstack/react-query';
+
 import tokens from '@/theme/tokens';
 import { RootStackParamList } from '@/navigation/types';
-import { useGuest, useUpdateGuestDnc } from '@/hooks/guests/useGuests';
+import { useGuest, useUpdateGuestDnc, guestsKeys } from '@/hooks/guests/useGuests';
 import { useAuthStore } from '@/store/authStore';
+import type { GuestProfileResponse } from '@/types/guest';
 import {
   ErrorState,
   LoadingSpinner,
@@ -21,13 +24,17 @@ import GuestStayHistory from './components/GuestStayHistory';
 import GuestSummaryCard from './components/GuestSummaryCard';
 import GuestProfileInfo from './components/GuestProfileInfo';
 import GuestRewards from './components/GuestRewards';
+import IssueRewardModal from './components/IssueRewardModal';
 type Props = NativeStackScreenProps<RootStackParamList, 'GuestProfile'>;
 
 export default function GuestProfileScreen({ route }: Props) {
   const { id } = route.params;
   const { data, isLoading, isError, error, refetch } = useGuest(id);
   const updateDncMutation = useUpdateGuestDnc();
+  const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState('stays');
+
+  const [rewardModalVisible, setRewardModalVisible] = useState(false);
 
   const [dncModalVisible, setDncModalVisible] = useState(false);
   const [pendingDncValue, setPendingDncValue] = useState(false);
@@ -56,7 +63,6 @@ export default function GuestProfileScreen({ route }: Props) {
   const spendableBalance = guest.spendableBalance || 0;
 
   const isStaff = userRole === 'staff';
-  const canIssueReward = !isStaff && spendableBalance >= 2000;
 
   const handleDncChange = (newValue: boolean) => {
     setPendingDncValue(newValue);
@@ -66,6 +72,21 @@ export default function GuestProfileScreen({ route }: Props) {
   const confirmDncChange = () => {
     updateDncMutation.mutate({ id, doNotContact: pendingDncValue });
     setDncModalVisible(false);
+  };
+
+  const handleIssueReward = (_rewardId: string, cost: number) => {
+    // Optimistic mock update
+    queryClient.setQueryData<GuestProfileResponse>(guestsKeys.detail(id), oldData => {
+      if (!oldData) return oldData;
+      return {
+        ...oldData,
+        guest: {
+          ...oldData.guest,
+          spendableBalance: Math.max(0, (oldData.guest.spendableBalance || 0) - cost),
+        },
+      };
+    });
+    // Optional: add to rewards list if we had that mock state
   };
 
   return (
@@ -108,8 +129,8 @@ export default function GuestProfileScreen({ route }: Props) {
         <Button
           label="ISSUE REWARD"
           icon={isStaff ? 'lock' : 'plus'}
-          onPress={() => {}}
-          disabled={isStaff || !canIssueReward}
+          onPress={() => setRewardModalVisible(true)}
+          disabled={isStaff}
           style={styles.actionButton}
         />
       </View>
@@ -134,6 +155,13 @@ export default function GuestProfileScreen({ route }: Props) {
           />
         }
         confirmDisabled={updateDncMutation.isPending}
+      />
+
+      <IssueRewardModal
+        visible={rewardModalVisible}
+        onClose={() => setRewardModalVisible(false)}
+        spendableBalance={spendableBalance}
+        onIssueReward={handleIssueReward}
       />
     </SafeAreaView>
   );
