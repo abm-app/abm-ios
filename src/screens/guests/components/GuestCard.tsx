@@ -53,8 +53,8 @@ export default function GuestCard({ guest, onPress, style }: GuestCardProps) {
 
       <View style={styles.statsRow}>
         <View style={styles.statBox}>
-          <Text style={styles.statLabel}>Total Points</Text>
-          <Text style={styles.statValue}>{guest.totalPointsLifetime.toLocaleString()}</Text>
+          <Text style={styles.statLabel}>Available Points</Text>
+          <Text style={styles.statValue}>{guest.spendableBalance.toLocaleString()}</Text>
         </View>
         <View style={styles.statBox}>
           <Text style={styles.statLabel}>Total Stays</Text>

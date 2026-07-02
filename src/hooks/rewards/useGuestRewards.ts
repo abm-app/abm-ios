@@ -22,8 +22,8 @@ export function useIssueGuestReward(guestId: string) {
     onSuccess: () => {
       // Refresh the rewards list
       queryClient.invalidateQueries({ queryKey: guestRewardsKeys.list(guestId) });
-      // Refresh the guest details (so the spendableBalance updates from backend)
-      queryClient.invalidateQueries({ queryKey: guestsKeys.detail(guestId) });
+      // Refresh the guest details and all guest lists (so the spendableBalance updates globally)
+      queryClient.invalidateQueries({ queryKey: guestsKeys.all });
     },
   });
 }
