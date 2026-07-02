@@ -35,6 +35,7 @@ const ModalFooter = ({
   secondaryButtonLabel,
   onSecondarySubmit,
   isSubmitting,
+  submitDisabled,
   bottomInset,
   onBack,
 }: {
@@ -43,6 +44,7 @@ const ModalFooter = ({
   secondaryButtonLabel?: string;
   onSecondarySubmit?: () => void;
   isSubmitting?: boolean;
+  submitDisabled?: boolean;
   bottomInset: number;
   onBack?: () => void;
 }) => (
@@ -72,7 +74,7 @@ const ModalFooter = ({
       onPress={onSubmit}
       variant="primary"
       size="md"
-      disabled={isSubmitting}
+      disabled={isSubmitting || submitDisabled}
       loading={isSubmitting}
       style={[styles.flexBtn]}
     />
@@ -90,6 +92,7 @@ interface SharedFormModalProps {
   secondaryButtonLabel?: string;
   onSecondarySubmit?: () => void;
   isSubmitting?: boolean;
+  submitDisabled?: boolean;
   onBack?: () => void;
   children: React.ReactNode;
   overlay?: React.ReactNode;
@@ -106,6 +109,7 @@ export const SharedFormModal = React.forwardRef<ScrollView, SharedFormModalProps
       secondaryButtonLabel,
       onSecondarySubmit,
       isSubmitting,
+      submitDisabled,
       onBack,
       children,
       overlay,
@@ -188,6 +192,7 @@ export const SharedFormModal = React.forwardRef<ScrollView, SharedFormModalProps
               secondaryButtonLabel={secondaryButtonLabel}
               onSecondarySubmit={onSecondarySubmit}
               isSubmitting={isSubmitting}
+              submitDisabled={submitDisabled}
               onBack={onBack}
               bottomInset={insets.bottom}
             />

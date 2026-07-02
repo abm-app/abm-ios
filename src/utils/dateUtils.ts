@@ -15,7 +15,9 @@ const MONTH_NAMES = [
 
 export const formatDate = (isoStr?: string): string | null => {
   if (!isoStr) return null;
-  const [year, month, day] = isoStr.split('-');
+  const datePart = isoStr.split('T')[0];
+  if (!datePart) return null;
+  const [year, month, day] = datePart.split('-');
   if (!year || !month || !day) return null;
   const monthIndex = Number(month) - 1;
   const dayNumber = Number(day);

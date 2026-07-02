@@ -1,7 +1,5 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import type { ModuleKey } from '@/types/auth';
-
 // ─── Auth Stack ──────────────────────────────────────────────────────────────
 
 export type AuthStackParamList = {
@@ -16,28 +14,11 @@ export type AuthStackScreenProps<T extends keyof AuthStackParamList> = NativeSta
 // ─── App Tabs ────────────────────────────────────────────────────────────────
 
 export type AppTabParamList = {
-  // Dashboard: undefined;
+  Dashboard: undefined;
+  Operations: undefined;
+  Guests: undefined;
   Campaigns: undefined;
-  LiveStatus: undefined;
-  AuditTrail: undefined;
-  Revenue: undefined;
-  // Reports: undefined;
-  // Loyalty: undefined;
-  // Notifications: undefined;
-  UserManagement: undefined;
-};
-
-/** Maps each backend ModuleKey to the corresponding tab route name. */
-export const MODULE_TO_TAB: Record<ModuleKey, keyof AppTabParamList> = {
-  // dashboard: 'Dashboard',
-  campaigns: 'Campaigns',
-  live_status: 'LiveStatus',
-  audit_trail: 'AuditTrail',
-  revenue: 'Revenue',
-  // reports: 'Reports',
-  // loyalty: 'Loyalty',
-  // notifications: 'Notifications',
-  user_management: 'UserManagement',
+  Admin: undefined;
 };
 
 // ─── Root Stack ──────────────────────────────────────────────────────────────
@@ -46,6 +27,7 @@ export type RootStackParamList = {
   Auth: undefined;
   Main: undefined;
   CampaignDetails: { id: string };
+  GuestProfile: { id: string };
 
   DesignSystemPreview: undefined;
 };

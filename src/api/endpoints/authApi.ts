@@ -1,6 +1,4 @@
-import apiClient from '../client';
 import type { AuthUser, LoginRequest, LoginResponse, ModuleKey } from '@/types/auth';
-import { USE_MOCK_AUTH } from '@/config/env';
 
 // ─── Mock toggle ─────────────────────────────────────────────────────────────
 
@@ -17,7 +15,7 @@ const ALL_MODULES: ModuleKey[] = [
   'audit_trail',
   'revenue',
   // 'reports',
-  // 'loyalty',
+  'loyalty',
   // 'notifications',
   'user_management',
 ];
@@ -98,18 +96,15 @@ async function mockLogin(payload: LoginRequest): Promise<LoginResponse> {
 
 // ─── Public API ──────────────────────────────────────────────────────────────
 
-export const loginUser = async (payload: LoginRequest): Promise<LoginResponse> => {
-  if (USE_MOCK_AUTH) {
-    return mockLogin(payload);
-  }
-  const r = await apiClient.post('/auth/login', payload);
-  return r.data;
+// NOTE: Currently using mock data. When the real backend is ready, replace the
+// body of loginUser with:
+//   const r = await apiClient.post('/auth/login', payload);
+//   return r.data;
+
+export const loginUser = (payload: LoginRequest): Promise<LoginResponse> => {
+  return mockLogin(payload);
 };
 
-export const logout = async (): Promise<void> => {
-  if (USE_MOCK_AUTH) {
-    return Promise.resolve(undefined);
-  }
-  await apiClient.post('/auth/logout');
-  return undefined;
+export const logout = (): Promise<void> => {
+  return Promise.resolve();
 };

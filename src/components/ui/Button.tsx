@@ -7,6 +7,7 @@ import {
   ViewStyle,
   TextStyle,
 } from 'react-native';
+import { Feather } from '@expo/vector-icons';
 
 import tokens from '@/theme/tokens';
 
@@ -29,6 +30,8 @@ export interface ButtonProps {
   loading?: boolean;
   /** Additional container styles merged after layout defaults. */
   style?: StyleProp<ViewStyle>;
+  /** Optional icon name from Feather icons */
+  icon?: keyof typeof Feather.glyphMap;
 }
 
 // ─── Pre-created token-derived style maps (module-level, computed once) ──────
@@ -89,6 +92,7 @@ export default function Button({
   disabled = false,
   loading = false,
   style,
+  icon,
 }: ButtonProps) {
   const loadingColor = variantLabelStyles[variant].color ?? tokens.colors.primary;
 
@@ -108,9 +112,19 @@ export default function Button({
       {loading ? (
         <ActivityIndicator size="small" color={loadingColor} />
       ) : (
-        <Text style={[styles.label, variantLabelStyles[variant], sizeLabelStyles[size]]}>
-          {label}
-        </Text>
+        <>
+          {icon && (
+            <Feather
+              name={icon}
+              size={size === 'sm' ? 14 : 18}
+              color={loadingColor as string}
+              style={styles.icon}
+            />
+          )}
+          <Text style={[styles.label, variantLabelStyles[variant], sizeLabelStyles[size]]}>
+            {label}
+          </Text>
+        </>
       )}
     </TouchableOpacity>
   );
@@ -130,5 +144,8 @@ const styles = StyleSheet.create({
   },
   disabled: {
     opacity: tokens.opacity.disabled,
+  },
+  icon: {
+    marginRight: tokens.spacing.sm,
   },
 });

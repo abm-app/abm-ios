@@ -12,6 +12,7 @@ import AuthNavigator from './AuthNavigator';
 import AppNavigator from './AppNavigator';
 import DesignSystemPreviewScreen from '@/screens/dev/DesignSystemPreview';
 import CampaignDetailsScreen from '@/screens/campaigns/CampaignDetailsScreen';
+import GuestProfileScreen from '@/screens/guests/GuestProfileScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -44,6 +45,7 @@ export default function RootNavigator() {
               <>
                 <Stack.Screen name="Main" component={AppNavigator} />
                 <Stack.Screen name="CampaignDetails" component={CampaignDetailsScreen} />
+                <Stack.Screen name="GuestProfile" component={GuestProfileScreen} />
                 {__DEV__ && (
                   <Stack.Screen
                     name="DesignSystemPreview"

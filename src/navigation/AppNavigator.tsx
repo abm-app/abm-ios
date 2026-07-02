@@ -8,11 +8,10 @@ import { useAuthStore } from '@/store/authStore';
 import { useLogout } from '@/hooks/auth/useLogout';
 import { Button } from '@/components/ui';
 import { FloatingTabBar } from '@/components/shared';
-import type { ModuleKey } from '@/types/auth';
-
 import type { AppTabParamList } from './types';
-import { MODULE_TO_TAB } from './types';
+import { TAB_PERMISSIONS } from '@/config/roles';
 import CampaignDashboardScreen from '@/screens/campaigns/CampaignDashboardScreen';
+import GuestDirectoryScreen from '@/screens/guests/GuestDirectoryScreen';
 
 // ─── Tab Navigator ───────────────────────────────────────────────────────────
 
@@ -23,41 +22,27 @@ const Tab = createBottomTabNavigator<AppTabParamList>();
 type FeatherIconName = React.ComponentProps<typeof Feather>['name'];
 
 const TAB_ICONS: Record<keyof AppTabParamList, FeatherIconName> = {
-  // Dashboard: 'layers',
+  Dashboard: 'pie-chart',
+  Operations: 'layers',
+  Guests: 'users',
   Campaigns: 'target',
-  LiveStatus: 'list',
-  AuditTrail: 'star',
-  Revenue: 'trending-up',
-  // Reports: 'bar-chart-2',
-  // Loyalty: 'heart',
-  // Notifications: 'bell',
-  UserManagement: 'users',
+  Admin: 'settings',
 };
 
 const TAB_LABELS: Record<keyof AppTabParamList, string> = {
-  // Dashboard: 'Dashboard',
+  Dashboard: 'Dashboard',
+  Operations: 'Operations',
+  Guests: 'Guests',
   Campaigns: 'Campaigns',
-  LiveStatus: 'Live Status',
-  AuditTrail: 'Audit Trail',
-  Revenue: 'Revenue',
-  // Reports: 'Reports',
-  // Loyalty: 'Loyalty',
-  // Notifications: 'Notifs',
-  UserManagement: 'Users',
+  Admin: 'Admin',
 };
 
-// ─── Ordered ModuleKeys (determines tab order) ───────────────────────────────
-
-const MODULE_ORDER: ModuleKey[] = [
-  // 'dashboard',
-  'campaigns',
-  'live_status',
-  'audit_trail',
-  'revenue',
-  // 'reports',
-  // 'loyalty',
-  // 'notifications',
-  'user_management',
+const TAB_ORDER: (keyof AppTabParamList)[] = [
+  'Dashboard',
+  'Operations',
+  'Guests',
+  'Campaigns',
+  'Admin',
 ];
 
 // ─── Placeholder Screen ──────────────────────────────────────────────────────
@@ -93,11 +78,17 @@ const PLACEHOLDER_SCREENS = Object.fromEntries(
 ) as unknown as Record<keyof AppTabParamList, React.ComponentType>;
 
 export default function AppNavigator() {
-  const modules = useAuthStore(s => s.modules);
+  const user = useAuthStore(s => s.user);
 
-  const enabledModules = MODULE_ORDER.filter(m => modules.includes(m));
+  if (!user || !user.role) {
+    return <AccessDeniedScreen />;
+  }
 
-  if (enabledModules.length === 0) {
+  const enabledTabs = TAB_ORDER.filter(tabName =>
+    (TAB_PERMISSIONS[tabName] as readonly string[]).includes(user.role),
+  );
+
+  if (enabledTabs.length === 0) {
     return <AccessDeniedScreen />;
   }
 
@@ -108,14 +99,17 @@ export default function AppNavigator() {
         headerShown: false,
       }}
     >
-      {enabledModules.map(moduleKey => {
-        const routeName = MODULE_TO_TAB[moduleKey];
+      {enabledTabs.map(routeName => {
         const ScreenComponent =
-          routeName === 'Campaigns' ? CampaignDashboardScreen : PLACEHOLDER_SCREENS[routeName];
+          routeName === 'Campaigns'
+            ? CampaignDashboardScreen
+            : routeName === 'Guests'
+              ? GuestDirectoryScreen
+              : PLACEHOLDER_SCREENS[routeName];
 
         return (
           <Tab.Screen
-            key={moduleKey}
+            key={routeName}
             name={routeName}
             component={ScreenComponent}
             options={{

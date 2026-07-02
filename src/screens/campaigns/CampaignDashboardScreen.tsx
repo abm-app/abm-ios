@@ -11,7 +11,7 @@ import ActionRequiredCard, { PendingAction } from './components/ActionRequiredCa
 import RecentBroadcastCard, { Broadcast } from './components/RecentBroadcastCard';
 import CreateCampaignModal from './components/CreateCampaignModal/CreateCampaignModal';
 import { useCampaigns } from '@/hooks/campaigns/useCampaigns';
-import { LoadingSpinner, ErrorState, Backdrop, EmptyState } from '@/components/shared';
+import { LoadingSpinner, ErrorState, Backdrop, EmptyState, ListSurface } from '@/components/shared';
 import { AccordionHeader } from './components/Accordion';
 import type { Campaign } from '@/types/campaign';
 
@@ -97,7 +97,7 @@ export default function CampaignDashboardScreen() {
         onRightButtonPress={() => setIsCreateModalVisible(true)}
       />
       <View style={[styles.mainWrapper, { paddingBottom: bottomPadding }]}>
-        <View style={styles.surface}>
+        <ListSurface>
           <View style={styles.tabsContainer}>
             <SegmentedControl tabs={TABS} activeTab={activeTab} onChange={setActiveTab} />
           </View>
@@ -167,7 +167,7 @@ export default function CampaignDashboardScreen() {
               stickySectionHeadersEnabled={false}
             />
           )}
-        </View>
+        </ListSurface>
       </View>
 
       <CreateCampaignModal
@@ -192,18 +192,6 @@ const styles = StyleSheet.create({
   },
   scrollInner: {
     flexGrow: 1,
-  },
-  surface: {
-    flex: 1,
-    backgroundColor: tokens.colors.background,
-    borderRadius: tokens.borderRadius.xl,
-    padding: tokens.spacing.xlMd,
-    shadowColor: tokens.shadow.modal.shadowColor,
-    shadowOffset: tokens.shadow.modal.shadowOffset,
-    shadowOpacity: tokens.shadow.modal.shadowOpacity,
-    shadowRadius: tokens.shadow.modal.shadowRadius,
-    borderWidth: tokens.borderWidth.hairline,
-    borderColor: tokens.colors.border,
   },
   tabsContainer: {
     paddingBottom: tokens.spacing.lgMd,
