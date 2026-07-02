@@ -4,13 +4,11 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import { useQueryClient } from '@tanstack/react-query';
-
 import tokens from '@/theme/tokens';
 import { RootStackParamList } from '@/navigation/types';
-import { useGuest, useUpdateGuestDnc, guestsKeys } from '@/hooks/guests/useGuests';
+import { useGuest, useUpdateGuestDnc } from '@/hooks/guests/useGuests';
 import { useAuthStore } from '@/store/authStore';
-import type { GuestProfileResponse } from '@/types/guest';
+import { useIssueGuestReward } from '@/hooks/rewards/useGuestRewards';
 import {
   ErrorState,
   LoadingSpinner,
@@ -31,7 +29,7 @@ export default function GuestProfileScreen({ route }: Props) {
   const { id } = route.params;
   const { data, isLoading, isError, error, refetch } = useGuest(id);
   const updateDncMutation = useUpdateGuestDnc();
-  const queryClient = useQueryClient();
+  const issueRewardMutation = useIssueGuestReward(id);
   const [activeTab, setActiveTab] = useState('stays');
 
   const [rewardModalVisible, setRewardModalVisible] = useState(false);
@@ -74,19 +72,8 @@ export default function GuestProfileScreen({ route }: Props) {
     setDncModalVisible(false);
   };
 
-  const handleIssueReward = (_rewardId: string, cost: number) => {
-    // Optimistic mock update
-    queryClient.setQueryData<GuestProfileResponse>(guestsKeys.detail(id), oldData => {
-      if (!oldData) return oldData;
-      return {
-        ...oldData,
-        guest: {
-          ...oldData.guest,
-          spendableBalance: Math.max(0, (oldData.guest.spendableBalance || 0) - cost),
-        },
-      };
-    });
-    // Optional: add to rewards list if we had that mock state
+  const handleIssueReward = (_rewardId: string, _cost: number) => {
+    issueRewardMutation.mutate(_rewardId);
   };
 
   return (
@@ -117,7 +104,7 @@ export default function GuestProfileScreen({ route }: Props) {
         {/* Tab Content */}
         <View style={styles.tabContent}>
           {activeTab === 'stays' && <GuestStayHistory bookings={bookings} />}
-          {activeTab === 'rewards' && <GuestRewards />}
+          {activeTab === 'rewards' && <GuestRewards guestId={guest._id} />}
           {activeTab === 'comms' && (
             <CommunicationLog guestId={guest._id} doNotContact={guest.doNotContact} />
           )}

@@ -199,6 +199,16 @@ export const updateGuestDnc = async (
   return fetchGuestById(id);
 };
 
+export const deductGuestPoints = async (id: string, points: number): Promise<void> => {
+  const guestIndex = mockGuests.findIndex(g => g._id === id);
+  if (guestIndex !== -1) {
+    mockGuests[guestIndex] = {
+      ...mockGuests[guestIndex],
+      spendableBalance: Math.max(0, mockGuests[guestIndex].spendableBalance - points),
+    };
+  }
+};
+
 export const fetchGuestCommunications = async (_id: string): Promise<CommunicationLogEvent[]> => {
   await new Promise(resolve => setTimeout(resolve, 300));
   return [
