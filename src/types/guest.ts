@@ -35,3 +35,13 @@ export interface GuestProfileResponse {
   guest: Guest;
   bookings: import('./booking').Booking[];
 }
+
+export interface CommunicationLogEvent {
+  _id: string;
+  campaignId: string | null;
+  templateId: string;
+  templateName: string;
+  sentAt: string;
+  status: 'sent' | 'delivered' | 'read' | 'failed' | string;
+  channel: string;
+}

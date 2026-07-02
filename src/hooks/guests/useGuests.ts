@@ -1,11 +1,17 @@
 import { useInfiniteQuery, useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getGuests, getGuestById, updateGuestDnc } from '@/api/endpoints/guestsApi';
+import {
+  getGuests,
+  getGuestById,
+  updateGuestDnc,
+  getGuestCommunications,
+} from '@/api/endpoints/guestsApi';
 import type { GuestFilters } from '@/types/guest';
 
 export const guestsKeys = {
   all: ['guests'] as const,
   list: (filters: GuestFilters) => [...guestsKeys.all, 'list', filters] as const,
   detail: (id: string) => [...guestsKeys.all, 'detail', id] as const,
+  communications: (id: string) => [...guestsKeys.all, 'communications', id] as const,
 };
 
 export function useInfiniteGuests(filters: Omit<GuestFilters, 'page'>) {
@@ -38,5 +44,12 @@ export function useUpdateGuestDnc() {
       queryClient.setQueryData(guestsKeys.detail(variables.id), data);
       queryClient.invalidateQueries({ queryKey: guestsKeys.list({}) }); // Invalidate all list queries
     },
+  });
+}
+
+export function useGuestCommunications(id: string) {
+  return useQuery({
+    queryKey: guestsKeys.communications(id),
+    queryFn: () => getGuestCommunications(id),
   });
 }

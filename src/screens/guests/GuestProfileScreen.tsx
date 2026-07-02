@@ -20,7 +20,7 @@ import {
 } from '@/components/shared';
 import { Badge, Button } from '@/components/ui';
 import GuestProfileHeader from './components/GuestProfileHeader';
-
+import CommunicationLog from './components/CommunicationLog';
 type Props = NativeStackScreenProps<RootStackParamList, 'GuestProfile'>;
 
 export default function GuestProfileScreen({ route }: Props) {
@@ -167,9 +167,7 @@ export default function GuestProfileScreen({ route }: Props) {
           {activeTab === 'stays' && renderStayHistory()}
           {activeTab === 'rewards' && renderRewards()}
           {activeTab === 'comms' && (
-            <View style={styles.emptyContainer}>
-              <Text style={styles.emptyText}>Communications coming soon.</Text>
-            </View>
+            <CommunicationLog guestId={guest._id} doNotContact={guest.doNotContact} />
           )}
         </View>
       </ScrollView>
