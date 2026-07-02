@@ -13,6 +13,12 @@
     },
     "preview": {
       "distribution": "internal",
+      "credentialsSource": "remote",
+      "env": {
+        "APP_ENV": "preview",
+        "EXPO_PUBLIC_API_URL": "https://api.example.com",
+        "EXPO_PUBLIC_USE_MOCK_AUTH": "true"
+      },
       "ios": {
         "simulator": false
       }
