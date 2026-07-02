@@ -5,16 +5,6 @@ const IS_PREVIEW = process.env.APP_ENV === 'preview';
 const bundleIdentifier = IS_PREVIEW ? 'com.abm.app.preview' : 'com.abm.app';
 const appName = IS_PREVIEW ? 'ABM Preview' : 'ABM';
 
-// EAS project IDs — production uses the existing one, preview uses the new account's project.
-// Replace REPLACE_WITH_PREVIEW_PROJECT_ID below once you have run `eas init` on the new account.
-const easProjectId = IS_PREVIEW
-  ? 'REPLACE_WITH_PREVIEW_PROJECT_ID'
-  : 'a427f36a-865c-49f5-bbf5-2a9e4b82219c';
-
-// Expo owner — production is lplusdevelopers, preview is your new account slug.
-// Replace REPLACE_WITH_NEW_ACCOUNT_SLUG with the slug of the new Expo account.
-const owner = IS_PREVIEW ? 'REPLACE_WITH_NEW_ACCOUNT_SLUG' : 'lplusdevelopers';
-
 export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
   name: appName,
@@ -36,7 +26,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       ITSAppUsesNonExemptEncryption: false,
     },
   },
-  owner,
+  owner: 'lplusdevelopers',
   plugins: [
     [
       'expo-font',
@@ -53,7 +43,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   ],
   extra: {
     eas: {
-      projectId: easProjectId,
+      projectId: 'a427f36a-865c-49f5-bbf5-2a9e4b82219c',
     },
   },
 });
+
