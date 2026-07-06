@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { Feather } from '@expo/vector-icons';
+import { Feather, Ionicons } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 import tokens from '@/theme/tokens';
@@ -19,22 +19,25 @@ const Tab = createBottomTabNavigator<AppTabParamList>();
 
 // ─── Tab Icon Map ────────────────────────────────────────────────────────────
 
-type FeatherIconName = React.ComponentProps<typeof Feather>['name'];
+type IconConfig = {
+  family: 'Feather' | 'Ionicons';
+  name: React.ComponentProps<typeof Feather>['name'] | React.ComponentProps<typeof Ionicons>['name'];
+};
 
-const TAB_ICONS: Record<keyof AppTabParamList, FeatherIconName> = {
-  Dashboard: 'pie-chart',
-  Operations: 'layers',
-  Guests: 'users',
-  Campaigns: 'target',
-  Admin: 'settings',
+const TAB_ICONS: Record<keyof AppTabParamList, IconConfig> = {
+  Dashboard: { family: 'Feather', name: 'layers' },
+  Operations: { family: 'Feather', name: 'key' },
+  Guests: { family: 'Feather', name: 'star' },
+  Campaigns: { family: 'Ionicons', name: 'megaphone-outline' },
+  Admin: { family: 'Feather', name: 'more-horizontal' },
 };
 
 const TAB_LABELS: Record<keyof AppTabParamList, string> = {
   Dashboard: 'Dashboard',
   Operations: 'Operations',
-  Guests: 'Guests',
+  Guests: 'Guest',
   Campaigns: 'Campaigns',
-  Admin: 'Admin',
+  Admin: 'Menu',
 };
 
 const TAB_ORDER: (keyof AppTabParamList)[] = [
@@ -114,14 +117,19 @@ export default function AppNavigator() {
             component={ScreenComponent}
             options={{
               tabBarLabel: TAB_LABELS[routeName],
-              tabBarIcon: ({ color, focused }) => (
-                <Feather
-                  name={TAB_ICONS[routeName]}
-                  size={tokens.iconSizes.tabBar}
-                  color={color}
-                  style={focused ? styles.iconFocused : undefined}
-                />
-              ),
+              tabBarIcon: ({ color, focused }) => {
+                const IconConfig = TAB_ICONS[routeName];
+                const IconComponent = IconConfig.family === 'Ionicons' ? Ionicons : Feather;
+
+                return (
+                  <IconComponent
+                    name={IconConfig.name as any}
+                    size={tokens.iconSizes.tabBar}
+                    color={color}
+                    style={focused ? styles.iconFocused : undefined}
+                  />
+                );
+              },
             }}
           />
         );
