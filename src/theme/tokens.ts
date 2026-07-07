@@ -62,6 +62,11 @@ const colors = {
   // Insight progress
   insightTrackMuted: '#BBBBBB',
 
+  // Dashboard
+  dashboardBg: '#FAF8F5',
+  chipNeutralBg: '#F0EFED',
+  chipWarmBg: '#F5E6D0',
+
   // Auth — Login screen
   authBackdropBase: '#F5E6D8',
   authFog1: '#FFAF96',
