@@ -12,6 +12,7 @@ import type { AppTabParamList } from './types';
 import { TAB_PERMISSIONS } from '@/config/roles';
 import CampaignDashboardScreen from '@/screens/campaigns/CampaignDashboardScreen';
 import GuestDirectoryScreen from '@/screens/guests/GuestDirectoryScreen';
+import DashboardScreen from '@/screens/dashboard/DashboardScreen';
 
 // ─── Tab Navigator ───────────────────────────────────────────────────────────
 
@@ -103,11 +104,13 @@ export default function AppNavigator() {
     >
       {enabledTabs.map(routeName => {
         const ScreenComponent =
-          routeName === 'Campaigns'
-            ? CampaignDashboardScreen
-            : routeName === 'Guests'
-              ? GuestDirectoryScreen
-              : PLACEHOLDER_SCREENS[routeName];
+          routeName === 'Dashboard'
+            ? DashboardScreen
+            : routeName === 'Campaigns'
+              ? CampaignDashboardScreen
+              : routeName === 'Guests'
+                ? GuestDirectoryScreen
+                : PLACEHOLDER_SCREENS[routeName];
 
         return (
           <Tab.Screen
