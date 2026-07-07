@@ -34,6 +34,7 @@ const ActionButtons = ({
   showFilter,
   showRightButton,
   showNotifications,
+  notificationCount,
   rightButtonText,
   onSearchPress,
   onFilterPress,
@@ -45,6 +46,7 @@ const ActionButtons = ({
   showFilter: boolean;
   showRightButton: boolean;
   showNotifications?: boolean;
+  notificationCount?: number;
   rightButtonText: string;
   onSearchPress: () => void;
   onFilterPress?: () => void;
@@ -69,8 +71,17 @@ const ActionButtons = ({
         activeOpacity={0.7}
       >
         <Feather name="bell" size={20} color={tokens.colors.textPrimary} />
-        {/* Placeholder for notification badge */}
-        <View style={styles.notificationBadge} />
+        {notificationCount !== undefined ? (
+          notificationCount > 0 && (
+            <View style={styles.notificationBadge}>
+              <Text style={styles.notificationBadgeText}>
+                {notificationCount > 99 ? '99+' : notificationCount}
+              </Text>
+            </View>
+          )
+        ) : (
+          <View style={styles.notificationBadgeDot} />
+        )}
       </TouchableOpacity>
     )}
     {showRightButton && (
@@ -93,6 +104,7 @@ export interface ScreenHeaderProps {
   showSearch?: boolean;
   showFilter?: boolean;
   showNotifications?: boolean;
+  notificationCount?: number;
   showRightButton?: boolean;
   rightButtonText?: string;
   searchValue?: string;
@@ -109,6 +121,7 @@ export function ScreenHeaderV2({
   showSearch = false,
   showFilter = false,
   showNotifications = true,
+  notificationCount,
   showRightButton = true,
   rightButtonText = 'New',
   searchValue,
@@ -146,6 +159,7 @@ export function ScreenHeaderV2({
         isSearching={isSearching}
         showFilter={showFilter}
         showNotifications={showNotifications}
+        notificationCount={notificationCount}
         showRightButton={showRightButton}
         rightButtonText={rightButtonText}
         onSearchPress={handleSearchPress}
@@ -213,7 +227,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: tokens.colors.border,
   },
-  notificationBadge: {
+  notificationBadgeDot: {
     position: 'absolute',
     top: 10,
     right: 12,
@@ -223,5 +237,24 @@ const styles = StyleSheet.create({
     backgroundColor: tokens.colors.danger,
     borderWidth: 1.5,
     borderColor: tokens.colors.background,
+  },
+  notificationBadge: {
+    position: 'absolute',
+    top: -4,
+    right: -4,
+    backgroundColor: tokens.colors.danger,
+    borderRadius: 10,
+    minWidth: 18,
+    height: 18,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1.5,
+    borderColor: tokens.colors.background,
+    paddingHorizontal: 4,
+  },
+  notificationBadgeText: {
+    color: tokens.colors.white,
+    fontSize: 10,
+    fontWeight: 'bold',
   },
 });

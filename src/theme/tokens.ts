@@ -62,6 +62,15 @@ const colors = {
   // Insight progress
   insightTrackMuted: '#BBBBBB',
 
+  // Dashboard
+  dashboardBg: '#FAF8F5',
+  dashboardCardDarkBg: '#1A1A1A',
+  dashboardCardDarkSurfaceBg: '#2C2C2E',
+  avatarWarmBg: '#FDF0D5',
+  avatarWarmIcon: '#D97706',
+  chipNeutralBg: '#F0EFED',
+  chipWarmBg: '#F5E6D0',
+
   // Auth — Login screen
   authBackdropBase: '#F5E6D8',
   authFog1: '#FFAF96',
@@ -174,6 +183,8 @@ const letterSpacing = {
   navLabel: -0.1,
   /** 13 × 0.01 = 0.13 */
   button: 0.13,
+  /** 11 × (1.5/11) approx */
+  caps: 1.5,
 } as const;
 
 const typography = {
@@ -231,6 +242,7 @@ const borderRadius = {
   sm: 6,
   md: 10,
   lg: 16,
+  xlMd: 20,
   xl: 24,
   pill: 100,
   navCapsule: 296,
@@ -259,6 +271,12 @@ const iconSizes = {
   navPreview: 18,
   /** Task card meta icons (calendar, repeat) */
   taskMeta: 13,
+  /** Avatar inside activity feed */
+  avatar: 18,
+  /** Medium icon size for generic containers */
+  md: 24,
+  /** Standard icon container dimension */
+  container: 48,
 } as const;
 
 // ─── Button Dimensions ───────────────────────────────────────────────────────

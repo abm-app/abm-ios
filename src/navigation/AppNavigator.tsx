@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { Feather } from '@expo/vector-icons';
+import { Feather, Ionicons } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 import tokens from '@/theme/tokens';
@@ -12,6 +12,7 @@ import type { AppTabParamList } from './types';
 import { TAB_PERMISSIONS } from '@/config/roles';
 import CampaignDashboardScreen from '@/screens/campaigns/CampaignDashboardScreen';
 import GuestDirectoryScreen from '@/screens/guests/GuestDirectoryScreen';
+import DashboardScreen from '@/screens/dashboard/DashboardScreen';
 
 // ─── Tab Navigator ───────────────────────────────────────────────────────────
 
@@ -19,22 +20,24 @@ const Tab = createBottomTabNavigator<AppTabParamList>();
 
 // ─── Tab Icon Map ────────────────────────────────────────────────────────────
 
-type FeatherIconName = React.ComponentProps<typeof Feather>['name'];
+type IconConfig =
+  | { family: 'Feather'; name: React.ComponentProps<typeof Feather>['name'] }
+  | { family: 'Ionicons'; name: React.ComponentProps<typeof Ionicons>['name'] };
 
-const TAB_ICONS: Record<keyof AppTabParamList, FeatherIconName> = {
-  Dashboard: 'pie-chart',
-  Operations: 'layers',
-  Guests: 'users',
-  Campaigns: 'target',
-  Admin: 'settings',
+const TAB_ICONS: Record<keyof AppTabParamList, IconConfig> = {
+  Dashboard: { family: 'Feather', name: 'layers' },
+  Operations: { family: 'Feather', name: 'key' },
+  Guests: { family: 'Feather', name: 'star' },
+  Campaigns: { family: 'Ionicons', name: 'megaphone-outline' },
+  Admin: { family: 'Feather', name: 'more-horizontal' },
 };
 
 const TAB_LABELS: Record<keyof AppTabParamList, string> = {
   Dashboard: 'Dashboard',
   Operations: 'Operations',
-  Guests: 'Guests',
+  Guests: 'Guest',
   Campaigns: 'Campaigns',
-  Admin: 'Admin',
+  Admin: 'Menu',
 };
 
 const TAB_ORDER: (keyof AppTabParamList)[] = [
@@ -101,11 +104,13 @@ export default function AppNavigator() {
     >
       {enabledTabs.map(routeName => {
         const ScreenComponent =
-          routeName === 'Campaigns'
-            ? CampaignDashboardScreen
-            : routeName === 'Guests'
-              ? GuestDirectoryScreen
-              : PLACEHOLDER_SCREENS[routeName];
+          routeName === 'Dashboard'
+            ? DashboardScreen
+            : routeName === 'Campaigns'
+              ? CampaignDashboardScreen
+              : routeName === 'Guests'
+                ? GuestDirectoryScreen
+                : PLACEHOLDER_SCREENS[routeName];
 
         return (
           <Tab.Screen
@@ -114,14 +119,29 @@ export default function AppNavigator() {
             component={ScreenComponent}
             options={{
               tabBarLabel: TAB_LABELS[routeName],
-              tabBarIcon: ({ color, focused }) => (
-                <Feather
-                  name={TAB_ICONS[routeName]}
-                  size={tokens.iconSizes.tabBar}
-                  color={color}
-                  style={focused ? styles.iconFocused : undefined}
-                />
-              ),
+              tabBarIcon: ({ color, focused }) => {
+                const IconConfig = TAB_ICONS[routeName];
+
+                if (IconConfig.family === 'Ionicons') {
+                  return (
+                    <Ionicons
+                      name={IconConfig.name}
+                      size={tokens.iconSizes.tabBar}
+                      color={color}
+                      style={focused ? styles.iconFocused : undefined}
+                    />
+                  );
+                }
+
+                return (
+                  <Feather
+                    name={IconConfig.name}
+                    size={tokens.iconSizes.tabBar}
+                    color={color}
+                    style={focused ? styles.iconFocused : undefined}
+                  />
+                );
+              },
             }}
           />
         );
