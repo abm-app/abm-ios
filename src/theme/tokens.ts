@@ -64,6 +64,8 @@ const colors = {
 
   // Dashboard
   dashboardBg: '#FAF8F5',
+  dashboardCardDarkBg: '#1A1A1A',
+  dashboardCardDarkSurfaceBg: '#2C2C2E',
   chipNeutralBg: '#F0EFED',
   chipWarmBg: '#F5E6D0',
 
@@ -236,6 +238,7 @@ const borderRadius = {
   sm: 6,
   md: 10,
   lg: 16,
+  xlMd: 20,
   xl: 24,
   pill: 100,
   navCapsule: 296,
