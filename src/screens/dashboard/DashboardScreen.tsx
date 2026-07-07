@@ -1,16 +1,17 @@
 import React from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useDashboardSummary } from '../../hooks/dashboard/useDashboardSummary';
-import OccupancySection from '../../components/dashboard/OccupancySection';
-import RevenueSummary from '../../components/dashboard/RevenueSummary';
-import RecentActivityFeed from '../../components/dashboard/RecentActivityFeed';
+import OccupancySection from './OccupancySection';
+import RevenueSummary from './RevenueSummary';
+import RecentActivityFeed from './RecentActivityFeed';
 import LoadingSpinner from '../../components/shared/LoadingSpinner';
 import ErrorState from '../../components/shared/ErrorState';
 import tokens from '../../theme/tokens';
 
 export default function DashboardScreen() {
   const { data, isLoading, isError, refetch } = useDashboardSummary();
+  const insets = useSafeAreaInsets();
 
   if (isLoading) {
     return <LoadingSpinner />;
@@ -20,11 +21,14 @@ export default function DashboardScreen() {
     return <ErrorState message="Failed to load dashboard. Pull to refresh." onRetry={refetch} />;
   }
 
+  const bottomClearance =
+    Math.max(insets.bottom, tokens.navigation.paddingVertical) + tokens.navigation.height + 16;
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView
         style={styles.scroll}
-        contentContainerStyle={styles.content}
+        contentContainerStyle={[styles.content, { paddingBottom: bottomClearance }]}
         showsVerticalScrollIndicator={false}
       >
         <OccupancySection
@@ -51,7 +55,6 @@ const styles = StyleSheet.create({
   },
   content: {
     paddingHorizontal: tokens.spacing.lgMd,
-    paddingBottom: tokens.spacing.xxlMd,
   },
   gap: {
     height: tokens.spacing.lgMd,

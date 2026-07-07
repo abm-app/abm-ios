@@ -16,12 +16,14 @@ export default function RevenueSummary({ todayRevenue }: RevenueSummaryProps) {
 
   return (
     <View style={styles.container}>
-      <View style={styles.iconContainer}>
-        <Feather name="credit-card" size={24} color={tokens.colors.white} />
-      </View>
-      <View style={styles.textContainer}>
-        <Text style={styles.amount}>{formattedRevenue}</Text>
+      <View style={styles.leftContainer}>
+        <View style={styles.iconContainer}>
+          <Feather name="credit-card" size={24} color={tokens.colors.white} />
+        </View>
         <Text style={styles.label}>{"TODAY'S REVENUE"}</Text>
+      </View>
+      <View style={styles.rightContainer}>
+        <Text style={styles.amount}>{formattedRevenue}</Text>
       </View>
     </View>
   );
@@ -34,6 +36,12 @@ const styles = StyleSheet.create({
     padding: tokens.spacing.xxl,
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  leftContainer: {
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+    gap: 6,
   },
   iconContainer: {
     backgroundColor: tokens.colors.dashboardCardDarkSurfaceBg,
@@ -42,16 +50,14 @@ const styles = StyleSheet.create({
     borderRadius: tokens.borderRadius.md,
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: tokens.spacing.lgMd,
   },
-  textContainer: {
-    flex: 1,
+  rightContainer: {
+    justifyContent: 'center',
   },
   amount: {
     fontSize: tokens.typography.fontSize.numeric,
     fontWeight: '700',
     color: tokens.colors.white,
-    marginBottom: 4,
   },
   label: {
     fontSize: tokens.typography.fontSize.label,

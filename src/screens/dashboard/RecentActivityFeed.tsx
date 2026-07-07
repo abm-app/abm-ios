@@ -85,7 +85,12 @@ export default function RecentActivityFeed({ events }: RecentActivityFeedProps) 
 
 const styles = StyleSheet.create({
   container: {
-    paddingVertical: tokens.spacing.lgMd,
+    backgroundColor: tokens.colors.white,
+    borderRadius: tokens.borderRadius.xlMd,
+    overflow: 'hidden',
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    paddingBottom: 16,
   },
   sectionTitle: {
     fontSize: tokens.typography.fontSize.label,
@@ -93,7 +98,6 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
     color: tokens.colors.textMuted,
     marginBottom: tokens.spacing.lgMd,
-    paddingHorizontal: tokens.spacing.xlMd,
   },
   listContainer: {
     backgroundColor: tokens.colors.white,
@@ -102,7 +106,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: tokens.spacing.lg,
-    paddingHorizontal: tokens.spacing.xlMd,
   },
   rowBorder: {
     borderBottomWidth: tokens.borderWidth.thin,
@@ -131,7 +134,6 @@ const styles = StyleSheet.create({
   },
   button: {
     marginTop: tokens.spacing.lgMd,
-    marginHorizontal: tokens.spacing.xlMd,
     borderWidth: tokens.borderWidth.thin,
     borderColor: tokens.colors.borderMd,
     borderRadius: tokens.borderRadius.xl,

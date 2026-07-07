@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import tokens from '../../theme/tokens';
-import { ScreenHeaderV2 } from '../shared/ScreenHeader';
+import { ScreenHeaderV2 } from '../../components/shared/ScreenHeader';
 
 interface OccupancySectionProps {
   occupancy: Record<string, { occupied: number; total: number }>;
@@ -37,8 +37,6 @@ export default function OccupancySection({
         {Object.entries(occupancy).map(([propertyName, data]) => {
           const { occupied, total } = data;
           const vacant = total - occupied;
-          const departures = Math.round(occupied * 0.34);
-          const arrivals = Math.min(total, Math.round(vacant * 1.6));
 
           return (
             <View key={propertyName} style={styles.card}>
@@ -55,12 +53,6 @@ export default function OccupancySection({
                 </View>
                 <View style={[styles.chip, styles.chipNeutral]}>
                   <Text style={styles.chipText}>Vacant {vacant}</Text>
-                </View>
-                <View style={[styles.chip, styles.chipWarm]}>
-                  <Text style={styles.chipText}>Departures {departures}</Text>
-                </View>
-                <View style={[styles.chip, styles.chipNeutral]}>
-                  <Text style={styles.chipText}>Arrivals {arrivals}</Text>
                 </View>
               </View>
             </View>
@@ -105,26 +97,20 @@ const styles = StyleSheet.create({
   },
   fraction: {
     fontSize: tokens.typography.fontSize.display,
-    fontWeight: '700',
     color: tokens.colors.primary,
     marginBottom: tokens.spacing.xl,
   },
   chipsGrid: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
     gap: tokens.spacing.sm,
   },
   chip: {
     borderRadius: 20,
     paddingVertical: tokens.spacing.sm,
     paddingHorizontal: tokens.spacing.mdLg,
-    width: '48%',
   },
   chipNeutral: {
     backgroundColor: tokens.colors.chipNeutralBg,
-  },
-  chipWarm: {
-    backgroundColor: tokens.colors.chipWarmBg,
   },
   chipText: {
     fontSize: tokens.typography.fontSize.caption,
