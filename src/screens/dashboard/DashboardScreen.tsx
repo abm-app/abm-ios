@@ -17,12 +17,7 @@ export default function DashboardScreen() {
   }
 
   if (isError || !data) {
-    return (
-      <ErrorState 
-        message="Failed to load dashboard. Pull to refresh." 
-        onRetry={refetch} 
-      />
-    );
+    return <ErrorState message="Failed to load dashboard. Pull to refresh." onRetry={refetch} />;
   }
 
   return (
