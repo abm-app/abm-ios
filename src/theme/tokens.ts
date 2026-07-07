@@ -66,6 +66,8 @@ const colors = {
   dashboardBg: '#FAF8F5',
   dashboardCardDarkBg: '#1A1A1A',
   dashboardCardDarkSurfaceBg: '#2C2C2E',
+  avatarWarmBg: '#FDF0D5',
+  avatarWarmIcon: '#D97706',
   chipNeutralBg: '#F0EFED',
   chipWarmBg: '#F5E6D0',
 
@@ -181,6 +183,8 @@ const letterSpacing = {
   navLabel: -0.1,
   /** 13 × 0.01 = 0.13 */
   button: 0.13,
+  /** 11 × (1.5/11) approx */
+  caps: 1.5,
 } as const;
 
 const typography = {
@@ -267,6 +271,8 @@ const iconSizes = {
   navPreview: 18,
   /** Task card meta icons (calendar, repeat) */
   taskMeta: 13,
+  /** Avatar inside activity feed */
+  avatar: 18,
 } as const;
 
 // ─── Button Dimensions ───────────────────────────────────────────────────────
