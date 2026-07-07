@@ -18,7 +18,7 @@ export default function RevenueSummary({ todayRevenue }: RevenueSummaryProps) {
     <View style={styles.container}>
       <View style={styles.leftContainer}>
         <View style={styles.iconContainer}>
-          <Feather name="credit-card" size={24} color={tokens.colors.white} />
+          <Feather name="credit-card" size={tokens.iconSizes.md} color={tokens.colors.white} />
         </View>
         <Text style={styles.label}>{"TODAY'S REVENUE"}</Text>
       </View>
@@ -41,12 +41,12 @@ const styles = StyleSheet.create({
   leftContainer: {
     flexDirection: 'column',
     alignItems: 'flex-start',
-    gap: 6,
+    gap: tokens.spacing.s,
   },
   iconContainer: {
     backgroundColor: tokens.colors.dashboardCardDarkSurfaceBg,
-    width: 48,
-    height: 48,
+    width: tokens.iconSizes.container,
+    height: tokens.iconSizes.container,
     borderRadius: tokens.borderRadius.md,
     justifyContent: 'center',
     alignItems: 'center',
@@ -64,6 +64,6 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: tokens.colors.white,
     opacity: 0.6,
-    letterSpacing: 1.5,
+    letterSpacing: tokens.typography.letterSpacing.caps,
   },
 });

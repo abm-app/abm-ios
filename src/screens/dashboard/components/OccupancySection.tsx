@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
   },
   occupancyLabel: {
     fontSize: tokens.typography.fontSize.label,
-    letterSpacing: 1.2,
+    letterSpacing: tokens.typography.letterSpacing.sectionLabel,
     color: tokens.colors.textHint,
     textTransform: 'uppercase',
     marginBottom: tokens.spacing.md,
@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
     gap: tokens.spacing.sm,
   },
   chip: {
-    borderRadius: 20,
+    borderRadius: tokens.borderRadius.xlMd,
     paddingVertical: tokens.spacing.sm,
     paddingHorizontal: tokens.spacing.mdLg,
   },

@@ -273,6 +273,10 @@ const iconSizes = {
   taskMeta: 13,
   /** Avatar inside activity feed */
   avatar: 18,
+  /** Medium icon size for generic containers */
+  md: 24,
+  /** Standard icon container dimension */
+  container: 48,
 } as const;
 
 // ─── Button Dimensions ───────────────────────────────────────────────────────
