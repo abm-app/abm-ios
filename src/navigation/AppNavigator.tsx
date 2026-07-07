@@ -19,10 +19,9 @@ const Tab = createBottomTabNavigator<AppTabParamList>();
 
 // ─── Tab Icon Map ────────────────────────────────────────────────────────────
 
-type IconConfig = {
-  family: 'Feather' | 'Ionicons';
-  name: React.ComponentProps<typeof Feather>['name'] | React.ComponentProps<typeof Ionicons>['name'];
-};
+type IconConfig =
+  | { family: 'Feather'; name: React.ComponentProps<typeof Feather>['name'] }
+  | { family: 'Ionicons'; name: React.ComponentProps<typeof Ionicons>['name'] };
 
 const TAB_ICONS: Record<keyof AppTabParamList, IconConfig> = {
   Dashboard: { family: 'Feather', name: 'layers' },
@@ -119,11 +118,21 @@ export default function AppNavigator() {
               tabBarLabel: TAB_LABELS[routeName],
               tabBarIcon: ({ color, focused }) => {
                 const IconConfig = TAB_ICONS[routeName];
-                const IconComponent = IconConfig.family === 'Ionicons' ? Ionicons : Feather;
+
+                if (IconConfig.family === 'Ionicons') {
+                  return (
+                    <Ionicons
+                      name={IconConfig.name}
+                      size={tokens.iconSizes.tabBar}
+                      color={color}
+                      style={focused ? styles.iconFocused : undefined}
+                    />
+                  );
+                }
 
                 return (
-                  <IconComponent
-                    name={IconConfig.name as any}
+                  <Feather
+                    name={IconConfig.name}
                     size={tokens.iconSizes.tabBar}
                     color={color}
                     style={focused ? styles.iconFocused : undefined}
