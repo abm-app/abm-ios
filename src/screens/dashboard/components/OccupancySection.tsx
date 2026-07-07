@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import tokens from '../../theme/tokens';
-import { ScreenHeaderV2 } from '../../components/shared/ScreenHeader';
+import tokens from '../../../theme/tokens';
+import { ScreenHeaderV2 } from '../../../components/shared/ScreenHeader';
 
 interface OccupancySectionProps {
   occupancy: Record<string, { occupied: number; total: number }>;

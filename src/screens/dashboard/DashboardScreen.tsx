@@ -2,12 +2,12 @@ import React from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useDashboardSummary } from '../../hooks/dashboard/useDashboardSummary';
-import OccupancySection from './OccupancySection';
-import RevenueSummary from './RevenueSummary';
-import RecentActivityFeed from './RecentActivityFeed';
+import RevenueSummary from './components/RevenueSummary';
+import RecentActivityFeed from './components/RecentActivityFeed';
 import LoadingSpinner from '../../components/shared/LoadingSpinner';
 import ErrorState from '../../components/shared/ErrorState';
 import tokens from '../../theme/tokens';
+import OccupancySection from './components/OccupancySection';
 
 export default function DashboardScreen() {
   const { data, isLoading, isError, refetch } = useDashboardSummary();

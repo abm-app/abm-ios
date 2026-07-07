@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Feather } from '@expo/vector-icons';
-import tokens from '../../theme/tokens';
-import type { RecentEvent } from '../../types/dashboard';
+import tokens from '../../../theme/tokens';
+import type { RecentEvent } from '../../../types/dashboard';
 
 interface RecentActivityFeedProps {
   events: RecentEvent[];
