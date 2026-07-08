@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import tokens from '@/theme/tokens';
 import { SegmentedControl } from '@/components/shared/SegmentedControl';
 import { ScreenHeaderV2 } from '@/components/shared/ScreenHeader';
-import AuditTrailScreen, { AuditTrailScreenRef } from '@/screens/AuditTrail/AuditTrailScreen';
+import AuditTrailScreen, { AuditTrailScreenRef } from '@/screens/audit-trail/AuditTrailScreen';
 import Backdrop from '@/components/shared/Backdrop';
 
 export default function OperationsScreen() {
