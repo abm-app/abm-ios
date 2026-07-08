@@ -1,6 +1,6 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { Feather, Ionicons } from '@expo/vector-icons';
+import { StyleSheet, Text, View, TextStyle } from 'react-native';
+import { Feather, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 import tokens from '@/theme/tokens';
@@ -22,14 +22,31 @@ const Tab = createBottomTabNavigator<AppTabParamList>();
 // ─── Tab Icon Map ────────────────────────────────────────────────────────────
 
 type IconConfig =
-  | { family: 'Feather'; name: React.ComponentProps<typeof Feather>['name'] }
-  | { family: 'Ionicons'; name: React.ComponentProps<typeof Ionicons>['name'] };
+  | {
+      family: 'Feather';
+      name: React.ComponentProps<typeof Feather>['name'];
+      transform?: TextStyle['transform'];
+    }
+  | {
+      family: 'Ionicons';
+      name: React.ComponentProps<typeof Ionicons>['name'];
+      transform?: TextStyle['transform'];
+    }
+  | {
+      family: 'MaterialCommunityIcons';
+      name: React.ComponentProps<typeof MaterialCommunityIcons>['name'];
+      transform?: TextStyle['transform'];
+    };
 
 const TAB_ICONS: Record<keyof AppTabParamList, IconConfig> = {
   Dashboard: { family: 'Feather', name: 'layers' },
-  Operations: { family: 'Feather', name: 'key' },
+  Operations: {
+    family: 'Ionicons',
+    name: 'key-outline',
+    transform: [{ rotate: '90deg' }, { scaleY: -1 }],
+  },
   Guests: { family: 'Feather', name: 'star' },
-  Campaigns: { family: 'Ionicons', name: 'megaphone-outline' },
+  Campaigns: { family: 'MaterialCommunityIcons', name: 'bullhorn-outline' },
   Admin: { family: 'Feather', name: 'more-horizontal' },
 };
 
@@ -131,7 +148,24 @@ export default function AppNavigator() {
                       name={IconConfig.name}
                       size={tokens.iconSizes.tabBar}
                       color={color}
-                      style={focused ? styles.iconFocused : undefined}
+                      style={[
+                        focused ? styles.iconFocused : undefined,
+                        IconConfig.transform && { transform: IconConfig.transform },
+                      ]}
+                    />
+                  );
+                }
+
+                if (IconConfig.family === 'MaterialCommunityIcons') {
+                  return (
+                    <MaterialCommunityIcons
+                      name={IconConfig.name}
+                      size={tokens.iconSizes.tabBar}
+                      color={color}
+                      style={[
+                        focused ? styles.iconFocused : undefined,
+                        IconConfig.transform && { transform: IconConfig.transform },
+                      ]}
                     />
                   );
                 }
@@ -141,7 +175,10 @@ export default function AppNavigator() {
                     name={IconConfig.name}
                     size={tokens.iconSizes.tabBar}
                     color={color}
-                    style={focused ? styles.iconFocused : undefined}
+                    style={[
+                      focused ? styles.iconFocused : undefined,
+                      IconConfig.transform && { transform: IconConfig.transform },
+                    ]}
                   />
                 );
               },

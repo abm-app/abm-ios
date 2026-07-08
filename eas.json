@@ -13,6 +13,7 @@
     },
     "preview": {
       "distribution": "store",
+      "autoIncrement": true,
       "credentialsSource": "remote",
       "env": {
         "APP_ENV": "preview",

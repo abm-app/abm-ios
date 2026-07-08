@@ -8,7 +8,7 @@ const Stack = createNativeStackNavigator<OperationsStackParamList>();
 export default function OperationsNavigator() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="Operations" component={OperationsScreen} />
+      <Stack.Screen name="OperationsHome" component={OperationsScreen} />
     </Stack.Navigator>
   );
 }
