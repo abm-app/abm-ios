@@ -1,6 +1,6 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import AuditTrailScreen from '@/screens/AuditTrailScreen';
+import AuditTrailScreen from '@/screens/AuditTrail/AuditTrailScreen';
 import type { OperationsStackParamList } from './types';
 
 const Stack = createNativeStackNavigator<OperationsStackParamList>();

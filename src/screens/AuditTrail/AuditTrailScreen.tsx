@@ -13,7 +13,7 @@ import { Feather } from '@expo/vector-icons';
 import tokens from '@/theme/tokens';
 import { useAuditEvents } from '@/hooks/audit/useAuditEvents';
 import type { AuditFilters } from '@/hooks/audit/useAuditEvents';
-import { AuditCard } from '@/components/audit/AuditCard';
+import { AuditCard } from './components/AuditCard';
 import { FilterSheet } from '@/components/shared/FilterSheet';
 import { Button } from '@/components/ui';
 
