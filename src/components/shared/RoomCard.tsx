@@ -9,7 +9,8 @@ interface RoomCardProps {
 }
 
 export default function RoomCard({ room }: RoomCardProps) {
-  const { statusColors, label } = getStatusConfig(room.status);
+  const { label } = getStatusConfig(room.status);
+  const statusStyle = statusBadgeStyles[room.status] || statusBadgeStyles.vacant;
 
   return (
     <View style={styles.container}>
@@ -22,7 +23,7 @@ export default function RoomCard({ room }: RoomCardProps) {
           <Text style={styles.vacantText}>Ready for Check-in</Text>
         ) : (
           <>
-            <Text style={styles.guestName}>{room.guestName}</Text>
+            <Text style={styles.guestName}>{room.guestName || 'Unknown Guest'}</Text>
             {room.status === 'arrival' ? (
               <Text style={styles.dates}>Arriving Today</Text>
             ) : (
@@ -34,10 +35,7 @@ export default function RoomCard({ room }: RoomCardProps) {
         )}
       </View>
       <View style={styles.statusCol}>
-        <Badge
-          label={label}
-          style={{ backgroundColor: statusColors.bg, color: statusColors.text }}
-        />
+        <Badge label={label} style={statusStyle} />
       </View>
     </View>
   );
@@ -46,38 +44,14 @@ export default function RoomCard({ room }: RoomCardProps) {
 function getStatusConfig(status: RoomStatusType) {
   switch (status) {
     case 'occupied':
-      return {
-        label: 'OCCUPIED',
-        statusColors: {
-          bg: tokens.colors.statusOccupiedBg,
-          text: tokens.colors.statusOccupiedText,
-        },
-      };
+      return { label: 'OCCUPIED' };
     case 'checkout':
-      return {
-        label: 'CHECKOUT',
-        statusColors: {
-          bg: tokens.colors.statusCheckoutBg,
-          text: tokens.colors.statusCheckoutText,
-        },
-      };
+      return { label: 'CHECKOUT' };
     case 'arrival':
-      return {
-        label: 'ARRIVAL',
-        statusColors: {
-          bg: tokens.colors.statusArrivalBg,
-          text: tokens.colors.statusArrivalText,
-        },
-      };
+      return { label: 'ARRIVAL' };
     case 'vacant':
     default:
-      return {
-        label: 'VACANT',
-        statusColors: {
-          bg: tokens.colors.statusVacantBg,
-          text: tokens.colors.statusVacantText,
-        },
-      };
+      return { label: 'VACANT' };
   }
 }
 
@@ -105,6 +79,22 @@ function formatDateShort(dateStr?: string) {
   return `${m} ${d}`;
 }
 
+const statusBadgeStyles = StyleSheet.create({
+  occupied: {
+    backgroundColor: tokens.colors.statusOccupiedBg,
+    color: tokens.colors.statusOccupiedText,
+  },
+  checkout: {
+    backgroundColor: tokens.colors.statusCheckoutBg,
+    color: tokens.colors.statusCheckoutText,
+  },
+  arrival: {
+    backgroundColor: tokens.colors.statusArrivalBg,
+    color: tokens.colors.statusArrivalText,
+  },
+  vacant: { backgroundColor: tokens.colors.statusVacantBg, color: tokens.colors.statusVacantText },
+});
+
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
@@ -114,7 +104,7 @@ const styles = StyleSheet.create({
     borderBottomColor: tokens.colors.border,
   },
   roomInfoCol: {
-    width: 80,
+    width: tokens.spacing.xxxl * 1.5,
   },
   roomNumber: {
     fontFamily: tokens.typography.fontFamily.headingBold,
@@ -123,7 +113,7 @@ const styles = StyleSheet.create({
   },
   roomType: {
     fontFamily: tokens.typography.fontFamily.sub,
-    fontSize: 10, // Slight variation for very small text
+    fontSize: tokens.typography.fontSize.sectionLabel,
     color: tokens.colors.textHint,
     marginTop: tokens.spacing.xxs,
   },
@@ -151,6 +141,6 @@ const styles = StyleSheet.create({
   },
   statusCol: {
     alignItems: 'flex-end',
-    minWidth: 80,
+    minWidth: tokens.spacing.xxxl * 1.5,
   },
 });

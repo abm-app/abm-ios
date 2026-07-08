@@ -332,15 +332,38 @@ const mockAuditEvents: AuditEvent[] = [
 export const getAuditEvents = (params: GetAuditEventsParams): Promise<AuditEventsResponse> => {
   return new Promise(resolve => {
     setTimeout(() => {
-      const { page, limit } = params;
+      const { page, limit, filters } = params;
+
+      let filteredEvents = [...mockAuditEvents];
+
+      if (filters) {
+        if (filters.property && filters.property.length > 0) {
+          filteredEvents = filteredEvents.filter(e => filters.property!.includes(e.property));
+        }
+        if (filters.eventType && filters.eventType.length > 0) {
+          filteredEvents = filteredEvents.filter(e => filters.eventType!.includes(e.eventType));
+        }
+        if (filters.rmCode && filters.rmCode.length > 0) {
+          filteredEvents = filteredEvents.filter(e => filters.rmCode!.includes(e.rmCode));
+        }
+        if (filters.from) {
+          const fromTime = new Date(filters.from).getTime();
+          filteredEvents = filteredEvents.filter(e => new Date(e.detectedAt).getTime() >= fromTime);
+        }
+        if (filters.to) {
+          const toTime = new Date(filters.to).getTime();
+          filteredEvents = filteredEvents.filter(e => new Date(e.detectedAt).getTime() <= toTime);
+        }
+      }
+
       const startIndex = (page - 1) * limit;
       const endIndex = startIndex + limit;
 
-      const paginatedEvents = mockAuditEvents.slice(startIndex, endIndex);
+      const paginatedEvents = filteredEvents.slice(startIndex, endIndex);
 
       resolve({
         events: paginatedEvents,
-        total: 142,
+        total: filteredEvents.length,
         page,
         limit,
       });

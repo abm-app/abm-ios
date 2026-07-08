@@ -44,7 +44,6 @@ export function AuditFilterSheet({
 
   const handleReset = () => {
     setDraftFilters({});
-    onApply({});
   };
 
   const renderFooter = () => (
@@ -166,7 +165,6 @@ export function AuditFilterSheet({
         visible={isFromDateVisible}
         onClose={() => setIsFromDateVisible(false)}
         selectedDate={draftFilters.from ? new Date(draftFilters.from) : undefined}
-        disablePastDates
         onSelectDate={date => {
           setDraftFilters(prev => {
             const next = { ...prev, from: getCalendarDateString(date) };
@@ -185,7 +183,6 @@ export function AuditFilterSheet({
         onClose={() => setIsToDateVisible(false)}
         selectedDate={draftFilters.to ? new Date(draftFilters.to) : undefined}
         minDate={draftFilters.from ? new Date(draftFilters.from) : undefined}
-        disablePastDates
         onSelectDate={date => {
           setDraftFilters(prev => ({ ...prev, to: getCalendarDateString(date) }));
           setIsToDateVisible(false);

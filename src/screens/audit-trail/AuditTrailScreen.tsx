@@ -1,11 +1,12 @@
 import React, { useState, forwardRef, useImperativeHandle } from 'react';
-import { FlatList, View, Text, StyleSheet, ActivityIndicator } from 'react-native';
+import { FlatList, View, StyleSheet, ActivityIndicator } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import tokens from '@/theme/tokens';
 import { useAuditEvents } from '@/hooks/audit/useAuditEvents';
 import type { AuditFilters } from '@/hooks/audit/useAuditEvents';
 import { AuditCard } from './components/AuditCard';
 import { AuditFilterSheet } from './components/AuditFilterSheet';
+import { LoadingSpinner, ErrorState, EmptyState } from '@/components/shared';
 
 export interface AuditTrailScreenRef {
   openFilters: () => void;
@@ -23,7 +24,7 @@ const AuditTrailScreen = forwardRef<AuditTrailScreenRef, unknown>((_, ref) => {
   const overlap = tabBarTotalHeight - insets.bottom;
   const bottomSpace = overlap + tokens.spacing.md;
 
-  const { events, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, isError } =
+  const { events, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, isError, refetch } =
     useAuditEvents(activeFilters);
 
   useImperativeHandle(ref, () => ({
@@ -57,11 +58,15 @@ const AuditTrailScreen = forwardRef<AuditTrailScreenRef, unknown>((_, ref) => {
           }
           ListEmptyComponent={
             isLoading ? (
-              <ActivityIndicator style={styles.centered} color={tokens.colors.primary} />
+              <LoadingSpinner />
             ) : isError ? (
-              <Text style={styles.emptyText}>Failed to load events.</Text>
+              <ErrorState message="Failed to load events." onRetry={refetch} />
             ) : (
-              <Text style={styles.emptyText}>No events found.</Text>
+              <EmptyState
+                icon="file-text"
+                title="No events found"
+                subtitle="Audit events will appear here."
+              />
             )
           }
         />

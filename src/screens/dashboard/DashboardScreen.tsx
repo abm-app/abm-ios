@@ -10,6 +10,7 @@ import tokens from '../../theme/tokens';
 import OccupancySection from './components/OccupancySection';
 import { Backdrop } from '@/components/shared';
 import { ScreenHeaderV2 } from '../../components/shared/ScreenHeader';
+import { formatDate } from '@/utils/dateUtils';
 
 export default function DashboardScreen() {
   const { data, isLoading, isError, refetch } = useDashboardSummary();
@@ -24,6 +25,7 @@ export default function DashboardScreen() {
   }
 
   const syncedDate = new Date(data.lastSyncedAt);
+  const isToday = syncedDate.toDateString() === new Date().toDateString();
   const formattedTime = syncedDate.toLocaleTimeString([], {
     hour: '2-digit',
     minute: '2-digit',
@@ -44,7 +46,11 @@ export default function DashboardScreen() {
       >
         <ScreenHeaderV2
           title="Dashboard"
-          subtitle={`Last synced: Today, ${formattedTime}`}
+          subtitle={
+            isToday
+              ? `Last synced: Today, ${formattedTime}`
+              : `Last synced: ${formatDate(data.lastSyncedAt)}, ${formattedTime}`
+          }
           showSearch={false}
           showFilter={false}
           showRightButton={false}

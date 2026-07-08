@@ -22,7 +22,8 @@ export function useAuditEvents(filters?: AuditFilters) {
     },
   });
 
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, isError } = query;
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, isError, refetch } =
+    query;
 
   return {
     events: data?.pages.flatMap(p => p.events) ?? [],
@@ -32,5 +33,6 @@ export function useAuditEvents(filters?: AuditFilters) {
     isFetchingNextPage,
     isLoading,
     isError,
+    refetch,
   };
 }

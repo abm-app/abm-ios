@@ -163,9 +163,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   badge: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 999,
+    paddingHorizontal: tokens.spacing.sm,
+    paddingVertical: tokens.spacing.xs,
+    borderRadius: tokens.borderRadius.pill,
   },
   badgeText: {
     fontSize: tokens.typography.fontSize.label,
@@ -180,7 +180,7 @@ const styles = StyleSheet.create({
   },
   headline: {
     fontFamily: tokens.typography.fontFamily.sub,
-    fontSize: 16,
+    fontSize: tokens.typography.fontSize.body,
     fontWeight: '600',
     color: tokens.colors.textPrimary,
     marginTop: tokens.spacing.md,
@@ -224,7 +224,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   divider: {
-    height: 1,
+    height: tokens.borderWidth.thin,
     backgroundColor: tokens.colors.border,
     marginVertical: tokens.spacing.sm,
   },

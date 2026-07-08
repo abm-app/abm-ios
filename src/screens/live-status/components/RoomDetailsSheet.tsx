@@ -68,16 +68,17 @@ export function RoomDetailsSheet({ visible, onClose, room }: RoomDetailsSheetPro
 
         <View style={styles.divider} />
 
-        {(room.departureDate || room.arrivalDate) && (
-          <View style={styles.section}>
-            <Text style={styles.sectionLabel}>
-              {room.status === 'arrival' ? 'ARRIVING' : 'DEPARTING'}
-            </Text>
-            <Text style={styles.sectionValue}>
-              {room.status === 'arrival' ? room.arrivalDate : room.departureDate}
-            </Text>
-          </View>
-        )}
+        {(() => {
+          const dateValue = room.status === 'arrival' ? room.arrivalDate : room.departureDate;
+          return dateValue ? (
+            <View style={styles.section}>
+              <Text style={styles.sectionLabel}>
+                {room.status === 'arrival' ? 'ARRIVING' : 'DEPARTING'}
+              </Text>
+              <Text style={styles.sectionValue}>{dateValue}</Text>
+            </View>
+          ) : null;
+        })()}
       </View>
     </FilterSheet>
   );
@@ -86,7 +87,7 @@ export function RoomDetailsSheet({ visible, onClose, room }: RoomDetailsSheetPro
 const styles = StyleSheet.create({
   sheetContent: {
     paddingHorizontal: tokens.spacing.xl,
-    paddingBottom: 16,
+    paddingBottom: tokens.spacing.lgMd,
   },
   content: {
     paddingTop: tokens.spacing.sm,
@@ -96,8 +97,8 @@ const styles = StyleSheet.create({
     marginBottom: tokens.spacing.sm,
   },
   badge: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
+    paddingHorizontal: tokens.spacing.sm,
+    paddingVertical: tokens.spacing.xs,
     borderRadius: tokens.borderRadius.pill,
   },
   badgeText: {
@@ -108,7 +109,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontFamily: tokens.typography.fontFamily.sub,
-    fontSize: 28,
+    fontSize: tokens.typography.fontSize.numeric,
     fontWeight: tokens.typography.fontWeight.bold,
     color: tokens.colors.textPrimary,
     marginBottom: tokens.spacing.xs,
