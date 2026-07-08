@@ -1,12 +1,25 @@
 import React, { useState, forwardRef, useImperativeHandle } from 'react';
-import { FlatList, View, Text, StyleSheet, ActivityIndicator, TextInput } from 'react-native';
+import { FlatList, View, Text, StyleSheet, ActivityIndicator, Pressable } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import tokens from '@/theme/tokens';
 import { useAuditEvents } from '@/hooks/audit/useAuditEvents';
 import type { AuditFilters } from '@/hooks/audit/useAuditEvents';
 import { AuditCard } from './components/AuditCard';
 import { FilterSheet } from '@/components/shared/FilterSheet';
-import { Button } from '@/components/ui';
+import { Button, Chip } from '@/components/ui';
+import { CustomCalender } from '@/components/shared/CustomCalender';
+import { getCalendarDateString } from '@/utils/dateUtils';
+
+const PROPERTIES = ['ABM Express', 'ABM International'];
+const EVENT_TYPES = [
+  'new_booking',
+  'extension',
+  'early_checkout',
+  'cancellation',
+  'modification',
+  'room_change',
+];
+const ROOM_TYPES = ['Standard', 'Deluxe', 'Suite'];
 
 export interface AuditTrailScreenRef {
   openFilters: () => void;
@@ -16,6 +29,9 @@ const AuditTrailScreen = forwardRef<AuditTrailScreenRef, unknown>((_, ref) => {
   const [isFilterVisible, setIsFilterVisible] = useState(false);
   const [activeFilters, setActiveFilters] = useState<AuditFilters>({});
   const [draftFilters, setDraftFilters] = useState<AuditFilters>({});
+
+  const [isFromDateVisible, setIsFromDateVisible] = useState(false);
+  const [isToDateVisible, setIsToDateVisible] = useState(false);
 
   const insets = useSafeAreaInsets();
   const tabBarTotalHeight =
@@ -43,7 +59,6 @@ const AuditTrailScreen = forwardRef<AuditTrailScreenRef, unknown>((_, ref) => {
   const handleReset = () => {
     setDraftFilters({});
     setActiveFilters({});
-    setIsFilterVisible(false);
   };
 
   const renderFilterSheetFooter = () => (
@@ -97,54 +112,100 @@ const AuditTrailScreen = forwardRef<AuditTrailScreenRef, unknown>((_, ref) => {
       >
         <View style={styles.fieldGroup}>
           <Text style={styles.label}>Property</Text>
-          <TextInput
-            style={styles.input}
-            value={draftFilters.property || ''}
-            onChangeText={val => setDraftFilters(prev => ({ ...prev, property: val }))}
-          />
+          <View style={styles.chipGroup}>
+            {PROPERTIES.map(prop => (
+              <Chip
+                key={prop}
+                label={prop}
+                active={draftFilters.property === prop}
+                onPress={() =>
+                  setDraftFilters(prev => ({
+                    ...prev,
+                    property: prev.property === prop ? undefined : prop,
+                  }))
+                }
+              />
+            ))}
+          </View>
         </View>
 
         <View style={styles.fieldGroup}>
           <Text style={styles.label}>Event Type</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="extension, room_change, checkout"
-            placeholderTextColor={tokens.colors.textHint}
-            value={draftFilters.eventType || ''}
-            onChangeText={val => setDraftFilters(prev => ({ ...prev, eventType: val }))}
-          />
+          <View style={styles.chipGroup}>
+            {EVENT_TYPES.map(type => (
+              <Chip
+                key={type}
+                label={type.replace('_', ' ')}
+                active={draftFilters.eventType === type}
+                onPress={() =>
+                  setDraftFilters(prev => ({
+                    ...prev,
+                    eventType: prev.eventType === type ? undefined : type,
+                  }))
+                }
+              />
+            ))}
+          </View>
         </View>
 
         <View style={styles.fieldGroup}>
-          <Text style={styles.label}>Room Code</Text>
-          <TextInput
-            style={styles.input}
-            value={draftFilters.rmCode || ''}
-            onChangeText={val => setDraftFilters(prev => ({ ...prev, rmCode: val }))}
-          />
+          <Text style={styles.label}>Room Type</Text>
+          <View style={styles.chipGroup}>
+            {ROOM_TYPES.map(type => (
+              <Chip
+                key={type}
+                label={type}
+                active={draftFilters.rmCode === type}
+                onPress={() =>
+                  setDraftFilters(prev => ({
+                    ...prev,
+                    rmCode: prev.rmCode === type ? undefined : type,
+                  }))
+                }
+              />
+            ))}
+          </View>
         </View>
 
-        <View style={styles.fieldGroup}>
-          <Text style={styles.label}>From Date</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="YYYY-MM-DD"
-            placeholderTextColor={tokens.colors.textHint}
-            value={draftFilters.from || ''}
-            onChangeText={val => setDraftFilters(prev => ({ ...prev, from: val }))}
-          />
+        <View style={styles.dateRow}>
+          <View style={[styles.fieldGroup, styles.flex1]}>
+            <Text style={styles.label}>From Date</Text>
+            <Pressable style={styles.input} onPress={() => setIsFromDateVisible(true)}>
+              <Text style={draftFilters.from ? styles.inputText : styles.placeholderText}>
+                {draftFilters.from || 'YYYY-MM-DD'}
+              </Text>
+            </Pressable>
+          </View>
+
+          <View style={[styles.fieldGroup, styles.flex1]}>
+            <Text style={styles.label}>To Date</Text>
+            <Pressable style={styles.input} onPress={() => setIsToDateVisible(true)}>
+              <Text style={draftFilters.to ? styles.inputText : styles.placeholderText}>
+                {draftFilters.to || 'YYYY-MM-DD'}
+              </Text>
+            </Pressable>
+          </View>
         </View>
 
-        <View style={styles.fieldGroup}>
-          <Text style={styles.label}>To Date</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="YYYY-MM-DD"
-            placeholderTextColor={tokens.colors.textHint}
-            value={draftFilters.to || ''}
-            onChangeText={val => setDraftFilters(prev => ({ ...prev, to: val }))}
-          />
-        </View>
+        <CustomCalender
+          visible={isFromDateVisible}
+          onClose={() => setIsFromDateVisible(false)}
+          selectedDate={draftFilters.from ? new Date(draftFilters.from) : undefined}
+          onSelectDate={date => {
+            setDraftFilters(prev => ({ ...prev, from: getCalendarDateString(date) }));
+            setIsFromDateVisible(false);
+          }}
+        />
+
+        <CustomCalender
+          visible={isToDateVisible}
+          onClose={() => setIsToDateVisible(false)}
+          selectedDate={draftFilters.to ? new Date(draftFilters.to) : undefined}
+          onSelectDate={date => {
+            setDraftFilters(prev => ({ ...prev, to: getCalendarDateString(date) }));
+            setIsToDateVisible(false);
+          }}
+        />
       </FilterSheet>
     </View>
   );
@@ -208,7 +269,28 @@ const styles = StyleSheet.create({
     borderColor: tokens.colors.border,
     borderRadius: tokens.spacing.sm,
     padding: tokens.spacing.sm,
+    justifyContent: 'center',
+    height: 44,
+  },
+  chipGroup: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: tokens.spacing.sm,
+  },
+  dateRow: {
+    flexDirection: 'row',
+    gap: tokens.spacing.md,
+  },
+  flex1: {
+    flex: 1,
+  },
+  inputText: {
     color: tokens.colors.textPrimary,
+    fontFamily: tokens.typography.fontFamily.sub,
+    fontSize: tokens.typography.fontSize.body,
+  },
+  placeholderText: {
+    color: tokens.colors.textHint,
     fontFamily: tokens.typography.fontFamily.sub,
     fontSize: tokens.typography.fontSize.body,
   },
