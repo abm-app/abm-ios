@@ -12,7 +12,7 @@ const EVENT_CONFIG: Record<AuditEventType, { label: string; color: string; backg
   },
   extension: {
     label: 'STAY EXTENSION',
-    color: tokens.colors.info,
+    color: tokens.colors.blue,
     background: tokens.colors.badgeExtensionBg,
   },
   modification: {
@@ -43,18 +43,44 @@ const formatShortDate = (isoStr?: string) => {
   return new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' }).format(date);
 };
 
-const formatTime = (isoStr?: string) => {
+const formatEventTime = (isoStr?: string) => {
   if (!isoStr) return '';
   const date = new Date(isoStr);
   if (isNaN(date.getTime())) return '';
-  return new Intl.DateTimeFormat('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })
+
+  const now = new Date();
+  const isToday =
+    date.getDate() === now.getDate() &&
+    date.getMonth() === now.getMonth() &&
+    date.getFullYear() === now.getFullYear();
+
+  const isSameMonth =
+    date.getMonth() === now.getMonth() && date.getFullYear() === now.getFullYear();
+
+  const timeStr = new Intl.DateTimeFormat('en-US', {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true,
+  })
     .format(date)
     .toUpperCase();
+
+  if (isToday) {
+    return timeStr;
+  } else if (isSameMonth) {
+    const day = date.getDate();
+    return `${day}, ${timeStr}`;
+  } else {
+    const monthDay = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' }).format(
+      date,
+    );
+    return `${monthDay}, ${timeStr}`;
+  }
 };
 
 export function AuditCard({ event }: AuditCardProps) {
   const config = EVENT_CONFIG[event.eventType] || EVENT_CONFIG.modification;
-  const timeStr = formatTime(event.detectedAt);
+  const timeStr = formatEventTime(event.detectedAt);
 
   const renderDetailRow = () => {
     if (
@@ -65,18 +91,15 @@ export function AuditCard({ event }: AuditCardProps) {
       return (
         <View style={styles.detailContainer}>
           <View style={styles.detailRow}>
-            <Text style={styles.detailBefore}>
-              Departure: {formatShortDate(event.before.departureDate)}
-            </Text>
+            <Text style={styles.detailLabel}>Departure: </Text>
+            <Text style={styles.detailBefore}>{formatShortDate(event.before.departureDate)}</Text>
             <Feather
               name="arrow-right"
               size={14}
               color={tokens.colors.textMuted}
               style={styles.detailArrow}
             />
-            <Text style={styles.detailAfter}>
-              Departure: {formatShortDate(event.after.departureDate)}
-            </Text>
+            <Text style={styles.detailAfter}>{formatShortDate(event.after.departureDate)}</Text>
           </View>
           {event.revenueDelta !== undefined && (
             <>
@@ -128,12 +151,11 @@ export function AuditCard({ event }: AuditCardProps) {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: tokens.colors.background,
+    backgroundColor: tokens.colors.white,
     borderRadius: tokens.spacing.md,
-    borderWidth: 1,
-    borderColor: tokens.colors.border,
     padding: tokens.spacing.lgMd,
     marginBottom: tokens.spacing.md,
+    ...tokens.shadow.chatBubble,
   },
   headerRow: {
     flexDirection: 'row',
@@ -180,6 +202,11 @@ const styles = StyleSheet.create({
   detailRow: {
     flexDirection: 'row',
     alignItems: 'center',
+  },
+  detailLabel: {
+    fontFamily: tokens.typography.fontFamily.sub,
+    fontSize: tokens.typography.fontSize.body,
+    color: tokens.colors.textPrimary,
   },
   detailBefore: {
     fontFamily: tokens.typography.fontFamily.sub,

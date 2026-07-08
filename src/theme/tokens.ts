@@ -29,6 +29,7 @@ const colors = {
   success: '#27AE60',
   info: '#2471A3',
   purple: '#8E44AD',
+  blue: '#007AFF', // Bright blue for Stay Extension
 
   // Badge — High priority
   badgeHighBg: '#FEE2E2',
@@ -51,7 +52,7 @@ const colors = {
   badgeSuiteText: '#8A5A2B',
 
   // Badge — Event types
-  badgeExtensionBg: 'rgba(36,113,163,0.1)',
+  badgeExtensionBg: 'rgba(0, 122, 255, 0.1)', // Matches blue color with 10% opacity
   badgeModificationBg: 'rgba(142,68,173,0.1)',
   badgeRoomChangeBg: 'rgba(230,126,34,0.1)',
 

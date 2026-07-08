@@ -49,8 +49,6 @@ const styles = StyleSheet.create({
   segmentedControlContainer: {
     padding: tokens.spacing.md,
     backgroundColor: tokens.colors.background,
-    borderBottomWidth: 1,
-    borderBottomColor: tokens.colors.border,
   },
   placeholderContainer: {
     flex: 1,
