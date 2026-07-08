@@ -21,7 +21,7 @@ export default function OccupancySection({
   });
 
   return (
-    <View style={styles.container}>
+    <View>
       <ScreenHeaderV2
         title="Dashboard"
         subtitle={`Last synced: Today, ${formattedTime}`}
@@ -64,11 +64,7 @@ export default function OccupancySection({
 }
 
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: tokens.colors.dashboardBg,
-  },
   cardsContainer: {
-    paddingHorizontal: tokens.spacing.xlMd,
     paddingBottom: tokens.spacing.xlMd,
     gap: tokens.spacing.lgMd,
   },

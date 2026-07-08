@@ -5,8 +5,8 @@ export async function getDashboardSummary(): Promise<DashboardSummary> {
     setTimeout(() => {
       resolve({
         occupancy: {
-          'Abm Express': { occupied: 35, total: 40 },
-          'Lifestyle+ Resort': { occupied: 112, total: 150 },
+          'ABM Express': { occupied: 35, total: 40 },
+          'Hotel ABM International': { occupied: 112, total: 150 },
         },
         todayRevenue: 150000,
         unreadNotifications: 3,
