@@ -196,7 +196,7 @@ const styles = StyleSheet.create({
     fontSize: tokens.typography.fontSize.caption,
     fontWeight: '400',
     color: tokens.colors.textMuted,
-    marginTop: 4,
+    marginTop: -2,
   },
   rightRow: {
     flexDirection: 'row',

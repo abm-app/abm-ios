@@ -20,7 +20,7 @@ export default function RevenueSummary({ todayRevenue }: RevenueSummaryProps) {
         <View style={styles.iconContainer}>
           <Feather name="credit-card" size={tokens.iconSizes.md} color={tokens.colors.white} />
         </View>
-        <Text style={styles.label}>{"TODAY'S REVENUE"}</Text>
+        <Text style={styles.label}>{'Today’s Revenue'}</Text>
       </View>
       <View style={styles.rightContainer}>
         <Text style={styles.amount}>{formattedRevenue}</Text>
@@ -64,6 +64,5 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: tokens.colors.white,
     opacity: 0.6,
-    letterSpacing: tokens.typography.letterSpacing.caps,
   },
 });

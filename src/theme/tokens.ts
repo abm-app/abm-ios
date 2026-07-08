@@ -15,6 +15,7 @@ const colors = {
   // Borders
   border: 'rgba(0,0,0,0.10)',
   borderMd: 'rgba(0,0,0,0.18)',
+  borderDark: 'rgba(0, 0, 0, 0.25)',
 
   // Text hierarchy
   textPrimary: '#000000',

@@ -17,7 +17,7 @@ export default function OccupancySection({ occupancy }: OccupancySectionProps) {
           return (
             <View key={propertyName} style={styles.card}>
               <Text style={styles.propertyName}>{propertyName}</Text>
-              <Text style={styles.occupancyLabel}>OCCUPANCY</Text>
+              <Text style={styles.occupancyLabel}>Occupancy</Text>
 
               <Text style={styles.fraction}>
                 {occupied} / {total}
@@ -49,10 +49,12 @@ const styles = StyleSheet.create({
     borderRadius: tokens.borderRadius.lg,
     padding: tokens.spacing.xlMd,
     shadowColor: tokens.colors.primary,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.06,
-    shadowRadius: 8,
-    elevation: 2,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.12,
+    shadowRadius: 12,
+    elevation: 4,
+    borderWidth: 1,
+    borderColor: tokens.colors.borderDark,
   },
   propertyName: {
     fontSize: tokens.typography.fontSize.h2,
@@ -64,7 +66,6 @@ const styles = StyleSheet.create({
     fontSize: tokens.typography.fontSize.label,
     letterSpacing: tokens.typography.letterSpacing.sectionLabel,
     color: tokens.colors.textHint,
-    textTransform: 'uppercase',
     marginBottom: tokens.spacing.md,
   },
   fraction: {
