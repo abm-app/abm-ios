@@ -21,6 +21,12 @@ export type AppTabParamList = {
   Admin: undefined;
 };
 
+// ─── Operations Stack ────────────────────────────────────────────────────────
+
+export type OperationsStackParamList = {
+  AuditTrail: undefined;
+};
+
 // ─── Root Stack ──────────────────────────────────────────────────────────────
 
 export type RootStackParamList = {

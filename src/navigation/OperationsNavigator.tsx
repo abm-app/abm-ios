@@ -1,0 +1,14 @@
+import React from 'react';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import AuditTrailScreen from '@/screens/AuditTrailScreen';
+import type { OperationsStackParamList } from './types';
+
+const Stack = createNativeStackNavigator<OperationsStackParamList>();
+
+export default function OperationsNavigator() {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="AuditTrail" component={AuditTrailScreen} />
+    </Stack.Navigator>
+  );
+}
