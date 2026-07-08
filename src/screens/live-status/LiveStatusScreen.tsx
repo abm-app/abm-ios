@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { View, Text, StyleSheet, FlatList, ScrollView } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import tokens from '@/theme/tokens';
 import { useAuthStore } from '@/store/authStore';
 import { useStatusRooms } from '@/hooks/status/useStatusRooms';
@@ -7,6 +8,7 @@ import { LoadingSpinner, ErrorState, EmptyState } from '@/components/shared';
 import RoomCard from '@/components/shared/RoomCard';
 import RoomGridCard from './components/RoomGridCard';
 import LiveStatusFilters, { ViewMode } from './components/LiveStatusFilters';
+import { LiveStatusFilterSheet } from './components/LiveStatusFilterSheet';
 import type { LiveStatusRoom } from '@/types/status';
 
 const EMPTY_ROOMS: LiveStatusRoom[] = [];
@@ -15,9 +17,18 @@ export default function LiveStatusScreen() {
   const property = useAuthStore(s => s.user?.property) || 'express';
   const { data, isLoading, isError, error, refetch } = useStatusRooms(property);
 
+  const insets = useSafeAreaInsets();
+  const tabBarTotalHeight =
+    tokens.navigation.height +
+    tokens.navigation.paddingVertical +
+    Math.max(insets.bottom, tokens.navigation.paddingVertical);
+  const overlap = tabBarTotalHeight - insets.bottom;
+  const bottomSpace = overlap + tokens.spacing.md;
+
   const [searchQuery, setSearchQuery] = useState('');
   const [viewMode, setViewMode] = useState<ViewMode>('list');
-  const [activeFilter, setActiveFilter] = useState('all');
+  const [activeFilters, setActiveFilters] = useState<string[]>(['all']);
+  const [isFilterSheetOpen, setIsFilterSheetOpen] = useState(false);
 
   const rooms = data?.rooms || EMPTY_ROOMS;
 
@@ -33,18 +44,16 @@ export default function LiveStatusScreen() {
       if (!matchesSearch) return false;
 
       // 2. Filter tabs
-      if (activeFilter === 'departures') {
-        return room.status === 'checkout';
-      }
-      if (activeFilter === 'arrivals') {
-        return room.status === 'arrival';
-      }
-      if (activeFilter === 'vacant') {
-        return room.status === 'vacant';
+      if (!activeFilters.includes('all')) {
+        let isMatch = false;
+        if (activeFilters.includes('departures') && room.status === 'checkout') isMatch = true;
+        if (activeFilters.includes('arrivals') && room.status === 'arrival') isMatch = true;
+        if (activeFilters.includes('vacant') && room.status === 'vacant') isMatch = true;
+        if (!isMatch) return false;
       }
       return true;
     });
-  }, [rooms, searchQuery, activeFilter]);
+  }, [rooms, searchQuery, activeFilters]);
 
   // Derived state: stats for filter pills
   const stats = useMemo(() => {
@@ -82,38 +91,54 @@ export default function LiveStatusScreen() {
         onSearchChange={setSearchQuery}
         viewMode={viewMode}
         onViewModeChange={setViewMode}
-        activeFilter={activeFilter}
-        onFilterChange={setActiveFilter}
-        stats={stats}
+        onFilterPress={() => setIsFilterSheetOpen(true)}
+        hasActiveFilter={activeFilters.length > 0 && !activeFilters.includes('all')}
       />
 
-      {filteredRooms.length === 0 ? (
-        <EmptyState
-          icon="search"
-          title="No rooms found"
-          subtitle="Try adjusting your search or filters."
-        />
-      ) : viewMode === 'list' ? (
-        <FlatList
-          data={filteredRooms}
-          keyExtractor={item => item.rmCode}
-          renderItem={({ item }) => <RoomCard room={item} />}
-          contentContainerStyle={styles.listContent}
-        />
-      ) : (
-        <ScrollView contentContainerStyle={styles.gridContent}>
-          {Object.entries(floors).map(([floorName, floorRooms]) => (
-            <View key={floorName} style={styles.floorSection}>
-              <Text style={styles.floorTitle}>{floorName}</Text>
-              <View style={styles.gridWrapper}>
-                {floorRooms.map(room => (
-                  <RoomGridCard key={room.rmCode} room={room} />
-                ))}
+      <View style={[styles.listContainer, { marginBottom: bottomSpace }]}>
+        {filteredRooms.length === 0 ? (
+          <EmptyState
+            icon="search"
+            title="No rooms found"
+            subtitle="Try adjusting your search or filters."
+          />
+        ) : viewMode === 'list' ? (
+          <FlatList
+            data={filteredRooms}
+            keyExtractor={item => item.rmCode}
+            renderItem={({ item }) => <RoomCard room={item} />}
+            contentContainerStyle={styles.listContent}
+            showsVerticalScrollIndicator={false}
+          />
+        ) : (
+          <ScrollView
+            contentContainerStyle={styles.gridContent}
+            showsVerticalScrollIndicator={false}
+          >
+            {Object.entries(floors).map(([floorName, floorRooms]) => (
+              <View key={floorName} style={styles.floorSection}>
+                <Text style={styles.floorTitle}>{floorName}</Text>
+                <View style={styles.gridWrapper}>
+                  {floorRooms.map(room => (
+                    <RoomGridCard key={room.rmCode} room={room} />
+                  ))}
+                </View>
               </View>
-            </View>
-          ))}
-        </ScrollView>
-      )}
+            ))}
+          </ScrollView>
+        )}
+      </View>
+
+      <LiveStatusFilterSheet
+        visible={isFilterSheetOpen}
+        onClose={() => setIsFilterSheetOpen(false)}
+        onApply={filters => {
+          setActiveFilters(filters);
+          setIsFilterSheetOpen(false);
+        }}
+        initialFilters={activeFilters}
+        stats={stats}
+      />
     </View>
   );
 }
@@ -127,15 +152,23 @@ function getOrdinal(n: number) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: tokens.colors.background,
+  },
+  listContainer: {
+    flex: 1,
+    backgroundColor: tokens.colors.surfaceLight,
+    marginHorizontal: tokens.spacing.xlMd,
+    borderRadius: tokens.spacing.xl,
+    overflow: 'hidden',
+    padding: tokens.spacing.xlMd,
+    marginTop: tokens.spacing.md,
   },
   listContent: {
-    paddingHorizontal: tokens.spacing.lgMd,
-    paddingBottom: tokens.spacing.xxxl,
+    paddingTop: tokens.spacing.sm,
+    paddingBottom: tokens.spacing.xl,
   },
   gridContent: {
-    padding: tokens.spacing.lgMd,
-    paddingBottom: tokens.spacing.xxxl,
+    paddingTop: tokens.spacing.sm,
+    paddingBottom: tokens.spacing.xl,
   },
   floorSection: {
     marginBottom: tokens.spacing.xxl,

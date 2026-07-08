@@ -1,8 +1,8 @@
 import React from 'react';
-import { View, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import tokens from '@/theme/tokens';
-import { Input, Chip } from '@/components/ui';
+import { Input } from '@/components/ui';
 
 export type ViewMode = 'list' | 'grid';
 
@@ -11,13 +11,8 @@ interface LiveStatusFiltersProps {
   onSearchChange: (query: string) => void;
   viewMode: ViewMode;
   onViewModeChange: (mode: ViewMode) => void;
-  activeFilter: string;
-  onFilterChange: (filter: string) => void;
-  stats: {
-    total: number;
-    departures: number;
-    arrivals: number;
-  };
+  onFilterPress: () => void;
+  hasActiveFilter: boolean;
 }
 
 export default function LiveStatusFilters({
@@ -25,9 +20,8 @@ export default function LiveStatusFilters({
   onSearchChange,
   viewMode,
   onViewModeChange,
-  activeFilter,
-  onFilterChange,
-  stats,
+  onFilterPress,
+  hasActiveFilter,
 }: LiveStatusFiltersProps) {
   return (
     <View style={styles.container}>
@@ -37,9 +31,31 @@ export default function LiveStatusFilters({
             placeholder="Search room or guest..."
             value={searchQuery}
             onChangeText={onSearchChange}
-            rightIcon={<Feather name="search" size={16} color={tokens.colors.textHint} />}
+            rightIcon={
+              searchQuery.length > 0 ? (
+                <TouchableOpacity
+                  onPress={() => onSearchChange('')}
+                  hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                >
+                  <Feather name="x-circle" size={16} color={tokens.colors.textHint} />
+                </TouchableOpacity>
+              ) : (
+                <Feather name="search" size={16} color={tokens.colors.textHint} />
+              )
+            }
           />
         </View>
+        <TouchableOpacity
+          style={[styles.filterBtn, hasActiveFilter && styles.filterBtnActive]}
+          onPress={onFilterPress}
+          activeOpacity={0.8}
+        >
+          <Feather
+            name="filter"
+            size={18}
+            color={hasActiveFilter ? tokens.colors.white : tokens.colors.textPrimary}
+          />
+        </TouchableOpacity>
         <View style={styles.toggleContainer}>
           <TouchableOpacity
             style={[styles.toggleBtn, viewMode === 'list' && styles.toggleBtnActive]}
@@ -65,37 +81,6 @@ export default function LiveStatusFilters({
           </TouchableOpacity>
         </View>
       </View>
-
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.filtersScroll}
-      >
-        <Chip
-          label="All Rooms"
-          active={activeFilter === 'all'}
-          tone={activeFilter === 'all' ? 'primary' : 'default'}
-          onPress={() => onFilterChange('all')}
-        />
-        <Chip
-          label={`Departures (${stats.departures})`}
-          active={activeFilter === 'departures'}
-          tone={activeFilter === 'departures' ? 'primary' : 'default'}
-          onPress={() => onFilterChange('departures')}
-        />
-        <Chip
-          label={`Arrivals (${stats.arrivals})`}
-          active={activeFilter === 'arrivals'}
-          tone={activeFilter === 'arrivals' ? 'primary' : 'default'}
-          onPress={() => onFilterChange('arrivals')}
-        />
-        <Chip
-          label="Vacant"
-          active={activeFilter === 'vacant'}
-          tone={activeFilter === 'vacant' ? 'primary' : 'default'}
-          onPress={() => onFilterChange('vacant')}
-        />
-      </ScrollView>
     </View>
   );
 }
@@ -103,19 +88,29 @@ export default function LiveStatusFilters({
 const styles = StyleSheet.create({
   container: {
     paddingVertical: tokens.spacing.md,
-    borderBottomWidth: tokens.borderWidth.hairline,
-    borderBottomColor: tokens.colors.border,
-    backgroundColor: tokens.colors.background,
   },
   topRow: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: tokens.spacing.lgMd,
-    marginBottom: tokens.spacing.md,
     gap: tokens.spacing.sm,
   },
   searchContainer: {
     flex: 1,
+  },
+  filterBtn: {
+    width: 44,
+    height: 44,
+    borderRadius: tokens.borderRadius.md,
+    backgroundColor: tokens.colors.surface,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: tokens.borderWidth.hairline,
+    borderColor: tokens.colors.borderMd,
+  },
+  filterBtnActive: {
+    backgroundColor: tokens.colors.primary,
+    borderColor: tokens.colors.primary,
   },
   toggleContainer: {
     flexDirection: 'row',
@@ -136,9 +131,5 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 2,
     elevation: 1,
-  },
-  filtersScroll: {
-    paddingHorizontal: tokens.spacing.lgMd,
-    gap: tokens.spacing.sm,
   },
 });
