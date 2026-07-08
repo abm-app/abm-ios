@@ -1,10 +1,11 @@
 import React, { useState, useRef } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import tokens from '@/theme/tokens';
 import { SegmentedControl } from '@/components/shared/SegmentedControl';
 import { ScreenHeaderV2 } from '@/components/shared/ScreenHeader';
 import AuditTrailScreen, { AuditTrailScreenRef } from '@/screens/audit-trail/AuditTrailScreen';
+import LiveStatusScreen from '@/screens/live-status/LiveStatusScreen';
 import Backdrop from '@/components/shared/Backdrop';
 
 export default function OperationsScreen() {
@@ -34,9 +35,7 @@ export default function OperationsScreen() {
         </View>
 
         {activeTab === 'live_status' ? (
-          <View style={styles.placeholderContainer}>
-            <Text style={styles.placeholderText}>Live Status coming soon</Text>
-          </View>
+          <LiveStatusScreen />
         ) : (
           <AuditTrailScreen ref={auditTrailRef} />
         )}

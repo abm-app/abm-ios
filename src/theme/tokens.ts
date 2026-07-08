@@ -56,6 +56,20 @@ const colors = {
   badgeModificationBg: 'rgba(142,68,173,0.1)',
   badgeRoomChangeBg: 'rgba(230,126,34,0.1)',
 
+  // Live Status
+  statusOccupiedBg: '#E8F5E9',
+  statusOccupiedText: '#2E7D32',
+  statusOccupiedBorder: '#A5D6A7',
+  statusVacantBg: '#F5F5F5',
+  statusVacantText: '#424242',
+  statusVacantBorder: '#E0E0E0',
+  statusCheckoutBg: '#FFF3E0',
+  statusCheckoutText: '#E65100',
+  statusCheckoutBorder: '#FFCC80',
+  statusArrivalBg: '#E3F2FD',
+  statusArrivalText: '#1565C0',
+  statusArrivalBorder: '#90CAF9',
+
   // Cards
   cardDarkBg: '#0F0F0F',
 
@@ -405,6 +419,15 @@ const taskCard = {
   metaIconGap: 6,
 } as const;
 
+/** Live Status grid card geometry */
+const roomGridCard = {
+  width: 72,
+  height: 72,
+  borderRadius: 16,
+  padding: 8,
+  gap: 4,
+} as const;
+
 /** Insight card geometry */
 const insight = {
   paddingVertical: 16,
@@ -665,6 +688,7 @@ const tokens = {
   statCard,
   scoreCard,
   taskCard,
+  roomGridCard,
   insight,
   swatch,
   typographyRow,
