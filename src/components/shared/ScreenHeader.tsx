@@ -176,7 +176,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 20,
     paddingVertical: 16,
   },
   leftCol: {
@@ -193,7 +192,7 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontFamily: tokens.typography.fontFamily.sub,
-    fontSize: 14,
+    fontSize: tokens.typography.fontSize.caption,
     fontWeight: '400',
     color: tokens.colors.textMuted,
     marginTop: 4,
