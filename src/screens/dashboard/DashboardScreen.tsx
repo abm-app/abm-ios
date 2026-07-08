@@ -9,6 +9,7 @@ import ErrorState from '../../components/shared/ErrorState';
 import tokens from '../../theme/tokens';
 import OccupancySection from './components/OccupancySection';
 import { Backdrop } from '@/components/shared';
+import { ScreenHeaderV2 } from '../../components/shared/ScreenHeader';
 
 export default function DashboardScreen() {
   const { data, isLoading, isError, refetch } = useDashboardSummary();
@@ -22,6 +23,12 @@ export default function DashboardScreen() {
     return <ErrorState message="Failed to load dashboard. Pull to refresh." onRetry={refetch} />;
   }
 
+  const syncedDate = new Date(data.lastSyncedAt);
+  const formattedTime = syncedDate.toLocaleTimeString([], {
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+
   const bottomClearance =
     Math.max(insets.bottom, tokens.navigation.paddingVertical) + tokens.navigation.height + 16;
 
@@ -33,13 +40,18 @@ export default function DashboardScreen() {
         contentContainerStyle={[styles.content, { paddingBottom: bottomClearance }]}
         showsVerticalScrollIndicator={false}
       >
-        <OccupancySection
-          occupancy={data.occupancy}
-          unreadNotifications={data.unreadNotifications}
-          lastSyncedAt={data.lastSyncedAt}
+        <ScreenHeaderV2
+          title="Dashboard"
+          subtitle={`Last synced: Today, ${formattedTime}`}
+          showSearch={false}
+          showFilter={false}
+          showRightButton={false}
+          showNotifications={true}
+          notificationCount={data.unreadNotifications}
         />
-        <View style={styles.gap} />
         <RevenueSummary todayRevenue={data.todayRevenue} />
+        <View style={styles.gap} />
+        <OccupancySection occupancy={data.occupancy} />
         <View style={styles.gap} />
         <RecentActivityFeed events={data.recentEvents} />
       </ScrollView>

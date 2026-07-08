@@ -340,7 +340,7 @@ const taskCheckbox = {
 const navigation = {
   borderRadius: 296,
   paddingVertical: 16,
-  paddingHorizontal: 25,
+  paddingHorizontal: 12,
   itemGap: 1,
   itemPaddingTop: 6,
   itemPaddingBottom: 7,

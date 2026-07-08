@@ -1,37 +1,13 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import tokens from '../../../theme/tokens';
-import { ScreenHeaderV2 } from '../../../components/shared/ScreenHeader';
-
 interface OccupancySectionProps {
   occupancy: Record<string, { occupied: number; total: number }>;
-  unreadNotifications: number;
-  lastSyncedAt: string;
 }
 
-export default function OccupancySection({
-  occupancy,
-  unreadNotifications,
-  lastSyncedAt,
-}: OccupancySectionProps) {
-  const syncedDate = new Date(lastSyncedAt);
-  const formattedTime = syncedDate.toLocaleTimeString([], {
-    hour: '2-digit',
-    minute: '2-digit',
-  });
-
+export default function OccupancySection({ occupancy }: OccupancySectionProps) {
   return (
     <View>
-      <ScreenHeaderV2
-        title="Dashboard"
-        subtitle={`Last synced: Today, ${formattedTime}`}
-        showSearch={false}
-        showFilter={false}
-        showRightButton={false}
-        showNotifications={true}
-        notificationCount={unreadNotifications}
-      />
-
       {/* Occupancy Cards */}
       <View style={styles.cardsContainer}>
         {Object.entries(occupancy).map(([propertyName, data]) => {
