@@ -1,19 +1,24 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { Text, StyleSheet, TouchableOpacity } from 'react-native';
 import tokens from '@/theme/tokens';
 import type { LiveStatusRoom, RoomStatusType } from '@/types/status';
 
 interface RoomGridCardProps {
   room: LiveStatusRoom;
+  onPress: (room: LiveStatusRoom) => void;
 }
 
-export default function RoomGridCard({ room }: RoomGridCardProps) {
+export default function RoomGridCard({ room, onPress }: RoomGridCardProps) {
   const colors = getGridColors(room.status);
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.bg, borderColor: colors.border }]}>
+    <TouchableOpacity
+      activeOpacity={0.8}
+      onPress={() => onPress(room)}
+      style={[styles.container, { backgroundColor: colors.bg, borderColor: colors.border }]}
+    >
       <Text style={[styles.roomNumber, { color: colors.text }]}>{room.rmCode}</Text>
-    </View>
+    </TouchableOpacity>
   );
 }
 

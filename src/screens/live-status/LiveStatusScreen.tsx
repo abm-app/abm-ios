@@ -9,6 +9,7 @@ import RoomCard from '@/components/shared/RoomCard';
 import RoomGridCard from './components/RoomGridCard';
 import LiveStatusFilters, { ViewMode } from './components/LiveStatusFilters';
 import { LiveStatusFilterSheet } from './components/LiveStatusFilterSheet';
+import { RoomDetailsSheet } from './components/RoomDetailsSheet';
 import type { LiveStatusRoom } from '@/types/status';
 
 const EMPTY_ROOMS: LiveStatusRoom[] = [];
@@ -29,6 +30,14 @@ export default function LiveStatusScreen() {
   const [viewMode, setViewMode] = useState<ViewMode>('list');
   const [activeFilters, setActiveFilters] = useState<string[]>(['all']);
   const [isFilterSheetOpen, setIsFilterSheetOpen] = useState(false);
+
+  const [selectedRoom, setSelectedRoom] = useState<LiveStatusRoom | null>(null);
+  const [isDetailsSheetOpen, setIsDetailsSheetOpen] = useState(false);
+
+  const handleRoomPress = (room: LiveStatusRoom) => {
+    setSelectedRoom(room);
+    setIsDetailsSheetOpen(true);
+  };
 
   const rooms = data?.rooms || EMPTY_ROOMS;
 
@@ -120,7 +129,7 @@ export default function LiveStatusScreen() {
                 <Text style={styles.floorTitle}>{floorName}</Text>
                 <View style={styles.gridWrapper}>
                   {floorRooms.map(room => (
-                    <RoomGridCard key={room.rmCode} room={room} />
+                    <RoomGridCard key={room.rmCode} room={room} onPress={handleRoomPress} />
                   ))}
                 </View>
               </View>
@@ -138,6 +147,12 @@ export default function LiveStatusScreen() {
         }}
         initialFilters={activeFilters}
         stats={stats}
+      />
+
+      <RoomDetailsSheet
+        visible={isDetailsSheetOpen}
+        onClose={() => setIsDetailsSheetOpen(false)}
+        room={selectedRoom}
       />
     </View>
   );
