@@ -33,7 +33,11 @@
     }
   },
   "submit": {
-    "preview": {},
+    "preview": {
+      "env": {
+        "APP_ENV": "preview"
+      }
+    },
     "production": {}
   }
 }
