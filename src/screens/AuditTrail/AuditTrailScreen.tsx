@@ -1,5 +1,6 @@
 import React, { useState, forwardRef, useImperativeHandle } from 'react';
 import { FlatList, View, Text, StyleSheet, ActivityIndicator, TextInput } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import tokens from '@/theme/tokens';
 import { useAuditEvents } from '@/hooks/audit/useAuditEvents';
 import type { AuditFilters } from '@/hooks/audit/useAuditEvents';
@@ -15,6 +16,14 @@ const AuditTrailScreen = forwardRef<AuditTrailScreenRef, unknown>((_, ref) => {
   const [isFilterVisible, setIsFilterVisible] = useState(false);
   const [activeFilters, setActiveFilters] = useState<AuditFilters>({});
   const [draftFilters, setDraftFilters] = useState<AuditFilters>({});
+
+  const insets = useSafeAreaInsets();
+  const tabBarTotalHeight =
+    tokens.navigation.height +
+    tokens.navigation.paddingVertical +
+    Math.max(insets.bottom, tokens.navigation.paddingVertical);
+  const overlap = tabBarTotalHeight - insets.bottom;
+  const bottomSpace = overlap + tokens.spacing.md;
 
   const { events, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, isError } =
     useAuditEvents(activeFilters);
@@ -51,30 +60,33 @@ const AuditTrailScreen = forwardRef<AuditTrailScreenRef, unknown>((_, ref) => {
 
   return (
     <View style={styles.container}>
-      <FlatList
-        data={events}
-        keyExtractor={item => item.id}
-        renderItem={({ item }) => <AuditCard event={item} />}
-        contentContainerStyle={styles.listContent}
-        onEndReached={() => {
-          if (hasNextPage && !isFetchingNextPage) fetchNextPage();
-        }}
-        onEndReachedThreshold={0.4}
-        ListFooterComponent={
-          isFetchingNextPage ? (
-            <ActivityIndicator style={styles.footerLoader} color={tokens.colors.primary} />
-          ) : null
-        }
-        ListEmptyComponent={
-          isLoading ? (
-            <ActivityIndicator style={styles.centered} color={tokens.colors.primary} />
-          ) : isError ? (
-            <Text style={styles.emptyText}>Failed to load events.</Text>
-          ) : (
-            <Text style={styles.emptyText}>No events found.</Text>
-          )
-        }
-      />
+      <View style={[styles.listContainer, { marginBottom: bottomSpace }]}>
+        <FlatList
+          data={events}
+          keyExtractor={item => item.id}
+          renderItem={({ item }) => <AuditCard event={item} />}
+          contentContainerStyle={styles.listContent}
+          showsVerticalScrollIndicator={false}
+          onEndReached={() => {
+            if (hasNextPage && !isFetchingNextPage) fetchNextPage();
+          }}
+          onEndReachedThreshold={0.4}
+          ListFooterComponent={
+            isFetchingNextPage ? (
+              <ActivityIndicator style={styles.footerLoader} color={tokens.colors.primary} />
+            ) : null
+          }
+          ListEmptyComponent={
+            isLoading ? (
+              <ActivityIndicator style={styles.centered} color={tokens.colors.primary} />
+            ) : isError ? (
+              <Text style={styles.emptyText}>Failed to load events.</Text>
+            ) : (
+              <Text style={styles.emptyText}>No events found.</Text>
+            )
+          }
+        />
+      </View>
 
       <FilterSheet
         title="Filters"
@@ -145,14 +157,20 @@ export default AuditTrailScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: tokens.colors.background,
+  },
+  listContainer: {
+    flex: 1,
+    backgroundColor: tokens.colors.surfaceLight,
+    marginHorizontal: tokens.spacing.xlMd,
+    borderRadius: tokens.spacing.xl,
+    overflow: 'hidden',
+    padding: tokens.spacing.xlMd, // Add padding inside the card
   },
   headerButton: {
     marginRight: tokens.spacing.md,
   },
   listContent: {
-    paddingHorizontal: tokens.spacing.md,
-    paddingTop: tokens.spacing.md,
+    paddingTop: tokens.spacing.sm, // Remove overall padding, keep top padding for the items
     paddingBottom: tokens.spacing.xl,
   },
   footerLoader: {

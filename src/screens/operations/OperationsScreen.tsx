@@ -5,50 +5,55 @@ import tokens from '@/theme/tokens';
 import { SegmentedControl } from '@/components/shared/SegmentedControl';
 import { ScreenHeaderV2 } from '@/components/shared/ScreenHeader';
 import AuditTrailScreen, { AuditTrailScreenRef } from '@/screens/AuditTrail/AuditTrailScreen';
+import Backdrop from '@/components/shared/Backdrop';
 
 export default function OperationsScreen() {
   const [activeTab, setActiveTab] = useState('live_status');
   const auditTrailRef = useRef<AuditTrailScreenRef>(null);
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ScreenHeaderV2
-        title="Operations"
-        showNotifications={false}
-        showRightButton={false}
-        showFilter={activeTab === 'audit_trail'}
-        onFilterPress={() => auditTrailRef.current?.openFilters()}
-      />
-      <View style={styles.segmentedControlContainer}>
-        <SegmentedControl
-          tabs={[
-            { id: 'live_status', label: 'Live Status' },
-            { id: 'audit_trail', label: 'Audit Trail' },
-          ]}
-          activeTab={activeTab}
-          onChange={setActiveTab}
+    <View style={styles.root}>
+      <Backdrop />
+      <SafeAreaView style={styles.container}>
+        <ScreenHeaderV2
+          title="Operations"
+          showNotifications={false}
+          showRightButton={false}
+          showFilter={activeTab === 'audit_trail'}
+          onFilterPress={() => auditTrailRef.current?.openFilters()}
         />
-      </View>
-
-      {activeTab === 'live_status' ? (
-        <View style={styles.placeholderContainer}>
-          <Text style={styles.placeholderText}>Live Status coming soon</Text>
+        <View style={styles.segmentedControlContainer}>
+          <SegmentedControl
+            tabs={[
+              { id: 'live_status', label: 'Live Status' },
+              { id: 'audit_trail', label: 'Audit Trail' },
+            ]}
+            activeTab={activeTab}
+            onChange={setActiveTab}
+          />
         </View>
-      ) : (
-        <AuditTrailScreen ref={auditTrailRef} />
-      )}
-    </SafeAreaView>
+
+        {activeTab === 'live_status' ? (
+          <View style={styles.placeholderContainer}>
+            <Text style={styles.placeholderText}>Live Status coming soon</Text>
+          </View>
+        ) : (
+          <AuditTrailScreen ref={auditTrailRef} />
+        )}
+      </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  root: {
+    flex: 1,
+  },
   container: {
     flex: 1,
-    backgroundColor: tokens.colors.background,
   },
   segmentedControlContainer: {
     padding: tokens.spacing.md,
-    backgroundColor: tokens.colors.background,
   },
   placeholderContainer: {
     flex: 1,
