@@ -28,8 +28,11 @@ const colors = {
   danger: '#C0392B',
   warning: '#FFD9B2',
   success: '#27AE60',
+  successLight: 'rgba(39, 174, 96, 0.1)',
   info: '#2471A3',
   purple: '#8E44AD',
+  brandPurple: '#5C55F5',
+  brandPurpleLight: 'rgba(92, 85, 245, 0.1)',
   blue: '#007AFF', // Bright blue for Stay Extension
 
   // Badge — High priority

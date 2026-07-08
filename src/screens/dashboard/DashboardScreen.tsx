@@ -32,6 +32,8 @@ export default function DashboardScreen() {
   const bottomClearance =
     Math.max(insets.bottom, tokens.navigation.paddingVertical) + tokens.navigation.height + 16;
 
+  const totalRevenue = Object.values(data.todayRevenue).reduce((acc, curr) => acc + curr, 0);
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <Backdrop />
@@ -49,9 +51,9 @@ export default function DashboardScreen() {
           showNotifications={true}
           notificationCount={data.unreadNotifications}
         />
-        <RevenueSummary todayRevenue={data.todayRevenue} />
+        <RevenueSummary todayRevenue={totalRevenue} />
         <View style={styles.gap} />
-        <OccupancySection occupancy={data.occupancy} />
+        <OccupancySection occupancy={data.occupancy} todayRevenue={data.todayRevenue} />
         <View style={styles.gap} />
         <RecentActivityFeed events={data.recentEvents} />
       </ScrollView>
