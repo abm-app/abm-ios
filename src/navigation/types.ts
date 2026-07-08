@@ -24,7 +24,7 @@ export type AppTabParamList = {
 // ─── Operations Stack ────────────────────────────────────────────────────────
 
 export type OperationsStackParamList = {
-  AuditTrail: undefined;
+  Operations: undefined;
 };
 
 // ─── Root Stack ──────────────────────────────────────────────────────────────

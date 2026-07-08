@@ -1,15 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import {
-  FlatList,
-  View,
-  Text,
-  StyleSheet,
-  ActivityIndicator,
-  TouchableOpacity,
-  TextInput,
-} from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { Feather } from '@expo/vector-icons';
+import React, { useState, forwardRef, useImperativeHandle } from 'react';
+import { FlatList, View, Text, StyleSheet, ActivityIndicator, TextInput } from 'react-native';
 import tokens from '@/theme/tokens';
 import { useAuditEvents } from '@/hooks/audit/useAuditEvents';
 import type { AuditFilters } from '@/hooks/audit/useAuditEvents';
@@ -17,9 +7,11 @@ import { AuditCard } from './components/AuditCard';
 import { FilterSheet } from '@/components/shared/FilterSheet';
 import { Button } from '@/components/ui';
 
-export default function AuditTrailScreen() {
-  const navigation = useNavigation();
+export interface AuditTrailScreenRef {
+  openFilters: () => void;
+}
 
+const AuditTrailScreen = forwardRef<AuditTrailScreenRef, unknown>((_, ref) => {
   const [isFilterVisible, setIsFilterVisible] = useState(false);
   const [activeFilters, setActiveFilters] = useState<AuditFilters>({});
   const [draftFilters, setDraftFilters] = useState<AuditFilters>({});
@@ -27,23 +19,12 @@ export default function AuditTrailScreen() {
   const { events, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, isError } =
     useAuditEvents(activeFilters);
 
-  useEffect(() => {
-    navigation.setOptions({
-      title: 'Audit Trail',
-      headerRight: () => (
-        <TouchableOpacity
-          onPress={() => {
-            setDraftFilters(activeFilters);
-            setIsFilterVisible(true);
-          }}
-          style={styles.headerButton}
-          activeOpacity={0.7}
-        >
-          <Feather name="sliders" size={20} color={tokens.colors.textPrimary} />
-        </TouchableOpacity>
-      ),
-    });
-  }, [navigation, activeFilters]);
+  useImperativeHandle(ref, () => ({
+    openFilters: () => {
+      setDraftFilters(activeFilters);
+      setIsFilterVisible(true);
+    },
+  }));
 
   const handleApply = () => {
     setActiveFilters(draftFilters);
@@ -155,7 +136,11 @@ export default function AuditTrailScreen() {
       </FilterSheet>
     </View>
   );
-}
+});
+
+AuditTrailScreen.displayName = 'AuditTrailScreen';
+
+export default AuditTrailScreen;
 
 const styles = StyleSheet.create({
   container: {
