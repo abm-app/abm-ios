@@ -80,7 +80,7 @@ export default function GuestProfileScreen({ route }: Props) {
     <SafeAreaView style={styles.safeArea} edges={['top']}>
       <GuestProfileHeader doNotContact={guest.doNotContact} onDncChange={handleDncChange} />
 
-      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+      <View style={styles.topSection}>
         <GuestProfileInfo name={guest.name} phone={guest.phone} />
 
         <GuestSummaryCard
@@ -100,7 +100,9 @@ export default function GuestProfileScreen({ route }: Props) {
           onChange={setActiveTab}
           style={styles.tabs}
         />
+      </View>
 
+      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         {/* Tab Content */}
         <View style={styles.tabContent}>
           {activeTab === 'stays' && <GuestStayHistory bookings={bookings} />}
@@ -161,6 +163,10 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingBottom: tokens.spacing.xxxl,
+  },
+  topSection: {
+    backgroundColor: tokens.colors.background,
+    zIndex: 10,
   },
 
   tabs: {

@@ -15,6 +15,7 @@ const colors = {
   // Borders
   border: 'rgba(0,0,0,0.10)',
   borderMd: 'rgba(0,0,0,0.18)',
+  borderDark: 'rgba(0, 0, 0, 0.25)',
 
   // Text hierarchy
   textPrimary: '#000000',
@@ -27,7 +28,12 @@ const colors = {
   danger: '#C0392B',
   warning: '#FFD9B2',
   success: '#27AE60',
+  successLight: 'rgba(39, 174, 96, 0.1)',
   info: '#2471A3',
+  purple: '#8E44AD',
+  brandPurple: '#5C55F5',
+  brandPurpleLight: 'rgba(92, 85, 245, 0.1)',
+  blue: '#007AFF', // Bright blue for Stay Extension
 
   // Badge — High priority
   badgeHighBg: '#FEE2E2',
@@ -48,6 +54,25 @@ const colors = {
   // Badge — Suite
   badgeSuiteBg: '#EAD3B7',
   badgeSuiteText: '#8A5A2B',
+
+  // Badge — Event types
+  badgeExtensionBg: 'rgba(0, 122, 255, 0.1)', // Matches blue color with 10% opacity
+  badgeModificationBg: 'rgba(142,68,173,0.1)',
+  badgeRoomChangeBg: 'rgba(230,126,34,0.1)',
+
+  // Live Status
+  statusOccupiedBg: '#E8F5E9',
+  statusOccupiedText: '#2E7D32',
+  statusOccupiedBorder: '#A5D6A7',
+  statusVacantBg: '#F5F5F5',
+  statusVacantText: '#424242',
+  statusVacantBorder: '#E0E0E0',
+  statusCheckoutBg: '#FFF3E0',
+  statusCheckoutText: '#E65100',
+  statusCheckoutBorder: '#FFCC80',
+  statusArrivalBg: '#E3F2FD',
+  statusArrivalText: '#1565C0',
+  statusArrivalBorder: '#90CAF9',
 
   // Cards
   cardDarkBg: '#0F0F0F',
@@ -340,7 +365,7 @@ const taskCheckbox = {
 const navigation = {
   borderRadius: 296,
   paddingVertical: 16,
-  paddingHorizontal: 25,
+  paddingHorizontal: 12,
   itemGap: 1,
   itemPaddingTop: 6,
   itemPaddingBottom: 7,
@@ -396,6 +421,15 @@ const taskCard = {
   metaMarginTop: 8,
   metaGap: 8,
   metaIconGap: 6,
+} as const;
+
+/** Live Status grid card geometry */
+const roomGridCard = {
+  width: 72,
+  height: 72,
+  borderRadius: 16,
+  padding: 8,
+  gap: 4,
 } as const;
 
 /** Insight card geometry */
@@ -658,6 +692,7 @@ const tokens = {
   statCard,
   scoreCard,
   taskCard,
+  roomGridCard,
   insight,
   swatch,
   typographyRow,

@@ -13,6 +13,7 @@ import { TAB_PERMISSIONS } from '@/config/roles';
 import CampaignDashboardScreen from '@/screens/campaigns/CampaignDashboardScreen';
 import GuestDirectoryScreen from '@/screens/guests/GuestDirectoryScreen';
 import DashboardScreen from '@/screens/dashboard/DashboardScreen';
+import OperationsNavigator from '@/navigation/OperationsNavigator';
 
 // ─── Tab Navigator ───────────────────────────────────────────────────────────
 
@@ -106,11 +107,13 @@ export default function AppNavigator() {
         const ScreenComponent =
           routeName === 'Dashboard'
             ? DashboardScreen
-            : routeName === 'Campaigns'
-              ? CampaignDashboardScreen
-              : routeName === 'Guests'
-                ? GuestDirectoryScreen
-                : PLACEHOLDER_SCREENS[routeName];
+            : routeName === 'Operations'
+              ? OperationsNavigator
+              : routeName === 'Campaigns'
+                ? CampaignDashboardScreen
+                : routeName === 'Guests'
+                  ? GuestDirectoryScreen
+                  : PLACEHOLDER_SCREENS[routeName];
 
         return (
           <Tab.Screen

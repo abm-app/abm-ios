@@ -45,3 +45,19 @@ export const parseDateString = (dateStr?: string): Date | undefined => {
   if (parts.length !== 3) return undefined;
   return new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
 };
+
+export const formatDateTime = (isoStr?: string): string | null => {
+  if (!isoStr) return null;
+  const date = new Date(isoStr);
+  if (isNaN(date.getTime())) return null;
+
+  return new Intl.DateTimeFormat('en-GB', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true,
+  }).format(date);
+  // e.g. "8 Jul 2026, 04:30 pm"
+};

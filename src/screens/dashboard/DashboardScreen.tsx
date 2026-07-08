@@ -8,6 +8,9 @@ import LoadingSpinner from '../../components/shared/LoadingSpinner';
 import ErrorState from '../../components/shared/ErrorState';
 import tokens from '../../theme/tokens';
 import OccupancySection from './components/OccupancySection';
+import { Backdrop } from '@/components/shared';
+import { ScreenHeaderV2 } from '../../components/shared/ScreenHeader';
+import { formatDate } from '@/utils/dateUtils';
 
 export default function DashboardScreen() {
   const { data, isLoading, isError, refetch } = useDashboardSummary();
@@ -21,23 +24,42 @@ export default function DashboardScreen() {
     return <ErrorState message="Failed to load dashboard. Pull to refresh." onRetry={refetch} />;
   }
 
+  const syncedDate = new Date(data.lastSyncedAt);
+  const isToday = syncedDate.toDateString() === new Date().toDateString();
+  const formattedTime = syncedDate.toLocaleTimeString([], {
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+
   const bottomClearance =
     Math.max(insets.bottom, tokens.navigation.paddingVertical) + tokens.navigation.height + 16;
 
+  const totalRevenue = Object.values(data.todayRevenue).reduce((acc, curr) => acc + curr, 0);
+
   return (
     <SafeAreaView style={styles.safeArea}>
+      <Backdrop />
       <ScrollView
         style={styles.scroll}
         contentContainerStyle={[styles.content, { paddingBottom: bottomClearance }]}
         showsVerticalScrollIndicator={false}
       >
-        <OccupancySection
-          occupancy={data.occupancy}
-          unreadNotifications={data.unreadNotifications}
-          lastSyncedAt={data.lastSyncedAt}
+        <ScreenHeaderV2
+          title="Dashboard"
+          subtitle={
+            isToday
+              ? `Last synced: Today, ${formattedTime}`
+              : `Last synced: ${formatDate(data.lastSyncedAt)}, ${formattedTime}`
+          }
+          showSearch={false}
+          showFilter={false}
+          showRightButton={false}
+          showNotifications={true}
+          notificationCount={data.unreadNotifications}
         />
+        <RevenueSummary todayRevenue={totalRevenue} />
         <View style={styles.gap} />
-        <RevenueSummary todayRevenue={data.todayRevenue} />
+        <OccupancySection occupancy={data.occupancy} todayRevenue={data.todayRevenue} />
         <View style={styles.gap} />
         <RecentActivityFeed events={data.recentEvents} />
       </ScrollView>

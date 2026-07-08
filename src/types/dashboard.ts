@@ -1,6 +1,7 @@
 export type RecentEventType = 'check_in' | 'rate_override';
 
 export interface OccupancyProperty {
+  name: string;
   occupied: number;
   total: number;
 }
@@ -17,7 +18,7 @@ export type DashboardOccupancy = Record<string, OccupancyProperty>;
 
 export interface DashboardSummary {
   occupancy: DashboardOccupancy;
-  todayRevenue: number;
+  todayRevenue: Record<string, number>;
   recentEvents: RecentEvent[];
   unreadNotifications: number;
   lastSyncedAt: string;

@@ -60,6 +60,15 @@ export default function RecentBroadcastCard({ broadcast }: RecentBroadcastCardPr
 const styles = StyleSheet.create({
   card: {
     marginBottom: tokens.spacing.mdLg,
+    backgroundColor: tokens.colors.white,
+    shadowColor: tokens.colors.primary,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 12,
+    elevation: 4,
+    borderWidth: 1,
+    borderColor: tokens.colors.borderDark,
+    borderRadius: tokens.borderRadius.xl,
   },
   chipRow: {
     alignItems: 'flex-start',

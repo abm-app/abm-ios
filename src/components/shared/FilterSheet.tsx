@@ -7,6 +7,8 @@ import {
   Modal,
   TouchableWithoutFeedback,
   Animated,
+  StyleProp,
+  ViewStyle,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -19,6 +21,8 @@ export interface FilterSheetProps {
   showDragIndicator?: boolean;
   headerRight?: React.ReactNode;
   footer?: React.ReactNode;
+  scrollable?: boolean;
+  contentStyle?: StyleProp<ViewStyle>;
   children: React.ReactNode;
 }
 
@@ -29,6 +33,8 @@ export function FilterSheet({
   showDragIndicator = false,
   headerRight,
   footer,
+  scrollable = true,
+  contentStyle,
   children,
 }: FilterSheetProps) {
   const insets = useSafeAreaInsets();
@@ -64,16 +70,34 @@ export function FilterSheet({
               <View style={styles.dragIndicator} />
             </View>
           )}
-          <View style={[styles.header, showDragIndicator && styles.headerWithDrag]}>
-            <Text style={styles.title}>{title}</Text>
-            {headerRight && <View>{headerRight}</View>}
-          </View>
-          <ScrollView
-            contentContainerStyle={styles.contentContainer}
-            showsVerticalScrollIndicator={false}
-          >
-            {children}
-          </ScrollView>
+          {(!!title || !!headerRight) && (
+            <View style={[styles.header, showDragIndicator && styles.headerWithDrag]}>
+              {!!title && <Text style={styles.title}>{title}</Text>}
+              {!!headerRight && <View>{headerRight}</View>}
+            </View>
+          )}
+          {scrollable ? (
+            <ScrollView
+              contentContainerStyle={[
+                styles.contentContainer,
+                !footer && { paddingBottom: Math.max(insets.bottom, 24) },
+                contentStyle,
+              ]}
+              showsVerticalScrollIndicator={false}
+            >
+              {children}
+            </ScrollView>
+          ) : (
+            <View
+              style={[
+                styles.contentContainer,
+                !footer && { paddingBottom: Math.max(insets.bottom, 24) },
+                contentStyle,
+              ]}
+            >
+              {children}
+            </View>
+          )}
           {footer && (
             <View
               style={[styles.footer, { paddingBottom: Math.max(insets.bottom, tokens.spacing.lg) }]}
@@ -133,7 +157,6 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     paddingHorizontal: 24,
-    paddingBottom: 24,
   },
   footer: {
     paddingHorizontal: 24,
