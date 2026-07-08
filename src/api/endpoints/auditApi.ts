@@ -8,7 +8,12 @@ export interface AuditEventAfter {
   rmCode?: string;
 }
 
-export type AuditEventType = 'extension' | 'room_change' | 'checkout';
+export type AuditEventType =
+  | 'extension'
+  | 'room_change'
+  | 'checkout'
+  | 'cancellation'
+  | 'modification';
 
 export interface AuditEvent {
   id: string;
@@ -20,6 +25,8 @@ export interface AuditEvent {
   before: AuditEventBefore;
   after: AuditEventAfter;
   detectedAt: string;
+  description?: string;
+  revenueDelta?: number;
 }
 
 export interface AuditEventsResponse {
@@ -44,36 +51,39 @@ export interface GetAuditEventsParams {
 const mockAuditEvents: AuditEvent[] = [
   {
     id: 'evt-001',
-    eventType: 'extension',
-    chCode: 'CH-1001',
-    rmCode: '105',
+    eventType: 'cancellation',
+    chCode: 'CH-1000',
+    rmCode: '101',
     property: 'express',
-    guestName: 'Alice Johnson',
-    before: { departureDate: '2026-06-10T12:00:00Z', rmCode: '105' },
-    after: { departureDate: '2026-06-12T12:00:00Z', rmCode: '105' },
-    detectedAt: '2026-06-09T08:30:00Z',
+    guestName: 'Rahul Kumar',
+    before: {},
+    after: {},
+    description: 'Booking cancelled. No revenue captured.',
+    detectedAt: '2026-10-24T10:15:00Z',
   },
   {
     id: 'evt-002',
-    eventType: 'room_change',
-    chCode: 'CH-1002',
-    rmCode: '210',
+    eventType: 'extension',
+    chCode: 'CH-1001',
+    rmCode: '405',
     property: 'grand',
-    guestName: 'Bob Smith',
-    before: { rmCode: '150' },
-    after: { rmCode: '210' },
-    detectedAt: '2026-06-11T14:45:00Z',
+    guestName: 'Sarah Jenkins',
+    before: { departureDate: '2026-10-24T12:00:00Z' },
+    after: { departureDate: '2026-10-26T12:00:00Z' },
+    revenueDelta: 8000,
+    detectedAt: '2026-10-24T09:30:00Z',
   },
   {
     id: 'evt-003',
-    eventType: 'checkout',
-    chCode: 'CH-1003',
-    rmCode: '320',
+    eventType: 'modification',
+    chCode: 'CH-1002',
+    rmCode: '202',
     property: 'suite',
-    guestName: 'Charlie Davis',
+    guestName: 'James Holden',
     before: {},
     after: {},
-    detectedAt: '2026-06-12T09:15:00Z',
+    description: 'Guest profile updated (Phone number changed)',
+    detectedAt: '2026-10-24T08:12:00Z',
   },
   {
     id: 'evt-004',

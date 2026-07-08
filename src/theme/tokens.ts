@@ -28,6 +28,7 @@ const colors = {
   warning: '#FFD9B2',
   success: '#27AE60',
   info: '#2471A3',
+  purple: '#8E44AD',
 
   // Badge — High priority
   badgeHighBg: '#FEE2E2',
@@ -48,6 +49,11 @@ const colors = {
   // Badge — Suite
   badgeSuiteBg: '#EAD3B7',
   badgeSuiteText: '#8A5A2B',
+
+  // Badge — Event types
+  badgeExtensionBg: 'rgba(36,113,163,0.1)',
+  badgeModificationBg: 'rgba(142,68,173,0.1)',
+  badgeRoomChangeBg: 'rgba(230,126,34,0.1)',
 
   // Cards
   cardDarkBg: '#0F0F0F',
