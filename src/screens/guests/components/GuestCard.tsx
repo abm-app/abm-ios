@@ -6,6 +6,7 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 import tokens from '@/theme/tokens';
 import { Card, Badge } from '@/components/ui';
+import { Avatar } from '@/components/shared';
 import type { Guest } from '@/types/guest';
 import type { RootStackParamList } from '@/navigation/types';
 import type { BadgeVariant } from '@/components/ui/Badge';
@@ -43,9 +44,12 @@ export default function GuestCard({ guest, onPress, style }: GuestCardProps) {
   return (
     <Card padded onPress={handlePress} style={[styles.container, style]}>
       <View style={styles.header}>
-        <Text style={styles.name} numberOfLines={1}>
-          {guest.name}
-        </Text>
+        <View style={styles.guestInfoGroup}>
+          <Avatar name={guest.name} size={40} />
+          <Text style={styles.name} numberOfLines={1}>
+            {guest.name}
+          </Text>
+        </View>
         <Badge label={guest.tier} variant={getTierVariant(guest.tier)} />
       </View>
 
@@ -80,6 +84,15 @@ export default function GuestCard({ guest, onPress, style }: GuestCardProps) {
 const styles = StyleSheet.create({
   container: {
     marginBottom: tokens.spacing.lg,
+    backgroundColor: tokens.colors.white,
+    shadowColor: tokens.colors.primary,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 12,
+    elevation: 4,
+    borderWidth: 1,
+    borderColor: tokens.colors.borderDark,
+    borderRadius: tokens.borderRadius.xl,
   },
   header: {
     flexDirection: 'row',
@@ -87,12 +100,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: tokens.spacing.lg,
   },
+  guestInfoGroup: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: tokens.spacing.md,
+    flex: 1,
+    marginRight: tokens.spacing.md,
+  },
   name: {
-    fontFamily: tokens.typography.fontFamily.heading,
+    fontFamily: tokens.typography.fontFamily.headingBold,
     fontSize: tokens.typography.fontSize.h2,
     color: tokens.colors.textPrimary,
     flex: 1,
-    marginRight: tokens.spacing.sm,
   },
   divider: {
     height: tokens.borderWidth.hairline,
@@ -116,7 +135,7 @@ const styles = StyleSheet.create({
   statValue: {
     fontFamily: tokens.typography.fontFamily.sub,
     fontSize: tokens.typography.fontSize.h2,
-    fontWeight: tokens.typography.fontWeight.semibold,
+    fontWeight: '700',
     color: tokens.colors.textPrimary,
   },
   footer: {
