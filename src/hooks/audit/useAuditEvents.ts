@@ -2,9 +2,9 @@ import { useInfiniteQuery } from '@tanstack/react-query';
 import { getAuditEvents } from '@/api/endpoints/auditApi';
 
 export interface AuditFilters {
-  property?: string;
-  eventType?: string;
-  rmCode?: string;
+  property?: string[];
+  eventType?: string[];
+  rmCode?: string[];
   from?: string;
   to?: string;
 }

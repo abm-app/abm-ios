@@ -40,9 +40,9 @@ export interface GetAuditEventsParams {
   page: number;
   limit: number;
   filters?: {
-    property?: string;
-    eventType?: string;
-    rmCode?: string;
+    property?: string[];
+    eventType?: string[];
+    rmCode?: string[];
     from?: string;
     to?: string;
   };

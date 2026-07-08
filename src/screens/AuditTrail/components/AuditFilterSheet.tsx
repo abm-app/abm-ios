@@ -75,12 +75,16 @@ export function AuditFilterSheet({
               <Chip
                 key={prop}
                 label={prop}
-                active={draftFilters.property === prop}
+                tone="primary"
+                active={draftFilters.property?.includes(prop)}
                 onPress={() =>
-                  setDraftFilters(prev => ({
-                    ...prev,
-                    property: prev.property === prop ? undefined : prop,
-                  }))
+                  setDraftFilters(prev => {
+                    const current = prev.property || [];
+                    const next = current.includes(prop)
+                      ? current.filter(p => p !== prop)
+                      : [...current, prop];
+                    return { ...prev, property: next.length > 0 ? next : undefined };
+                  })
                 }
               />
             ))}
@@ -94,12 +98,16 @@ export function AuditFilterSheet({
               <Chip
                 key={type}
                 label={type.replace('_', ' ')}
-                active={draftFilters.eventType === type}
+                tone="primary"
+                active={draftFilters.eventType?.includes(type)}
                 onPress={() =>
-                  setDraftFilters(prev => ({
-                    ...prev,
-                    eventType: prev.eventType === type ? undefined : type,
-                  }))
+                  setDraftFilters(prev => {
+                    const current = prev.eventType || [];
+                    const next = current.includes(type)
+                      ? current.filter(p => p !== type)
+                      : [...current, type];
+                    return { ...prev, eventType: next.length > 0 ? next : undefined };
+                  })
                 }
               />
             ))}
@@ -116,12 +124,16 @@ export function AuditFilterSheet({
                 <Chip
                   key={type}
                   label={type}
-                  active={draftFilters.rmCode === type}
+                  tone="primary"
+                  active={draftFilters.rmCode?.includes(type)}
                   onPress={() =>
-                    setDraftFilters(prev => ({
-                      ...prev,
-                      rmCode: prev.rmCode === type ? undefined : type,
-                    }))
+                    setDraftFilters(prev => {
+                      const current = prev.rmCode || [];
+                      const next = current.includes(type)
+                        ? current.filter(p => p !== type)
+                        : [...current, type];
+                      return { ...prev, rmCode: next.length > 0 ? next : undefined };
+                    })
                   }
                 />
               ))
@@ -154,8 +166,16 @@ export function AuditFilterSheet({
         visible={isFromDateVisible}
         onClose={() => setIsFromDateVisible(false)}
         selectedDate={draftFilters.from ? new Date(draftFilters.from) : undefined}
+        disablePastDates
         onSelectDate={date => {
-          setDraftFilters(prev => ({ ...prev, from: getCalendarDateString(date) }));
+          setDraftFilters(prev => {
+            const next = { ...prev, from: getCalendarDateString(date) };
+            // Auto-clear 'to' date if it is now before the 'from' date
+            if (next.to && new Date(next.to) < date) {
+              next.to = undefined;
+            }
+            return next;
+          });
           setIsFromDateVisible(false);
         }}
       />
@@ -164,6 +184,8 @@ export function AuditFilterSheet({
         visible={isToDateVisible}
         onClose={() => setIsToDateVisible(false)}
         selectedDate={draftFilters.to ? new Date(draftFilters.to) : undefined}
+        minDate={draftFilters.from ? new Date(draftFilters.from) : undefined}
+        disablePastDates
         onSelectDate={date => {
           setDraftFilters(prev => ({ ...prev, to: getCalendarDateString(date) }));
           setIsToDateVisible(false);
