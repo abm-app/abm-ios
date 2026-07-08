@@ -14,7 +14,7 @@ export default function OperationsScreen() {
     <SafeAreaView style={styles.container}>
       <ScreenHeaderV2
         title="Operations"
-        showNotifications={true}
+        showNotifications={false}
         showRightButton={false}
         showFilter={activeTab === 'audit_trail'}
         onFilterPress={() => auditTrailRef.current?.openFilters()}
