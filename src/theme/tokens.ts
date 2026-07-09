@@ -11,6 +11,7 @@ const colors = {
   surface: 'rgba(0,0,0,0.06)',
   surfaceLight: '#F9F9F9',
   secondary: 'rgba(0,0,0,0.15)',
+  pressOverlay: 'rgba(0,0,0,0.05)',
 
   // Borders
   border: 'rgba(0,0,0,0.10)',
@@ -95,6 +96,11 @@ const colors = {
   avatarWarmIcon: '#D97706',
   chipNeutralBg: '#F0EFED',
   chipWarmBg: '#F5E6D0',
+
+  // Occupancy progress ring
+  occupancyHigh: 'rgba(4, 175, 10, 0.72)',
+  occupancyMid: 'rgba(231, 139, 0, 0.76)',
+  occupancyLow: 'rgba(235, 33, 33, 0.7)',
 
   // Auth — Login screen
   authBackdropBase: '#F5E6D8',
@@ -668,6 +674,14 @@ const shadow = {
     shadowOpacity: 0.05,
     shadowRadius: 2,
     elevation: 1,
+  },
+  /** Elevated card (Campaign cards) */
+  elevatedCard: {
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 12,
+    elevation: 4,
   },
 } as const;
 

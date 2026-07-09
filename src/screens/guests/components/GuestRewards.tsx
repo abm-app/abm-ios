@@ -5,7 +5,7 @@ import { Feather } from '@expo/vector-icons';
 import tokens from '@/theme/tokens';
 import { useGuestRewards } from '@/hooks/rewards/useGuestRewards';
 import { LoadingSpinner, ErrorState, EmptyState } from '@/components/shared';
-import { Badge } from '@/components/ui';
+import { Badge, Card } from '@/components/ui';
 
 interface GuestRewardsProps {
   guestId: string;
@@ -45,7 +45,7 @@ export default function GuestRewards({ guestId }: GuestRewardsProps) {
   return (
     <View style={styles.listContainer}>
       {rewards.map(reward => (
-        <View key={reward._id} style={styles.rewardCard}>
+        <Card key={reward._id} variant="flat" padded style={styles.rewardCard}>
           <View style={styles.rewardHeader}>
             <Text style={styles.rewardName}>{reward.name}</Text>
             <Badge
@@ -70,7 +70,7 @@ export default function GuestRewards({ guestId }: GuestRewardsProps) {
               <Text style={styles.detailText}>{reward.pointsCost.toLocaleString()} pts</Text>
             </View>
           </View>
-        </View>
+        </Card>
       ))}
     </View>
   );
@@ -87,9 +87,6 @@ const styles = StyleSheet.create({
     paddingVertical: tokens.spacing.md,
   },
   rewardCard: {
-    backgroundColor: tokens.colors.surfaceLight,
-    borderRadius: tokens.borderRadius.md,
-    padding: tokens.spacing.lg,
     marginBottom: tokens.spacing.md,
     borderWidth: tokens.borderWidth.thin,
     borderColor: tokens.colors.border,

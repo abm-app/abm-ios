@@ -1,19 +1,29 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { Feather, Ionicons } from '@expo/vector-icons';
+import { Feather, FontAwesome } from '@expo/vector-icons';
 import Svg, { Circle } from 'react-native-svg';
 import tokens from '../../../theme/tokens';
+import { Card } from '../../../components/ui';
 
 interface OccupancySectionProps {
   occupancy: Record<string, { name?: string; occupied: number; total: number }>;
   todayRevenue: Record<string, number>;
 }
 
+// ─── Colour helper ──────────────────────────────────────────────────────────
+
+function getProgressColor(percentage: number): string {
+  if (percentage >= 80) return tokens.colors.occupancyHigh;
+  if (percentage <= 50) return tokens.colors.occupancyLow;
+  return tokens.colors.occupancyMid;
+}
+
 // ─── Local Circular Progress Component ────────────────────────────────────────
 
 function CircularProgress({ percentage }: { percentage: number }) {
-  const size = 110;
-  const strokeWidth = 10;
+  const strokeColor = getProgressColor(percentage);
+  const size = 90;
+  const strokeWidth = 8;
   const radius = (size - strokeWidth) / 2;
   const circumference = radius * 2 * Math.PI;
   const strokeDashoffset = circumference - (percentage / 100) * circumference;
@@ -32,7 +42,7 @@ function CircularProgress({ percentage }: { percentage: number }) {
         />
         {/* Progress Circle */}
         <Circle
-          stroke={tokens.colors.primary}
+          stroke={strokeColor}
           fill="none"
           cx={size / 2}
           cy={size / 2}
@@ -71,11 +81,17 @@ export default function OccupancySection({ occupancy, todayRevenue }: OccupancyS
           }).format(revenue);
 
           return (
-            <View key={propertyKey} style={styles.card}>
+            <Card
+              key={propertyKey}
+              padded
+              variant="shadow-outlined"
+              shadow="elevatedCard"
+              style={styles.card}
+            >
               {/* Header */}
               <View style={styles.header}>
                 <View style={styles.iconBoxNeutral}>
-                  <Ionicons name="business" size={22} color={tokens.colors.primary} />
+                  <FontAwesome name="building-o" size={20} color={tokens.colors.primary} />
                 </View>
                 <Text style={styles.propertyName}>{displayName}</Text>
               </View>
@@ -107,7 +123,7 @@ export default function OccupancySection({ occupancy, todayRevenue }: OccupancyS
                   <Text style={styles.revenueAmount}>{formattedRevenue}</Text>
                 </View>
               </View>
-            </View>
+            </Card>
           );
         })}
       </View>
@@ -123,22 +139,13 @@ const styles = StyleSheet.create({
     gap: tokens.spacing.lgMd,
   },
   card: {
-    backgroundColor: tokens.colors.white,
     borderRadius: tokens.borderRadius.xl,
-    padding: tokens.spacing.xlMd,
-    shadowColor: tokens.colors.primary,
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.08,
-    shadowRadius: 16,
-    elevation: 4,
-    borderWidth: 1,
-    borderColor: tokens.colors.borderDark,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: tokens.spacing.mdLg,
-    marginBottom: tokens.spacing.xl,
+    marginBottom: tokens.spacing.lgMd,
   },
   iconBox: {
     width: 44,
@@ -171,13 +178,13 @@ const styles = StyleSheet.create({
   },
   middleRow: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-end',
     justifyContent: 'space-between',
-    marginBottom: tokens.spacing.xl,
+    marginBottom: tokens.spacing.lgMd,
   },
   progressContainer: {
-    width: 110,
-    height: 110,
+    width: 90,
+    height: 90,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -206,6 +213,8 @@ const styles = StyleSheet.create({
     gap: tokens.spacing.sm,
     flex: 1,
     justifyContent: 'flex-end',
+    alignSelf: 'flex-end',
+    paddingBottom: tokens.spacing.xs,
   },
   chip: {
     flexDirection: 'row',

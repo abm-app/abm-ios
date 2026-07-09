@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import tokens from '../../../theme/tokens';
+import { Card } from '../../../components/ui';
 
 interface RevenueSummaryProps {
   todayRevenue: number;
@@ -15,7 +16,7 @@ export default function RevenueSummary({ todayRevenue }: RevenueSummaryProps) {
   }).format(todayRevenue);
 
   return (
-    <View style={styles.container}>
+    <Card variant="shadow-outlined" shadow="elevatedCard" style={styles.container}>
       <View style={styles.leftContainer}>
         <View style={styles.iconContainer}>
           <Feather name="credit-card" size={tokens.iconSizes.md} color={tokens.colors.white} />
@@ -25,14 +26,13 @@ export default function RevenueSummary({ todayRevenue }: RevenueSummaryProps) {
       <View style={styles.rightContainer}>
         <Text style={styles.amount}>{formattedRevenue}</Text>
       </View>
-    </View>
+    </Card>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     backgroundColor: tokens.colors.dashboardCardDarkBg,
-    borderRadius: tokens.borderRadius.xlMd,
     padding: tokens.spacing.xxl,
     flexDirection: 'row',
     alignItems: 'center',

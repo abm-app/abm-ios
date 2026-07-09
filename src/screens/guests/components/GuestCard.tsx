@@ -42,7 +42,13 @@ export default function GuestCard({ guest, onPress, style }: GuestCardProps) {
   };
 
   return (
-    <Card padded onPress={handlePress} style={[styles.container, style]}>
+    <Card
+      padded
+      variant="shadow-outlined"
+      shadow="elevatedCard"
+      onPress={handlePress}
+      style={[styles.container, style]}
+    >
       <View style={styles.header}>
         <View style={styles.guestInfoGroup}>
           <Avatar name={guest.name} size={40} />
@@ -84,15 +90,6 @@ export default function GuestCard({ guest, onPress, style }: GuestCardProps) {
 const styles = StyleSheet.create({
   container: {
     marginBottom: tokens.spacing.lg,
-    backgroundColor: tokens.colors.white,
-    shadowColor: tokens.colors.primary,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.25,
-    shadowRadius: 12,
-    elevation: 4,
-    borderWidth: 1,
-    borderColor: tokens.colors.borderDark,
-    borderRadius: tokens.borderRadius.xl,
   },
   header: {
     flexDirection: 'row',

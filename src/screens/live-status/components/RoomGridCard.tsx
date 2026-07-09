@@ -1,7 +1,9 @@
 import React from 'react';
-import { Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { Text, StyleSheet } from 'react-native';
 import tokens from '@/theme/tokens';
-import type { LiveStatusRoom, RoomStatusType } from '@/types/status';
+import { Card } from '@/components/ui';
+import { getRoomStatusConfig } from '@/utils/roomUtils';
+import type { LiveStatusRoom } from '@/types/status';
 
 interface RoomGridCardProps {
   room: LiveStatusRoom;
@@ -9,47 +11,17 @@ interface RoomGridCardProps {
 }
 
 export default function RoomGridCard({ room, onPress }: RoomGridCardProps) {
-  const colors = getGridColors(room.status);
+  const { colors } = getRoomStatusConfig(room.status);
 
   return (
-    <TouchableOpacity
-      activeOpacity={0.8}
+    <Card
+      variant="flat"
       onPress={() => onPress(room)}
       style={[styles.container, { backgroundColor: colors.bg, borderColor: colors.border }]}
     >
       <Text style={[styles.roomNumber, { color: colors.text }]}>{room.rmCode}</Text>
-    </TouchableOpacity>
+    </Card>
   );
-}
-
-function getGridColors(status: RoomStatusType) {
-  switch (status) {
-    case 'occupied':
-      return {
-        bg: tokens.colors.statusOccupiedBg,
-        text: tokens.colors.statusOccupiedText,
-        border: tokens.colors.statusOccupiedBorder,
-      };
-    case 'checkout':
-      return {
-        bg: tokens.colors.statusCheckoutBg,
-        text: tokens.colors.statusCheckoutText,
-        border: tokens.colors.statusCheckoutBorder,
-      };
-    case 'arrival':
-      return {
-        bg: tokens.colors.statusArrivalBg,
-        text: tokens.colors.statusArrivalText,
-        border: tokens.colors.statusArrivalBorder,
-      };
-    case 'vacant':
-    default:
-      return {
-        bg: tokens.colors.statusVacantBg,
-        text: tokens.colors.statusVacantText,
-        border: tokens.colors.statusVacantBorder,
-      };
-  }
 }
 
 const styles = StyleSheet.create({

@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
 import tokens from '@/theme/tokens';
+import { Card } from '@/components/ui';
 
 interface GuestSummaryCardProps {
   spendableBalance: number;
@@ -15,7 +16,7 @@ export default function GuestSummaryCard({
   totalStays,
 }: GuestSummaryCardProps) {
   return (
-    <View style={styles.summaryCard}>
+    <Card variant="dark" style={styles.summaryCard}>
       <View style={styles.summaryHalf}>
         <View style={styles.summaryHeader}>
           <Text style={styles.summaryLabel}>AVAILABLE{'\n'}POINTS</Text>
@@ -32,16 +33,14 @@ export default function GuestSummaryCard({
         <Text style={[styles.summaryLabel, styles.summaryLabelRight]}>TOTAL NIGHTS</Text>
         <Text style={styles.summaryValue}>{totalStays}</Text>
       </View>
-    </View>
+    </Card>
   );
 }
 
 const styles = StyleSheet.create({
   summaryCard: {
     flexDirection: 'row',
-    backgroundColor: tokens.colors.cardDarkBg,
     marginHorizontal: tokens.spacing.xlMd,
-    borderRadius: tokens.borderRadius.xl,
     padding: tokens.spacing.xl,
     marginTop: tokens.spacing.lg,
     marginBottom: tokens.spacing.xxl,

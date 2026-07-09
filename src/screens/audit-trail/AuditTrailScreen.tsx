@@ -1,6 +1,5 @@
 import React, { useState, forwardRef, useImperativeHandle } from 'react';
-import { FlatList, View, StyleSheet, ActivityIndicator } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { FlatList, StyleSheet, ActivityIndicator } from 'react-native';
 import tokens from '@/theme/tokens';
 import { useAuditEvents } from '@/hooks/audit/useAuditEvents';
 import type { AuditFilters } from '@/hooks/audit/useAuditEvents';
@@ -15,14 +14,6 @@ export interface AuditTrailScreenRef {
 const AuditTrailScreen = forwardRef<AuditTrailScreenRef, unknown>((_, ref) => {
   const [isFilterVisible, setIsFilterVisible] = useState(false);
   const [activeFilters, setActiveFilters] = useState<AuditFilters>({});
-
-  const insets = useSafeAreaInsets();
-  const tabBarTotalHeight =
-    tokens.navigation.height +
-    tokens.navigation.paddingVertical +
-    Math.max(insets.bottom, tokens.navigation.paddingVertical);
-  const overlap = tabBarTotalHeight - insets.bottom;
-  const bottomSpace = overlap + tokens.spacing.md;
 
   const { events, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, isError, refetch } =
     useAuditEvents(activeFilters);
@@ -39,46 +30,43 @@ const AuditTrailScreen = forwardRef<AuditTrailScreenRef, unknown>((_, ref) => {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={[styles.listContainer, { marginBottom: bottomSpace }]}>
-        <FlatList
-          data={events}
-          keyExtractor={item => item.id}
-          renderItem={({ item }) => <AuditCard event={item} />}
-          contentContainerStyle={styles.listContent}
-          showsVerticalScrollIndicator={false}
-          onEndReached={() => {
-            if (hasNextPage && !isFetchingNextPage) fetchNextPage();
-          }}
-          onEndReachedThreshold={0.4}
-          ListFooterComponent={
-            isFetchingNextPage ? (
-              <ActivityIndicator style={styles.footerLoader} color={tokens.colors.primary} />
-            ) : null
-          }
-          ListEmptyComponent={
-            isLoading ? (
-              <LoadingSpinner />
-            ) : isError ? (
-              <ErrorState message="Failed to load events." onRetry={refetch} />
-            ) : (
-              <EmptyState
-                icon="file-text"
-                title="No events found"
-                subtitle="Audit events will appear here."
-              />
-            )
-          }
-        />
-      </View>
-
+    <>
+      <FlatList
+        data={events}
+        keyExtractor={item => item.id}
+        renderItem={({ item }) => <AuditCard event={item} />}
+        contentContainerStyle={styles.listContent}
+        showsVerticalScrollIndicator={false}
+        onEndReached={() => {
+          if (hasNextPage && !isFetchingNextPage) fetchNextPage();
+        }}
+        onEndReachedThreshold={0.4}
+        ListFooterComponent={
+          isFetchingNextPage ? (
+            <ActivityIndicator style={styles.footerLoader} color={tokens.colors.primary} />
+          ) : null
+        }
+        ListEmptyComponent={
+          isLoading ? (
+            <LoadingSpinner />
+          ) : isError ? (
+            <ErrorState message="Failed to load events." onRetry={refetch} />
+          ) : (
+            <EmptyState
+              icon="file-text"
+              title="No events found"
+              subtitle="Audit events will appear here."
+            />
+          )
+        }
+      />
       <AuditFilterSheet
         visible={isFilterVisible}
         onClose={() => setIsFilterVisible(false)}
         initialFilters={activeFilters}
         onApply={handleApplyFilters}
       />
-    </View>
+    </>
   );
 });
 
@@ -87,22 +75,8 @@ AuditTrailScreen.displayName = 'AuditTrailScreen';
 export default AuditTrailScreen;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  listContainer: {
-    flex: 1,
-    backgroundColor: tokens.colors.surfaceLight,
-    marginHorizontal: tokens.spacing.xlMd,
-    borderRadius: tokens.spacing.xl,
-    overflow: 'hidden',
-    padding: tokens.spacing.xlMd, // Add padding inside the card
-  },
-  headerButton: {
-    marginRight: tokens.spacing.md,
-  },
   listContent: {
-    paddingTop: tokens.spacing.sm, // Remove overall padding, keep top padding for the items
+    paddingTop: tokens.spacing.md,
     paddingBottom: tokens.spacing.xl,
   },
   footerLoader: {
