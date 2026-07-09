@@ -3,7 +3,7 @@ import { View, Text, StyleSheet } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 
 import tokens from '@/theme/tokens';
-import { Badge } from '@/components/ui';
+import { Badge, Card } from '@/components/ui';
 import { ROOMS_DB } from '@/types/room';
 import { formatDate } from '@/utils/dateUtils';
 import type { Booking } from '@/types/booking';
@@ -34,7 +34,7 @@ export default function GuestStayHistory({ bookings }: GuestStayHistoryProps) {
               {!isLast && <View style={styles.timelineLine} />}
             </View>
 
-            <View style={styles.timelineContent}>
+            <Card variant="flat" padded style={styles.timelineContent}>
               <View style={styles.stayHeader}>
                 <Text style={styles.stayDate}>Checkout: {formatDate(booking.checkoutDate)}</Text>
                 <Badge label={`+${booking.pointsEarned} Pts`} variant="low" />
@@ -50,7 +50,7 @@ export default function GuestStayHistory({ bookings }: GuestStayHistoryProps) {
                   {booking.notes || `Folio ${booking.folioNumber}`}
                 </Text>
               </View>
-            </View>
+            </Card>
           </View>
         );
       })}
@@ -92,9 +92,6 @@ const styles = StyleSheet.create({
   },
   timelineContent: {
     flex: 1,
-    backgroundColor: tokens.colors.surfaceLight,
-    padding: tokens.spacing.lg,
-    borderRadius: tokens.borderRadius.lg,
   },
   stayHeader: {
     flexDirection: 'row',

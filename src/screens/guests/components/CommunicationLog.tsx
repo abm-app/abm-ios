@@ -6,6 +6,7 @@ import { formatDate } from '@/utils/dateUtils';
 
 import { useGuestCommunications } from '@/hooks/guests/useGuests';
 import { LoadingSpinner, ErrorState, EmptyState } from '@/components/shared';
+import { Card } from '@/components/ui';
 
 interface CommunicationLogProps {
   guestId: string;
@@ -96,7 +97,7 @@ export default function CommunicationLog({ guestId, doNotContact }: Communicatio
               {!isLast && <View style={styles.timelineLine} />}
             </View>
 
-            <View style={styles.timelineContent}>
+            <Card variant="flat" padded style={styles.timelineContent}>
               <View style={styles.msgHeader}>
                 <Text style={styles.msgMeta}>
                   SENT: {(formatDate(msg.sentAt) || '').toUpperCase()} • {msg.channel.toUpperCase()}
@@ -112,7 +113,7 @@ export default function CommunicationLog({ guestId, doNotContact }: Communicatio
               <Text style={styles.msgBody} numberOfLines={1}>
                 {bodyText}
               </Text>
-            </View>
+            </Card>
           </View>
         );
       })}
@@ -168,9 +169,6 @@ const styles = StyleSheet.create({
   },
   timelineContent: {
     flex: 1,
-    backgroundColor: tokens.colors.surfaceLight,
-    padding: tokens.spacing.lg,
-    borderRadius: tokens.borderRadius.lg,
   },
   msgHeader: {
     flexDirection: 'row',
