@@ -32,6 +32,26 @@ export const formatDate = (isoStr?: string): string | null => {
   return `${dayNumber} ${MONTH_NAMES[monthIndex]}, ${year}`;
 };
 
+export const formatDateShort = (isoStr?: string): string => {
+  if (!isoStr) return '';
+  const datePart = isoStr.split('T')[0];
+  if (!datePart) return isoStr;
+  const [year, month, day] = datePart.split('-');
+  if (!year || !month || !day) return isoStr;
+  const monthIndex = Number(month) - 1;
+  const dayNumber = Number(day);
+  if (
+    !Number.isInteger(monthIndex + 1) ||
+    monthIndex < 0 ||
+    monthIndex > 11 ||
+    !Number.isInteger(dayNumber)
+  ) {
+    return isoStr;
+  }
+  const paddedDay = String(dayNumber).padStart(2, '0');
+  return `${MONTH_NAMES[monthIndex]} ${paddedDay}`;
+};
+
 export const getCalendarDateString = (date: Date): string => {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, '0');
