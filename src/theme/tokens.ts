@@ -11,6 +11,7 @@ const colors = {
   surface: 'rgba(0,0,0,0.06)',
   surfaceLight: '#F9F9F9',
   secondary: 'rgba(0,0,0,0.15)',
+  pressOverlay: 'rgba(0,0,0,0.05)',
 
   // Borders
   border: 'rgba(0,0,0,0.10)',
@@ -673,6 +674,14 @@ const shadow = {
     shadowOpacity: 0.05,
     shadowRadius: 2,
     elevation: 1,
+  },
+  /** Elevated card (Campaign cards) */
+  elevatedCard: {
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 12,
+    elevation: 4,
   },
 } as const;
 

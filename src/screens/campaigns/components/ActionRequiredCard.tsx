@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -24,55 +24,42 @@ export default function ActionRequiredCard({ action }: ActionRequiredCardProps) 
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   return (
-    <TouchableOpacity
-      activeOpacity={0.8}
+    <Card
+      padded
+      variant="shadow-outlined"
+      shadow="elevatedCard"
       onPress={() => navigation.navigate('CampaignDetails', { id: action.id })}
+      style={styles.card}
     >
-      <Card padded style={styles.card}>
-        {action.status === 'pending_approval' && (
-          <View style={styles.chipRow}>
-            <Chip
-              label="Pending Approval"
-              active
-              tone="warning"
-              textColor={tokens.colors.primary}
-            />
-          </View>
-        )}
-        <Text style={styles.title}>{action.title}</Text>
-        <View style={styles.metaRow}>
-          <Feather name="users" size={tokens.iconSizes.content} color={tokens.colors.textMuted} />
-          <Text style={styles.metaText}>{action.audience}</Text>
+      {action.status === 'pending_approval' && (
+        <View style={styles.chipRow}>
+          <Chip label="Pending Approval" active tone="warning" textColor={tokens.colors.primary} />
         </View>
+      )}
+      <Text style={styles.title}>{action.title}</Text>
+      <View style={styles.metaRow}>
+        <Feather name="users" size={tokens.iconSizes.content} color={tokens.colors.textMuted} />
+        <Text style={styles.metaText}>{action.audience}</Text>
+      </View>
 
-        <View style={styles.divider} />
+      <View style={styles.divider} />
 
-        <View style={styles.footerRow}>
-          <Text style={styles.footerText}>Created by {action.creator}</Text>
-          <Button
-            label="Review"
-            variant="primary"
-            size="sm"
-            onPress={() => navigation.navigate('CampaignDetails', { id: action.id })}
-          />
-        </View>
-      </Card>
-    </TouchableOpacity>
+      <View style={styles.footerRow}>
+        <Text style={styles.footerText}>Created by {action.creator}</Text>
+        <Button
+          label="Review"
+          variant="primary"
+          size="sm"
+          onPress={() => navigation.navigate('CampaignDetails', { id: action.id })}
+        />
+      </View>
+    </Card>
   );
 }
 
 const styles = StyleSheet.create({
   card: {
     marginBottom: tokens.spacing.mdLg,
-    backgroundColor: tokens.colors.white,
-    shadowColor: tokens.colors.primary,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.25,
-    shadowRadius: 12,
-    elevation: 4,
-    borderWidth: 1,
-    borderColor: tokens.colors.borderDark,
-    borderRadius: tokens.borderRadius.xl,
   },
   chipRow: {
     alignItems: 'flex-start',

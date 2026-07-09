@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { StyleSheet, TouchableOpacity, View, StyleProp, ViewStyle } from 'react-native';
+import { StyleSheet, View, StyleProp, ViewStyle, Pressable } from 'react-native';
 
 import tokens from '@/theme/tokens';
 
@@ -10,8 +10,8 @@ export interface CardProps {
    * the card has no inner padding so callers can control layout. */
   padded?: boolean;
   /** The visual style of the card. Defaults to 'outlined' for backwards compatibility. */
-  variant?: 'outlined' | 'shadow' | 'dark' | 'flat';
-  /** Optional specific shadow token to use when variant is 'shadow'. Defaults to 'chatBubble'. */
+  variant?: 'outlined' | 'shadow' | 'shadow-outlined' | 'dark' | 'flat';
+  /** Optional specific shadow token to use when variant is 'shadow' or 'shadow-outlined'. Defaults to 'chatBubble'. */
   shadow?: keyof typeof tokens.shadow;
   /** When provided, the card wraps its content in a pressable element. When omitted, the
    * card renders as a static View. */
@@ -39,31 +39,31 @@ export default function Card({
 }: CardProps) {
   const shadowStyle = shadow ? tokens.shadow[shadow] : tokens.shadow.chatBubble;
 
-  const content = (
-    <View
-      style={[
-        styles.base,
-        variant === 'outlined' && styles.outlined,
-        variant === 'shadow' && [styles.shadow, shadowStyle],
-        variant === 'dark' && styles.dark,
-        variant === 'flat' && styles.flat,
-        padded && paddedStyle,
-        style,
-      ]}
-    >
-      {children}
-    </View>
-  );
+  const contentStyles = [
+    styles.base,
+    variant === 'outlined' && styles.outlined,
+    variant === 'shadow' && [styles.shadow, shadowStyle],
+    variant === 'shadow-outlined' && [styles.shadow, styles.outlined, shadowStyle],
+    variant === 'dark' && styles.dark,
+    variant === 'flat' && styles.flat,
+    padded && paddedStyle,
+    style,
+  ];
 
   if (onPress) {
     return (
-      <TouchableOpacity onPress={onPress} activeOpacity={0.7}>
-        {content}
-      </TouchableOpacity>
+      <Pressable onPress={onPress} style={contentStyles}>
+        {({ pressed }) => (
+          <>
+            {children}
+            {pressed && <View style={styles.pressOverlay} />}
+          </>
+        )}
+      </Pressable>
     );
   }
 
-  return content;
+  return <View style={contentStyles}>{children}</View>;
 }
 
 // ─── Static base styles ──────────────────────────────────────────────────────
@@ -71,7 +71,6 @@ export default function Card({
 const styles = StyleSheet.create({
   base: {
     borderRadius: tokens.borderRadius.lg,
-    overflow: 'hidden',
   },
   outlined: {
     backgroundColor: tokens.colors.background,
@@ -86,5 +85,10 @@ const styles = StyleSheet.create({
   },
   flat: {
     backgroundColor: tokens.colors.surfaceLight,
+  },
+  pressOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: tokens.colors.pressOverlay,
+    borderRadius: tokens.borderRadius.lg,
   },
 });
