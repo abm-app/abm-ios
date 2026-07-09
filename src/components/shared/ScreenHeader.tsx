@@ -40,6 +40,9 @@ const ActionButtons = ({
   onFilterPress,
   onRightButtonPress,
   onNotificationsPress,
+  showViewModeToggle,
+  viewMode,
+  onViewModeChange,
 }: {
   showSearch: boolean;
   isSearching: boolean;
@@ -48,6 +51,9 @@ const ActionButtons = ({
   showNotifications?: boolean;
   notificationCount?: number;
   rightButtonText: string;
+  showViewModeToggle?: boolean;
+  viewMode?: 'list' | 'grid';
+  onViewModeChange?: (mode: 'list' | 'grid') => void;
   onSearchPress: () => void;
   onFilterPress?: () => void;
   onRightButtonPress?: () => void;
@@ -63,6 +69,32 @@ const ActionButtons = ({
       <TouchableOpacity style={styles.iconButton} onPress={onFilterPress} activeOpacity={0.7}>
         <Feather name="filter" size={20} color={tokens.colors.textPrimary} />
       </TouchableOpacity>
+    )}
+    {showViewModeToggle && onViewModeChange && viewMode && (
+      <View style={styles.toggleContainer}>
+        <TouchableOpacity
+          style={[styles.toggleBtn, viewMode === 'list' && styles.toggleBtnActive]}
+          onPress={() => onViewModeChange('list')}
+          activeOpacity={0.8}
+        >
+          <Feather
+            name="list"
+            size={16}
+            color={viewMode === 'list' ? tokens.colors.textPrimary : tokens.colors.textHint}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.toggleBtn, viewMode === 'grid' && styles.toggleBtnActive]}
+          onPress={() => onViewModeChange('grid')}
+          activeOpacity={0.8}
+        >
+          <Feather
+            name="grid"
+            size={16}
+            color={viewMode === 'grid' ? tokens.colors.textPrimary : tokens.colors.textHint}
+          />
+        </TouchableOpacity>
+      </View>
     )}
     {showNotifications && (
       <TouchableOpacity
@@ -107,6 +139,9 @@ export interface ScreenHeaderProps {
   notificationCount?: number;
   showRightButton?: boolean;
   rightButtonText?: string;
+  showViewModeToggle?: boolean;
+  viewMode?: 'list' | 'grid';
+  onViewModeChange?: (mode: 'list' | 'grid') => void;
   searchValue?: string;
   onSearchChange?: (text: string) => void;
   onSearchPress?: () => void;
@@ -124,6 +159,9 @@ export function ScreenHeaderV2({
   notificationCount,
   showRightButton = true,
   rightButtonText = 'New',
+  showViewModeToggle = false,
+  viewMode,
+  onViewModeChange,
   searchValue,
   onSearchChange,
   onSearchPress,
@@ -162,6 +200,9 @@ export function ScreenHeaderV2({
         notificationCount={notificationCount}
         showRightButton={showRightButton}
         rightButtonText={rightButtonText}
+        showViewModeToggle={showViewModeToggle}
+        viewMode={viewMode}
+        onViewModeChange={onViewModeChange}
         onSearchPress={handleSearchPress}
         onFilterPress={onFilterPress}
         onNotificationsPress={onNotificationsPress}
@@ -212,6 +253,26 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: tokens.colors.background,
+  },
+  toggleContainer: {
+    flexDirection: 'row',
+    backgroundColor: tokens.colors.surface,
+    borderRadius: tokens.borderRadius.pill,
+    padding: 2,
+    borderWidth: tokens.borderWidth.hairline,
+    borderColor: tokens.colors.border,
+  },
+  toggleBtn: {
+    padding: tokens.spacing.sm,
+    borderRadius: tokens.borderRadius.pill,
+  },
+  toggleBtnActive: {
+    backgroundColor: tokens.colors.white,
+    shadowColor: tokens.colors.primary,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 1,
   },
   actionButton: {
     borderRadius: 999,

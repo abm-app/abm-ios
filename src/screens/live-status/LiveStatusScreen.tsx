@@ -1,110 +1,103 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, forwardRef, useImperativeHandle } from 'react';
 import { View, Text, StyleSheet, FlatList, ScrollView } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import tokens from '@/theme/tokens';
 import { useAuthStore } from '@/store/authStore';
 import { useStatusRooms } from '@/hooks/status/useStatusRooms';
 import { LoadingSpinner, ErrorState, EmptyState } from '@/components/shared';
 import RoomCard from '@/components/shared/RoomCard';
 import RoomGridCard from './components/RoomGridCard';
-import LiveStatusFilters, { ViewMode } from './components/LiveStatusFilters';
 import { LiveStatusFilterSheet } from './components/LiveStatusFilterSheet';
 import { RoomDetailsSheet } from './components/RoomDetailsSheet';
 import type { LiveStatusRoom } from '@/types/status';
+import type { ViewMode } from './components/LiveStatusFilters';
 
 const EMPTY_ROOMS: LiveStatusRoom[] = [];
 
-export default function LiveStatusScreen() {
-  const property = useAuthStore(s => s.user?.property) || 'express';
-  const { data, isLoading, isError, error, refetch } = useStatusRooms(property);
+export interface LiveStatusScreenRef {
+  openFilters: () => void;
+}
 
-  const insets = useSafeAreaInsets();
-  const tabBarTotalHeight =
-    tokens.navigation.height +
-    tokens.navigation.paddingVertical +
-    Math.max(insets.bottom, tokens.navigation.paddingVertical);
-  const overlap = tabBarTotalHeight - insets.bottom;
-  const bottomSpace = overlap + tokens.spacing.md;
+interface LiveStatusScreenProps {
+  searchQuery: string;
+  viewMode: ViewMode;
+}
 
-  const [searchQuery, setSearchQuery] = useState('');
-  const [viewMode, setViewMode] = useState<ViewMode>('list');
-  const [activeFilters, setActiveFilters] = useState<string[]>(['all']);
-  const [isFilterSheetOpen, setIsFilterSheetOpen] = useState(false);
+const LiveStatusScreen = forwardRef<LiveStatusScreenRef, LiveStatusScreenProps>(
+  ({ searchQuery, viewMode }, ref) => {
+    const property = useAuthStore(s => s.user?.property) || 'express';
+    const { data, isLoading, isError, error, refetch } = useStatusRooms(property);
 
-  const [selectedRoom, setSelectedRoom] = useState<LiveStatusRoom | null>(null);
-  const [isDetailsSheetOpen, setIsDetailsSheetOpen] = useState(false);
+    const [activeFilters, setActiveFilters] = useState<string[]>(['all']);
+    const [isFilterSheetOpen, setIsFilterSheetOpen] = useState(false);
 
-  const handleRoomPress = (room: LiveStatusRoom) => {
-    setSelectedRoom(room);
-    setIsDetailsSheetOpen(true);
-  };
+    useImperativeHandle(ref, () => ({
+      openFilters: () => setIsFilterSheetOpen(true),
+    }));
 
-  const rooms = data?.rooms || EMPTY_ROOMS;
+    const [selectedRoom, setSelectedRoom] = useState<LiveStatusRoom | null>(null);
+    const [isDetailsSheetOpen, setIsDetailsSheetOpen] = useState(false);
 
-  // Derived state: filters and search
-  const filteredRooms = useMemo(() => {
-    return rooms.filter(room => {
-      // 1. Text search
-      const query = searchQuery.toLowerCase();
-      const matchesSearch =
-        room.rmCode.toLowerCase().includes(query) ||
-        (room.guestName || '').toLowerCase().includes(query);
-
-      if (!matchesSearch) return false;
-
-      // 2. Filter tabs
-      if (!activeFilters.includes('all')) {
-        let isMatch = false;
-        if (activeFilters.includes('departures') && room.status === 'checkout') isMatch = true;
-        if (activeFilters.includes('arrivals') && room.status === 'arrival') isMatch = true;
-        if (activeFilters.includes('vacant') && room.status === 'vacant') isMatch = true;
-        if (!isMatch) return false;
-      }
-      return true;
-    });
-  }, [rooms, searchQuery, activeFilters]);
-
-  // Derived state: stats for filter pills
-  const stats = useMemo(() => {
-    return {
-      total: rooms.length,
-      departures: rooms.filter(r => r.status === 'checkout').length,
-      arrivals: rooms.filter(r => r.status === 'arrival').length,
+    const handleRoomPress = (room: LiveStatusRoom) => {
+      setSelectedRoom(room);
+      setIsDetailsSheetOpen(true);
     };
-  }, [rooms]);
 
-  // Derived state: grouped by floor for grid view
-  const floors = useMemo(() => {
-    const grouped: Record<string, LiveStatusRoom[]> = {};
-    filteredRooms.forEach(room => {
-      // Simple heuristic: first digit of room number
-      const floorStr = room.rmCode.charAt(0);
-      const floorNum = parseInt(floorStr, 10);
-      const floorKey = isNaN(floorNum) ? 'Other' : `${floorNum}${getOrdinal(floorNum)} FLOOR`;
+    const rooms = data?.rooms || EMPTY_ROOMS;
 
-      if (!grouped[floorKey]) {
-        grouped[floorKey] = [];
-      }
-      grouped[floorKey].push(room);
-    });
-    return grouped;
-  }, [filteredRooms]);
+    // Derived state: filters and search
+    const filteredRooms = useMemo(() => {
+      return rooms.filter(room => {
+        // 1. Text search
+        const query = searchQuery.toLowerCase();
+        const matchesSearch =
+          room.rmCode.toLowerCase().includes(query) ||
+          (room.guestName || '').toLowerCase().includes(query);
 
-  if (isLoading) return <LoadingSpinner />;
-  if (isError) return <ErrorState message={error.message} onRetry={refetch} />;
+        if (!matchesSearch) return false;
 
-  return (
-    <View style={styles.container}>
-      <LiveStatusFilters
-        searchQuery={searchQuery}
-        onSearchChange={setSearchQuery}
-        viewMode={viewMode}
-        onViewModeChange={setViewMode}
-        onFilterPress={() => setIsFilterSheetOpen(true)}
-        hasActiveFilter={activeFilters.length > 0 && !activeFilters.includes('all')}
-      />
+        // 2. Filter tabs
+        if (!activeFilters.includes('all')) {
+          let isMatch = false;
+          if (activeFilters.includes('departures') && room.status === 'checkout') isMatch = true;
+          if (activeFilters.includes('arrivals') && room.status === 'arrival') isMatch = true;
+          if (activeFilters.includes('vacant') && room.status === 'vacant') isMatch = true;
+          if (!isMatch) return false;
+        }
+        return true;
+      });
+    }, [rooms, searchQuery, activeFilters]);
 
-      <View style={[styles.listContainer, { marginBottom: bottomSpace }]}>
+    // Derived state: stats for filter pills
+    const stats = useMemo(() => {
+      return {
+        total: rooms.length,
+        departures: rooms.filter(r => r.status === 'checkout').length,
+        arrivals: rooms.filter(r => r.status === 'arrival').length,
+      };
+    }, [rooms]);
+
+    // Derived state: grouped by floor for grid view
+    const floors = useMemo(() => {
+      const grouped: Record<string, LiveStatusRoom[]> = {};
+      filteredRooms.forEach(room => {
+        // Simple heuristic: first digit of room number
+        const floorStr = room.rmCode.charAt(0);
+        const floorNum = parseInt(floorStr, 10);
+        const floorKey = isNaN(floorNum) ? 'Other' : `${floorNum}${getOrdinal(floorNum)} FLOOR`;
+
+        if (!grouped[floorKey]) {
+          grouped[floorKey] = [];
+        }
+        grouped[floorKey].push(room);
+      });
+      return grouped;
+    }, [filteredRooms]);
+
+    if (isLoading) return <LoadingSpinner />;
+    if (isError) return <ErrorState message={error.message} onRetry={refetch} />;
+
+    return (
+      <>
         {filteredRooms.length === 0 ? (
           <EmptyState
             icon="search"
@@ -136,27 +129,31 @@ export default function LiveStatusScreen() {
             ))}
           </ScrollView>
         )}
-      </View>
 
-      <LiveStatusFilterSheet
-        visible={isFilterSheetOpen}
-        onClose={() => setIsFilterSheetOpen(false)}
-        onApply={filters => {
-          setActiveFilters(filters);
-          setIsFilterSheetOpen(false);
-        }}
-        initialFilters={activeFilters}
-        stats={stats}
-      />
+        <LiveStatusFilterSheet
+          visible={isFilterSheetOpen}
+          onClose={() => setIsFilterSheetOpen(false)}
+          onApply={filters => {
+            setActiveFilters(filters);
+            setIsFilterSheetOpen(false);
+          }}
+          initialFilters={activeFilters}
+          stats={stats}
+        />
 
-      <RoomDetailsSheet
-        visible={isDetailsSheetOpen}
-        onClose={() => setIsDetailsSheetOpen(false)}
-        room={selectedRoom}
-      />
-    </View>
-  );
-}
+        <RoomDetailsSheet
+          visible={isDetailsSheetOpen}
+          onClose={() => setIsDetailsSheetOpen(false)}
+          room={selectedRoom}
+        />
+      </>
+    );
+  },
+);
+
+LiveStatusScreen.displayName = 'LiveStatusScreen';
+
+export default LiveStatusScreen;
 
 function getOrdinal(n: number) {
   const s = ['th', 'st', 'nd', 'rd'];
@@ -165,20 +162,8 @@ function getOrdinal(n: number) {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  listContainer: {
-    flex: 1,
-    backgroundColor: tokens.colors.surfaceLight,
-    marginHorizontal: tokens.spacing.xlMd,
-    borderRadius: tokens.spacing.xl,
-    overflow: 'hidden',
-    padding: tokens.spacing.xlMd,
-    marginTop: tokens.spacing.md,
-  },
   listContent: {
-    paddingTop: tokens.spacing.sm,
+    paddingTop: tokens.spacing.md,
     paddingBottom: tokens.spacing.xl,
   },
   gridContent: {
