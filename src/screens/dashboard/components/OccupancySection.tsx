@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { Feather, Ionicons } from '@expo/vector-icons';
+import { Feather, FontAwesome } from '@expo/vector-icons';
 import Svg, { Circle } from 'react-native-svg';
 import tokens from '../../../theme/tokens';
 
@@ -12,8 +12,8 @@ interface OccupancySectionProps {
 // ─── Local Circular Progress Component ────────────────────────────────────────
 
 function CircularProgress({ percentage }: { percentage: number }) {
-  const size = 110;
-  const strokeWidth = 10;
+  const size = 90;
+  const strokeWidth = 8;
   const radius = (size - strokeWidth) / 2;
   const circumference = radius * 2 * Math.PI;
   const strokeDashoffset = circumference - (percentage / 100) * circumference;
@@ -75,7 +75,7 @@ export default function OccupancySection({ occupancy, todayRevenue }: OccupancyS
               {/* Header */}
               <View style={styles.header}>
                 <View style={styles.iconBoxNeutral}>
-                  <Ionicons name="business" size={22} color={tokens.colors.primary} />
+                  <FontAwesome name="building-o" size={20} color={tokens.colors.primary} />
                 </View>
                 <Text style={styles.propertyName}>{displayName}</Text>
               </View>
@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: tokens.colors.white,
     borderRadius: tokens.borderRadius.xl,
-    padding: tokens.spacing.xlMd,
+    padding: tokens.spacing.lgMd,
     shadowColor: tokens.colors.primary,
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.08,
@@ -138,7 +138,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: tokens.spacing.mdLg,
-    marginBottom: tokens.spacing.xl,
+    marginBottom: tokens.spacing.lgMd,
   },
   iconBox: {
     width: 44,
@@ -171,13 +171,13 @@ const styles = StyleSheet.create({
   },
   middleRow: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-end',
     justifyContent: 'space-between',
-    marginBottom: tokens.spacing.xl,
+    marginBottom: tokens.spacing.lgMd,
   },
   progressContainer: {
-    width: 110,
-    height: 110,
+    width: 90,
+    height: 90,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -206,6 +206,8 @@ const styles = StyleSheet.create({
     gap: tokens.spacing.sm,
     flex: 1,
     justifyContent: 'flex-end',
+    alignSelf: 'flex-end',
+    paddingBottom: tokens.spacing.xs,
   },
   chip: {
     flexDirection: 'row',
