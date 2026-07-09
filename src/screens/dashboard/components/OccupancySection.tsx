@@ -9,9 +9,18 @@ interface OccupancySectionProps {
   todayRevenue: Record<string, number>;
 }
 
+// ─── Colour helper ──────────────────────────────────────────────────────────
+
+function getProgressColor(percentage: number): string {
+  if (percentage >= 80) return tokens.colors.occupancyHigh;
+  if (percentage <= 50) return tokens.colors.occupancyLow;
+  return tokens.colors.occupancyMid;
+}
+
 // ─── Local Circular Progress Component ────────────────────────────────────────
 
 function CircularProgress({ percentage }: { percentage: number }) {
+  const strokeColor = getProgressColor(percentage);
   const size = 90;
   const strokeWidth = 8;
   const radius = (size - strokeWidth) / 2;
@@ -32,7 +41,7 @@ function CircularProgress({ percentage }: { percentage: number }) {
         />
         {/* Progress Circle */}
         <Circle
-          stroke={tokens.colors.primary}
+          stroke={strokeColor}
           fill="none"
           cx={size / 2}
           cy={size / 2}
