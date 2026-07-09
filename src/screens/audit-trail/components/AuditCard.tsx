@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import tokens from '@/theme/tokens';
+import { Card } from '@/components/ui';
 import type { AuditEvent, AuditEventType } from '@/api/endpoints/auditApi';
 
 const EVENT_CONFIG: Record<AuditEventType, { label: string; color: string; background: string }> = {
@@ -134,7 +135,7 @@ export function AuditCard({ event }: AuditCardProps) {
   };
 
   return (
-    <View style={styles.card}>
+    <Card padded variant="shadow-outlined" shadow="elevatedCard" style={styles.card}>
       <View style={styles.headerRow}>
         <View style={[styles.badge, { backgroundColor: config.background }]}>
           <Text style={[styles.badgeText, { color: config.color }]}>{config.label}</Text>
@@ -145,17 +146,13 @@ export function AuditCard({ event }: AuditCardProps) {
         Room {event.rmCode} • {event.guestName}
       </Text>
       {renderDetailRow()}
-    </View>
+    </Card>
   );
 }
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: tokens.colors.white,
-    borderRadius: tokens.spacing.md,
-    padding: tokens.spacing.lgMd,
     marginBottom: tokens.spacing.md,
-    ...tokens.shadow.chatBubble,
   },
   headerRow: {
     flexDirection: 'row',
