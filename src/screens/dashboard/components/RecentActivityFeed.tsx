@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import tokens from '../../../theme/tokens';
+import { Card } from '../../../components/ui';
 import type { RecentEvent } from '../../../types/dashboard';
 
 interface RecentActivityFeedProps {
@@ -65,7 +66,13 @@ export default function RecentActivityFeed({ events }: RecentActivityFeedProps) 
           const time = formatTime(event.timestamp);
 
           return (
-            <View key={event.id} style={styles.card}>
+            <Card
+              key={event.id}
+              padded
+              variant="shadow-outlined"
+              shadow="elevatedCard"
+              style={styles.card}
+            >
               {/* Icon box */}
               <View style={[styles.iconBox, { backgroundColor: iconBg }]}>
                 <Feather name={iconName} size={20} color={iconColor} />
@@ -88,7 +95,7 @@ export default function RecentActivityFeed({ events }: RecentActivityFeedProps) 
                   <Text style={styles.roomText}>Room {event.room}</Text>
                 </View>
               </View>
-            </View>
+            </Card>
           );
         })}
       </View>
@@ -113,15 +120,7 @@ const styles = StyleSheet.create({
   card: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    backgroundColor: tokens.colors.white,
-    borderRadius: tokens.borderRadius.lg,
-    paddingVertical: tokens.spacing.lgMd,
-    paddingHorizontal: tokens.spacing.lgMd,
     gap: tokens.spacing.mdLg,
-    shadowColor: tokens.colors.primary,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.06,
-    shadowRadius: 12,
   },
   iconBox: {
     width: 48,

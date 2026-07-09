@@ -3,6 +3,7 @@ import { View, Text, StyleSheet } from 'react-native';
 import { Feather, FontAwesome } from '@expo/vector-icons';
 import Svg, { Circle } from 'react-native-svg';
 import tokens from '../../../theme/tokens';
+import { Card } from '../../../components/ui';
 
 interface OccupancySectionProps {
   occupancy: Record<string, { name?: string; occupied: number; total: number }>;
@@ -80,7 +81,13 @@ export default function OccupancySection({ occupancy, todayRevenue }: OccupancyS
           }).format(revenue);
 
           return (
-            <View key={propertyKey} style={styles.card}>
+            <Card
+              key={propertyKey}
+              padded
+              variant="shadow-outlined"
+              shadow="elevatedCard"
+              style={styles.card}
+            >
               {/* Header */}
               <View style={styles.header}>
                 <View style={styles.iconBoxNeutral}>
@@ -116,7 +123,7 @@ export default function OccupancySection({ occupancy, todayRevenue }: OccupancyS
                   <Text style={styles.revenueAmount}>{formattedRevenue}</Text>
                 </View>
               </View>
-            </View>
+            </Card>
           );
         })}
       </View>
@@ -132,16 +139,7 @@ const styles = StyleSheet.create({
     gap: tokens.spacing.lgMd,
   },
   card: {
-    backgroundColor: tokens.colors.white,
     borderRadius: tokens.borderRadius.xl,
-    padding: tokens.spacing.lgMd,
-    shadowColor: tokens.colors.primary,
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.08,
-    shadowRadius: 16,
-    elevation: 4,
-    borderWidth: 1,
-    borderColor: tokens.colors.borderDark,
   },
   header: {
     flexDirection: 'row',
