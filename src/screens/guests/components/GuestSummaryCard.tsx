@@ -59,7 +59,7 @@ const styles = StyleSheet.create({
   },
   summaryLabel: {
     fontFamily: tokens.typography.fontFamily.sub,
-    fontSize: 11,
+    fontSize: tokens.typography.fontSize.label,
     color: tokens.colors.textHint,
     letterSpacing: 0.5,
     marginRight: tokens.spacing.md,

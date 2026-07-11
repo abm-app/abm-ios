@@ -46,8 +46,8 @@ const toneContainerStyles: Record<ChipTone, ViewStyle> = {
     borderColor: tokens.colors.primary,
   },
   warning: {
-    backgroundColor: tokens.colors.warning,
-    borderColor: tokens.colors.warning,
+    backgroundColor: tokens.colors.warningSurface,
+    borderColor: tokens.colors.warningSurface,
   },
 };
 
@@ -59,7 +59,7 @@ const toneLabelStyles: Record<ChipTone, TextStyle> = {
     color: tokens.colors.background,
   },
   warning: {
-    color: tokens.colors.background,
+    color: tokens.colors.warning,
   },
 };
 

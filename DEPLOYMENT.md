@@ -77,7 +77,7 @@ Then, scan the QR code using the camera on your iPhone to open the app in Expo G
 If you want to create a standalone build specifically for the iOS Simulator:
 
 ```bash
-eas build --profile development --platform ios --auto-submit
+eas build --profile development --platform ios
 ```
 Once the build is complete, EAS CLI will prompt you to automatically install and run it on your running simulator.
 

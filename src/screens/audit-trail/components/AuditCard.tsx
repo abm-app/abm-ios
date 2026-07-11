@@ -33,7 +33,7 @@ const EVENT_CONFIG: Record<
   room_change: {
     label: 'Room Change',
     colors: {
-      bg: tokens.colors.badgeRoomChangeBg,
+      bg: tokens.colors.warningSurface,
       text: tokens.colors.warning,
     },
   },
