@@ -1,4 +1,4 @@
-import type { Guest, GuestFilters, GuestResponse, CommunicationLogEvent } from '@/types/guest';
+import type { Guest, CommunicationLogEvent } from '@/types/guest';
 
 const mockGuests = [
   {
@@ -102,88 +102,6 @@ for (let i = 5; i <= 45; i++) {
   } as unknown as Guest);
 }
 
-export const fetchMockGuests = async (filters: GuestFilters): Promise<GuestResponse> => {
-  // Simulate network delay
-  await new Promise(resolve => setTimeout(resolve, 600));
-
-  let filtered = [...mockGuests];
-
-  if (filters.search) {
-    const query = filters.search.toLowerCase();
-    filtered = filtered.filter(
-      g => g.name.toLowerCase().includes(query) || g.phone.includes(query),
-    );
-  }
-
-  if (filters.tier && filters.tier !== 'All') {
-    filtered = filtered.filter(g => g.tier.toLowerCase() === filters.tier?.toLowerCase());
-  }
-
-  if ((filters as any).lapsed) {
-    const cutoffDate = new Date();
-    if ((filters as any).lapsed === '30_days' || (filters as any).lapsed === true) {
-      cutoffDate.setDate(cutoffDate.getDate() - 30);
-    } else if ((filters as any).lapsed === '3_months') {
-      cutoffDate.setMonth(cutoffDate.getMonth() - 3);
-    } else if ((filters as any).lapsed === '6_months') {
-      cutoffDate.setMonth(cutoffDate.getMonth() - 6);
-    } else if ((filters as any).lapsed === '12_months') {
-      cutoffDate.setFullYear(cutoffDate.getFullYear() - 1);
-    }
-    filtered = filtered.filter(
-      g => g.lastStayDate != null && new Date(g.lastStayDate) < cutoffDate,
-    );
-  }
-
-  const limit = filters.limit || 10;
-  const page = filters.page || 1;
-  const start = (page - 1) * limit;
-  const end = start + limit;
-
-  const paginatedGuests = filtered.slice(start, end);
-
-  return {
-    guests: paginatedGuests,
-    total: filtered.length,
-    page,
-    limit,
-  };
-};
-
-export const fetchGuestById = async (
-  id: string,
-): Promise<import('@/types/guest').GuestProfileResponse> => {
-  await new Promise(resolve => setTimeout(resolve, 400));
-
-  const guest = mockGuests.find(g => g.id === id);
-  if (!guest) {
-    throw new Error('Guest not found');
-  }
-
-  // Generate mock bookings based on guest stays
-  const bookings: import('@/types/booking').Booking[] = [];
-  const roomCodes = ['DLX_CV', 'EXEC_SU', 'STD_Q', 'STD_K', 'PREM_SU', 'PRES_SU'];
-
-  for (let i = 0; i < guest.totalStays; i++) {
-    const d = guest.lastStayDate != null ? new Date(guest.lastStayDate) : null;
-    if (d != null) {
-      d.setMonth(d.getMonth() - i * 3); // fake spread out dates
-
-      bookings.push({
-        id: `b_${id}_${i}`,
-        guestId: id,
-        rmCode: roomCodes[Math.floor(Math.random() * roomCodes.length)],
-        checkoutDate: d.toISOString(),
-        pointsEarned: Math.floor(Math.random() * 500) + 50,
-        folioNumber: `#${Math.floor(Math.random() * 90000) + 10000}`,
-        notes: i % 3 === 0 ? 'Anniversary Trip' : undefined,
-      });
-    }
-  }
-
-  return { guest, bookings };
-};
-
 export const updateGuestDnc = async (
   id: string,
   doNotContact: boolean,
@@ -199,8 +117,10 @@ export const updateGuestDnc = async (
     doNotContact,
   };
 
-  // Re-fetch to return full profile
-  return fetchGuestById(id);
+  return Promise.resolve({
+    guest: mockGuests[guestIndex],
+    bookings: [],
+  });
 };
 
 export const deductGuestPoints = async (id: string, points: number): Promise<void> => {
