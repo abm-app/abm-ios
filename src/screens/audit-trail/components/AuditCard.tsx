@@ -5,31 +5,44 @@ import tokens from '@/theme/tokens';
 import { Card } from '@/components/ui';
 import type { AuditEvent, AuditEventType } from '@/api/endpoints/auditApi';
 
-const EVENT_CONFIG: Record<AuditEventType, { label: string; color: string; background: string }> = {
+const EVENT_CONFIG: Record<
+  AuditEventType,
+  { label: string; colors: { bg: string; text: string } }
+> = {
   cancellation: {
-    label: 'CANCELLATION',
-    color: tokens.colors.danger,
-    background: tokens.colors.badgeHighBg,
+    label: 'Cancellation',
+    colors: {
+      bg: tokens.colors.badgeHighBg,
+      text: tokens.colors.danger,
+    },
   },
   extension: {
-    label: 'STAY EXTENSION',
-    color: tokens.colors.blue,
-    background: tokens.colors.badgeExtensionBg,
+    label: 'Stay Extension',
+    colors: {
+      bg: tokens.colors.badgeExtensionBg,
+      text: tokens.colors.blue,
+    },
   },
   modification: {
-    label: 'MODIFICATION',
-    color: tokens.colors.purple,
-    background: tokens.colors.badgeModificationBg,
+    label: 'Modification',
+    colors: {
+      bg: tokens.colors.badgeModificationBg,
+      text: tokens.colors.purple,
+    },
   },
   room_change: {
-    label: 'ROOM CHANGE',
-    color: tokens.colors.warning,
-    background: tokens.colors.badgeRoomChangeBg,
+    label: 'Room Change',
+    colors: {
+      bg: tokens.colors.warningSurface,
+      text: tokens.colors.warning,
+    },
   },
   checkout: {
-    label: 'CHECKOUT',
-    color: tokens.colors.danger,
-    background: tokens.colors.badgeHighBg,
+    label: 'Checkout',
+    colors: {
+      bg: tokens.colors.badgeHighBg,
+      text: tokens.colors.danger,
+    },
   },
 };
 
@@ -137,8 +150,8 @@ export function AuditCard({ event }: AuditCardProps) {
   return (
     <Card padded variant="shadow-outlined" shadow="elevatedCard" style={styles.card}>
       <View style={styles.headerRow}>
-        <View style={[styles.badge, { backgroundColor: config.background }]}>
-          <Text style={[styles.badgeText, { color: config.color }]}>{config.label}</Text>
+        <View style={[styles.badge, { backgroundColor: config.colors.bg }]}>
+          <Text style={[styles.badgeText, { color: config.colors.text }]}>{config.label}</Text>
         </View>
         {timeStr ? <Text style={styles.timeText}>{timeStr}</Text> : null}
       </View>
@@ -165,10 +178,9 @@ const styles = StyleSheet.create({
     borderRadius: tokens.borderRadius.pill,
   },
   badgeText: {
-    fontSize: tokens.typography.fontSize.label,
-    fontFamily: tokens.typography.fontFamily.sub,
-    fontWeight: '700',
-    letterSpacing: tokens.typography.letterSpacing.caps,
+    fontSize: tokens.badge.fontSize,
+    fontWeight: tokens.badge.fontWeight,
+    letterSpacing: tokens.typography.letterSpacing.badge,
   },
   timeText: {
     fontSize: tokens.typography.fontSize.caption,

@@ -55,11 +55,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   amount: {
+    fontFamily: tokens.typography.fontFamily.headingBold,
     fontSize: tokens.typography.fontSize.numeric,
     fontWeight: '700',
     color: tokens.colors.white,
   },
   label: {
+    fontFamily: tokens.typography.fontFamily.headingBold,
     fontSize: tokens.typography.fontSize.label,
     fontWeight: '600',
     color: tokens.colors.white,

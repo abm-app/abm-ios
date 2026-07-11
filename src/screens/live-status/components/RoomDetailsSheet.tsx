@@ -17,26 +17,26 @@ export function RoomDetailsSheet({ visible, onClose, room }: RoomDetailsSheetPro
     switch (status) {
       case 'checkout':
         return {
-          label: 'CHECKOUT TODAY',
+          label: 'Checkout Today',
           bg: tokens.colors.statusCheckoutBg,
           text: tokens.colors.statusCheckoutText,
         };
       case 'arrival':
         return {
-          label: 'ARRIVAL TODAY',
+          label: 'Arrival Today',
           bg: tokens.colors.statusArrivalBg,
           text: tokens.colors.statusArrivalText,
         };
       case 'occupied':
         return {
-          label: 'OCCUPIED',
+          label: 'Occupied',
           bg: tokens.colors.statusOccupiedBg,
           text: tokens.colors.statusOccupiedText,
         };
       case 'vacant':
       default:
         return {
-          label: 'VACANT',
+          label: 'Vacant',
           bg: tokens.colors.statusVacantBg,
           text: tokens.colors.statusVacantText,
         };

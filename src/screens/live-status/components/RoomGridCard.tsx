@@ -35,8 +35,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   roomNumber: {
-    fontFamily: tokens.typography.fontFamily.sub,
+    fontFamily: tokens.typography.fontFamily.headingBold,
     fontSize: tokens.typography.fontSize.h2,
-    fontWeight: tokens.typography.fontWeight.semibold,
   },
 });
