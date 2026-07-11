@@ -619,6 +619,8 @@ const auth = {
   logoWidth: 78,
   /** Logo height (unscaled) */
   logoHeight: 22,
+  /** Brand logo size for login header (unscaled) */
+  brandLogoSize: 80,
 } as const;
 
 // ─── Opacities ───────────────────────────────────────────────────────────────
