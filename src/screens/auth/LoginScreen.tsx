@@ -13,6 +13,7 @@ import { useLogin } from '@/hooks/auth/useLogin';
 import { Backdrop } from '@/components/shared';
 import LoginCard from './components/LoginCard';
 import LpaiLogo from '../../../assets/lpai.svg';
+import AbmLogo from '../../../assets/logos/abm-logo.svg';
 
 // ─── Layout reference (unscaled) ─────────────────────────────────────────────
 
@@ -59,7 +60,10 @@ export default function LoginScreen() {
         <View style={[styles.content, dynamicStyles.content]}>
           {/* ── Brand area ──────────────────────────────────────────────── */}
           <View style={[styles.brandRow, dynamicStyles.brandRow]}>
-            <Text style={[styles.brandName, dynamicStyles.brandName]}>ABM</Text>
+            <AbmLogo
+              width={tokens.auth.brandLogoSize * designScale}
+              height={tokens.auth.brandLogoSize * designScale}
+            />
           </View>
 
           {/* ── Login card ──────────────────────────────────────────────── */}
@@ -110,12 +114,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  brandName: {
-    fontFamily: tokens.typography.fontFamily.heading,
-    color: tokens.colors.authBrandInk,
-    textAlign: 'center',
-    fontWeight: '400',
-  },
   brandTagline: {
     fontFamily: tokens.typography.fontFamily.sub,
     color: tokens.colors.authLabel,
@@ -153,10 +151,6 @@ const createDynamicStyles = (designScale: number, windowHeight: number) =>
     },
     brandRow: {
       top: tokens.auth.brandTop * designScale,
-    },
-    brandName: {
-      fontSize: tokens.typography.fontSize.display * designScale,
-      lineHeight: tokens.typography.fontSize.display * 1.1 * designScale,
     },
     cardPosition: {
       top: tokens.auth.cardTop * designScale,

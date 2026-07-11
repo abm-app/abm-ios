@@ -619,6 +619,8 @@ const auth = {
   logoWidth: 78,
   /** Logo height (unscaled) */
   logoHeight: 22,
+  /** Brand logo size for login header (unscaled) */
+  brandLogoSize: 80,
 } as const;
 
 // ─── Opacities ───────────────────────────────────────────────────────────────
@@ -678,8 +680,8 @@ const shadow = {
   /** Elevated card (Campaign cards) */
   elevatedCard: {
     shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.25,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.06,
     shadowRadius: 12,
     elevation: 4,
   },
