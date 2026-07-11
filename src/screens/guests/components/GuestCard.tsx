@@ -37,7 +37,7 @@ export default function GuestCard({ guest, onPress, style }: GuestCardProps) {
     if (onPress) {
       onPress();
     } else {
-      navigation.navigate('GuestProfile', { id: guest._id });
+      navigation.navigate('GuestProfile', { id: guest.id });
     }
   };
 
@@ -64,7 +64,7 @@ export default function GuestCard({ guest, onPress, style }: GuestCardProps) {
       <View style={styles.statsRow}>
         <View style={styles.statBox}>
           <Text style={styles.statLabel}>Available Points</Text>
-          <Text style={styles.statValue}>{guest.spendableBalance.toLocaleString()}</Text>
+          <Text style={styles.statValue}>{(guest.spendableBalance ?? 0).toLocaleString()}</Text>
         </View>
         <View style={styles.statBox}>
           <Text style={styles.statLabel}>Total Stays</Text>

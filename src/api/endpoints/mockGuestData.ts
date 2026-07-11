@@ -1,8 +1,8 @@
 import type { Guest, GuestFilters, GuestResponse, CommunicationLogEvent } from '@/types/guest';
 
-const mockGuests: Guest[] = [
+const mockGuests = [
   {
-    _id: '60d5ec49f1b2c8b1f8e4e1a1',
+    id: '60d5ec49f1b2c8b1f8e4e1a1',
     name: 'Aarav Patel',
     phone: '+91 98765 43210',
     email: 'aarav.patel@example.com',
@@ -19,7 +19,7 @@ const mockGuests: Guest[] = [
     createdAt: '2022-11-12T09:15:00Z',
   },
   {
-    _id: '60d5ec49f1b2c8b1f8e4e1a2',
+    id: '60d5ec49f1b2c8b1f8e4e1a2',
     name: 'Marcus Reed',
     phone: '+44 7700 900077',
     email: 'marcus.reed@example.com',
@@ -36,7 +36,7 @@ const mockGuests: Guest[] = [
     createdAt: '2023-10-01T11:20:00Z',
   },
   {
-    _id: '60d5ec49f1b2c8b1f8e4e1a3',
+    id: '60d5ec49f1b2c8b1f8e4e1a3',
     name: 'Elena Larson',
     phone: '+1 555 0198',
     email: 'elena.larson@example.com',
@@ -53,7 +53,7 @@ const mockGuests: Guest[] = [
     createdAt: '2021-06-15T09:00:00Z',
   },
   {
-    _id: '60d5ec49f1b2c8b1f8e4e1a4',
+    id: '60d5ec49f1b2c8b1f8e4e1a4',
     name: 'Sarah Jenkins',
     phone: '+91 98765 43210',
     email: 'sarah.jenkins@example.com',
@@ -69,7 +69,7 @@ const mockGuests: Guest[] = [
     source: 'direct',
     createdAt: '2022-01-10T09:15:00Z',
   },
-];
+] as unknown as Guest[];
 
 // Generate more mock data for infinite scrolling
 for (let i = 5; i <= 45; i++) {
@@ -84,7 +84,7 @@ for (let i = 5; i <= 45; i++) {
   }
 
   mockGuests.push({
-    _id: `60d5ec49f1b2c8b1f8e4e1a${i}`,
+    id: `60d5ec49f1b2c8b1f8e4e1a${i}`,
     name: `Guest User ${i}`,
     phone: `+91 90000 000${i.toString().padStart(2, '0')}`,
     email: `guest${i}@example.com`,
@@ -99,7 +99,7 @@ for (let i = 5; i <= 45; i++) {
     doNotContact: false,
     source: 'direct',
     createdAt: '2022-01-01T00:00:00Z',
-  });
+  } as unknown as Guest);
 }
 
 export const fetchMockGuests = async (filters: GuestFilters): Promise<GuestResponse> => {
@@ -119,18 +119,20 @@ export const fetchMockGuests = async (filters: GuestFilters): Promise<GuestRespo
     filtered = filtered.filter(g => g.tier.toLowerCase() === filters.tier?.toLowerCase());
   }
 
-  if (filters.lapsed) {
+  if ((filters as any).lapsed) {
     const cutoffDate = new Date();
-    if (filters.lapsed === '30_days' || filters.lapsed === true) {
+    if ((filters as any).lapsed === '30_days' || (filters as any).lapsed === true) {
       cutoffDate.setDate(cutoffDate.getDate() - 30);
-    } else if (filters.lapsed === '3_months') {
+    } else if ((filters as any).lapsed === '3_months') {
       cutoffDate.setMonth(cutoffDate.getMonth() - 3);
-    } else if (filters.lapsed === '6_months') {
+    } else if ((filters as any).lapsed === '6_months') {
       cutoffDate.setMonth(cutoffDate.getMonth() - 6);
-    } else if (filters.lapsed === '12_months') {
+    } else if ((filters as any).lapsed === '12_months') {
       cutoffDate.setFullYear(cutoffDate.getFullYear() - 1);
     }
-    filtered = filtered.filter(g => new Date(g.lastStayDate) < cutoffDate);
+    filtered = filtered.filter(
+      g => g.lastStayDate != null && new Date(g.lastStayDate) < cutoffDate,
+    );
   }
 
   const limit = filters.limit || 10;
@@ -153,7 +155,7 @@ export const fetchGuestById = async (
 ): Promise<import('@/types/guest').GuestProfileResponse> => {
   await new Promise(resolve => setTimeout(resolve, 400));
 
-  const guest = mockGuests.find(g => g._id === id);
+  const guest = mockGuests.find(g => g.id === id);
   if (!guest) {
     throw new Error('Guest not found');
   }
@@ -163,18 +165,20 @@ export const fetchGuestById = async (
   const roomCodes = ['DLX_CV', 'EXEC_SU', 'STD_Q', 'STD_K', 'PREM_SU', 'PRES_SU'];
 
   for (let i = 0; i < guest.totalStays; i++) {
-    const d = new Date(guest.lastStayDate);
-    d.setMonth(d.getMonth() - i * 3); // fake spread out dates
+    const d = guest.lastStayDate != null ? new Date(guest.lastStayDate) : null;
+    if (d != null) {
+      d.setMonth(d.getMonth() - i * 3); // fake spread out dates
 
-    bookings.push({
-      id: `b_${id}_${i}`,
-      guestId: id,
-      rmCode: roomCodes[Math.floor(Math.random() * roomCodes.length)],
-      checkoutDate: d.toISOString(),
-      pointsEarned: Math.floor(Math.random() * 500) + 50,
-      folioNumber: `#${Math.floor(Math.random() * 90000) + 10000}`,
-      notes: i % 3 === 0 ? 'Anniversary Trip' : undefined,
-    });
+      bookings.push({
+        id: `b_${id}_${i}`,
+        guestId: id,
+        rmCode: roomCodes[Math.floor(Math.random() * roomCodes.length)],
+        checkoutDate: d.toISOString(),
+        pointsEarned: Math.floor(Math.random() * 500) + 50,
+        folioNumber: `#${Math.floor(Math.random() * 90000) + 10000}`,
+        notes: i % 3 === 0 ? 'Anniversary Trip' : undefined,
+      });
+    }
   }
 
   return { guest, bookings };
@@ -185,7 +189,7 @@ export const updateGuestDnc = async (
   doNotContact: boolean,
 ): Promise<import('@/types/guest').GuestProfileResponse> => {
   await new Promise(resolve => setTimeout(resolve, 500));
-  const guestIndex = mockGuests.findIndex(g => g._id === id);
+  const guestIndex = mockGuests.findIndex(g => g.id === id);
   if (guestIndex === -1) {
     throw new Error('Guest not found');
   }
@@ -200,11 +204,11 @@ export const updateGuestDnc = async (
 };
 
 export const deductGuestPoints = async (id: string, points: number): Promise<void> => {
-  const guestIndex = mockGuests.findIndex(g => g._id === id);
+  const guestIndex = mockGuests.findIndex(g => g.id === id);
   if (guestIndex !== -1) {
     mockGuests[guestIndex] = {
       ...mockGuests[guestIndex],
-      spendableBalance: Math.max(0, mockGuests[guestIndex].spendableBalance - points),
+      spendableBalance: Math.max(0, (mockGuests[guestIndex].spendableBalance ?? 0) - points),
     };
   }
 };

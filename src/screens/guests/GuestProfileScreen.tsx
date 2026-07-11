@@ -57,7 +57,7 @@ export default function GuestProfileScreen({ route }: Props) {
     );
   }
 
-  const { guest, bookings } = data;
+  const guest = data;
   const spendableBalance = guest.spendableBalance || 0;
 
   const isStaff = userRole === 'staff';
@@ -105,10 +105,10 @@ export default function GuestProfileScreen({ route }: Props) {
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         {/* Tab Content */}
         <View style={styles.tabContent}>
-          {activeTab === 'stays' && <GuestStayHistory bookings={bookings} />}
-          {activeTab === 'rewards' && <GuestRewards guestId={guest._id} />}
+          {activeTab === 'stays' && <GuestStayHistory bookings={[]} />}
+          {activeTab === 'rewards' && <GuestRewards guestId={guest.id} />}
           {activeTab === 'comms' && (
-            <CommunicationLog guestId={guest._id} doNotContact={guest.doNotContact} />
+            <CommunicationLog guestId={guest.id} doNotContact={guest.doNotContact} />
           )}
         </View>
       </ScrollView>
