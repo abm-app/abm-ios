@@ -78,25 +78,14 @@ export function FilterSheet({
           )}
           {scrollable ? (
             <ScrollView
-              contentContainerStyle={[
-                styles.contentContainer,
-                !footer && { paddingBottom: Math.max(insets.bottom, 24) },
-                contentStyle,
-              ]}
+              style={styles.content}
+              contentContainerStyle={[styles.contentContainer, contentStyle]}
               showsVerticalScrollIndicator={false}
             >
               {children}
             </ScrollView>
           ) : (
-            <View
-              style={[
-                styles.contentContainer,
-                !footer && { paddingBottom: Math.max(insets.bottom, 24) },
-                contentStyle,
-              ]}
-            >
-              {children}
-            </View>
+            <View style={[styles.contentContainer, contentStyle]}>{children}</View>
           )}
           {footer && (
             <View
@@ -122,49 +111,51 @@ const styles = StyleSheet.create({
   },
   sheetContainer: {
     backgroundColor: tokens.colors.background,
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
+    borderTopLeftRadius: tokens.borderRadius.xl,
+    borderTopRightRadius: tokens.borderRadius.xl,
     maxHeight: '90%',
     ...tokens.shadow.modal,
     elevation: 24,
   },
   dragIndicatorContainer: {
     alignItems: 'center',
-    paddingTop: 12,
+    paddingTop: tokens.spacing.mdLg,
   },
   dragIndicator: {
     width: 40,
-    height: 4,
+    height: tokens.spacing.xs,
     backgroundColor: tokens.colors.border,
-    borderRadius: 2,
+    borderRadius: tokens.spacing.xxs,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 24,
-    paddingTop: 24,
-    paddingBottom: 16,
+    paddingHorizontal: tokens.spacing.xxl,
+    paddingTop: tokens.spacing.xxl,
+    paddingBottom: tokens.spacing.lgMd,
   },
   headerWithDrag: {
-    paddingTop: 16,
+    paddingTop: tokens.spacing.lgMd,
   },
   title: {
     fontFamily: tokens.typography.fontFamily.heading,
-    fontSize: 24,
-    fontWeight: '600',
+    fontSize: tokens.sharedFormModal.titleFontSize,
+    fontWeight: '800',
     color: tokens.colors.textPrimary,
   },
+  content: {},
   contentContainer: {
-    paddingHorizontal: 24,
+    paddingHorizontal: tokens.spacing.xxl,
+    paddingBottom: tokens.spacing.xxl,
   },
   footer: {
-    paddingHorizontal: 24,
-    paddingTop: 16,
+    paddingHorizontal: tokens.spacing.xxl,
+    paddingTop: tokens.spacing.lgMd,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
-    borderTopWidth: 1,
+    gap: tokens.spacing.mdLg,
+    borderTopWidth: tokens.borderWidth.thin,
     borderTopColor: tokens.colors.border,
   },
 });

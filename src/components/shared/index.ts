@@ -13,3 +13,4 @@ export * from './ScreenHeader';
 export * from './FilterSheet';
 export { default as ListSurface } from './ListSurface';
 export * from './Avatar';
+export { default as FilterSection } from './FilterSection';
