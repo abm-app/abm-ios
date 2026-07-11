@@ -19,7 +19,7 @@ export default function GuestSummaryCard({
     <Card variant="dark" style={styles.summaryCard}>
       <View style={styles.summaryHalf}>
         <View style={styles.summaryHeader}>
-          <Text style={styles.summaryLabel}>AVAILABLE{'\n'}POINTS</Text>
+          <Text style={styles.summaryLabel}>Available{'\n'}Points</Text>
           <View style={styles.tierBadge}>
             <Text style={styles.tierBadgeText}>{tier.toUpperCase()} TIER</Text>
           </View>
@@ -30,7 +30,7 @@ export default function GuestSummaryCard({
       <View style={styles.summaryDivider} />
 
       <View style={[styles.summaryHalf, styles.summaryHalfRight]}>
-        <Text style={[styles.summaryLabel, styles.summaryLabelRight]}>TOTAL NIGHTS</Text>
+        <Text style={[styles.summaryLabel, styles.summaryLabelRight]}>Total Nights</Text>
         <Text style={styles.summaryValue}>{totalStays}</Text>
       </View>
     </Card>
@@ -59,10 +59,11 @@ const styles = StyleSheet.create({
   },
   summaryLabel: {
     fontFamily: tokens.typography.fontFamily.sub,
-    fontSize: 10,
+    fontSize: 11,
     color: tokens.colors.textHint,
     letterSpacing: 0.5,
     marginRight: tokens.spacing.md,
+    flex: 1,
   },
   summaryLabelRight: {
     textAlign: 'right',

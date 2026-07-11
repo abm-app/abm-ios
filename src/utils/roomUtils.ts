@@ -5,7 +5,7 @@ export function getRoomStatusConfig(status: RoomStatusType) {
   switch (status) {
     case 'occupied':
       return {
-        label: 'OCCUPIED',
+        label: 'Occupied',
         colors: {
           bg: tokens.colors.statusOccupiedBg,
           text: tokens.colors.statusOccupiedText,
@@ -14,7 +14,7 @@ export function getRoomStatusConfig(status: RoomStatusType) {
       };
     case 'checkout':
       return {
-        label: 'CHECKOUT',
+        label: 'Checkout',
         colors: {
           bg: tokens.colors.statusCheckoutBg,
           text: tokens.colors.statusCheckoutText,
@@ -23,7 +23,7 @@ export function getRoomStatusConfig(status: RoomStatusType) {
       };
     case 'arrival':
       return {
-        label: 'ARRIVAL',
+        label: 'Arrival',
         colors: {
           bg: tokens.colors.statusArrivalBg,
           text: tokens.colors.statusArrivalText,
@@ -33,7 +33,7 @@ export function getRoomStatusConfig(status: RoomStatusType) {
     case 'vacant':
     default:
       return {
-        label: 'VACANT',
+        label: 'Vacant',
         colors: {
           bg: tokens.colors.statusVacantBg,
           text: tokens.colors.statusVacantText,
