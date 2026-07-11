@@ -15,12 +15,14 @@ interface CommunicationLogProps {
 
 export default function CommunicationLog({ guestId, doNotContact }: CommunicationLogProps) {
   const {
-    data: communications,
+    data: responseData,
     isLoading,
     isError,
     error,
     refetch,
   } = useGuestCommunications(guestId);
+
+  const communications = responseData?.messages;
 
   const getStatusDisplay = (status: string) => {
     switch (status) {

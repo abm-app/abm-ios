@@ -1,6 +1,5 @@
 import apiClient from '../client';
-import type { GuestFilters, GuestResponse, Guest, GuestProfileResponse, CommunicationLogEvent } from '@/types/guest';
-import { updateGuestDnc as updateMockDnc } from './mockGuestData';
+import type { GuestFilters, GuestResponse, Guest, CommunicationLogEvent } from '@/types/guest';
 
 export const getGuests = (filters: GuestFilters): Promise<GuestResponse> =>
   apiClient.get('/guests', { params: filters }).then(r => r.data);
@@ -8,12 +7,10 @@ export const getGuests = (filters: GuestFilters): Promise<GuestResponse> =>
 export const getGuestById = (id: string): Promise<Guest> =>
   apiClient.get(`/guests/${id}`).then(r => r.data);
 
-export const updateGuestDnc = (
-  id: string,
-  doNotContact: boolean,
-): Promise<GuestProfileResponse> => {
-  return updateMockDnc(id, doNotContact);
-};
+export const updateGuestDnc = (guestId: string, doNotContact: boolean): Promise<Guest> =>
+  apiClient.patch(`/guests/${guestId}/dnc/`, { doNotContact }).then((r) => r.data);
 
-export const getGuestCommunications = (guestId: string): Promise<CommunicationLogEvent[]> =>
+export const getGuestCommunications = (
+  guestId: string,
+): Promise<{ messages: CommunicationLogEvent[]; total: number }> =>
   apiClient.get(`/guests/${guestId}/messages/`).then((r) => r.data);
