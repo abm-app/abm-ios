@@ -678,8 +678,8 @@ const shadow = {
   /** Elevated card (Campaign cards) */
   elevatedCard: {
     shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.25,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.06,
     shadowRadius: 12,
     elevation: 4,
   },
