@@ -102,26 +102,6 @@ for (let i = 5; i <= 45; i++) {
   } as unknown as Guest);
 }
 
-export const updateGuestDnc = async (
-  id: string,
-  doNotContact: boolean,
-): Promise<import('@/types/guest').GuestProfileResponse> => {
-  await new Promise(resolve => setTimeout(resolve, 500));
-  const guestIndex = mockGuests.findIndex(g => g.id === id);
-  if (guestIndex === -1) {
-    throw new Error('Guest not found');
-  }
-
-  mockGuests[guestIndex] = {
-    ...mockGuests[guestIndex],
-    doNotContact,
-  };
-
-  return Promise.resolve({
-    guest: mockGuests[guestIndex],
-    bookings: [],
-  });
-};
 
 export const deductGuestPoints = async (id: string, points: number): Promise<void> => {
   const guestIndex = mockGuests.findIndex(g => g.id === id);
