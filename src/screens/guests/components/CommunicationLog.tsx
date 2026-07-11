@@ -89,7 +89,7 @@ export default function CommunicationLog({ guestId, doNotContact }: Communicatio
               : 'We miss you, here is 10% off your next stay...';
 
         return (
-          <View key={msg._id} style={styles.timelineRow}>
+          <View key={msg.id} style={styles.timelineRow}>
             <View style={styles.timelineLeft}>
               <View
                 style={[styles.timelineDot, msg.status === 'read' ? styles.timelineDotRead : null]}
@@ -100,7 +100,7 @@ export default function CommunicationLog({ guestId, doNotContact }: Communicatio
             <Card variant="flat" padded style={styles.timelineContent}>
               <View style={styles.msgHeader}>
                 <Text style={styles.msgMeta}>
-                  SENT: {(formatDate(msg.sentAt) || '').toUpperCase()} • {msg.channel.toUpperCase()}
+                  SENT: {(formatDate(msg.sentAt) || '').toUpperCase()} • {(msg.triggerType || 'SYSTEM').toUpperCase()}
                 </Text>
                 <View style={styles.statusBadge}>
                   <Feather name={statusDisplay.icon} size={12} color={statusDisplay.color} />
@@ -109,7 +109,7 @@ export default function CommunicationLog({ guestId, doNotContact }: Communicatio
                   </Text>
                 </View>
               </View>
-              <Text style={styles.templateName}>{msg.templateName}</Text>
+              <Text style={styles.templateName}>{msg.templateId}</Text>
               <Text style={styles.msgBody} numberOfLines={1}>
                 {bodyText}
               </Text>

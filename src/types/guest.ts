@@ -43,11 +43,11 @@ export interface GuestProfileResponse {
 }
 
 export interface CommunicationLogEvent {
-  _id: string;
+  id: string;
+  guestId: string;
   campaignId: string | null;
   templateId: string;
-  templateName: string;
-  sentAt: string;
+  triggerType: string;
   status: 'sent' | 'delivered' | 'read' | 'failed' | string;
-  channel: string;
+  sentAt: string;
 }

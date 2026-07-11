@@ -1,4 +1,4 @@
-import type { Guest, CommunicationLogEvent } from '@/types/guest';
+import type { Guest } from '@/types/guest';
 
 const mockGuests = [
   {
@@ -133,35 +133,3 @@ export const deductGuestPoints = async (id: string, points: number): Promise<voi
   }
 };
 
-export const fetchGuestCommunications = async (_id: string): Promise<CommunicationLogEvent[]> => {
-  await new Promise(resolve => setTimeout(resolve, 300));
-  return [
-    {
-      _id: 'msg_67890abc',
-      campaignId: 'camp_888',
-      templateId: 'festival_offer_01',
-      templateName: 'Diwali Special Offer',
-      sentAt: '2026-06-20T10:30:00Z',
-      status: 'read',
-      channel: 'whatsapp',
-    },
-    {
-      _id: 'msg_12345xyz',
-      campaignId: null,
-      templateId: 'post_checkout_01',
-      templateName: 'Post-Checkout Thank You',
-      sentAt: '2026-05-15T09:15:00Z',
-      status: 'delivered',
-      channel: 'whatsapp',
-    },
-    {
-      _id: 'msg_98765fail',
-      campaignId: 'camp_999',
-      templateId: 'reengagement_02',
-      templateName: 'We Miss You - 10% Off',
-      sentAt: '2026-04-10T14:20:00Z',
-      status: 'failed',
-      channel: 'whatsapp',
-    },
-  ];
-};
