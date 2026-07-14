@@ -1,7 +1,6 @@
 import React, { useState, useMemo, forwardRef, useImperativeHandle } from 'react';
 import { View, Text, StyleSheet, FlatList, ScrollView } from 'react-native';
 import tokens from '@/theme/tokens';
-import { useAuthStore } from '@/store/authStore';
 import { useStatusRooms } from '@/hooks/status/useStatusRooms';
 import { LoadingSpinner, ErrorState, EmptyState } from '@/components/shared';
 import RoomCard from '@/components/shared/RoomCard';
@@ -24,8 +23,8 @@ interface LiveStatusScreenProps {
 
 const LiveStatusScreen = forwardRef<LiveStatusScreenRef, LiveStatusScreenProps>(
   ({ searchQuery, viewMode }, ref) => {
-    const property = useAuthStore(s => s.user?.property) || 'express';
-    const { data, isLoading, isError, error, refetch } = useStatusRooms(property);
+    // note to self on 14/7/26 -- hardcoded the property until the property switch design is compelted
+    const { data, isLoading, isError, error, refetch } = useStatusRooms('express');
 
     const [activeFilters, setActiveFilters] = useState<string[]>(['all']);
     const [isFilterSheetOpen, setIsFilterSheetOpen] = useState(false);
@@ -58,8 +57,9 @@ const LiveStatusScreen = forwardRef<LiveStatusScreenRef, LiveStatusScreenProps>(
         // 2. Filter tabs
         if (!activeFilters.includes('all')) {
           let isMatch = false;
-          if (activeFilters.includes('departures') && room.status === 'checkout') isMatch = true;
-          if (activeFilters.includes('arrivals') && room.status === 'arrival') isMatch = true;
+          if (activeFilters.includes('departures') && room.status === 'checking_out')
+            isMatch = true;
+          if (activeFilters.includes('arrivals') && room.status === 'arriving') isMatch = true;
           if (activeFilters.includes('vacant') && room.status === 'vacant') isMatch = true;
           if (!isMatch) return false;
         }
@@ -71,8 +71,8 @@ const LiveStatusScreen = forwardRef<LiveStatusScreenRef, LiveStatusScreenProps>(
     const stats = useMemo(() => {
       return {
         total: rooms.length,
-        departures: rooms.filter(r => r.status === 'checkout').length,
-        arrivals: rooms.filter(r => r.status === 'arrival').length,
+        departures: rooms.filter(r => r.status === 'checking_out').length,
+        arrivals: rooms.filter(r => r.status === 'arriving').length,
       };
     }, [rooms]);
 
