@@ -1,8 +1,10 @@
-export type RoomStatusType = 'occupied' | 'vacant' | 'checkout' | 'arrival';
+export type PropertyKey = 'express' | 'international';
+
+export type RoomStatusType = 'occupied' | 'vacant' | 'checking_out' | 'arriving';
 
 export interface PropertyStatusOverview {
   name: string;
-  key: string;
+  key: PropertyKey;
   totalRooms: number;
   occupied: number;
   vacant: number;
@@ -19,12 +21,12 @@ export interface LiveStatusRoom {
   rmCode: string;
   roomType: string;
   status: RoomStatusType;
-  guestName?: string;
-  arrivalDate?: string;
-  departureDate?: string;
+  guestName: string | null;
+  arrivalDate: string | null;
+  departureDate: string | null;
 }
 
 export interface LiveStatusRoomsResponse {
-  property: string;
+  property: PropertyKey;
   rooms: LiveStatusRoom[];
 }
