@@ -1,9 +1,10 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { getAuditEvents } from '@/api/endpoints/auditApi';
+import type { AuditEventType, AuditProperty } from '@/api/endpoints/auditApi';
 
 export interface AuditFilters {
-  property?: string[];
-  eventType?: string[];
+  property?: AuditProperty[];
+  eventType?: AuditEventType[];
   rmCode?: string[];
   from?: string;
   to?: string;

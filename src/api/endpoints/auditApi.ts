@@ -1,33 +1,69 @@
-export interface AuditEventBefore {
+// Shared tracked fields that can appear in before/after diffs
+export interface AuditEventDiffFields {
+  arrivalDate?: string;
   departureDate?: string;
+  status?: string;
+  rate?: number;
+  roomId?: string;
   rmCode?: string;
-}
-
-export interface AuditEventAfter {
-  departureDate?: string;
-  rmCode?: string;
+  discountPercent?: number;
+  discountAmount?: number;
+  adults?: number;
+  children?: number;
+  cancelDate?: string;
+  cancelReason?: string;
 }
 
 export type AuditEventType =
+  | 'new_booking'
   | 'extension'
-  | 'room_change'
-  | 'checkout'
+  | 'early_checkout'
   | 'cancellation'
   | 'modification';
 
-export interface AuditEvent {
+export type AuditProperty = 'express' | 'international';
+
+export const PROPERTY_OPTIONS: { label: string; value: AuditProperty }[] = [
+  { label: 'ABM Express', value: 'express' },
+  { label: 'ABM International', value: 'international' },
+];
+
+export const EVENT_TYPE_OPTIONS: { label: string; value: AuditEventType }[] = [
+  { label: 'New Booking', value: 'new_booking' },
+  { label: 'Extension', value: 'extension' },
+  { label: 'Early Checkout', value: 'early_checkout' },
+  { label: 'Cancellation', value: 'cancellation' },
+  { label: 'Modification', value: 'modification' },
+];
+
+// new_booking: before is always empty, after always has these 4 fields
+export interface NewBookingAfter {
+  arrivalDate: string;
+  departureDate: string;
+  rate: number;
+  rmCode: string;
+}
+
+export interface AuditEventBase {
   id: string;
-  eventType: AuditEventType;
   chCode: string;
   rmCode: string;
-  property: string;
+  property: AuditProperty;
   guestName: string;
-  before: AuditEventBefore;
-  after: AuditEventAfter;
   detectedAt: string;
-  description?: string;
-  revenueDelta?: number;
 }
+
+export type AuditEvent =
+  | (AuditEventBase & {
+      eventType: 'new_booking';
+      before: Record<string, never>;
+      after: NewBookingAfter;
+    })
+  | (AuditEventBase & {
+      eventType: Exclude<AuditEventType, 'new_booking'>;
+      before: AuditEventDiffFields;
+      after: AuditEventDiffFields;
+    });
 
 export interface AuditEventsResponse {
   events: AuditEvent[];
@@ -40,8 +76,8 @@ export interface GetAuditEventsParams {
   page: number;
   limit: number;
   filters?: {
-    property?: string[];
-    eventType?: string[];
+    property?: AuditProperty[];
+    eventType?: AuditEventType[];
     rmCode?: string[];
     from?: string;
     to?: string;
@@ -58,7 +94,6 @@ const mockAuditEvents: AuditEvent[] = [
     guestName: 'Rahul Kumar',
     before: {},
     after: {},
-    description: 'Booking cancelled. No revenue captured.',
     detectedAt: '2026-10-24T10:15:00Z',
   },
   {
@@ -66,11 +101,10 @@ const mockAuditEvents: AuditEvent[] = [
     eventType: 'extension',
     chCode: 'CH-1001',
     rmCode: '405',
-    property: 'grand',
+    property: 'express',
     guestName: 'Sarah Jenkins',
     before: { departureDate: '2026-10-24T12:00:00Z' },
     after: { departureDate: '2026-10-26T12:00:00Z' },
-    revenueDelta: 8000,
     detectedAt: '2026-10-24T09:30:00Z',
   },
   {
@@ -78,11 +112,10 @@ const mockAuditEvents: AuditEvent[] = [
     eventType: 'modification',
     chCode: 'CH-1002',
     rmCode: '202',
-    property: 'suite',
+    property: 'international',
     guestName: 'James Holden',
     before: {},
     after: {},
-    description: 'Guest profile updated (Phone number changed)',
     detectedAt: '2026-10-24T08:12:00Z',
   },
   {
@@ -98,10 +131,10 @@ const mockAuditEvents: AuditEvent[] = [
   },
   {
     id: 'evt-005',
-    eventType: 'room_change',
+    eventType: 'modification',
     chCode: 'CH-1005',
     rmCode: '112',
-    property: 'suite',
+    property: 'international',
     guestName: 'Ethan Wright',
     before: { rmCode: '108' },
     after: { rmCode: '112' },
@@ -109,10 +142,10 @@ const mockAuditEvents: AuditEvent[] = [
   },
   {
     id: 'evt-006',
-    eventType: 'checkout',
+    eventType: 'early_checkout',
     chCode: 'CH-1006',
     rmCode: '250',
-    property: 'grand',
+    property: 'express',
     guestName: 'Fiona Garcia',
     before: {},
     after: {},
@@ -131,10 +164,10 @@ const mockAuditEvents: AuditEvent[] = [
   },
   {
     id: 'evt-008',
-    eventType: 'room_change',
+    eventType: 'modification',
     chCode: 'CH-1008',
     rmCode: '422',
-    property: 'grand',
+    property: 'express',
     guestName: 'Hannah Clark',
     before: { rmCode: '410' },
     after: { rmCode: '422' },
@@ -142,10 +175,10 @@ const mockAuditEvents: AuditEvent[] = [
   },
   {
     id: 'evt-009',
-    eventType: 'checkout',
+    eventType: 'early_checkout',
     chCode: 'CH-1009',
     rmCode: '118',
-    property: 'suite',
+    property: 'international',
     guestName: 'Ian Lewis',
     before: {},
     after: {},
@@ -164,10 +197,10 @@ const mockAuditEvents: AuditEvent[] = [
   },
   {
     id: 'evt-011',
-    eventType: 'room_change',
+    eventType: 'modification',
     chCode: 'CH-1011',
     rmCode: '345',
-    property: 'suite',
+    property: 'international',
     guestName: 'Kevin Hall',
     before: { rmCode: '330' },
     after: { rmCode: '345' },
@@ -175,10 +208,10 @@ const mockAuditEvents: AuditEvent[] = [
   },
   {
     id: 'evt-012',
-    eventType: 'checkout',
+    eventType: 'early_checkout',
     chCode: 'CH-1012',
     rmCode: '411',
-    property: 'grand',
+    property: 'express',
     guestName: 'Laura Allen',
     before: {},
     after: {},
@@ -197,10 +230,10 @@ const mockAuditEvents: AuditEvent[] = [
   },
   {
     id: 'evt-014',
-    eventType: 'room_change',
+    eventType: 'modification',
     chCode: 'CH-1014',
     rmCode: '245',
-    property: 'grand',
+    property: 'express',
     guestName: 'Nina King',
     before: { rmCode: '201' },
     after: { rmCode: '245' },
@@ -208,10 +241,10 @@ const mockAuditEvents: AuditEvent[] = [
   },
   {
     id: 'evt-015',
-    eventType: 'checkout',
+    eventType: 'early_checkout',
     chCode: 'CH-1015',
     rmCode: '350',
-    property: 'suite',
+    property: 'international',
     guestName: 'Oliver Scott',
     before: {},
     after: {},
@@ -230,10 +263,10 @@ const mockAuditEvents: AuditEvent[] = [
   },
   {
     id: 'evt-017',
-    eventType: 'room_change',
+    eventType: 'modification',
     chCode: 'CH-1017',
     rmCode: '125',
-    property: 'suite',
+    property: 'international',
     guestName: 'Quinn Adams',
     before: { rmCode: '115' },
     after: { rmCode: '125' },
@@ -241,10 +274,10 @@ const mockAuditEvents: AuditEvent[] = [
   },
   {
     id: 'evt-018',
-    eventType: 'checkout',
+    eventType: 'early_checkout',
     chCode: 'CH-1018',
     rmCode: '260',
-    property: 'grand',
+    property: 'express',
     guestName: 'Rachel Baker',
     before: {},
     after: {},
@@ -263,10 +296,10 @@ const mockAuditEvents: AuditEvent[] = [
   },
   {
     id: 'evt-020',
-    eventType: 'room_change',
+    eventType: 'modification',
     chCode: 'CH-1020',
     rmCode: '445',
-    property: 'grand',
+    property: 'express',
     guestName: 'Tina Carter',
     before: { rmCode: '420' },
     after: { rmCode: '445' },
@@ -274,10 +307,10 @@ const mockAuditEvents: AuditEvent[] = [
   },
   {
     id: 'evt-021',
-    eventType: 'checkout',
+    eventType: 'early_checkout',
     chCode: 'CH-1021',
     rmCode: '135',
-    property: 'suite',
+    property: 'international',
     guestName: 'Umar Mitchell',
     before: {},
     after: {},
@@ -296,10 +329,10 @@ const mockAuditEvents: AuditEvent[] = [
   },
   {
     id: 'evt-023',
-    eventType: 'room_change',
+    eventType: 'modification',
     chCode: 'CH-1023',
     rmCode: '333',
-    property: 'suite',
+    property: 'international',
     guestName: 'Wendy Roberts',
     before: { rmCode: '310' },
     after: { rmCode: '333' },
@@ -307,10 +340,10 @@ const mockAuditEvents: AuditEvent[] = [
   },
   {
     id: 'evt-024',
-    eventType: 'checkout',
+    eventType: 'early_checkout',
     chCode: 'CH-1024',
     rmCode: '450',
-    property: 'grand',
+    property: 'express',
     guestName: 'Xander Turner',
     before: {},
     after: {},

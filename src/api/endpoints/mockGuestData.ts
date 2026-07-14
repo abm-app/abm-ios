@@ -102,7 +102,6 @@ for (let i = 5; i <= 45; i++) {
   } as unknown as Guest);
 }
 
-
 export const deductGuestPoints = async (id: string, points: number): Promise<void> => {
   const guestIndex = mockGuests.findIndex(g => g.id === id);
   if (guestIndex !== -1) {
@@ -112,4 +111,3 @@ export const deductGuestPoints = async (id: string, points: number): Promise<voi
     };
   }
 };
-
