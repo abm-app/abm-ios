@@ -3,7 +3,7 @@ import { View, Text, StyleSheet } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import tokens from '@/theme/tokens';
 import { Card } from '@/components/ui';
-import type { AuditEvent, AuditEventType } from '@/api/endpoints/auditApi';
+import type { AuditEvent, AuditEventType } from '@/types/audit';
 
 const EVENT_CONFIG: Record<AuditEventType, { label: string; color: string; background: string }> = {
   new_booking: {

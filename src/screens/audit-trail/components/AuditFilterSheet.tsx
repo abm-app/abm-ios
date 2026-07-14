@@ -6,7 +6,7 @@ import { Button, Chip } from '@/components/ui';
 import { CustomCalender } from '@/components/shared/CustomCalender';
 import { getCalendarDateString } from '@/utils/dateUtils';
 import type { AuditFilters } from '@/hooks/audit/useAuditEvents';
-import { PROPERTY_OPTIONS, EVENT_TYPE_OPTIONS } from '@/api/endpoints/auditApi';
+import { PROPERTY_OPTIONS, EVENT_TYPE_OPTIONS } from '@/types/audit';
 import { useRoomTypes } from '@/hooks/rooms/useRoomTypes';
 
 interface AuditFilterSheetProps {

@@ -1,5 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
-import { fetchCampaigns } from '@/api/endpoints/campaignApi';
+import {
+  fetchCampaigns,
+  fetchCampaignById,
+  fetchMetaTemplates,
+  createCampaign,
+  updateCampaign,
+  deleteCampaign,
+  getEstimatedReach,
+} from '@/api/endpoints/campaignApi';
 
 export const campaignKeys = {
   all: ['campaigns'] as const,
@@ -16,7 +24,7 @@ export function useCampaigns() {
 export function useCampaign(id: string) {
   return useQuery({
     queryKey: [...campaignKeys.all, 'detail', id] as const,
-    queryFn: () => import('@/api/endpoints/campaignApi').then(m => m.fetchCampaignById(id)),
+    queryFn: () => fetchCampaignById(id),
     enabled: !!id,
   });
 }
@@ -24,7 +32,7 @@ export function useCampaign(id: string) {
 export function useMetaTemplates() {
   return useQuery({
     queryKey: [...campaignKeys.all, 'templates'] as const,
-    queryFn: () => import('@/api/endpoints/campaignApi').then(m => m.fetchMetaTemplates()),
+    queryFn: () => fetchMetaTemplates(),
   });
 }
 
@@ -34,8 +42,7 @@ import type { CreateCampaignPayload } from '@/api/endpoints/campaignApi';
 export function useCreateCampaign() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (payload: CreateCampaignPayload) =>
-      import('@/api/endpoints/campaignApi').then(m => m.createCampaign(payload)),
+    mutationFn: (payload: CreateCampaignPayload) => createCampaign(payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: campaignKeys.all });
     },
@@ -46,7 +53,7 @@ export function useUpdateCampaign() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({ id, payload }: { id: string; payload: Partial<CreateCampaignPayload> }) =>
-      import('@/api/endpoints/campaignApi').then(m => m.updateCampaign(id, payload)),
+      updateCampaign(id, payload),
     onSuccess: (data, variables) => {
       queryClient.setQueryData([...campaignKeys.all, 'detail', variables.id], data);
       queryClient.invalidateQueries({ queryKey: campaignKeys.all });
@@ -57,8 +64,7 @@ export function useUpdateCampaign() {
 export function useDeleteCampaign() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (id: string) =>
-      import('@/api/endpoints/campaignApi').then(m => m.deleteCampaign(id)),
+    mutationFn: (id: string) => deleteCampaign(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: campaignKeys.all });
     },
@@ -67,7 +73,6 @@ export function useDeleteCampaign() {
 
 export function useEstimatedReach() {
   return useMutation({
-    mutationFn: (tiers: string[]) =>
-      import('@/api/endpoints/campaignApi').then(m => m.getEstimatedReach(tiers)),
+    mutationFn: (tiers: string[]) => getEstimatedReach(tiers),
   });
 }
