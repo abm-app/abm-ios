@@ -48,7 +48,7 @@ export function useUpdateCampaign() {
     mutationFn: ({ id, payload }: { id: string; payload: Partial<CreateCampaignPayload> }) =>
       import('@/api/endpoints/campaignApi').then(m => m.updateCampaign(id, payload)),
     onSuccess: (data, variables) => {
-      queryClient.setQueryData([...campaignKeys.all, 'detail', variables.id], data.data);
+      queryClient.setQueryData([...campaignKeys.all, 'detail', variables.id], data);
       queryClient.invalidateQueries({ queryKey: campaignKeys.all });
     },
   });
