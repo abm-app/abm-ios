@@ -30,7 +30,7 @@ export const mockStatusRoomsExpress: LiveStatusRoomsResponse = {
     {
       rmCode: '101',
       roomType: 'Standard Room',
-      status: 'checkout',
+      status: 'checking_out',
       guestName: 'Rahul Kumar',
       arrivalDate: '2026-06-07',
       departureDate: '2026-06-10',
@@ -46,7 +46,7 @@ export const mockStatusRoomsExpress: LiveStatusRoomsResponse = {
     {
       rmCode: '201',
       roomType: 'Executive Suite',
-      status: 'arrival',
+      status: 'arriving',
       guestName: 'A. Sharma',
       arrivalDate: '2026-06-09',
       departureDate: '2026-06-11',
@@ -55,6 +55,9 @@ export const mockStatusRoomsExpress: LiveStatusRoomsResponse = {
       rmCode: '205',
       roomType: 'Standard Room',
       status: 'vacant',
+      guestName: null,
+      arrivalDate: null,
+      departureDate: null,
     },
     {
       rmCode: '121',

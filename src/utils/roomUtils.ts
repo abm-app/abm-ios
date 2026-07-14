@@ -12,7 +12,7 @@ export function getRoomStatusConfig(status: RoomStatusType) {
           border: tokens.colors.statusOccupiedBorder,
         },
       };
-    case 'checkout':
+    case 'checking_out':
       return {
         label: 'Checkout',
         colors: {
@@ -21,7 +21,7 @@ export function getRoomStatusConfig(status: RoomStatusType) {
           border: tokens.colors.statusCheckoutBorder,
         },
       };
-    case 'arrival':
+    case 'arriving':
       return {
         label: 'Arrival',
         colors: {
