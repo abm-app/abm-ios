@@ -3,13 +3,18 @@ import { View, Text, StyleSheet } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import tokens from '@/theme/tokens';
 import { Card } from '@/components/ui';
-import type { AuditEvent, AuditEventType } from '@/types/audit';
+import { AuditEvent, AuditEventType } from '@/types/audit';
 
-const EVENT_CONFIG: Record<AuditEventType, { label: string; color: string; background: string }> = {
+const EVENT_CONFIG: Record<
+  AuditEventType,
+  { label: string; colors: { bg: string; text: string } }
+> = {
   new_booking: {
-    label: 'NEW BOOKING',
-    color: tokens.colors.success,
-    background: tokens.colors.badgeLowBg,
+    label: 'New Booking',
+    colors: {
+      bg: tokens.colors.badgeLowBg,
+      text: tokens.colors.badgeLowText,
+    },
   },
   cancellation: {
     label: 'Cancellation',
@@ -33,9 +38,11 @@ const EVENT_CONFIG: Record<AuditEventType, { label: string; color: string; backg
     },
   },
   early_checkout: {
-    label: 'EARLY CHECKOUT',
-    color: tokens.colors.warning,
-    background: tokens.colors.badgeRoomChangeBg,
+    label: 'Early Checkout',
+    colors: {
+      bg: tokens.colors.badgeHighBg,
+      text: tokens.colors.danger,
+    },
   },
 };
 
