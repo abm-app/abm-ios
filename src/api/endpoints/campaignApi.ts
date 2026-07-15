@@ -4,34 +4,31 @@ import apiClient from '../client';
 export interface CreateCampaignPayload {
   name: string;
   templateId: string;
-  templateVariables: Record<string, string>;
+  templateVariables?: Record<string, string>;
   type: 'manual' | 'scheduled' | 'trigger';
   filters: Record<string, unknown>;
   recipientCount: number;
   scheduledAt?: string;
   offerExpiry?: string;
-  metadata: {
+  metadata?: {
     [key: string]: unknown;
   };
 }
 
 export const fetchCampaigns = async (): Promise<Campaign[]> => {
-  const response = await apiClient.get('/api/campaigns/');
+  const response = await apiClient.get<{ campaigns: Campaign[] }>('/api/campaigns/');
   return response.data.campaigns;
 };
 
 export const fetchCampaignById = async (id: string): Promise<Campaign> => {
-  const response = await apiClient.get(`/api/campaigns/${id}/`);
+  const response = await apiClient.get<Campaign>(`/api/campaigns/${id}/`);
   const data = response.data;
-  // Map _id to id if needed, though the Campaign type uses _id.
-  if (data._id && !data.id) {
-    data.id = data._id;
-  }
+
   return data;
 };
 
 export const createCampaign = async (payload: CreateCampaignPayload): Promise<Campaign> => {
-  const response = await apiClient.post('/api/campaigns/create', payload);
+  const response = await apiClient.post<Campaign>('/api/campaigns/create', payload);
   return response.data;
 };
 
@@ -39,12 +36,12 @@ export const updateCampaign = async (
   id: string,
   payload: Partial<CreateCampaignPayload>,
 ): Promise<Campaign> => {
-  const response = await apiClient.patch(`/api/campaigns/${id}/update`, payload);
+  const response = await apiClient.patch<Campaign>(`/api/campaigns/${id}/update`, payload);
   return response.data;
 };
 
 export const deleteCampaign = async (id: string): Promise<{ message: string }> => {
-  const response = await apiClient.delete(`/api/campaigns/${id}/delete`);
+  const response = await apiClient.delete<{ message: string }>(`/api/campaigns/${id}/delete`);
   return { message: response.data?.message || 'Campaign deleted successfully.' };
 };
 
@@ -53,7 +50,7 @@ export const getEstimatedReach = async (tiers: string[]): Promise<number> => {
     return 0;
   }
   const tiersString = tiers.join(',');
-  const response = await apiClient.get('/api/campaigns/reach', {
+  const response = await apiClient.get<{ count: number }>('/api/campaigns/reach', {
     params: { tiers: tiersString },
   });
   return response.data.count;

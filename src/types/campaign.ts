@@ -5,7 +5,7 @@ export interface Campaign {
   _id: string;
   name: string;
   templateId: string;
-  templateVariables: Record<string, string>;
+  templateVariables?: Record<string, string>;
   type: CampaignType;
   filters: Record<string, unknown>;
   recipientCount: number;
@@ -16,9 +16,9 @@ export interface Campaign {
   scheduledAt?: string;
   sentAt?: string;
   createdAt: string;
-  updatedAt: string;
+  updatedAt?: string;
   offerExpiry?: string;
-  metadata: {
+  metadata?: {
     [key: string]: unknown;
   };
 }
