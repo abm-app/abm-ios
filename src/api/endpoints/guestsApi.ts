@@ -1,32 +1,18 @@
-import type { GuestFilters, GuestResponse, GuestProfileResponse } from '@/types/guest';
-import {
-  fetchMockGuests,
-  fetchGuestById,
-  updateGuestDnc as updateMockDnc,
-  fetchGuestCommunications,
-} from './mockGuestData';
+import apiClient from '../client';
+import type { GuestFilters, GuestResponse, Guest, CommunicationLogEvent } from '@/types/guest';
 
-// import apiClient from '../client';
-//
-// When the real endpoint is ready, use apiClient like this:
-// export const getGuests = (filters: GuestFilters): Promise<GuestResponse> =>
-//   apiClient.get('/guests', { params: filters }).then((r) => r.data);
+export const getGuests = (filters: GuestFilters): Promise<GuestResponse> =>
+  apiClient.get<GuestResponse>('/guests', { params: filters }).then(r => r.data);
 
-export const getGuests = (filters: GuestFilters): Promise<GuestResponse> => {
-  return fetchMockGuests(filters);
-};
+export const getGuestById = (id: string): Promise<Guest> =>
+  apiClient.get<Guest>(`/guests/${id}`).then(r => r.data);
 
-export const getGuestById = (id: string): Promise<GuestProfileResponse> => {
-  return fetchGuestById(id);
-};
+export const updateGuestDnc = (guestId: string, doNotContact: boolean): Promise<Guest> =>
+  apiClient.patch<Guest>(`/guests/${guestId}/dnc/`, { doNotContact }).then(r => r.data);
 
-export const updateGuestDnc = (
-  id: string,
-  doNotContact: boolean,
-): Promise<GuestProfileResponse> => {
-  return updateMockDnc(id, doNotContact);
-};
-
-export const getGuestCommunications = (id: string) => {
-  return fetchGuestCommunications(id);
-};
+export const getGuestCommunications = (
+  guestId: string,
+): Promise<{ messages: CommunicationLogEvent[]; total: number }> =>
+  apiClient
+    .get<{ messages: CommunicationLogEvent[]; total: number }>(`/guests/${guestId}/messages/`)
+    .then(r => r.data);

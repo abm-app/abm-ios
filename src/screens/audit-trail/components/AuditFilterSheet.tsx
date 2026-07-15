@@ -6,7 +6,7 @@ import { Button, Chip } from '@/components/ui';
 import { CustomCalender } from '@/components/shared/CustomCalender';
 import { getCalendarDateString } from '@/utils/dateUtils';
 import type { AuditFilters } from '@/hooks/audit/useAuditEvents';
-import { PROPERTIES, EVENT_TYPES } from '@/constants';
+import { PROPERTY_OPTIONS, EVENT_TYPE_OPTIONS } from '@/types/audit';
 import { useRoomTypes } from '@/hooks/rooms/useRoomTypes';
 
 interface AuditFilterSheetProps {
@@ -70,18 +70,18 @@ export function AuditFilterSheet({
         <View style={styles.fieldGroup}>
           <Text style={styles.label}>Property</Text>
           <View style={styles.chipGroup}>
-            {PROPERTIES.map(prop => (
+            {PROPERTY_OPTIONS.map(prop => (
               <Chip
-                key={prop}
-                label={prop}
+                key={prop.value}
+                label={prop.label}
                 tone="primary"
-                active={draftFilters.property?.includes(prop)}
+                active={draftFilters.property?.includes(prop.value)}
                 onPress={() =>
                   setDraftFilters(prev => {
                     const current = prev.property || [];
-                    const next = current.includes(prop)
-                      ? current.filter(p => p !== prop)
-                      : [...current, prop];
+                    const next = current.includes(prop.value)
+                      ? current.filter(p => p !== prop.value)
+                      : [...current, prop.value];
                     return { ...prev, property: next.length > 0 ? next : undefined };
                   })
                 }
@@ -93,18 +93,18 @@ export function AuditFilterSheet({
         <View style={styles.fieldGroup}>
           <Text style={styles.label}>Event Type</Text>
           <View style={styles.chipGroup}>
-            {EVENT_TYPES.map(type => (
+            {EVENT_TYPE_OPTIONS.map(type => (
               <Chip
-                key={type}
-                label={type.replace('_', ' ')}
+                key={type.value}
+                label={type.label}
                 tone="primary"
-                active={draftFilters.eventType?.includes(type)}
+                active={draftFilters.eventType?.includes(type.value)}
                 onPress={() =>
                   setDraftFilters(prev => {
                     const current = prev.eventType || [];
-                    const next = current.includes(type)
-                      ? current.filter(p => p !== type)
-                      : [...current, type];
+                    const next = current.includes(type.value)
+                      ? current.filter(p => p !== type.value)
+                      : [...current, type.value];
                     return { ...prev, eventType: next.length > 0 ? next : undefined };
                   })
                 }

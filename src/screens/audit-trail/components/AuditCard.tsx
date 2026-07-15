@@ -3,12 +3,19 @@ import { View, Text, StyleSheet } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import tokens from '@/theme/tokens';
 import { Card } from '@/components/ui';
-import type { AuditEvent, AuditEventType } from '@/api/endpoints/auditApi';
+import { AuditEvent, AuditEventType } from '@/types/audit';
 
 const EVENT_CONFIG: Record<
   AuditEventType,
   { label: string; colors: { bg: string; text: string } }
 > = {
+  new_booking: {
+    label: 'New Booking',
+    colors: {
+      bg: tokens.colors.badgeLowBg,
+      text: tokens.colors.badgeLowText,
+    },
+  },
   cancellation: {
     label: 'Cancellation',
     colors: {
@@ -30,15 +37,8 @@ const EVENT_CONFIG: Record<
       text: tokens.colors.purple,
     },
   },
-  room_change: {
-    label: 'Room Change',
-    colors: {
-      bg: tokens.colors.warningSurface,
-      text: tokens.colors.warning,
-    },
-  },
-  checkout: {
-    label: 'Checkout',
+  early_checkout: {
+    label: 'Early Checkout',
     colors: {
       bg: tokens.colors.badgeHighBg,
       text: tokens.colors.danger,
@@ -97,6 +97,22 @@ export function AuditCard({ event }: AuditCardProps) {
   const timeStr = formatEventTime(event.detectedAt);
 
   const renderDetailRow = () => {
+    if (event.eventType === 'new_booking') {
+      return (
+        <View style={styles.detailContainer}>
+          <View style={styles.detailRow}>
+            <Text style={styles.detailLabel}>Arrival: </Text>
+            <Text style={styles.detailAfter}>{formatShortDate(event.after.arrivalDate)}</Text>
+          </View>
+          <View style={styles.divider} />
+          <View style={styles.detailRow}>
+            <Text style={styles.detailLabel}>Departure: </Text>
+            <Text style={styles.detailAfter}>{formatShortDate(event.after.departureDate)}</Text>
+          </View>
+        </View>
+      );
+    }
+
     if (
       event.eventType === 'extension' &&
       event.before.departureDate &&
@@ -115,26 +131,27 @@ export function AuditCard({ event }: AuditCardProps) {
             />
             <Text style={styles.detailAfter}>{formatShortDate(event.after.departureDate)}</Text>
           </View>
-          {event.revenueDelta !== undefined && (
-            <>
-              <View style={styles.divider} />
-              <Text style={styles.revenueText}>
-                Revenue updated:{' '}
-                <Text style={styles.revenueDelta}>
-                  {event.revenueDelta > 0 ? '+' : ''} ₹ {event.revenueDelta.toLocaleString('en-IN')}
-                </Text>
-              </Text>
-            </>
-          )}
         </View>
       );
     }
 
-    if (event.description) {
-      return <Text style={styles.descriptionText}>{event.description}</Text>;
+    if (event.eventType === 'early_checkout' && event.before.departureDate) {
+      return (
+        <View style={styles.detailContainer}>
+          <View style={styles.detailRow}>
+            <Text style={styles.detailLabel}>Expected departure: </Text>
+            <Text style={styles.detailBefore}>{formatShortDate(event.before.departureDate)}</Text>
+          </View>
+        </View>
+      );
     }
 
-    if (event.eventType === 'room_change' && event.before.rmCode && event.after.rmCode) {
+    if (
+      event.eventType === 'modification' &&
+      event.before.rmCode &&
+      event.after.rmCode &&
+      event.before.rmCode !== event.after.rmCode
+    ) {
       return (
         <View style={styles.detailContainer}>
           <Text style={styles.descriptionText}>

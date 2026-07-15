@@ -15,13 +15,13 @@ export function RoomDetailsSheet({ visible, onClose, room }: RoomDetailsSheetPro
 
   const getStatusDisplay = (status: RoomStatusType) => {
     switch (status) {
-      case 'checkout':
+      case 'checking_out':
         return {
           label: 'Checkout Today',
           bg: tokens.colors.statusCheckoutBg,
           text: tokens.colors.statusCheckoutText,
         };
-      case 'arrival':
+      case 'arriving':
         return {
           label: 'Arrival Today',
           bg: tokens.colors.statusArrivalBg,
@@ -69,11 +69,11 @@ export function RoomDetailsSheet({ visible, onClose, room }: RoomDetailsSheetPro
         <View style={styles.divider} />
 
         {(() => {
-          const dateValue = room.status === 'arrival' ? room.arrivalDate : room.departureDate;
+          const dateValue = room.status === 'arriving' ? room.arrivalDate : room.departureDate;
           return dateValue ? (
             <View style={styles.section}>
               <Text style={styles.sectionLabel}>
-                {room.status === 'arrival' ? 'ARRIVING' : 'DEPARTING'}
+                {room.status === 'arriving' ? 'ARRIVING' : 'DEPARTING'}
               </Text>
               <Text style={styles.sectionValue}>{dateValue}</Text>
             </View>

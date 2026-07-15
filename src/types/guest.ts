@@ -1,19 +1,22 @@
 export interface Guest {
-  _id: string;
+  id: string;
   name: string;
   phone: string;
   email: string | null;
+  birthdate: string | null;
   properties: string[];
   totalStays: number;
   totalPointsLifetime: number;
-  spendableBalance: number;
+  spendableBalance: number | undefined;
   tier: string;
-  lastStayDate: string;
-  firstStayDate: string;
-  birthdate: string | null;
+  lastStayDate: string | null;
+  firstStayDate: string | null;
   doNotContact: boolean;
   source: string;
   createdAt: string;
+  vipStatus: string | null;
+  blacklisted: boolean;
+  nationalityId: number;
 }
 
 export interface GuestResponse {
@@ -26,7 +29,10 @@ export interface GuestResponse {
 export interface GuestFilters {
   search?: string;
   tier?: string;
-  lapsed?: string | boolean; // e.g. '30_days', '3_months', '6_months', '12_months'
+  source?: string;
+  property?: string;
+  lapsedDays?: number;
+  doNotContact?: 'true' | 'false';
   page?: number;
   limit?: number;
 }
@@ -37,11 +43,11 @@ export interface GuestProfileResponse {
 }
 
 export interface CommunicationLogEvent {
-  _id: string;
+  id: string;
+  guestId: string;
   campaignId: string | null;
   templateId: string;
-  templateName: string;
-  sentAt: string;
+  triggerType: string;
   status: 'sent' | 'delivered' | 'read' | 'failed' | string;
-  channel: string;
+  sentAt: string;
 }

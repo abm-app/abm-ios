@@ -57,7 +57,7 @@ export default function GuestList({
       <ListSurface>
         <FlatList
           data={guests}
-          keyExtractor={item => item._id}
+          keyExtractor={item => item.id}
           renderItem={({ item }) => <GuestCard guest={item} />}
           contentContainerStyle={styles.listContent}
           showsVerticalScrollIndicator={false}

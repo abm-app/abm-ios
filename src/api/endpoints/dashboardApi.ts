@@ -5,7 +5,7 @@ export async function getDashboardSummary(): Promise<DashboardSummary> {
     setTimeout(() => {
       resolve({
         occupancy: {
-          express: { name: 'ABM Express', occupied: 30, total: 40 },
+          express: { name: 'ABM Express', occupied: 37, total: 40 },
           international: { name: 'ABM International', occupied: 112, total: 150 },
         },
         todayRevenue: { express: 70000, international: 110000 },

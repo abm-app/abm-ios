@@ -1,5 +1,4 @@
 import type { RewardItem, IssuedReward } from '@/types/reward';
-import { deductGuestPoints } from './mockGuestData';
 
 export const mockRewardCatalogue: RewardItem[] = [
   { id: 'cat_001', name: 'Late Checkout (2 PM)', pointsCost: 1000, type: 'late_checkout' },
@@ -58,7 +57,6 @@ export const issueGuestReward = async (
   }
 
   mockGuestRewards[guestId].unshift(newReward);
-  await deductGuestPoints(guestId, catalogItem.pointsCost);
 
   return newReward;
 };

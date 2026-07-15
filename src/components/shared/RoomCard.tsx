@@ -26,11 +26,12 @@ export default function RoomCard({ room }: RoomCardProps) {
         ) : (
           <>
             <Text style={styles.guestName}>{room.guestName || 'Unknown Guest'}</Text>
-            {room.status === 'arrival' ? (
+            {room.status === 'arriving' ? (
               <Text style={styles.dates}>Arriving Today</Text>
             ) : (
               <Text style={styles.dates}>
-                {formatDateShort(room.arrivalDate)} - {formatDateShort(room.departureDate)}
+                {formatDateShort(room.arrivalDate ?? undefined)} -{' '}
+                {formatDateShort(room.departureDate ?? undefined)}
               </Text>
             )}
           </>

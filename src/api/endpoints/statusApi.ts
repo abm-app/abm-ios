@@ -1,10 +1,16 @@
-import type { LiveStatusOverviewResponse, LiveStatusRoomsResponse } from '@/types/status';
-import { mockStatusOverview, mockStatusRoomsExpress } from './mockStatusData';
+import apiClient from '@/api/client';
+import type {
+  LiveStatusOverviewResponse,
+  LiveStatusRoomsResponse,
+  PropertyKey,
+} from '@/types/status';
 
 export const getStatusOverview = (): Promise<LiveStatusOverviewResponse> => {
-  return new Promise(resolve => setTimeout(() => resolve(mockStatusOverview), 500));
+  return apiClient.get<LiveStatusOverviewResponse>('/status/overview').then(r => r.data);
 };
 
-export const getStatusRooms = (_property: string): Promise<LiveStatusRoomsResponse> => {
-  return new Promise(resolve => setTimeout(() => resolve(mockStatusRoomsExpress), 500));
+export const getStatusRooms = (property: PropertyKey): Promise<LiveStatusRoomsResponse> => {
+  return apiClient
+    .get<LiveStatusRoomsResponse>('/status/rooms', { params: { property } })
+    .then(r => r.data);
 };
