@@ -12,6 +12,7 @@ import {
 export const campaignKeys = {
   all: ['campaigns'] as const,
   list: () => [...campaignKeys.all, 'list'] as const,
+  detail: (id: string) => [...campaignKeys.all, 'detail', id] as const,
 };
 
 export function useCampaigns() {
@@ -23,7 +24,7 @@ export function useCampaigns() {
 
 export function useCampaign(id: string) {
   return useQuery({
-    queryKey: [...campaignKeys.all, 'detail', id] as const,
+    queryKey: campaignKeys.detail(id),
     queryFn: () => fetchCampaignById(id),
     enabled: !!id,
   });
@@ -43,7 +44,8 @@ export function useCreateCampaign() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (payload: CreateCampaignPayload) => createCampaign(payload),
-    onSuccess: () => {
+    onSuccess: data => {
+      queryClient.setQueryData(campaignKeys.detail(data._id), data);
       queryClient.invalidateQueries({ queryKey: campaignKeys.all });
     },
   });
@@ -55,7 +57,7 @@ export function useUpdateCampaign() {
     mutationFn: ({ id, payload }: { id: string; payload: Partial<CreateCampaignPayload> }) =>
       updateCampaign(id, payload),
     onSuccess: (data, variables) => {
-      queryClient.setQueryData([...campaignKeys.all, 'detail', variables.id], data);
+      queryClient.setQueryData(campaignKeys.detail(variables.id), data);
       queryClient.invalidateQueries({ queryKey: campaignKeys.all });
     },
   });
@@ -65,7 +67,8 @@ export function useDeleteCampaign() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (id: string) => deleteCampaign(id),
-    onSuccess: () => {
+    onSuccess: (_, id) => {
+      queryClient.removeQueries({ queryKey: campaignKeys.detail(id) });
       queryClient.invalidateQueries({ queryKey: campaignKeys.all });
     },
   });
