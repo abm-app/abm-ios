@@ -217,6 +217,8 @@ const letterSpacing = {
   button: 0.13,
   /** 11 × (1.5/11) approx */
   caps: 1.5,
+  /** 12 × 0.04 = 0.5 approx for uppercase captions */
+  captionCaps: 0.5,
 } as const;
 
 const typography = {
