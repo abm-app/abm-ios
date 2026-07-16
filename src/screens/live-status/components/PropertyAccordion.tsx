@@ -101,7 +101,7 @@ export default function PropertyAccordion({
           ) : viewMode === 'list' ? (
             <View style={styles.listContent}>
               {filteredRooms.map(room => (
-                <RoomCard key={room.rmCode} room={room} />
+                <RoomCard key={room.rmCode} room={room} onPress={() => onRoomPress(room)} />
               ))}
             </View>
           ) : (
@@ -186,7 +186,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: tokens.colors.textHint,
     textTransform: 'uppercase',
-    letterSpacing: 0.5,
+    letterSpacing: tokens.typography.letterSpacing.captionCaps,
     marginBottom: tokens.spacing.md,
   },
   gridWrapper: {

@@ -1,7 +1,7 @@
-import React, { useState, useMemo, forwardRef, useImperativeHandle } from 'react';
+import React, { useState, forwardRef, useImperativeHandle } from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
 import tokens from '@/theme/tokens';
-import { useStatusOverview } from '@/hooks/status/useStatusOverview';
+import { useStatusOverview, useStatusOverviewStats } from '@/hooks/status/useStatusOverview';
 import { LoadingSpinner, ErrorState, EmptyState } from '@/components/shared';
 import PropertyAccordion from './components/PropertyAccordion';
 import { LiveStatusFilterSheet } from './components/LiveStatusFilterSheet';
@@ -37,19 +37,8 @@ const LiveStatusScreen = forwardRef<LiveStatusScreenRef, LiveStatusScreenProps>(
       setIsDetailsSheetOpen(true);
     };
 
-    // Derived state: stats for filter pills (aggregated across all properties)
-    const stats = useMemo(() => {
-      if (!overview) return { total: 0, departures: 0, arrivals: 0 };
-      let total = 0;
-      let departures = 0;
-      let arrivals = 0;
-      overview.properties.forEach(p => {
-        total += p.totalRooms;
-        departures += p.checkingOutToday;
-        arrivals += p.arrivingToday;
-      });
-      return { total, departures, arrivals };
-    }, [overview]);
+    const { data: statsData } = useStatusOverviewStats();
+    const stats = statsData || { total: 0, departures: 0, arrivals: 0 };
 
     if (isLoading) return <LoadingSpinner />;
     if (isError) return <ErrorState message={error.message} onRetry={refetch} />;

@@ -8,14 +8,21 @@ import type { LiveStatusRoom } from '@/types/status';
 
 interface RoomCardProps {
   room: LiveStatusRoom;
+  onPress?: () => void;
 }
 
-export default function RoomCard({ room }: RoomCardProps) {
+export default function RoomCard({ room, onPress }: RoomCardProps) {
   const { label, colors } = getRoomStatusConfig(room.status);
   const statusStyle = { backgroundColor: colors.bg, color: colors.text };
 
   return (
-    <Card variant="shadow-outlined" shadow="elevatedCard" padded style={styles.container}>
+    <Card
+      variant="shadow-outlined"
+      shadow="elevatedCard"
+      padded
+      onPress={onPress}
+      style={styles.container}
+    >
       <View style={styles.roomInfoCol}>
         <Text style={styles.roomNumber}>{room.rmCode}</Text>
         <Text style={styles.roomType}>{room.roomType}</Text>

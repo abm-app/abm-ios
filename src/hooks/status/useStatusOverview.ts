@@ -11,3 +11,21 @@ export function useStatusOverview() {
     queryFn: getStatusOverview,
   });
 }
+
+export function useStatusOverviewStats() {
+  return useQuery({
+    queryKey: statusOverviewKeys.all,
+    queryFn: getStatusOverview,
+    select: data => {
+      let total = 0;
+      let departures = 0;
+      let arrivals = 0;
+      data.properties.forEach(p => {
+        total += p.totalRooms;
+        departures += p.checkingOutToday;
+        arrivals += p.arrivingToday;
+      });
+      return { total, departures, arrivals };
+    },
+  });
+}
