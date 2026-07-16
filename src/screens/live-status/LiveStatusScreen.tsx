@@ -1,16 +1,13 @@
 import React, { useState, useMemo, forwardRef, useImperativeHandle } from 'react';
-import { View, Text, StyleSheet, FlatList, ScrollView } from 'react-native';
+import { ScrollView, StyleSheet } from 'react-native';
 import tokens from '@/theme/tokens';
-import { useStatusRooms } from '@/hooks/status/useStatusRooms';
+import { useStatusOverview } from '@/hooks/status/useStatusOverview';
 import { LoadingSpinner, ErrorState, EmptyState } from '@/components/shared';
-import RoomCard from '@/components/shared/RoomCard';
-import RoomGridCard from './components/RoomGridCard';
+import PropertyAccordion from './components/PropertyAccordion';
 import { LiveStatusFilterSheet } from './components/LiveStatusFilterSheet';
 import { RoomDetailsSheet } from './components/RoomDetailsSheet';
 import type { LiveStatusRoom } from '@/types/status';
 import type { ViewMode } from './components/LiveStatusFilters';
-
-const EMPTY_ROOMS: LiveStatusRoom[] = [];
 
 export interface LiveStatusScreenRef {
   openFilters: () => void;
@@ -23,8 +20,7 @@ interface LiveStatusScreenProps {
 
 const LiveStatusScreen = forwardRef<LiveStatusScreenRef, LiveStatusScreenProps>(
   ({ searchQuery, viewMode }, ref) => {
-    // note to self on 14/7/26 -- hardcoded the property until the property switch design is compelted
-    const { data, isLoading, isError, error, refetch } = useStatusRooms('express');
+    const { data: overview, isLoading, isError, error, refetch } = useStatusOverview();
 
     const [activeFilters, setActiveFilters] = useState<string[]>(['all']);
     const [isFilterSheetOpen, setIsFilterSheetOpen] = useState(false);
@@ -41,91 +37,48 @@ const LiveStatusScreen = forwardRef<LiveStatusScreenRef, LiveStatusScreenProps>(
       setIsDetailsSheetOpen(true);
     };
 
-    const rooms = data?.rooms || EMPTY_ROOMS;
-
-    // Derived state: filters and search
-    const filteredRooms = useMemo(() => {
-      return rooms.filter(room => {
-        // 1. Text search
-        const query = searchQuery.toLowerCase();
-        const matchesSearch =
-          room.rmCode.toLowerCase().includes(query) ||
-          (room.guestName || '').toLowerCase().includes(query);
-
-        if (!matchesSearch) return false;
-
-        // 2. Filter tabs
-        if (!activeFilters.includes('all')) {
-          let isMatch = false;
-          if (activeFilters.includes('departures') && room.status === 'checking_out')
-            isMatch = true;
-          if (activeFilters.includes('arrivals') && room.status === 'arriving') isMatch = true;
-          if (activeFilters.includes('vacant') && room.status === 'vacant') isMatch = true;
-          if (!isMatch) return false;
-        }
-        return true;
-      });
-    }, [rooms, searchQuery, activeFilters]);
-
-    // Derived state: stats for filter pills
+    // Derived state: stats for filter pills (aggregated across all properties)
     const stats = useMemo(() => {
-      return {
-        total: rooms.length,
-        departures: rooms.filter(r => r.status === 'checking_out').length,
-        arrivals: rooms.filter(r => r.status === 'arriving').length,
-      };
-    }, [rooms]);
-
-    // Derived state: grouped by floor for grid view
-    const floors = useMemo(() => {
-      const grouped: Record<string, LiveStatusRoom[]> = {};
-      filteredRooms.forEach(room => {
-        // Simple heuristic: first digit of room number
-        const floorStr = room.rmCode.charAt(0);
-        const floorNum = parseInt(floorStr, 10);
-        const floorKey = isNaN(floorNum) ? 'Other' : `${floorNum}${getOrdinal(floorNum)} FLOOR`;
-
-        if (!grouped[floorKey]) {
-          grouped[floorKey] = [];
-        }
-        grouped[floorKey].push(room);
+      if (!overview) return { total: 0, departures: 0, arrivals: 0 };
+      let total = 0;
+      let departures = 0;
+      let arrivals = 0;
+      overview.properties.forEach(p => {
+        total += p.totalRooms;
+        departures += p.checkingOutToday;
+        arrivals += p.arrivingToday;
       });
-      return grouped;
-    }, [filteredRooms]);
+      return { total, departures, arrivals };
+    }, [overview]);
 
     if (isLoading) return <LoadingSpinner />;
     if (isError) return <ErrorState message={error.message} onRetry={refetch} />;
 
+    const properties = overview?.properties || [];
+
     return (
       <>
-        {filteredRooms.length === 0 ? (
+        {properties.length === 0 ? (
           <EmptyState
-            icon="search"
-            title="No rooms found"
-            subtitle="Try adjusting your search or filters."
-          />
-        ) : viewMode === 'list' ? (
-          <FlatList
-            data={filteredRooms}
-            keyExtractor={item => item.rmCode}
-            renderItem={({ item }) => <RoomCard room={item} />}
-            contentContainerStyle={styles.listContent}
-            showsVerticalScrollIndicator={false}
+            icon="home"
+            title="No properties found"
+            subtitle="There are no properties available to display."
           />
         ) : (
           <ScrollView
-            contentContainerStyle={styles.gridContent}
+            contentContainerStyle={styles.scrollContent}
             showsVerticalScrollIndicator={false}
           >
-            {Object.entries(floors).map(([floorName, floorRooms]) => (
-              <View key={floorName} style={styles.floorSection}>
-                <Text style={styles.floorTitle}>{floorName}</Text>
-                <View style={styles.gridWrapper}>
-                  {floorRooms.map(room => (
-                    <RoomGridCard key={room.rmCode} room={room} onPress={handleRoomPress} />
-                  ))}
-                </View>
-              </View>
+            {properties.map((property, index) => (
+              <PropertyAccordion
+                key={property.key}
+                property={property}
+                searchQuery={searchQuery}
+                activeFilters={activeFilters}
+                viewMode={viewMode}
+                onRoomPress={handleRoomPress}
+                defaultExpanded={index === 0} // Expand the first property by default
+              />
             ))}
           </ScrollView>
         )}
@@ -155,36 +108,10 @@ LiveStatusScreen.displayName = 'LiveStatusScreen';
 
 export default LiveStatusScreen;
 
-function getOrdinal(n: number) {
-  const s = ['th', 'st', 'nd', 'rd'];
-  const v = n % 100;
-  return s[(v - 20) % 10] || s[v] || s[0];
-}
-
 const styles = StyleSheet.create({
-  listContent: {
+  scrollContent: {
     paddingTop: tokens.spacing.md,
     paddingBottom: tokens.spacing.xl,
-  },
-  gridContent: {
-    paddingTop: tokens.spacing.sm,
-    paddingBottom: tokens.spacing.xl,
-  },
-  floorSection: {
-    marginBottom: tokens.spacing.xxl,
-  },
-  floorTitle: {
-    fontFamily: tokens.typography.fontFamily.sub,
-    fontSize: tokens.typography.fontSize.caption,
-    fontWeight: tokens.typography.fontWeight.bold,
-    color: tokens.colors.textHint,
-    textTransform: 'uppercase',
-    letterSpacing: tokens.typography.letterSpacing.caps,
-    marginBottom: tokens.spacing.mdLg,
-  },
-  gridWrapper: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: tokens.spacing.mdLg,
+    paddingHorizontal: tokens.spacing.md,
   },
 });
