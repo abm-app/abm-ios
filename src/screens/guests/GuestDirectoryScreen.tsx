@@ -40,8 +40,8 @@ export default function GuestDirectoryScreen() {
 
   const filters = useMemo(() => {
     return {
-      search: debouncedSearch,
-      tier: activeTier,
+      search: debouncedSearch ? debouncedSearch : undefined,
+      tier: activeTier === 'All' ? undefined : activeTier,
       lapsed: activeLapsed || undefined,
     };
   }, [debouncedSearch, activeTier, activeLapsed]);
