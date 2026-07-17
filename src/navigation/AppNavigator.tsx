@@ -7,7 +7,7 @@ import tokens from '@/theme/tokens';
 import { useAuthStore } from '@/store/authStore';
 import { useLogout } from '@/hooks/auth/useLogout';
 import { Button } from '@/components/ui';
-import { FloatingTabBar } from '@/components/shared';
+import { FloatingTabBar, ConfirmationModal } from '@/components/shared';
 import type { AppTabParamList } from './types';
 import { TAB_PERMISSIONS } from '@/config/roles';
 import CampaignDashboardScreen from '@/screens/campaigns/CampaignDashboardScreen';
@@ -71,6 +71,7 @@ const TAB_ORDER: (keyof AppTabParamList)[] = [
 function createPlaceholderScreen(title: string) {
   return function PlaceholderScreen() {
     const logoutMutation = useLogout();
+    const [isLogoutModalVisible, setIsLogoutModalVisible] = React.useState(false);
 
     return (
       <View style={styles.placeholder}>
@@ -78,9 +79,22 @@ function createPlaceholderScreen(title: string) {
         <Text style={styles.placeholderSubtitle}>Coming soon</Text>
         <Button
           label={logoutMutation.isPending ? 'Logging out...' : 'Logout'}
-          onPress={() => logoutMutation.mutate()}
+          onPress={() => setIsLogoutModalVisible(true)}
           style={styles.logoutButton}
           disabled={logoutMutation.isPending}
+        />
+        <ConfirmationModal
+          visible={isLogoutModalVisible}
+          onClose={() => setIsLogoutModalVisible(false)}
+          onConfirm={() => {
+            setIsLogoutModalVisible(false);
+            logoutMutation.mutate();
+          }}
+          title="Log Out"
+          content="Are you sure you want to log out?"
+          confirmLabel="Log Out"
+          iconVariant="danger"
+          icon={<Feather name="log-out" size={32} color={tokens.colors.danger} />}
         />
       </View>
     );
