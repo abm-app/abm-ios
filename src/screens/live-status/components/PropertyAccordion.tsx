@@ -53,6 +53,7 @@ export default function PropertyAccordion({
         if (activeFilters.includes('departures') && room.status === 'checking_out') isMatch = true;
         if (activeFilters.includes('arrivals') && room.status === 'arriving') isMatch = true;
         if (activeFilters.includes('vacant') && room.status === 'vacant') isMatch = true;
+        if (activeFilters.includes('occupied') && room.status === 'occupied') isMatch = true;
         if (!isMatch) return false;
       }
       return true;
