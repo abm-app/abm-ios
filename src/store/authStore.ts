@@ -38,6 +38,8 @@ interface AuthActions {
   clearSession: () => Promise<void>;
   /** Read SecureStore on app launch. Sets isRestoring false when done. */
   restoreSession: () => Promise<void>;
+  /** Update just the tokens in the store and SecureStore */
+  updateTokens: (accessToken: string, refreshToken: string) => Promise<void>;
 }
 
 // ─── Store ───────────────────────────────────────────────────────────────────
@@ -84,6 +86,15 @@ export const useAuthStore = create<AuthState & AuthActions>(set => ({
       modules: [],
       isAuthenticated: false,
     });
+  },
+
+  updateTokens: async (accessToken, refreshToken) => {
+    try {
+      await saveAuthTokens(accessToken, refreshToken);
+    } catch (error) {
+      logger.error('Failed to save refreshed auth tokens:', error);
+    }
+    set({ accessToken, refreshToken });
   },
 
   restoreSession: async () => {
