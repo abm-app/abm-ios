@@ -16,19 +16,19 @@ export interface CreateCampaignPayload {
 }
 
 export const fetchCampaigns = async (): Promise<Campaign[]> => {
-  const response = await apiClient.get<{ campaigns: Campaign[] }>('/api/campaigns/');
+  const response = await apiClient.get<{ campaigns: Campaign[] }>('/campaigns/');
   return response.data.campaigns;
 };
 
 export const fetchCampaignById = async (id: string): Promise<Campaign> => {
-  const response = await apiClient.get<Campaign>(`/api/campaigns/${id}/`);
+  const response = await apiClient.get<Campaign>(`/campaigns/${id}/`);
   const data = response.data;
 
   return data;
 };
 
 export const createCampaign = async (payload: CreateCampaignPayload): Promise<Campaign> => {
-  const response = await apiClient.post<Campaign>('/api/campaigns/create', payload);
+  const response = await apiClient.post<Campaign>('/campaigns/create', payload);
   return response.data;
 };
 
@@ -36,12 +36,12 @@ export const updateCampaign = async (
   id: string,
   payload: Partial<CreateCampaignPayload>,
 ): Promise<Campaign> => {
-  const response = await apiClient.patch<Campaign>(`/api/campaigns/${id}/update`, payload);
+  const response = await apiClient.patch<Campaign>(`/campaigns/${id}/update`, payload);
   return response.data;
 };
 
 export const deleteCampaign = async (id: string): Promise<{ message: string }> => {
-  const response = await apiClient.delete<{ message: string }>(`/api/campaigns/${id}/delete`);
+  const response = await apiClient.delete<{ message: string }>(`/campaigns/${id}/delete`);
   return { message: response.data?.message || 'Campaign deleted successfully.' };
 };
 
@@ -50,7 +50,7 @@ export const getEstimatedReach = async (tiers: string[]): Promise<number> => {
     return 0;
   }
   const tiersString = tiers.join(',');
-  const response = await apiClient.get<{ count: number }>('/api/campaigns/reach', {
+  const response = await apiClient.get<{ count: number }>('/campaigns/reach', {
     params: { tiers: tiersString },
   });
   return response.data.count;

@@ -79,10 +79,6 @@ export default function CampaignDashboardScreen() {
     Math.max(insets.bottom, tokens.navigation.paddingVertical) +
     tokens.spacing.lg;
 
-  if (isLoading) return <LoadingSpinner />;
-  if (isError)
-    return <ErrorState message={error?.message || 'Failed to load campaigns.'} onRetry={refetch} />;
-
   const pendingCampaigns = campaigns?.filter(c => c.status === 'pending_approval') || [];
   const recentCampaigns = campaigns?.filter(c => c.status !== 'pending_approval') || [];
 
@@ -102,7 +98,18 @@ export default function CampaignDashboardScreen() {
             <SegmentedControl tabs={TABS} activeTab={activeTab} onChange={setActiveTab} />
           </View>
 
-          {activeTab === 'automations' ? (
+          {isLoading ? (
+            <View style={styles.centerContainer}>
+              <LoadingSpinner />
+            </View>
+          ) : isError ? (
+            <View style={styles.centerContainer}>
+              <ErrorState
+                message={error?.message || 'Failed to load campaigns.'}
+                onRetry={refetch}
+              />
+            </View>
+          ) : activeTab === 'automations' ? (
             <ScrollView
               showsVerticalScrollIndicator={false}
               contentContainerStyle={styles.scrollInner}
