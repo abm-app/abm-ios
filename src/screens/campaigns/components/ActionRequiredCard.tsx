@@ -12,7 +12,7 @@ export interface PendingAction {
   id: string;
   title: string;
   audience: string;
-  creator: string;
+  creator: { id: string; name: string };
   status: string;
 }
 
@@ -45,7 +45,7 @@ export default function ActionRequiredCard({ action }: ActionRequiredCardProps) 
       <View style={styles.divider} />
 
       <View style={styles.footerRow}>
-        <Text style={styles.footerText}>Created by {action.creator}</Text>
+        <Text style={styles.footerText}>Created by {action.creator?.name || 'Unknown'}</Text>
         <Button
           label="Review"
           variant="primary"

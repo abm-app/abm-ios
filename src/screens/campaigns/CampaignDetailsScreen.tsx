@@ -61,8 +61,10 @@ export default function CampaignDetailsScreen() {
     month: 'short',
     day: 'numeric',
     hour: 'numeric',
-    minute: 'numeric',
+    minute: '2-digit',
   });
+
+  const creatorName = campaign.createdBy?.name || 'Unknown';
 
   const handleDelete = async () => {
     if (!campaign) return;
@@ -129,7 +131,7 @@ export default function CampaignDetailsScreen() {
         </View>
 
         <Text style={styles.subtitle}>
-          Submitted by: {campaign.createdBy} on {dateStr}
+          Submitted by: {creatorName} on {dateStr}
         </Text>
 
         {/* Content Cards */}

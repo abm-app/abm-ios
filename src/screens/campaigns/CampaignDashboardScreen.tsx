@@ -32,7 +32,7 @@ function mapCampaignToPendingAction(c: Campaign): PendingAction {
     id: c._id,
     title: c.name,
     audience: audienceStr,
-    creator: c.createdBy,
+    creator: typeof c.createdBy === 'string' ? { id: c.createdBy, name: c.createdBy } : c.createdBy,
     status: c.status,
   };
 }
