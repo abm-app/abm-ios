@@ -1,110 +1,25 @@
-import type { AuthUser, LoginRequest, LoginResponse, ModuleKey } from '@/types/auth';
+import apiClient from '../client';
+import type { LoginRequest, LoginResponse } from '@/types/auth';
 
-// ─── Mock toggle ─────────────────────────────────────────────────────────────
+export const loginUser = async (payload: LoginRequest): Promise<LoginResponse> => {
+  const loginRes = await apiClient.post('/auth/login', payload);
+  const { accessToken, refreshToken } = loginRes.data;
 
-// ─── Mock delay helper ───────────────────────────────────────────────────────
-
-const delay = (ms: number): Promise<void> => new Promise(resolve => setTimeout(resolve, ms));
-
-// ─── Module sets per role ────────────────────────────────────────────────────
-
-const ALL_MODULES: ModuleKey[] = [
-  // 'dashboard',
-  'campaigns',
-  'live_status',
-  'audit_trail',
-  'revenue',
-  // 'reports',
-  'loyalty',
-  // 'notifications',
-  'user_management',
-];
-
-const MANAGER_MODULES: ModuleKey[] = ALL_MODULES.filter(m => m !== 'user_management');
-
-const STAFF_MODULES: ModuleKey[] = [/* 'dashboard', */ 'campaigns', 'live_status'];
-
-// ─── Mock users ──────────────────────────────────────────────────────────────
-
-interface MockUser {
-  password: string;
-  user: AuthUser;
-  modules: ModuleKey[];
-}
-
-const MOCK_USERS: Record<string, MockUser> = {
-  'owner@abm': {
-    password: '1234',
-    modules: ALL_MODULES,
-    user: {
-      id: 'usr_001',
-      email: 'owner@abm',
-      firstName: 'Tanvir',
-      lastName: 'O',
-      role: 'owner',
-      property: 'both',
-      modules: ALL_MODULES,
-    },
-  },
-  'manager@abm': {
-    password: '1234',
-    modules: MANAGER_MODULES,
-    user: {
-      id: 'usr_002',
-      email: 'manager@abm',
-      firstName: 'Priya',
-      lastName: 'Sharma',
-      role: 'manager',
-      property: 'express',
-      modules: MANAGER_MODULES,
-    },
-  },
-  'staff@abm': {
-    password: '1234',
-    modules: STAFF_MODULES,
-    user: {
-      id: 'usr_003',
-      email: 'staff@abm',
-      firstName: 'Amit',
-      lastName: 'Kumar',
-      role: 'staff',
-      property: 'international',
-      modules: STAFF_MODULES,
-    },
-  },
-};
-
-// ─── Mock login ──────────────────────────────────────────────────────────────
-
-async function mockLogin(payload: LoginRequest): Promise<LoginResponse> {
-  await delay(800);
-
-  const email = payload.email.trim().toLowerCase();
-  const mock = MOCK_USERS[email];
-
-  if (!mock || mock.password !== payload.password) {
-    throw new Error('Invalid email or password');
-  }
+  // The login endpoint returns a basic user profile, but the frontend needs
+  // the 'modules' array which is returned by the /auth/me endpoint.
+  const meRes = await apiClient.get('/auth/me', {
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
 
   return {
-    accessToken: `mock_access_${mock.user.id}`,
-    refreshToken: `mock_refresh_${mock.user.id}`,
-    user: mock.user,
-    modules: mock.modules,
+    accessToken,
+    refreshToken,
+    user: meRes.data.user,
+    modules: meRes.data.modules,
   };
-}
-
-// ─── Public API ──────────────────────────────────────────────────────────────
-
-// NOTE: Currently using mock data. When the real backend is ready, replace the
-// body of loginUser with:
-//   const r = await apiClient.post('/auth/login', payload);
-//   return r.data;
-
-export const loginUser = (payload: LoginRequest): Promise<LoginResponse> => {
-  return mockLogin(payload);
 };
 
-export const logout = (): Promise<void> => {
-  return Promise.resolve();
+export const logout = async (): Promise<void> => {
+  // Add backend logout endpoint call here if one exists
+  // await apiClient.post('/auth/logout');
 };

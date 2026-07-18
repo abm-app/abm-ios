@@ -1,16 +1,10 @@
 import React, { useMemo, useState } from 'react';
-import {
-  Alert,
-  KeyboardAvoidingView,
-  StyleSheet,
-  Text,
-  useWindowDimensions,
-  View,
-} from 'react-native';
+import { KeyboardAvoidingView, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
+import { Feather } from '@expo/vector-icons';
 
 import tokens from '@/theme/tokens';
 import { useLogin } from '@/hooks/auth/useLogin';
-import { Backdrop } from '@/components/shared';
+import { Backdrop, AlertModal } from '@/components/shared';
 import LoginCard from './components/LoginCard';
 import LpaiLogo from '../../../assets/lpai.svg';
 import AbmLogo from '../../../assets/logos/abm-logo.svg';
@@ -26,6 +20,7 @@ export default function LoginScreen() {
   const { width, height } = useWindowDimensions();
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
+  const [alertMessage, setAlertMessage] = useState<string | null>(null);
 
   const loginMutation = useLogin();
 
@@ -45,8 +40,11 @@ export default function LoginScreen() {
     loginMutation.mutate(
       { email: resolvedIdentifier, password },
       {
-        onError: (error: Error) => {
-          Alert.alert('Login failed', error.message || 'Check your credentials and try again.');
+        onError: error => {
+          const humanReadableMessage =
+            error.response?.data?.error || error.message || 'Check your credentials and try again.';
+
+          setAlertMessage(humanReadableMessage);
         },
       },
     );
@@ -89,6 +87,15 @@ export default function LoginScreen() {
           height={tokens.auth.logoHeight * designScale}
         />
       </View>
+
+      <AlertModal
+        visible={!!alertMessage}
+        onClose={() => setAlertMessage(null)}
+        title="Login failed"
+        content={alertMessage}
+        iconVariant="danger"
+        icon={<Feather name="alert-circle" size={32} color={tokens.colors.danger} />}
+      />
     </View>
   );
 }

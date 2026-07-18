@@ -19,12 +19,10 @@ export type ModuleKey =
 
 export interface AuthUser {
   id: string;
+  name: string;
   email: string;
-  firstName: string;
-  lastName: string;
   role: UserRole;
   property: UserProperty;
-  modules: ModuleKey[];
 }
 
 // ─── Auth API payloads & responses ───────────────────────────────────────────

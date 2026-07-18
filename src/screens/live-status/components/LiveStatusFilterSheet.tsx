@@ -105,6 +105,12 @@ export function LiveStatusFilterSheet({
             tone={draftFilters.includes('vacant') ? 'primary' : 'default'}
             onPress={() => toggleFilter('vacant')}
           />
+          <Chip
+            label="Occupied"
+            active={draftFilters.includes('occupied')}
+            tone={draftFilters.includes('occupied') ? 'primary' : 'default'}
+            onPress={() => toggleFilter('occupied')}
+          />
         </View>
       </View>
     </FilterSheet>

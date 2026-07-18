@@ -10,8 +10,8 @@ export interface Campaign {
   filters: Record<string, unknown>;
   recipientCount: number;
   status: CampaignStatus;
-  createdBy: string;
-  approvedBy?: string;
+  createdBy: { id: string; name: string };
+  approvedBy?: { id: string; name: string };
   rejectionReason?: string;
   scheduledAt?: string;
   sentAt?: string;
