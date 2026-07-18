@@ -6,8 +6,8 @@ import logger from '@/utils/logger';
 
 const apiClient = axios.create({
   baseURL: ENV.API_URL,
-  timeout: 15_000,
-  headers: { 'Content-Type': 'application/json' },
+  withCredentials: true,
+  timeout: 60_000,
 });
 
 // ─── Request interceptor — attach access token ───────────────────────────────
