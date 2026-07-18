@@ -17,8 +17,8 @@
       "credentialsSource": "remote",
       "env": {
         "APP_ENV": "preview",
-        "EXPO_PUBLIC_API_URL": "https://api.example.com",
-        "EXPO_PUBLIC_USE_MOCK_AUTH": "true"
+        "EXPO_PUBLIC_API_URL": "https://abm-api.up.railway.app/api",
+        "EXPO_PUBLIC_USE_MOCK_AUTH": "false"
       },
       "ios": {
         "simulator": false
@@ -27,8 +27,8 @@
     "production": {
       "autoIncrement": true,
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://api.example.com",
-        "EXPO_PUBLIC_USE_MOCK_AUTH": "true"
+        "EXPO_PUBLIC_API_URL": "https://abm-api.up.railway.app/api",
+        "EXPO_PUBLIC_USE_MOCK_AUTH": "false"
       }
     }
   },
