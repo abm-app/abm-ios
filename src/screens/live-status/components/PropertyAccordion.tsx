@@ -50,10 +50,21 @@ export default function PropertyAccordion({
 
       if (!activeFilters.includes('all')) {
         let isMatch = false;
-        if (activeFilters.includes('departures') && room.status === 'checking_out') isMatch = true;
-        if (activeFilters.includes('arrivals') && room.status === 'arriving') isMatch = true;
+        const now = new Date();
+        const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+
+        const isDeparture =
+          room.status === 'checking_out' ||
+          (room.departureDate && room.departureDate.split('T')[0] === todayStr);
+        const isArrival =
+          room.status === 'arriving' ||
+          (room.arrivalDate && room.arrivalDate.split('T')[0] === todayStr);
+
+        if (activeFilters.includes('departures') && isDeparture) isMatch = true;
+        if (activeFilters.includes('arrivals') && isArrival) isMatch = true;
         if (activeFilters.includes('vacant') && room.status === 'vacant') isMatch = true;
         if (activeFilters.includes('occupied') && room.status === 'occupied') isMatch = true;
+
         if (!isMatch) return false;
       }
       return true;
