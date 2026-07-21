@@ -25,6 +25,7 @@ export type AppTabParamList = {
 
 export type OperationsStackParamList = {
   OperationsHome: undefined;
+  Revenue: undefined;
 };
 
 // ─── Root Stack ──────────────────────────────────────────────────────────────

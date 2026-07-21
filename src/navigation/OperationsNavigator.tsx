@@ -1,6 +1,7 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import OperationsScreen from '@/screens/operations/OperationsScreen';
+import RevenueScreen from '@/screens/revenue/RevenueScreen';
 import type { OperationsStackParamList } from './types';
 
 const Stack = createNativeStackNavigator<OperationsStackParamList>();
@@ -9,6 +10,7 @@ export default function OperationsNavigator() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="OperationsHome" component={OperationsScreen} />
+      <Stack.Screen name="Revenue" component={RevenueScreen} />
     </Stack.Navigator>
   );
 }

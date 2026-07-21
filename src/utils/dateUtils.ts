@@ -81,3 +81,9 @@ export const formatDateTime = (isoStr?: string): string | null => {
   }).format(date);
   // e.g. "8 Jul 2026, 04:30 pm"
 };
+
+export const formatMonth = (monthStr: string): string => {
+  const [year, month] = monthStr.split('-');
+  const date = new Date(Number(year), Number(month) - 1, 1);
+  return date.toLocaleString('default', { month: 'short' }).toUpperCase();
+};

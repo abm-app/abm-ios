@@ -110,6 +110,29 @@ export default function FloatingTabBar({ state, descriptors, navigation }: Botto
                 </TouchableOpacity>
               );
             })}
+            {/* Temporary Revenue Tab */}
+            <TouchableOpacity
+              accessibilityRole="button"
+              onPress={() =>
+                (
+                  navigation as unknown as {
+                    navigate: (route: string, params?: Record<string, unknown>) => void;
+                  }
+                ).navigate('Operations', { screen: 'Revenue' })
+              }
+              style={styles.tabItem}
+              activeOpacity={0.8}
+            >
+              <View style={styles.iconContainer}>
+                <Feather
+                  name="dollar-sign"
+                  size={tokens.iconSizes.tabBar}
+                  color={tokens.colors.navInactiveText}
+                />
+              </View>
+              <Text style={[styles.tabLabel, styles.tabLabelInactive]}>Revenue</Text>
+            </TouchableOpacity>
+
             {ENV.DEV_MODE_ENABLED && (
               <TouchableOpacity
                 accessibilityRole="button"
