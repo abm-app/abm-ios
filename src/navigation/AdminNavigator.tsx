@@ -5,6 +5,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import tokens from '@/theme/tokens';
 import type { AdminStackParamList } from './types';
 import AdminScreen from '@/screens/admin/AdminScreen';
+import RevenueScreen from '@/screens/revenue/RevenueScreen';
 
 // ─── Placeholder screens for nested routes ───────────────────────────────────
 
@@ -19,7 +20,6 @@ function createSimplePlaceholder(title: string) {
   };
 }
 
-const RevenueAnalyticsScreen = createSimplePlaceholder('Revenue Analytics');
 const UserManagementScreen = createSimplePlaceholder('User Management');
 const LoyaltyConfigurationScreen = createSimplePlaceholder('Loyalty Configuration');
 
@@ -31,7 +31,7 @@ export default function AdminNavigator() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="AdminHome" component={AdminScreen} />
-      <Stack.Screen name="RevenueAnalytics" component={RevenueAnalyticsScreen} />
+      <Stack.Screen name="RevenueAnalytics" component={RevenueScreen} />
       <Stack.Screen name="UserManagement" component={UserManagementScreen} />
       <Stack.Screen name="LoyaltyConfiguration" component={LoyaltyConfigurationScreen} />
     </Stack.Navigator>
