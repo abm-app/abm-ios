@@ -10,3 +10,10 @@ export function formatCurrency(value?: number | null): string {
   }
   return `₹${safeValue.toFixed(0)}`;
 }
+
+export function formatTime(isoString: string): string {
+  return new Date(isoString).toLocaleTimeString([], {
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+}

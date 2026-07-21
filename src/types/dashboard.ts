@@ -1,24 +1,36 @@
-export type RecentEventType = 'check_in' | 'rate_override';
+import type { AuditEventType, AuditProperty } from './audit';
 
 export interface OccupancyProperty {
-  name: string;
   occupied: number;
   total: number;
 }
 
-export interface RecentEvent {
-  id: string;
-  type: RecentEventType;
-  guestName: string;
-  room: string;
-  timestamp: string;
+export interface RecentEventAfter {
+  arrivalDate?: string;
+  departureDate?: string;
+  rate?: number;
+  rmCode?: string;
 }
 
-export type DashboardOccupancy = Record<string, OccupancyProperty>;
+export interface RecentEvent {
+  id: string;
+  eventType: AuditEventType;
+  regId: number;
+  rmCode: string;
+  property: AuditProperty;
+  guestName: string;
+  before: Record<string, unknown>;
+  after: RecentEventAfter;
+  actor: string;
+  detectedAt: string;
+  idempotencyKey: string;
+}
+
+export type DashboardOccupancy = Record<AuditProperty, OccupancyProperty>;
 
 export interface DashboardSummary {
   occupancy: DashboardOccupancy;
-  todayRevenue: Record<string, number>;
+  todayRevenue: Record<AuditProperty, number>;
   recentEvents: RecentEvent[];
   unreadNotifications: number;
   lastSyncedAt: string;
