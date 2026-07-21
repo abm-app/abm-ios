@@ -28,6 +28,15 @@ export type OperationsStackParamList = {
   Revenue: undefined;
 };
 
+// ─── Admin Stack ─────────────────────────────────────────────────────────────
+
+export type AdminStackParamList = {
+  AdminHome: undefined;
+  RevenueAnalytics: undefined;
+  UserManagement: undefined;
+  LoyaltyConfiguration: undefined;
+};
+
 // ─── Root Stack ──────────────────────────────────────────────────────────────
 
 export type RootStackParamList = {
