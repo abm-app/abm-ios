@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { ScreenHeaderV2 } from '@/components/shared/ScreenHeader';
 import { SegmentedControl } from '@/components/shared/SegmentedControl';
 import ErrorState from '@/components/shared/ErrorState';
@@ -10,6 +11,7 @@ import tokens from '@/theme/tokens';
 import { useRevenueSummary } from '@/hooks/revenue/useRevenue';
 import { useRevenueTrends } from '@/hooks/revenue/useRevenue';
 import type { RevenuePeriod } from '@/types/revenue';
+import type { AdminStackParamList } from '@/navigation/types';
 import { formatCurrency } from '@/utils/formatters';
 import { formatMonth } from '@/utils/dateUtils';
 import { Backdrop } from '@/components/shared';
@@ -26,7 +28,9 @@ const PERIOD_LABELS: Record<RevenuePeriod, string> = {
   month: 'This Month',
 };
 
-export default function RevenueScreen() {
+type Props = NativeStackScreenProps<AdminStackParamList, 'RevenueAnalytics'>;
+
+export default function RevenueScreen({ navigation }: Props) {
   const [period, setPeriod] = useState<RevenuePeriod>('month');
   const insets = useSafeAreaInsets();
 
@@ -87,6 +91,8 @@ export default function RevenueScreen() {
           showFilter={false}
           showNotifications={false}
           showRightButton={false}
+          showBackButton
+          onBackPress={navigation.goBack}
         />
 
         <SegmentedControl
