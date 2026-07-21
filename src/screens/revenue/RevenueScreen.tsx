@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ScreenHeaderV2 } from '@/components/shared/ScreenHeader';
 import { SegmentedControl } from '@/components/shared/SegmentedControl';
 import ErrorState from '@/components/shared/ErrorState';
@@ -11,6 +12,7 @@ import { useRevenueTrends } from '@/hooks/revenue/useRevenue';
 import type { RevenuePeriod } from '@/types/revenue';
 import { formatCurrency } from '@/utils/formatters';
 import { formatMonth } from '@/utils/dateUtils';
+import { Backdrop } from '@/components/shared';
 
 const PERIOD_TABS = [
   { id: 'day', label: 'Today' },
@@ -26,6 +28,7 @@ const PERIOD_LABELS: Record<RevenuePeriod, string> = {
 
 export default function RevenueScreen() {
   const [period, setPeriod] = useState<RevenuePeriod>('month');
+  const insets = useSafeAreaInsets();
 
   const summaryQuery = useRevenueSummary(period);
   const trendsQuery = useRevenueTrends();
@@ -65,95 +68,112 @@ export default function RevenueScreen() {
   if (isLoading) return <LoadingSpinner />;
   if (isError) return <ErrorState message="Failed to load revenue data." onRetry={handleRetry} />;
 
+  const bottomClearance =
+    Math.max(insets.bottom, tokens.navigation.paddingVertical) +
+    tokens.navigation.height +
+    tokens.spacing.lg;
+
   return (
-    <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
-      <ScreenHeaderV2
-        title="Revenue"
-        subtitle={PERIOD_LABELS[period]}
-        showSearch={false}
-        showFilter={false}
-        showNotifications={false}
-        showRightButton={false}
-      />
+    <SafeAreaView style={styles.safeArea}>
+      <Backdrop />
+      <ScrollView
+        style={styles.screen}
+        contentContainerStyle={[styles.content, { paddingBottom: bottomClearance }]}
+      >
+        <ScreenHeaderV2
+          title="Revenue"
+          subtitle={PERIOD_LABELS[period]}
+          showSearch={false}
+          showFilter={false}
+          showNotifications={false}
+          showRightButton={false}
+        />
 
-      <SegmentedControl
-        tabs={PERIOD_TABS as unknown as { id: string; label: string }[]}
-        activeTab={period}
-        onChange={id => setPeriod(id as RevenuePeriod)}
-        style={styles.segmented}
-      />
+        <SegmentedControl
+          tabs={PERIOD_TABS as unknown as { id: string; label: string }[]}
+          activeTab={period}
+          onChange={id => setPeriod(id as RevenuePeriod)}
+          style={styles.segmented}
+        />
 
-      {/* Total Revenue Card */}
-      <Card variant="outlined" padded style={styles.card}>
-        <Text style={styles.cardLabel}>Total Revenue</Text>
-        <Text style={styles.headline}>{formatCurrency(totalRevenue)}</Text>
-        <Text style={styles.subline}>Tax: {formatCurrency(totalTax)}</Text>
-        <View style={styles.bookingRow}>
-          <Text style={styles.bookingText}>{totalBookings} bookings</Text>
-        </View>
-      </Card>
-
-      {/* Trend Chart */}
-      {last6Trends.length > 0 && (
+        {/* Total Revenue Card */}
         <Card variant="outlined" padded style={styles.card}>
-          <Text style={styles.cardLabel}>Monthly Trend</Text>
-          <View style={styles.chartContainer}>
-            {last6Trends.map(item => {
-              const combined = (item.international ?? 0) + (item.express ?? 0);
-              const heightPct = maxTrend > 0 ? combined / maxTrend : 0;
-              const safeHeightPct = Number.isNaN(heightPct) ? 0 : heightPct;
-              return (
-                <View key={item.month} style={styles.barWrapper}>
-                  <Text style={styles.barValue}>{formatCurrency(combined)}</Text>
-                  <View style={styles.barTrack}>
-                    <View
-                      style={[styles.barFill, { height: `${Math.max(safeHeightPct * 100, 4)}%` }]}
-                    />
-                  </View>
-                  <Text style={styles.barLabel}>{formatMonth(item.month)}</Text>
-                </View>
-              );
-            })}
+          <Text style={styles.cardLabel}>Total Revenue</Text>
+          <Text style={styles.headline}>{formatCurrency(totalRevenue)}</Text>
+          <Text style={styles.subline}>Tax: {formatCurrency(totalTax)}</Text>
+          <View style={styles.bookingRow}>
+            <Text style={styles.bookingText}>{totalBookings} bookings</Text>
           </View>
         </Card>
-      )}
 
-      {/* Property Breakdown */}
-      <Card variant="outlined" padded style={styles.card}>
-        <Text style={styles.cardLabel}>Property Breakdown</Text>
+        {/* Trend Chart */}
+        {last6Trends.length > 0 && (
+          <Card variant="outlined" padded style={styles.card}>
+            <Text style={styles.cardLabel}>Monthly Trend</Text>
+            <View style={styles.chartContainer}>
+              {last6Trends.map(item => {
+                const combined = (item.international ?? 0) + (item.express ?? 0);
+                const heightPct = maxTrend > 0 ? combined / maxTrend : 0;
+                const safeHeightPct = Number.isNaN(heightPct) ? 0 : heightPct;
+                return (
+                  <View key={item.month} style={styles.barWrapper}>
+                    <Text style={styles.barValue}>{formatCurrency(combined)}</Text>
+                    <View style={styles.barTrack}>
+                      <View
+                        style={[styles.barFill, { height: `${Math.max(safeHeightPct * 100, 4)}%` }]}
+                      />
+                    </View>
+                    <Text style={styles.barLabel}>{formatMonth(item.month)}</Text>
+                  </View>
+                );
+              })}
+            </View>
+          </Card>
+        )}
 
-        <View style={styles.propertyRow}>
-          <Text style={styles.propertyName}>International</Text>
-          <Text style={styles.propertyValue}>{formatCurrency(internationalTotal)}</Text>
-        </View>
-        <View style={styles.barTrackHoriz}>
-          <View
-            style={[styles.barFillHoriz, { width: `${(internationalTotal / propertyMax) * 100}%` }]}
-          />
-        </View>
+        {/* Property Breakdown */}
+        <Card variant="outlined" padded style={styles.card}>
+          <Text style={styles.cardLabel}>Property Breakdown</Text>
 
-        <View style={[styles.propertyRow, styles.propertyRowGap]}>
-          <Text style={styles.propertyName}>Express</Text>
-          <Text style={styles.propertyValue}>{formatCurrency(expressTotal)}</Text>
-        </View>
-        <View style={styles.barTrackHoriz}>
-          <View
-            style={[
-              styles.barFillHoriz,
-              styles.barFillHorizAlt,
-              { width: `${(expressTotal / propertyMax) * 100}%` },
-            ]}
-          />
-        </View>
-      </Card>
-    </ScrollView>
+          <View style={styles.propertyRow}>
+            <Text style={styles.propertyName}>International</Text>
+            <Text style={styles.propertyValue}>{formatCurrency(internationalTotal)}</Text>
+          </View>
+          <View style={styles.barTrackHoriz}>
+            <View
+              style={[
+                styles.barFillHoriz,
+                { width: `${(internationalTotal / propertyMax) * 100}%` },
+              ]}
+            />
+          </View>
+
+          <View style={[styles.propertyRow, styles.propertyRowGap]}>
+            <Text style={styles.propertyName}>Express</Text>
+            <Text style={styles.propertyValue}>{formatCurrency(expressTotal)}</Text>
+          </View>
+          <View style={styles.barTrackHoriz}>
+            <View
+              style={[
+                styles.barFillHoriz,
+                styles.barFillHorizAlt,
+                { width: `${(expressTotal / propertyMax) * 100}%` },
+              ]}
+            />
+          </View>
+        </Card>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  screen: {
+  safeArea: {
     flex: 1,
     backgroundColor: tokens.colors.background,
+  },
+  screen: {
+    flex: 1,
   },
   content: {
     paddingBottom: tokens.spacing.xxl,
