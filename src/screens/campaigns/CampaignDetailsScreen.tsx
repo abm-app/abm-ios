@@ -140,7 +140,7 @@ export default function CampaignDetailsScreen() {
       </ScrollView>
 
       {/* Bottom Bar */}
-      {isPending && <CampaignBottomBar />}
+      {isPending && user?.role === 'owner' && <CampaignBottomBar />}
 
       {/* Modals */}
       {isEditModalVisible && (

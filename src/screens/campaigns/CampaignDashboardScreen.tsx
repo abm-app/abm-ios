@@ -70,8 +70,6 @@ export default function CampaignDashboardScreen() {
 
   const { data: campaigns, isLoading, isError, error, refetch } = useCampaigns();
 
-  const isOwner = user?.role === 'owner';
-
   // Calculate bottom padding to ensure lists end above the floating tab bar
   const bottomPadding =
     tokens.navigation.height +
@@ -121,7 +119,7 @@ export default function CampaignDashboardScreen() {
           ) : (
             <SectionList
               sections={[
-                ...(isOwner && pendingCampaigns.length > 0
+                ...(pendingCampaigns.length > 0
                   ? [
                       {
                         key: 'pending',
