@@ -3,6 +3,7 @@ import { View, Text, StyleSheet } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import tokens from '../../../theme/tokens';
 import { Card } from '../../../components/ui';
+import { formatTime } from '../../../utils/formatters';
 import type { RecentEvent } from '../../../types/dashboard';
 
 interface RecentActivityFeedProps {
@@ -16,41 +17,44 @@ interface EventDisplayInfo {
   label: string;
 }
 
-function getEventDisplayInfo(event: RecentEvent): EventDisplayInfo {
-  const isVip = event.guestName.startsWith('A.');
-
-  if (isVip) {
-    return {
-      iconName: 'star',
-      iconColor: tokens.colors.avatarWarmIcon,
-      iconBg: tokens.colors.avatarWarmBg,
-      label: 'VIP Arrival',
-    };
+function getEventDisplayInfo(eventType: RecentEvent['eventType']): EventDisplayInfo {
+  switch (eventType) {
+    case 'new_booking':
+      return {
+        iconName: 'log-in',
+        iconColor: tokens.colors.textPrimary,
+        iconBg: tokens.colors.chipNeutralBg,
+        label: 'New Booking',
+      };
+    case 'extension':
+      return {
+        iconName: 'clock',
+        iconColor: tokens.colors.info,
+        iconBg: tokens.colors.chipNeutralBg,
+        label: 'Extension',
+      };
+    case 'early_checkout':
+      return {
+        iconName: 'log-out',
+        iconColor: tokens.colors.warning,
+        iconBg: tokens.colors.chipNeutralBg,
+        label: 'Early Checkout',
+      };
+    case 'cancellation':
+      return {
+        iconName: 'x-circle',
+        iconColor: tokens.colors.danger,
+        iconBg: tokens.colors.chipNeutralBg,
+        label: 'Cancellation',
+      };
+    case 'modification':
+      return {
+        iconName: 'edit-2',
+        iconColor: tokens.colors.avatarWarmIcon,
+        iconBg: tokens.colors.avatarWarmBg,
+        label: 'Modification',
+      };
   }
-
-  if (event.type === 'check_in') {
-    return {
-      iconName: 'log-in',
-      iconColor: tokens.colors.textPrimary,
-      iconBg: tokens.colors.chipNeutralBg,
-      label: 'Check-in',
-    };
-  }
-
-  // rate_override
-  return {
-    iconName: 'bell',
-    iconColor: tokens.colors.textPrimary,
-    iconBg: tokens.colors.chipNeutralBg,
-    label: 'Room Service',
-  };
-}
-
-function formatTime(timestamp: string): string {
-  return new Date(timestamp).toLocaleTimeString([], {
-    hour: '2-digit',
-    minute: '2-digit',
-  });
 }
 
 export default function RecentActivityFeed({ events }: RecentActivityFeedProps) {
@@ -62,8 +66,8 @@ export default function RecentActivityFeed({ events }: RecentActivityFeedProps) 
 
       <View style={styles.listContainer}>
         {visibleEvents.map(event => {
-          const { iconName, iconColor, iconBg, label } = getEventDisplayInfo(event);
-          const time = formatTime(event.timestamp);
+          const { iconName, iconColor, iconBg, label } = getEventDisplayInfo(event.eventType);
+          const time = formatTime(event.detectedAt);
 
           return (
             <Card
@@ -92,7 +96,7 @@ export default function RecentActivityFeed({ events }: RecentActivityFeedProps) 
                 {/* Room */}
                 <View style={styles.roomRow}>
                   <Feather name="home" size={11} color={tokens.colors.textHint} />
-                  <Text style={styles.roomText}>Room {event.room}</Text>
+                  <Text style={styles.roomText}>Room {event.rmCode}</Text>
                 </View>
               </View>
             </Card>

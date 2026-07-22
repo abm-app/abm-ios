@@ -4,10 +4,21 @@ import { Feather, FontAwesome } from '@expo/vector-icons';
 import Svg, { Circle } from 'react-native-svg';
 import tokens from '../../../theme/tokens';
 import { Card } from '../../../components/ui';
+import type { AuditProperty } from '../../../types/audit';
+import type { DashboardOccupancy } from '../../../types/dashboard';
 
 interface OccupancySectionProps {
-  occupancy: Record<string, { name?: string; occupied: number; total: number }>;
-  todayRevenue: Record<string, number>;
+  occupancy: DashboardOccupancy;
+  todayRevenue: Record<AuditProperty, number>;
+}
+
+const PROPERTY_DISPLAY_NAMES: Record<string, string> = {
+  express: 'ABM Express',
+  international: 'ABM International',
+};
+
+function getPropertyDisplayName(key: string): string {
+  return PROPERTY_DISPLAY_NAMES[key] ?? key;
 }
 
 // ─── Colour helper ──────────────────────────────────────────────────────────
@@ -68,11 +79,11 @@ export default function OccupancySection({ occupancy, todayRevenue }: OccupancyS
     <View>
       <View style={styles.cardsContainer}>
         {Object.entries(occupancy).map(([propertyKey, data]) => {
-          const { name, occupied, total } = data;
+          const { occupied, total } = data;
           const vacant = total - occupied;
           const percentage = total > 0 ? (occupied / total) * 100 : 0;
-          const displayName = name || propertyKey;
-          const revenue = todayRevenue[propertyKey] || 0;
+          const displayName = getPropertyDisplayName(propertyKey);
+          const revenue = todayRevenue[propertyKey as AuditProperty] ?? 0;
 
           const formattedRevenue = new Intl.NumberFormat('en-IN', {
             style: 'currency',

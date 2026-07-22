@@ -14,6 +14,7 @@ import CampaignDashboardScreen from '@/screens/campaigns/CampaignDashboardScreen
 import GuestDirectoryScreen from '@/screens/guests/GuestDirectoryScreen';
 import DashboardScreen from '@/screens/dashboard/DashboardScreen';
 import OperationsNavigator from '@/navigation/OperationsNavigator';
+import AdminNavigator from '@/navigation/AdminNavigator';
 
 // ─── Tab Navigator ───────────────────────────────────────────────────────────
 
@@ -144,7 +145,9 @@ export default function AppNavigator() {
                 ? CampaignDashboardScreen
                 : routeName === 'Guests'
                   ? GuestDirectoryScreen
-                  : PLACEHOLDER_SCREENS[routeName];
+                  : routeName === 'Admin'
+                    ? AdminNavigator
+                    : PLACEHOLDER_SCREENS[routeName];
 
         return (
           <Tab.Screen

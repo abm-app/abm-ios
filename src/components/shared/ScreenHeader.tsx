@@ -148,6 +148,8 @@ export interface ScreenHeaderProps {
   onFilterPress?: () => void;
   onNotificationsPress?: () => void;
   onRightButtonPress?: () => void;
+  showBackButton?: boolean;
+  onBackPress?: () => void;
 }
 
 export function ScreenHeaderV2({
@@ -168,6 +170,8 @@ export function ScreenHeaderV2({
   onFilterPress,
   onNotificationsPress,
   onRightButtonPress,
+  showBackButton = false,
+  onBackPress,
 }: ScreenHeaderProps) {
   const [isSearching, setIsSearching] = useState(false);
 
@@ -178,19 +182,31 @@ export function ScreenHeaderV2({
 
   return (
     <View style={styles.container}>
-      <View style={styles.leftCol}>
-        {isSearching ? (
-          <SearchInput
-            searchValue={searchValue}
-            onSearchChange={onSearchChange}
-            onBlur={() => setIsSearching(false)}
-          />
-        ) : (
-          <>
-            <Text style={styles.title}>{title}</Text>
-            {subtitle ? <Text style={styles.subtitle}>{subtitle}</Text> : null}
-          </>
+      <View style={styles.leftSection}>
+        {showBackButton && (
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={onBackPress}
+            activeOpacity={0.7}
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+          >
+            <Feather name="arrow-left" size={22} color={tokens.colors.textPrimary} />
+          </TouchableOpacity>
         )}
+        <View style={styles.leftCol}>
+          {isSearching ? (
+            <SearchInput
+              searchValue={searchValue}
+              onSearchChange={onSearchChange}
+              onBlur={() => setIsSearching(false)}
+            />
+          ) : (
+            <>
+              <Text style={styles.title}>{title}</Text>
+              {subtitle ? <Text style={styles.subtitle}>{subtitle}</Text> : null}
+            </>
+          )}
+        </View>
       </View>
       <ActionButtons
         showSearch={showSearch}
@@ -220,10 +236,22 @@ const styles = StyleSheet.create({
     paddingVertical: tokens.spacing.lg,
     paddingHorizontal: tokens.spacing.lg,
   },
+  leftSection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+    gap: tokens.spacing.sm,
+    paddingRight: tokens.spacing.lg,
+  },
+  backButton: {
+    width: 36,
+    height: 36,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   leftCol: {
     flexDirection: 'column',
     flex: 1,
-    paddingRight: 16,
   },
   title: {
     fontFamily: tokens.typography.fontFamily.heading,
