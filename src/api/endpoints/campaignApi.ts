@@ -8,6 +8,7 @@ export interface CreateCampaignPayload {
   type: 'manual' | 'scheduled' | 'trigger';
   filters: Record<string, unknown>;
   recipientCount: number;
+  status?: 'draft' | 'pending_approval';
   scheduledAt?: string;
   offerExpiry?: string;
   metadata?: {

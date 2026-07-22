@@ -46,7 +46,7 @@
     "format": "prettier --write src/**/*.{ts,tsx}",
     "type-check": "tsc --noEmit",
     "do": "pnpm format && pnpm lint && pnpm type-check && git add .",
-    "lh": "adb reverse tcp:8081 tcp:8081 && adb reverse tcp:3000 tcp:3000 && pnpm exec expo start --localhost"
+    "lh": "adb reverse tcp:8081 tcp:8081 && adb reverse tcp:8000 tcp:8000 && pnpm exec expo start --localhost"
   },
   "private": true
 }
