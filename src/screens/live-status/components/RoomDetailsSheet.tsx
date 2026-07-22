@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import tokens from '@/theme/tokens';
 import { FilterSheet } from '@/components/shared/FilterSheet';
+import { formatDate } from '@/utils/dateUtils';
 import type { LiveStatusRoom, RoomStatusType } from '@/types/status';
 
 interface RoomDetailsSheetProps {
@@ -75,7 +76,7 @@ export function RoomDetailsSheet({ visible, onClose, room }: RoomDetailsSheetPro
               <Text style={styles.sectionLabel}>
                 {room.status === 'arriving' ? 'ARRIVING' : 'DEPARTING'}
               </Text>
-              <Text style={styles.sectionValue}>{dateValue}</Text>
+              <Text style={styles.sectionValue}>{formatDate(dateValue)}</Text>
             </View>
           ) : null;
         })()}
