@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
@@ -8,7 +8,8 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import tokens from '@/theme/tokens';
 import { useAuthStore } from '@/store/authStore';
 import { useLogout } from '@/hooks/auth/useLogout';
-import { Backdrop, ConfirmationModal } from '@/components/shared';
+import { Backdrop, ConfirmationModal, UserCard, AdminMenuList } from '@/components/shared';
+import type { AdminMenuItem } from '@/components/shared/AdminMenuList';
 import type { AdminStackParamList } from '@/navigation/types';
 
 // ─── Navigation type ─────────────────────────────────────────────────────────
@@ -17,13 +18,7 @@ type AdminNavProp = NativeStackNavigationProp<AdminStackParamList>;
 
 // ─── Menu items ──────────────────────────────────────────────────────────────
 
-interface MenuItem {
-  label: string;
-  icon: React.ComponentProps<typeof Feather>['name'];
-  route: keyof AdminStackParamList;
-}
-
-const MENU_ITEMS: MenuItem[] = [
+const MENU_ITEMS: AdminMenuItem[] = [
   { label: 'Revenue Analytics', icon: 'bar-chart-2', route: 'RevenueAnalytics' },
   { label: 'User Management', icon: 'users', route: 'UserManagement' },
   { label: 'Loyalty Configuration', icon: 'award', route: 'LoyaltyConfiguration' },
@@ -38,8 +33,10 @@ export default function AdminScreen() {
   const logoutMutation = useLogout();
   const [logoutModalVisible, setLogoutModalVisible] = useState(false);
 
+  const rootContainerStyle = useMemo(() => [styles.root, { paddingTop: insets.top }], [insets.top]);
+
   return (
-    <View style={[styles.root, { paddingTop: insets.top }]}>
+    <View style={rootContainerStyle}>
       <Backdrop />
 
       {/* Header Row */}
@@ -60,54 +57,13 @@ export default function AdminScreen() {
       </View>
 
       {/* User Card */}
-      <View style={styles.userCard}>
-        <View style={styles.userRow}>
-          <View style={styles.avatarCircle}>
-            <Feather name="user" size={22} color={tokens.colors.avatarWarmIcon} />
-          </View>
-          <View style={styles.userInfo}>
-            <Text style={styles.userName} numberOfLines={1}>
-              {user?.name ?? 'User'}
-            </Text>
-            <Text style={styles.userEmail} numberOfLines={1}>
-              {user?.email ?? ''}
-            </Text>
-          </View>
-          <View style={styles.roleBadge}>
-            <Text style={styles.roleBadgeText}>{(user?.role ?? '').toUpperCase()}</Text>
-          </View>
-        </View>
-      </View>
+      <UserCard user={user} />
 
       {/* Menu List */}
-      <View style={styles.menuCard}>
-        {MENU_ITEMS.map((item, index) => (
-          <React.Fragment key={item.route}>
-            {index > 0 && <View style={styles.menuDivider} />}
-            <TouchableOpacity
-              style={styles.menuRow}
-              activeOpacity={0.6}
-              onPress={() => navigation.navigate(item.route)}
-            >
-              <View style={styles.menuLeft}>
-                <View style={styles.menuIconContainer}>
-                  <Feather
-                    name={item.icon}
-                    size={tokens.iconSizes.content}
-                    color={tokens.colors.textPrimary}
-                  />
-                </View>
-                <Text style={styles.menuLabel}>{item.label}</Text>
-              </View>
-              <Feather
-                name="chevron-right"
-                size={tokens.iconSizes.content}
-                color={tokens.colors.textMuted}
-              />
-            </TouchableOpacity>
-          </React.Fragment>
-        ))}
-      </View>
+      <AdminMenuList
+        items={MENU_ITEMS}
+        onNavigate={route => navigation.navigate(route as keyof AdminStackParamList)}
+      />
 
       {/* Logout Confirmation Modal */}
       <ConfirmationModal
@@ -166,97 +122,6 @@ const styles = StyleSheet.create({
     color: tokens.colors.danger,
     fontFamily: tokens.typography.fontFamily.sub,
     fontSize: tokens.typography.fontSize.caption,
-    fontWeight: '600',
-  },
-  userCard: {
-    marginTop: tokens.spacing.lgMd,
-    marginHorizontal: tokens.spacing.xlMd,
-    backgroundColor: tokens.colors.background,
-    borderRadius: tokens.borderRadius.xl,
-    borderWidth: tokens.borderWidth.thin,
-    borderColor: tokens.colors.border,
-    padding: tokens.spacing.lgMd,
-    ...tokens.shadow.modal,
-  },
-  userRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: tokens.spacing.mdLg,
-  },
-  avatarCircle: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: tokens.colors.avatarWarmBg,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  userInfo: {
-    flex: 1,
-  },
-  userName: {
-    fontFamily: tokens.typography.fontFamily.heading,
-    fontSize: tokens.typography.fontSize.subhead,
-    fontWeight: '600',
-    color: tokens.colors.textPrimary,
-  },
-  userEmail: {
-    fontFamily: tokens.typography.fontFamily.sub,
-    fontSize: tokens.typography.fontSize.caption,
-    color: tokens.colors.textMuted,
-    marginTop: 2,
-  },
-  roleBadge: {
-    paddingHorizontal: tokens.spacing.sm,
-    paddingVertical: tokens.spacing.xxs,
-    backgroundColor: tokens.colors.primary,
-    borderRadius: tokens.borderRadius.sm,
-    alignSelf: 'flex-start',
-  },
-  roleBadgeText: {
-    fontFamily: tokens.typography.fontFamily.sub,
-    fontSize: tokens.typography.fontSize.label,
-    color: tokens.colors.textInverse,
-    fontWeight: '600',
-    letterSpacing: tokens.typography.letterSpacing.badge,
-  },
-  menuCard: {
-    marginTop: tokens.spacing.lgMd,
-    marginHorizontal: tokens.spacing.xlMd,
-    backgroundColor: tokens.colors.background,
-    borderRadius: tokens.borderRadius.xl,
-    borderWidth: tokens.borderWidth.thin,
-    borderColor: tokens.colors.border,
-    ...tokens.shadow.modal,
-  },
-  menuRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: tokens.spacing.lgMd,
-    paddingVertical: tokens.spacing.lg,
-  },
-  menuLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: tokens.spacing.mdLg,
-  },
-  menuIconContainer: {
-    width: 34,
-    height: 34,
-    borderRadius: tokens.borderRadius.sm,
-    backgroundColor: tokens.colors.surface,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  menuLabel: {
-    fontFamily: tokens.typography.fontFamily.sub,
-    fontSize: tokens.typography.fontSize.body,
-    color: tokens.colors.textPrimary,
-  },
-  menuDivider: {
-    height: tokens.borderWidth.hairline,
-    backgroundColor: tokens.colors.border,
-    marginHorizontal: tokens.spacing.lgMd,
+    fontWeight: tokens.typography.fontWeight.semibold,
   },
 });

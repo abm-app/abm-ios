@@ -151,6 +151,8 @@ const fontSize = {
   numeric: 28,
 
   // Component-specific font sizes
+  revenueDisplay: 40,
+  chartSmall: 8,
   sectionLabel: 10,
   swatchValue: 10,
   button: 13,
@@ -207,6 +209,8 @@ const letterSpacing = {
   score: -1.56,
   /** 11 × 0.1 = 1.1 */
   scoreSub: 1.1,
+  /** 40 × -0.025 = -1 */
+  revenueDisplay: -1,
   /** 10 × 0.12 = 1.2 */
   sectionLabel: 1.2,
   /** 9 × 0.06 = 0.54 */
@@ -273,6 +277,7 @@ const spacing = {
 // ─── Border Radius ───────────────────────────────────────────────────────────
 
 const borderRadius = {
+  xs: 4,
   sm: 6,
   md: 10,
   lg: 16,

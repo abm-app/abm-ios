@@ -5,9 +5,10 @@ import Svg, { Circle } from 'react-native-svg';
 import tokens from '../../../theme/tokens';
 import { Card } from '../../../components/ui';
 import type { AuditProperty } from '../../../types/audit';
+import type { DashboardOccupancy } from '../../../types/dashboard';
 
 interface OccupancySectionProps {
-  occupancy: Record<AuditProperty, { occupied: number; total: number }>;
+  occupancy: DashboardOccupancy;
   todayRevenue: Record<AuditProperty, number>;
 }
 

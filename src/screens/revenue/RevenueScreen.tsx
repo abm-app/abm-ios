@@ -13,8 +13,7 @@ import { useRevenueTrends } from '@/hooks/revenue/useRevenue';
 import type { RevenuePeriod } from '@/types/revenue';
 import type { AdminStackParamList } from '@/navigation/types';
 import { formatCurrency } from '@/utils/formatters';
-import { formatMonth } from '@/utils/dateUtils';
-import { Backdrop } from '@/components/shared';
+import { Backdrop, TrendChart, PropertyBreakdown } from '@/components/shared';
 
 const PERIOD_TABS = [
   { id: 'day', label: 'Today' },
@@ -38,31 +37,31 @@ export default function RevenueScreen({ navigation }: Props) {
   const trendsQuery = useRevenueTrends();
 
   const summary = summaryQuery.data;
-  const trends = useMemo(() => trendsQuery.data?.trends ?? [], [trendsQuery.data?.trends]);
+  const trends = trendsQuery.data;
 
-  const totalRevenue = summary
-    ? (summary.international?.totalRevenue ?? 0) + (summary.express?.totalRevenue ?? 0)
-    : 0;
-  const totalTax = summary
-    ? (summary.international?.totalTax ?? 0) + (summary.express?.totalTax ?? 0)
-    : 0;
-  const totalBookings = summary
-    ? (summary.international?.bookingCount ?? 0) + (summary.express?.bookingCount ?? 0)
-    : 0;
-
-  const last6Trends = useMemo(() => trends.slice(-6), [trends]);
-
-  const maxTrend = useMemo(() => {
-    if (last6Trends.length === 0) return 1;
-    return Math.max(...last6Trends.map(t => (t.international ?? 0) + (t.express ?? 0)));
-  }, [last6Trends]);
-
-  const internationalTotal = summary?.international?.totalRevenue ?? 0;
-  const expressTotal = summary?.express?.totalRevenue ?? 0;
-  const propertyMax = Math.max(internationalTotal, expressTotal, 1);
+  const totalRevenue = summary?.totals?.totalRevenue ?? 0;
+  const totalTax = summary?.totals?.totalTax ?? 0;
+  const totalBookings = summary?.totals?.totalBookings ?? 0;
+  const last6Trends = trends?.last6Trends ?? [];
+  const maxTrend = trends?.maxTrend ?? 1;
+  const internationalTotal = summary?.internationalTotal ?? 0;
+  const expressTotal = summary?.expressTotal ?? 0;
+  const propertyMax = summary?.propertyMax ?? 1;
 
   const isLoading = summaryQuery.isLoading || trendsQuery.isLoading;
   const isError = summaryQuery.isError || trendsQuery.isError;
+
+  const bottomClearance =
+    Math.max(insets.bottom, tokens.navigation.paddingVertical) +
+    tokens.navigation.height +
+    tokens.spacing.lg;
+
+  // ─── Memoised dynamic styles ────────────────────────────────────────────
+
+  const contentContainerStyle = useMemo(
+    () => [styles.content, { paddingBottom: bottomClearance }],
+    [bottomClearance],
+  );
 
   const handleRetry = () => {
     summaryQuery.refetch();
@@ -72,18 +71,10 @@ export default function RevenueScreen({ navigation }: Props) {
   if (isLoading) return <LoadingSpinner />;
   if (isError) return <ErrorState message="Failed to load revenue data." onRetry={handleRetry} />;
 
-  const bottomClearance =
-    Math.max(insets.bottom, tokens.navigation.paddingVertical) +
-    tokens.navigation.height +
-    tokens.spacing.lg;
-
   return (
     <SafeAreaView style={styles.safeArea}>
       <Backdrop />
-      <ScrollView
-        style={styles.screen}
-        contentContainerStyle={[styles.content, { paddingBottom: bottomClearance }]}
-      >
+      <ScrollView style={styles.screen} contentContainerStyle={contentContainerStyle}>
         <ScreenHeaderV2
           title="Revenue"
           subtitle={PERIOD_LABELS[period]}
@@ -113,61 +104,14 @@ export default function RevenueScreen({ navigation }: Props) {
         </Card>
 
         {/* Trend Chart */}
-        {last6Trends.length > 0 && (
-          <Card variant="outlined" padded style={styles.card}>
-            <Text style={styles.cardLabel}>Monthly Trend</Text>
-            <View style={styles.chartContainer}>
-              {last6Trends.map(item => {
-                const combined = (item.international ?? 0) + (item.express ?? 0);
-                const heightPct = maxTrend > 0 ? combined / maxTrend : 0;
-                const safeHeightPct = Number.isNaN(heightPct) ? 0 : heightPct;
-                return (
-                  <View key={item.month} style={styles.barWrapper}>
-                    <Text style={styles.barValue}>{formatCurrency(combined)}</Text>
-                    <View style={styles.barTrack}>
-                      <View
-                        style={[styles.barFill, { height: `${Math.max(safeHeightPct * 100, 4)}%` }]}
-                      />
-                    </View>
-                    <Text style={styles.barLabel}>{formatMonth(item.month)}</Text>
-                  </View>
-                );
-              })}
-            </View>
-          </Card>
-        )}
+        <TrendChart data={last6Trends} maxTrend={maxTrend} />
 
         {/* Property Breakdown */}
-        <Card variant="outlined" padded style={styles.card}>
-          <Text style={styles.cardLabel}>Property Breakdown</Text>
-
-          <View style={styles.propertyRow}>
-            <Text style={styles.propertyName}>International</Text>
-            <Text style={styles.propertyValue}>{formatCurrency(internationalTotal)}</Text>
-          </View>
-          <View style={styles.barTrackHoriz}>
-            <View
-              style={[
-                styles.barFillHoriz,
-                { width: `${(internationalTotal / propertyMax) * 100}%` },
-              ]}
-            />
-          </View>
-
-          <View style={[styles.propertyRow, styles.propertyRowGap]}>
-            <Text style={styles.propertyName}>Express</Text>
-            <Text style={styles.propertyValue}>{formatCurrency(expressTotal)}</Text>
-          </View>
-          <View style={styles.barTrackHoriz}>
-            <View
-              style={[
-                styles.barFillHoriz,
-                styles.barFillHorizAlt,
-                { width: `${(expressTotal / propertyMax) * 100}%` },
-              ]}
-            />
-          </View>
-        </Card>
+        <PropertyBreakdown
+          internationalTotal={internationalTotal}
+          expressTotal={expressTotal}
+          propertyMax={propertyMax}
+        />
       </ScrollView>
     </SafeAreaView>
   );
@@ -195,24 +139,24 @@ const styles = StyleSheet.create({
   cardLabel: {
     fontFamily: tokens.typography.fontFamily.sub,
     fontSize: tokens.typography.fontSize.caption,
-    fontWeight: '600',
+    fontWeight: tokens.typography.fontWeight.semibold,
     color: tokens.colors.textMuted,
     textTransform: 'uppercase',
-    letterSpacing: 0.5,
+    letterSpacing: tokens.typography.letterSpacing.captionCaps,
     marginBottom: tokens.spacing.sm,
   },
   headline: {
     fontFamily: tokens.typography.fontFamily.heading,
-    fontSize: 40,
-    fontWeight: '700',
+    fontSize: tokens.typography.fontSize.revenueDisplay,
+    fontWeight: tokens.typography.fontWeight.bold,
     color: tokens.colors.textPrimary,
-    letterSpacing: -1,
+    letterSpacing: tokens.typography.letterSpacing.revenueDisplay,
   },
   subline: {
     fontFamily: tokens.typography.fontFamily.sub,
     fontSize: tokens.typography.fontSize.caption,
     color: tokens.colors.textMuted,
-    marginTop: 2,
+    marginTop: tokens.spacing.xxs,
   },
   bookingRow: {
     marginTop: tokens.spacing.sm,
@@ -221,78 +165,5 @@ const styles = StyleSheet.create({
     fontFamily: tokens.typography.fontFamily.sub,
     fontSize: tokens.typography.fontSize.body,
     color: tokens.colors.textSecondary,
-  },
-  chartContainer: {
-    flexDirection: 'row',
-    alignItems: 'flex-end',
-    height: 120,
-    gap: 8,
-    marginTop: tokens.spacing.sm,
-  },
-  barWrapper: {
-    flex: 1,
-    alignItems: 'center',
-    height: '100%',
-    justifyContent: 'flex-end',
-  },
-  barValue: {
-    fontFamily: tokens.typography.fontFamily.sub,
-    fontSize: 8,
-    color: tokens.colors.textMuted,
-    marginBottom: 2,
-  },
-  barTrack: {
-    flex: 1,
-    width: '100%',
-    backgroundColor: tokens.colors.surface,
-    borderRadius: 4,
-    justifyContent: 'flex-end',
-    overflow: 'hidden',
-  },
-  barFill: {
-    width: '100%',
-    backgroundColor: tokens.colors.primary,
-    borderRadius: 4,
-  },
-  barLabel: {
-    fontFamily: tokens.typography.fontFamily.sub,
-    fontSize: 9,
-    color: tokens.colors.textMuted,
-    marginTop: 4,
-  },
-  propertyRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: tokens.spacing.xs,
-  },
-  propertyRowGap: {
-    marginTop: tokens.spacing.md,
-  },
-  propertyName: {
-    fontFamily: tokens.typography.fontFamily.sub,
-    fontSize: tokens.typography.fontSize.body,
-    color: tokens.colors.textPrimary,
-    fontWeight: '500',
-  },
-  propertyValue: {
-    fontFamily: tokens.typography.fontFamily.sub,
-    fontSize: tokens.typography.fontSize.body,
-    color: tokens.colors.textPrimary,
-    fontWeight: '600',
-  },
-  barTrackHoriz: {
-    height: 8,
-    backgroundColor: tokens.colors.surface,
-    borderRadius: 4,
-    overflow: 'hidden',
-  },
-  barFillHoriz: {
-    height: '100%',
-    backgroundColor: tokens.colors.primary,
-    borderRadius: 4,
-  },
-  barFillHorizAlt: {
-    backgroundColor: tokens.colors.textSecondary,
   },
 });
