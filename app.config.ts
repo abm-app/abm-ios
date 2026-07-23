@@ -2,7 +2,7 @@ import type { ExpoConfig, ConfigContext } from 'expo/config';
 
 const IS_PREVIEW = process.env.APP_ENV === 'preview';
 
-const bundleIdentifier = IS_PREVIEW ? 'com.abm.app.preview' : 'com.abm.app';
+const bundleIdentifier = IS_PREVIEW ? 'com.ceyxasm.abm.preview' : 'com.ceyxasm.abm';
 const appName = IS_PREVIEW ? 'ABM Preview' : 'ABM';
 
 export default ({ config }: ConfigContext): ExpoConfig => ({
@@ -26,7 +26,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       ITSAppUsesNonExemptEncryption: false,
     },
   },
-  owner: 'lplusdevelopers',
+  owner: 'ceyxasm',
   plugins: [
     [
       'expo-font',
@@ -43,7 +43,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   ],
   extra: {
     eas: {
-      projectId: 'a427f36a-865c-49f5-bbf5-2a9e4b82219c',
+      projectId: '1bfd15cc-fae0-4808-af7c-c527934eabea',
     },
   },
 });

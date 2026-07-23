@@ -1,0 +1,44 @@
+{
+  "expo": {
+    "name": "ABM",
+    "slug": "abm-app",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "scheme": "abm",
+    "splash": {
+      "backgroundColor": "#ffffff",
+      "resizeMode": "contain"
+    },
+    "ios": {
+      "bundleIdentifier": "com.ceyxasm.abm",
+      "supportsTablet": false,
+      "buildNumber": "1",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
+    },
+    "owner": "ceyxasm",
+    "plugins": [
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "./assets/fonts/AncizarSerif-Regular.ttf",
+            "./assets/fonts/AncizarSerif-Italic.ttf",
+            "./assets/fonts/AncizarSerif-Bold.ttf",
+            "./assets/fonts/AncizarSerif-BoldItalic.ttf"
+          ]
+        }
+      ],
+      "@react-native-community/datetimepicker",
+      "expo-secure-store"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "1bfd15cc-fae0-4808-af7c-c527934eabea"
+      }
+    }
+  }
+}
