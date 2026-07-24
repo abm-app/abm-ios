@@ -87,3 +87,29 @@ export const formatMonth = (monthStr: string): string => {
   const date = new Date(Number(year), Number(month) - 1, 1);
   return date.toLocaleString('default', { month: 'short' }).toUpperCase();
 };
+
+export const formatLastSynced = (isoStr?: string): string | null => {
+  if (!isoStr) return null;
+  const date = new Date(isoStr);
+  if (isNaN(date.getTime())) return null;
+
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffMins = Math.floor(diffMs / 60000);
+
+  if (diffMins < 1) return 'Updated just now';
+  if (diffMins < 60) return `Updated ${diffMins}m ago`;
+
+  const diffHours = Math.floor(diffMins / 60);
+  if (diffHours < 24) return `Updated ${diffHours}h ago`;
+
+  // Older than a day — show absolute date & time
+  const dateStr = formatDate(isoStr);
+  const timeStr = new Intl.DateTimeFormat('en-US', {
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+  }).format(date);
+
+  return `Updated ${dateStr}, ${timeStr}`;
+};

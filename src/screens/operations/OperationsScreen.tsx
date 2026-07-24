@@ -2,6 +2,8 @@ import React, { useState, useRef } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import tokens from '@/theme/tokens';
+import { useStatusOverview } from '@/hooks/status/useStatusOverview';
+import { formatLastSynced } from '@/utils/dateUtils';
 import { SegmentedControl } from '@/components/shared/SegmentedControl';
 import { ScreenHeaderV2 } from '@/components/shared/ScreenHeader';
 import AuditTrailScreen, { AuditTrailScreenRef } from '@/screens/audit-trail/AuditTrailScreen';
@@ -14,6 +16,9 @@ export default function OperationsScreen() {
   const [activeTab, setActiveTab] = useState('live_status');
   const [searchQuery, setSearchQuery] = useState('');
   const [viewMode, setViewMode] = useState<ViewMode>('list');
+
+  const { data: overview } = useStatusOverview();
+  const lastSyncedLabel = formatLastSynced(overview?.lastSyncedAt) ?? undefined;
 
   const auditTrailRef = useRef<AuditTrailScreenRef>(null);
   const liveStatusRef = useRef<LiveStatusScreenRef>(null);
@@ -30,6 +35,7 @@ export default function OperationsScreen() {
       <Backdrop />
       <ScreenHeaderV2
         title="Operations"
+        subtitle={activeTab === 'live_status' ? lastSyncedLabel : undefined}
         showNotifications={false}
         showRightButton={false}
         showFilter={true}
