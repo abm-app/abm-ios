@@ -6,6 +6,7 @@ import tokens from '@/theme/tokens';
 import type { MenuStackParamList } from './types';
 import MenuScreen from '@/screens/menu/MenuScreen';
 import RevenueScreen from '@/screens/revenue/RevenueScreen';
+import LoyaltyConfigScreen from '@/screens/loyalty/LoyaltyConfigScreen';
 
 // ─── Placeholder screens for nested routes ───────────────────────────────────
 
@@ -21,7 +22,6 @@ function createSimplePlaceholder(title: string) {
 }
 
 const UserManagementScreen = createSimplePlaceholder('User Management');
-const LoyaltyConfigurationScreen = createSimplePlaceholder('Loyalty Configuration');
 
 // ─── Stack Navigator ─────────────────────────────────────────────────────────
 
@@ -33,7 +33,7 @@ export default function MenuNavigator() {
       <Stack.Screen name="MenuHome" component={MenuScreen} />
       <Stack.Screen name="RevenueAnalytics" component={RevenueScreen} />
       <Stack.Screen name="UserManagement" component={UserManagementScreen} />
-      <Stack.Screen name="LoyaltyConfiguration" component={LoyaltyConfigurationScreen} />
+      <Stack.Screen name="LoyaltyConfiguration" component={LoyaltyConfigScreen} />
     </Stack.Navigator>
   );
 }

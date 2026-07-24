@@ -6,7 +6,7 @@ export interface TierThreshold {
 }
 
 export interface RewardCatalogItem {
-  id: string;
+  id?: string;
   name: string;
   cost: number;
 }
@@ -18,6 +18,6 @@ export interface LoyaltyConfig {
 }
 
 export interface UpdateLoyaltyConfigPayload {
-  rewardCatalog?: Omit<RewardCatalogItem, 'id'> & { id?: string }[];
+  rewardCatalog?: RewardCatalogItem[];
   tierThresholds?: TierThreshold[];
 }
