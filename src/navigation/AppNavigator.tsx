@@ -14,7 +14,7 @@ import CampaignDashboardScreen from '@/screens/campaigns/CampaignDashboardScreen
 import GuestDirectoryScreen from '@/screens/guests/GuestDirectoryScreen';
 import DashboardScreen from '@/screens/dashboard/DashboardScreen';
 import OperationsNavigator from '@/navigation/OperationsNavigator';
-import AdminNavigator from '@/navigation/AdminNavigator';
+import MenuNavigator from '@/navigation/MenuNavigator';
 
 // ─── Tab Navigator ───────────────────────────────────────────────────────────
 
@@ -48,7 +48,7 @@ const TAB_ICONS: Record<keyof AppTabParamList, IconConfig> = {
   },
   Guests: { family: 'Feather', name: 'star' },
   Campaigns: { family: 'MaterialCommunityIcons', name: 'bullhorn-outline' },
-  Admin: { family: 'Feather', name: 'more-horizontal' },
+  Menu: { family: 'Feather', name: 'more-horizontal' },
 };
 
 const TAB_LABELS: Record<keyof AppTabParamList, string> = {
@@ -56,7 +56,7 @@ const TAB_LABELS: Record<keyof AppTabParamList, string> = {
   Operations: 'Operations',
   Guests: 'Guest',
   Campaigns: 'Campaigns',
-  Admin: 'Menu',
+  Menu: 'Menu',
 };
 
 const TAB_ORDER: (keyof AppTabParamList)[] = [
@@ -64,7 +64,7 @@ const TAB_ORDER: (keyof AppTabParamList)[] = [
   'Operations',
   'Guests',
   'Campaigns',
-  'Admin',
+  'Menu',
 ];
 
 // ─── Placeholder Screen ──────────────────────────────────────────────────────
@@ -145,8 +145,8 @@ export default function AppNavigator() {
                 ? CampaignDashboardScreen
                 : routeName === 'Guests'
                   ? GuestDirectoryScreen
-                  : routeName === 'Admin'
-                    ? AdminNavigator
+                  : routeName === 'Menu'
+                    ? MenuNavigator
                     : PLACEHOLDER_SCREENS[routeName];
 
         return (

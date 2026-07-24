@@ -8,17 +8,17 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import tokens from '@/theme/tokens';
 import { useAuthStore } from '@/store/authStore';
 import { useLogout } from '@/hooks/auth/useLogout';
-import { Backdrop, ConfirmationModal, UserCard, AdminMenuList } from '@/components/shared';
-import type { AdminMenuItem } from '@/components/shared/AdminMenuList';
-import type { AdminStackParamList } from '@/navigation/types';
+import { Backdrop, ConfirmationModal, UserCard, MenuList } from '@/components/shared';
+import type { MenuItem } from '@/components/shared/MenuList';
+import type { MenuStackParamList } from '@/navigation/types';
 
 // ─── Navigation type ─────────────────────────────────────────────────────────
 
-type AdminNavProp = NativeStackNavigationProp<AdminStackParamList>;
+type MenuNavProp = NativeStackNavigationProp<MenuStackParamList>;
 
 // ─── Menu items ──────────────────────────────────────────────────────────────
 
-const MENU_ITEMS: AdminMenuItem[] = [
+const MENU_ITEMS: MenuItem[] = [
   { label: 'Revenue Analytics', icon: 'bar-chart-2', route: 'RevenueAnalytics' },
   { label: 'User Management', icon: 'users', route: 'UserManagement' },
   { label: 'Loyalty Configuration', icon: 'award', route: 'LoyaltyConfiguration' },
@@ -26,9 +26,9 @@ const MENU_ITEMS: AdminMenuItem[] = [
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
-export default function AdminScreen() {
+export default function MenuScreen() {
   const insets = useSafeAreaInsets();
-  const navigation = useNavigation<AdminNavProp>();
+  const navigation = useNavigation<MenuNavProp>();
   const user = useAuthStore(state => state.user);
   const logoutMutation = useLogout();
   const [logoutModalVisible, setLogoutModalVisible] = useState(false);
@@ -60,9 +60,9 @@ export default function AdminScreen() {
       <UserCard user={user} />
 
       {/* Menu List */}
-      <AdminMenuList
+      <MenuList
         items={MENU_ITEMS}
-        onNavigate={route => navigation.navigate(route as keyof AdminStackParamList)}
+        onNavigate={route => navigation.navigate(route as keyof MenuStackParamList)}
       />
 
       {/* Logout Confirmation Modal */}

@@ -11,7 +11,7 @@ import tokens from '@/theme/tokens';
 import { useRevenueSummary } from '@/hooks/revenue/useRevenue';
 import { useRevenueTrends } from '@/hooks/revenue/useRevenue';
 import type { RevenuePeriod } from '@/types/revenue';
-import type { AdminStackParamList } from '@/navigation/types';
+import type { MenuStackParamList } from '@/navigation/types';
 import { formatCurrency } from '@/utils/formatters';
 import { Backdrop, TrendChart, PropertyBreakdown } from '@/components/shared';
 
@@ -27,7 +27,7 @@ const PERIOD_LABELS: Record<RevenuePeriod, string> = {
   month: 'This Month',
 };
 
-type Props = NativeStackScreenProps<AdminStackParamList, 'RevenueAnalytics'>;
+type Props = NativeStackScreenProps<MenuStackParamList, 'RevenueAnalytics'>;
 
 export default function RevenueScreen({ navigation }: Props) {
   const [period, setPeriod] = useState<RevenuePeriod>('month');

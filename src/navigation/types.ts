@@ -18,7 +18,7 @@ export type AppTabParamList = {
   Operations: undefined;
   Guests: undefined;
   Campaigns: undefined;
-  Admin: undefined;
+  Menu: undefined;
 };
 
 // ─── Operations Stack ────────────────────────────────────────────────────────
@@ -27,10 +27,10 @@ export type OperationsStackParamList = {
   OperationsHome: undefined;
 };
 
-// ─── Admin Stack ─────────────────────────────────────────────────────────────
+// ─── Menu Stack ─────────────────────────────────────────────────────────────
 
-export type AdminStackParamList = {
-  AdminHome: undefined;
+export type MenuStackParamList = {
+  MenuHome: undefined;
   RevenueAnalytics: undefined;
   UserManagement: undefined;
   LoyaltyConfiguration: undefined;
