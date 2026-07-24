@@ -1,11 +1,23 @@
-export interface RewardItem {
+// src/types/loyalty.ts
+
+export interface TierThreshold {
+  name: string;
+  minPoints: number;
+}
+
+export interface RewardCatalogItem {
   id: string;
   name: string;
   cost: number;
 }
 
 export interface LoyaltyConfig {
-  rewardCatalog: RewardItem[];
-  tierThresholds: Record<string, number>;
+  rewardCatalog: RewardCatalogItem[];
+  tierThresholds: TierThreshold[];
   pointsPerNight: Record<string, number>;
+}
+
+export interface UpdateLoyaltyConfigPayload {
+  rewardCatalog?: Omit<RewardCatalogItem, 'id'> & { id?: string }[];
+  tierThresholds?: TierThreshold[];
 }
