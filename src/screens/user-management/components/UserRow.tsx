@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Switch } from 'react-native';
+import React from 'react';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 
 import tokens from '@/theme/tokens';
@@ -13,9 +13,6 @@ interface UserRowProps {
 }
 
 export default function UserRow({ user, onEdit, onDelete, isLast }: UserRowProps) {
-  // Mocking the toggle state since the API doesn't support active status yet
-  const [isActive, setIsActive] = useState(true);
-
   // Generate initials for the avatar
   const initials = user.name
     .split(' ')
@@ -36,15 +33,6 @@ export default function UserRow({ user, onEdit, onDelete, isLast }: UserRowProps
       </View>
 
       <View style={styles.actions}>
-        <Switch
-          value={isActive}
-          onValueChange={setIsActive}
-          trackColor={{ false: tokens.colors.border, true: tokens.colors.primary }}
-          thumbColor={tokens.colors.white}
-          ios_backgroundColor={tokens.colors.border}
-          style={styles.switch}
-        />
-
         <TouchableOpacity
           onPress={() => onEdit(user)}
           style={styles.iconButton}
@@ -112,10 +100,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: tokens.spacing.sm,
   },
-  switch: {
-    transform: [{ scaleX: 0.8 }, { scaleY: 0.8 }],
-    marginRight: tokens.spacing.xs,
-  },
+
   iconButton: {
     width: 32,
     height: 32,
