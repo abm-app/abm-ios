@@ -7,18 +7,17 @@ export const mockRewardCatalogue: RewardItem[] = [
   { id: 'cat_004', name: 'Next-Stay Discount (10%)', pointsCost: 10000, type: 'discount' },
 ];
 
-// import apiClient from '../client';
-//
-// export const getRewardCatalogue = (): Promise<RewardItem[]> =>
-//   apiClient.get('/rewards/catalogue').then((r) => r.data);
+import apiClient from '../client';
 
-// import apiClient from '../client';
+const mapCatalogItem = (item: { id: string; name: string; cost: number }): RewardItem => ({
+  id: item.id,
+  name: item.name,
+  pointsCost: item.cost,
+  type: '',
+});
 
-export const getRewardCatalogue = async (): Promise<RewardItem[]> => {
-  // Simulate network delay
-  await new Promise(resolve => setTimeout(resolve, 300));
-  return mockRewardCatalogue;
-};
+export const getRewardCatalogue = (): Promise<RewardItem[]> =>
+  apiClient.get('/loyalty/config/').then(r => r.data.rewardCatalog.map(mapCatalogItem));
 
 // In-memory mock state for guest rewards
 const mockGuestRewards: Record<string, IssuedReward[]> = {};
