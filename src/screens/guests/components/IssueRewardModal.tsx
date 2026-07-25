@@ -4,12 +4,13 @@ import { Feather } from '@expo/vector-icons';
 
 import tokens from '@/theme/tokens';
 import { SharedFormModal, LoadingSpinner, ErrorState } from '@/components/shared';
-import { useRewardCatalogue } from '@/hooks/rewards/useRewardCatalogue';
+import { useGuestRewardCatalogue } from '@/hooks/rewards/useRewardCatalogue';
 
 interface IssueRewardModalProps {
   visible: boolean;
   onClose: () => void;
   spendableBalance: number;
+  guestId: string;
   onIssueReward: (rewardId: string, cost: number) => void;
 }
 
@@ -17,17 +18,18 @@ export default function IssueRewardModal({
   visible,
   onClose,
   spendableBalance,
+  guestId,
   onIssueReward,
 }: IssueRewardModalProps) {
   const [selectedRewardId, setSelectedRewardId] = useState<string | null>(null);
 
-  const { data: catalogue, isLoading, isError, refetch } = useRewardCatalogue();
+  const { data: catalogue, isLoading, isError, refetch } = useGuestRewardCatalogue(guestId);
 
   const sortedRewards = useMemo(() => {
     if (!catalogue) return [];
     return [...catalogue].sort((a, b) => {
-      const aAffordable = a.pointsCost <= spendableBalance;
-      const bAffordable = b.pointsCost <= spendableBalance;
+      const aAffordable = a.canAfford ?? a.pointsCost <= spendableBalance;
+      const bAffordable = b.canAfford ?? b.pointsCost <= spendableBalance;
       if (aAffordable && !bAffordable) return -1;
       if (!aAffordable && bAffordable) return 1;
       return a.pointsCost - b.pointsCost;
@@ -49,7 +51,8 @@ export default function IssueRewardModal({
   };
 
   const selectedReward = catalogue?.find(r => r.id === selectedRewardId);
-  const isValidSelection = !!selectedReward && selectedReward.pointsCost <= spendableBalance;
+  const isValidSelection =
+    !!selectedReward && (selectedReward.canAfford ?? selectedReward.pointsCost <= spendableBalance);
 
   return (
     <SharedFormModal
@@ -65,7 +68,7 @@ export default function IssueRewardModal({
       {!isLoading && !isError && catalogue && (
         <View style={styles.listContainer}>
           {sortedRewards.map(reward => {
-            const isAffordable = reward.pointsCost <= spendableBalance;
+            const isAffordable = reward.canAfford ?? reward.pointsCost <= spendableBalance;
             const isSelected = selectedRewardId === reward.id;
 
             return (

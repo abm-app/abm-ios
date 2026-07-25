@@ -1,14 +1,14 @@
 import { useQuery } from '@tanstack/react-query';
-import { getRewardCatalogue } from '@/api/endpoints/rewardsApi';
+import { getGuestRewardCatalogue } from '@/api/endpoints/rewardsApi';
 
 export const rewardsKeys = {
   all: ['rewards'] as const,
-  catalogue: () => [...rewardsKeys.all, 'catalogue'] as const,
+  catalogue: (guestId: string) => [...rewardsKeys.all, 'catalogue', guestId] as const,
 };
 
-export function useRewardCatalogue() {
+export function useGuestRewardCatalogue(guestId: string) {
   return useQuery({
-    queryKey: rewardsKeys.catalogue(),
-    queryFn: getRewardCatalogue,
+    queryKey: rewardsKeys.catalogue(guestId),
+    queryFn: () => getGuestRewardCatalogue(guestId),
   });
 }

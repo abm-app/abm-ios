@@ -150,6 +150,7 @@ export default function GuestProfileScreen({ route }: Props) {
         visible={rewardModalVisible}
         onClose={() => setRewardModalVisible(false)}
         spendableBalance={spendableBalance}
+        guestId={id}
         onIssueReward={handleIssueReward}
       />
     </SafeAreaView>

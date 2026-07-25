@@ -5,7 +5,7 @@ import { Feather } from '@expo/vector-icons';
 import tokens from '@/theme/tokens';
 import { useGuestRewards } from '@/hooks/rewards/useGuestRewards';
 import { LoadingSpinner, ErrorState, EmptyState } from '@/components/shared';
-import { Badge, Card } from '@/components/ui';
+import { Card } from '@/components/ui';
 
 interface GuestRewardsProps {
   guestId: string;
@@ -45,13 +45,9 @@ export default function GuestRewards({ guestId }: GuestRewardsProps) {
   return (
     <View style={styles.listContainer}>
       {rewards.map(reward => (
-        <Card key={reward._id} variant="flat" padded style={styles.rewardCard}>
+        <Card key={reward.id} variant="flat" padded style={styles.rewardCard}>
           <View style={styles.rewardHeader}>
-            <Text style={styles.rewardName}>{reward.name}</Text>
-            <Badge
-              label={reward.status}
-              variant={reward.status === 'active' ? 'low' : 'category'}
-            />
+            <Text style={styles.rewardName}>{reward.rewardName}</Text>
           </View>
 
           <View style={styles.rewardDetails}>
@@ -62,8 +58,12 @@ export default function GuestRewards({ guestId }: GuestRewardsProps) {
                 color={tokens.colors.textMuted}
               />
               <Text style={styles.detailText}>
-                Issued: {new Date(reward.issuedAt).toLocaleDateString()}
+                Redeemed: {new Date(reward.redeemedAt).toLocaleDateString()}
               </Text>
+            </View>
+            <View style={styles.detailRow}>
+              <Feather name="user" size={tokens.iconSizes.inline} color={tokens.colors.textMuted} />
+              <Text style={styles.detailText}>By {reward.redeemedByName}</Text>
             </View>
             <View style={styles.detailRow}>
               <Feather name="star" size={tokens.iconSizes.inline} color={tokens.colors.textMuted} />
