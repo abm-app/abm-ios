@@ -15,6 +15,9 @@ export default function GuestDirectoryScreen() {
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [activeTier, setActiveTier] = useState('All');
   const [activeLapsed, setActiveLapsed] = useState<string | null>(null);
+  const [activeDoNotContact, setActiveDoNotContact] = useState<'true' | 'false' | undefined>(
+    undefined,
+  );
   const [isFilterVisible, setIsFilterVisible] = useState(false);
 
   const { data: loyaltyConfig } = useLoyaltyConfig();
@@ -43,8 +46,9 @@ export default function GuestDirectoryScreen() {
       search: debouncedSearch ? debouncedSearch : undefined,
       tier: activeTier === 'All' ? undefined : activeTier,
       lapsed: activeLapsed || undefined,
+      doNotContact: activeDoNotContact,
     };
-  }, [debouncedSearch, activeTier, activeLapsed]);
+  }, [debouncedSearch, activeTier, activeLapsed, activeDoNotContact]);
 
   const {
     data,
@@ -99,6 +103,8 @@ export default function GuestDirectoryScreen() {
         setActiveTier={setActiveTier}
         activeLapsed={activeLapsed}
         setActiveLapsed={setActiveLapsed}
+        activeDoNotContact={activeDoNotContact}
+        setActiveDoNotContact={setActiveDoNotContact}
         tierOptions={tierOptions}
       />
     </SafeAreaView>
