@@ -1,13 +1,5 @@
 import React, { useState, useCallback, useRef, useImperativeHandle } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  TextInput,
-  TouchableOpacity,
-  Alert,
-} from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TextInput, TouchableOpacity } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
 
@@ -138,130 +130,163 @@ RewardsTab.displayName = 'RewardsTab';
 
 // ── TiersTab ─────────────────────────────────────────────────────────────────
 
-function TiersTab({
-  tiers,
-  onSave,
-  isSaving,
-}: {
-  tiers: TierThreshold[];
-  onSave: (updated: TierThreshold[]) => void;
-  isSaving: boolean;
-}) {
+export interface TiersTabHandle {
+  addItem: (name: string, minPoints: number) => void;
+  updateItem: (index: number, name: string, minPoints: number) => void;
+}
+
+const TiersTab = React.forwardRef<
+  TiersTabHandle,
+  {
+    tiers: TierThreshold[];
+    onSave: (updated: TierThreshold[]) => void;
+    onEditItem: (index: number, item: TierThreshold) => void;
+  }
+>(({ tiers, onSave, onEditItem }, ref) => {
   const [items, setItems] = useState<TierThreshold[]>(tiers);
-  const [newName, setNewName] = useState('');
-  const [newMin, setNewMin] = useState('');
 
-  const moveUp = useCallback((index: number) => {
-    if (index === 0) return;
-    setItems(prev => {
-      const next = [...prev];
-      [next[index - 1], next[index]] = [next[index], next[index - 1]];
-      return next;
-    });
-  }, []);
+  // ── Delete confirmation modal state ────────────────────────────────────────
+  const [deletingIndex, setDeletingIndex] = useState<number | null>(null);
 
-  const moveDown = useCallback((index: number) => {
-    setItems(prev => {
-      if (index === prev.length - 1) return prev;
-      const next = [...prev];
-      [next[index], next[index + 1]] = [next[index + 1], next[index]];
-      return next;
-    });
-  }, []);
+  useImperativeHandle(ref, () => ({
+    addItem: (name: string, minPoints: number) => {
+      setItems(prev => {
+        const updated = [...prev, { name, minPoints }];
+        onSave(updated);
+        return updated;
+      });
+    },
+    updateItem: (index: number, name: string, minPoints: number) => {
+      setItems(prev => {
+        const updated = [...prev];
+        updated[index] = { ...updated[index], name, minPoints };
+        onSave(updated);
+        return updated;
+      });
+    },
+  }));
 
-  const removeItem = useCallback((index: number) => {
-    setItems(prev => prev.filter((_, itemIndex) => itemIndex !== index));
-  }, []);
+  const handleRemoveItem = useCallback(
+    (index: number) => {
+      setItems(prev => {
+        const updated = prev.filter((_, itemIndex) => itemIndex !== index);
+        onSave(updated);
+        return updated;
+      });
+    },
+    [onSave],
+  );
 
-  const addItem = useCallback(() => {
-    const min = parseInt(newMin, 10);
-    if (!newName.trim() || Number.isNaN(min) || min < 0) {
-      Alert.alert('Invalid input', 'Please enter a valid tier name and minimum points.');
-      return;
+  const handleConfirmDelete = useCallback(() => {
+    if (deletingIndex !== null) {
+      handleRemoveItem(deletingIndex);
+      setDeletingIndex(null);
     }
-    setItems(prev => [...prev, { name: newName.trim(), minPoints: min }]);
-    setNewName('');
-    setNewMin('');
-  }, [newMin, newName]);
+  }, [deletingIndex, handleRemoveItem]);
+
+  const moveUp = useCallback(
+    (index: number) => {
+      if (index === 0) return;
+      setItems(prev => {
+        const next = [...prev];
+        [next[index - 1], next[index]] = [next[index], next[index - 1]];
+        onSave(next);
+        return next;
+      });
+    },
+    [onSave],
+  );
+
+  const moveDown = useCallback(
+    (index: number) => {
+      setItems(prev => {
+        if (index === prev.length - 1) return prev;
+        const next = [...prev];
+        [next[index], next[index + 1]] = [next[index + 1], next[index]];
+        onSave(next);
+        return next;
+      });
+    },
+    [onSave],
+  );
 
   return (
-    <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollInner}>
-      {items.map((item, index) => (
-        <View key={item.name + index} style={styles.row}>
-          <View style={styles.reorderBtns}>
-            <TouchableOpacity
-              onPress={() => moveUp(index)}
-              disabled={index === 0}
-              activeOpacity={0.7}
-              style={styles.reorderBtn}
-            >
-              <Feather
-                name="chevron-up"
-                size={16}
-                color={index === 0 ? tokens.colors.textHint : tokens.colors.textPrimary}
-              />
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => moveDown(index)}
-              disabled={index === items.length - 1}
-              activeOpacity={0.7}
-              style={styles.reorderBtn}
-            >
-              <Feather
-                name="chevron-down"
-                size={16}
-                color={
-                  index === items.length - 1 ? tokens.colors.textHint : tokens.colors.textPrimary
-                }
-              />
-            </TouchableOpacity>
+    <>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollInner}>
+        {items.length === 0 && (
+          <View style={styles.emptyRow}>
+            <Feather name="layers" size={24} color={tokens.colors.textHint} />
+            <Text style={styles.emptyText}>
+              No tiers yet. Tap &quot;Add Tier&quot; above to create one.
+            </Text>
           </View>
-          <View style={styles.rowLeft}>
-            <Text style={[styles.rowName, styles.capitalize]}>{item.name}</Text>
-            <Text style={styles.rowSub}>{item.minPoints} pts minimum</Text>
+        )}
+        {items.map((item, index) => (
+          <View key={item.name + index} style={styles.row}>
+            <View style={styles.reorderBtns}>
+              <TouchableOpacity
+                onPress={() => moveUp(index)}
+                disabled={index === 0}
+                activeOpacity={0.7}
+                style={styles.reorderBtn}
+              >
+                <Feather
+                  name="chevron-up"
+                  size={16}
+                  color={index === 0 ? tokens.colors.textHint : tokens.colors.textPrimary}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => moveDown(index)}
+                disabled={index === items.length - 1}
+                activeOpacity={0.7}
+                style={styles.reorderBtn}
+              >
+                <Feather
+                  name="chevron-down"
+                  size={16}
+                  color={
+                    index === items.length - 1 ? tokens.colors.textHint : tokens.colors.textPrimary
+                  }
+                />
+              </TouchableOpacity>
+            </View>
+            <View style={styles.rowLeft}>
+              <Text style={[styles.rowName, styles.capitalize]}>{item.name}</Text>
+              <Text style={styles.rowSub}>{item.minPoints} pts minimum</Text>
+            </View>
+            <View style={styles.actionRow}>
+              <TouchableOpacity onPress={() => onEditItem(index, item)} activeOpacity={0.7}>
+                <Feather name="edit" size={15} color={tokens.colors.info} />
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => setDeletingIndex(index)}
+                style={styles.deleteBtn}
+                activeOpacity={0.7}
+              >
+                <Feather name="trash-2" size={16} color={tokens.colors.danger} />
+              </TouchableOpacity>
+            </View>
           </View>
-          <TouchableOpacity
-            onPress={() => removeItem(index)}
-            style={styles.deleteBtn}
-            activeOpacity={0.7}
-          >
-            <Feather name="trash-2" size={16} color={tokens.colors.danger} />
-          </TouchableOpacity>
-        </View>
-      ))}
+        ))}
+      </ScrollView>
 
-      <View style={styles.addRow}>
-        <TextInput
-          style={[styles.addInput, styles.addInputName]}
-          placeholder="Tier name"
-          placeholderTextColor={tokens.colors.textHint}
-          value={newName}
-          onChangeText={setNewName}
-        />
-        <TextInput
-          style={[styles.addInput, styles.addInputCost]}
-          placeholder="Min pts"
-          placeholderTextColor={tokens.colors.textHint}
-          value={newMin}
-          onChangeText={setNewMin}
-          keyboardType="number-pad"
-        />
-        <TouchableOpacity onPress={addItem} style={styles.addBtn} activeOpacity={0.7}>
-          <Feather name="plus" size={18} color={tokens.colors.white} />
-        </TouchableOpacity>
-      </View>
-
-      <TouchableOpacity
-        style={[styles.saveBtn, isSaving && styles.saveBtnDisabled]}
-        onPress={() => onSave(items)}
-        activeOpacity={0.8}
-        disabled={isSaving}
-      >
-        <Text style={styles.saveBtnText}>{isSaving ? 'Saving\u2026' : 'Save Tiers'}</Text>
-      </TouchableOpacity>
-    </ScrollView>
+      {/* Delete Confirmation Modal */}
+      <ConfirmationModal
+        visible={deletingIndex !== null}
+        onClose={() => setDeletingIndex(null)}
+        onConfirm={handleConfirmDelete}
+        title="Delete Tier"
+        content="Are you sure you want to delete this tier? This action cannot be undone."
+        confirmLabel="Delete"
+        icon={<Feather name="trash-2" size={28} color={tokens.colors.danger} />}
+        iconVariant="danger"
+      />
+    </>
   );
-}
+});
+
+TiersTab.displayName = 'TiersTab';
 
 // ── Main Screen ─────────────────────────────────────────────────────────────
 
@@ -269,20 +294,28 @@ export default function LoyaltyConfigScreen() {
   const insets = useSafeAreaInsets();
   const [activeTab, setActiveTab] = useState('rewards');
   const { data, isLoading, isError, error, refetch } = useLoyaltyConfig();
-  const { mutate: updateConfig, isPending: isSaving } = useUpdateLoyaltyConfig();
+  const { mutate: updateConfig } = useUpdateLoyaltyConfig();
   const rewardsTabRef = useRef<RewardsTabHandle>(null);
+  const tiersTabRef = useRef<TiersTabHandle>(null);
 
-  // ── Add / Edit modal state ───────────────────────────────────────────────
+  // ── Reward Add / Edit modal state ────────────────────────────────────────
   const [addModalVisible, setAddModalVisible] = useState(false);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [newName, setNewName] = useState('');
   const [newCost, setNewCost] = useState('');
+
+  // ── Tier Add / Edit modal state ──────────────────────────────────────────
+  const [tierModalVisible, setTierModalVisible] = useState(false);
+  const [tierEditingIndex, setTierEditingIndex] = useState<number | null>(null);
+  const [newTierName, setNewTierName] = useState('');
+  const [newTierMin, setNewTierMin] = useState('');
 
   // ── Error modal state ────────────────────────────────────────────────────
   const [errorModalVisible, setErrorModalVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
   const isEditing = editingIndex !== null;
+  const isTierEditing = tierEditingIndex !== null;
 
   const bottomPadding =
     tokens.navigation.height +
@@ -335,15 +368,47 @@ export default function LoyaltyConfigScreen() {
     [updateConfig],
   );
 
-  const handleSaveTiers = useCallback(
+  // ── Tier modal handlers ────────────────────────────────────────────────────
+
+  const handleOpenAddTierModal = useCallback(() => {
+    setTierEditingIndex(null);
+    setNewTierName('');
+    setNewTierMin('');
+    setTierModalVisible(true);
+  }, []);
+
+  const handleOpenEditTierModal = useCallback((_index: number, item: TierThreshold) => {
+    setTierEditingIndex(_index);
+    setNewTierName(item.name);
+    setNewTierMin(String(item.minPoints));
+    setTierModalVisible(true);
+  }, []);
+
+  const handleSubmitTier = useCallback(() => {
+    const trimmedName = newTierName.trim();
+    const min = parseInt(newTierMin, 10);
+
+    if (!trimmedName || Number.isNaN(min) || min < 0) {
+      setErrorMessage('Please enter a valid tier name and minimum points.');
+      setErrorModalVisible(true);
+      return;
+    }
+
+    if (isTierEditing && tierEditingIndex !== null) {
+      tiersTabRef.current?.updateItem(tierEditingIndex, trimmedName, min);
+    } else {
+      tiersTabRef.current?.addItem(trimmedName, min);
+    }
+
+    setNewTierName('');
+    setNewTierMin('');
+    setTierEditingIndex(null);
+    setTierModalVisible(false);
+  }, [newTierName, newTierMin, isTierEditing, tierEditingIndex]);
+
+  const handleAutoSaveTiers = useCallback(
     (tiers: TierThreshold[]) => {
-      updateConfig(
-        { tierThresholds: tiers },
-        {
-          onSuccess: () => Alert.alert('Saved', 'Tier thresholds updated.'),
-          onError: () => Alert.alert('Error', 'Failed to save tiers. Please try again.'),
-        },
-      );
+      updateConfig({ tierThresholds: tiers });
     },
     [updateConfig],
   );
@@ -353,9 +418,9 @@ export default function LoyaltyConfigScreen() {
       <Backdrop />
       <ScreenHeaderV2
         title="Loyalty Config"
-        showRightButton={activeTab === 'rewards'}
-        rightButtonText="Add Reward"
-        onRightButtonPress={handleOpenAddModal}
+        showRightButton={activeTab === 'rewards' || activeTab === 'tiers'}
+        rightButtonText={activeTab === 'rewards' ? 'Add Reward' : 'Add Tier'}
+        onRightButtonPress={activeTab === 'rewards' ? handleOpenAddModal : handleOpenAddTierModal}
         showNotifications={false}
         showBackButton
       />
@@ -384,7 +449,12 @@ export default function LoyaltyConfigScreen() {
               onEditItem={handleOpenEditModal}
             />
           ) : (
-            <TiersTab tiers={data.tierThresholds} onSave={handleSaveTiers} isSaving={isSaving} />
+            <TiersTab
+              ref={tiersTabRef}
+              tiers={data.tierThresholds}
+              onSave={handleAutoSaveTiers}
+              onEditItem={handleOpenEditTierModal}
+            />
           )}
         </ListSurface>
       </View>
@@ -419,6 +489,41 @@ export default function LoyaltyConfigScreen() {
             placeholderTextColor={tokens.colors.textHint}
             value={newCost}
             onChangeText={setNewCost}
+            keyboardType="number-pad"
+          />
+        </View>
+      </SharedFormModal>
+
+      {/* Add / Edit Tier Modal */}
+      <SharedFormModal
+        visible={tierModalVisible}
+        title={isTierEditing ? 'Edit Tier' : 'Add Tier'}
+        buttonLabel={isTierEditing ? 'Save' : 'Add'}
+        onClose={() => {
+          setTierModalVisible(false);
+          setTierEditingIndex(null);
+        }}
+        onSubmit={handleSubmitTier}
+      >
+        <View style={styles.formGroup}>
+          <Text style={styles.formLabel}>Tier Name</Text>
+          <TextInput
+            style={styles.formInput}
+            placeholder="e.g. Gold"
+            placeholderTextColor={tokens.colors.textHint}
+            value={newTierName}
+            onChangeText={setNewTierName}
+            autoFocus
+          />
+        </View>
+        <View style={styles.formGroup}>
+          <Text style={styles.formLabel}>Minimum Points</Text>
+          <TextInput
+            style={styles.formInput}
+            placeholder="e.g. 1000"
+            placeholderTextColor={tokens.colors.textHint}
+            value={newTierMin}
+            onChangeText={setNewTierMin}
             keyboardType="number-pad"
           />
         </View>
@@ -523,53 +628,6 @@ const styles = StyleSheet.create({
   },
   reorderBtn: {
     padding: 2,
-  },
-  addRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: tokens.spacing.sm,
-    marginTop: tokens.spacing.lg,
-  },
-  addInput: {
-    height: 40,
-    borderWidth: tokens.borderWidth.thin,
-    borderColor: tokens.colors.border,
-    borderRadius: tokens.borderRadius.md,
-    paddingHorizontal: tokens.spacing.md,
-    fontFamily: tokens.typography.fontFamily.sub,
-    fontSize: tokens.typography.fontSize.body,
-    color: tokens.colors.textPrimary,
-    backgroundColor: tokens.colors.background,
-  },
-  addInputName: {
-    flex: 1,
-  },
-  addInputCost: {
-    width: 80,
-  },
-  addBtn: {
-    width: 40,
-    height: 40,
-    borderRadius: tokens.borderRadius.md,
-    backgroundColor: tokens.colors.primary,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  saveBtn: {
-    marginTop: tokens.spacing.xl,
-    backgroundColor: tokens.colors.primary,
-    borderRadius: tokens.borderRadius.pill,
-    paddingVertical: tokens.spacing.md,
-    alignItems: 'center',
-  },
-  saveBtnDisabled: {
-    opacity: 0.5,
-  },
-  saveBtnText: {
-    fontFamily: tokens.typography.fontFamily.sub,
-    fontSize: tokens.typography.fontSize.body,
-    fontWeight: tokens.typography.fontWeight.semibold,
-    color: tokens.colors.white,
   },
   // ── Modal form styles ─────────────────────────────────────────────────────
   formGroup: {
