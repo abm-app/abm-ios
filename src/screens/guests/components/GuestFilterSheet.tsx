@@ -19,6 +19,8 @@ interface GuestFilterSheetProps {
   setActiveTier: (tier: string) => void;
   activeLapsed: string | null;
   setActiveLapsed: React.Dispatch<React.SetStateAction<string | null>>;
+  activeDoNotContact: 'true' | 'false' | undefined;
+  setActiveDoNotContact: React.Dispatch<React.SetStateAction<'true' | 'false' | undefined>>;
   tierOptions: string[];
 }
 
@@ -29,6 +31,8 @@ export default function GuestFilterSheet({
   setActiveTier,
   activeLapsed,
   setActiveLapsed,
+  activeDoNotContact,
+  setActiveDoNotContact,
   tierOptions,
 }: GuestFilterSheetProps) {
   return (
@@ -46,6 +50,7 @@ export default function GuestFilterSheet({
             onPress={() => {
               setActiveTier('All');
               setActiveLapsed(null);
+              setActiveDoNotContact(undefined);
               onClose();
             }}
           />
@@ -82,6 +87,26 @@ export default function GuestFilterSheet({
               style={styles.filterChip}
             />
           ))}
+        </View>
+      </View>
+
+      <View style={styles.filterSection}>
+        <Text style={styles.filterSectionTitle}>Contact Preference</Text>
+        <View style={styles.chipGroup}>
+          <Chip
+            label="Opted In"
+            active={activeDoNotContact === 'false'}
+            tone={activeDoNotContact === 'false' ? 'primary' : 'default'}
+            onPress={() => setActiveDoNotContact(prev => (prev === 'false' ? undefined : 'false'))}
+            style={styles.filterChip}
+          />
+          <Chip
+            label="Opted Out"
+            active={activeDoNotContact === 'true'}
+            tone={activeDoNotContact === 'true' ? 'primary' : 'default'}
+            onPress={() => setActiveDoNotContact(prev => (prev === 'true' ? undefined : 'true'))}
+            style={styles.filterChip}
+          />
         </View>
       </View>
     </FilterSheet>

@@ -5,20 +5,20 @@ import tokens from '@/theme/tokens';
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
-export interface AdminMenuItem {
+export interface MenuItem {
   label: string;
   icon: React.ComponentProps<typeof Feather>['name'];
   route: string;
 }
 
-interface AdminMenuListProps {
-  items: AdminMenuItem[];
+interface MenuListProps {
+  items: MenuItem[];
   onNavigate: (route: string) => void;
 }
 
 // ─── Component ──────────────────────────────────────────────────────────────
 
-export default function AdminMenuList({ items, onNavigate }: AdminMenuListProps) {
+export default function MenuList({ items, onNavigate }: MenuListProps) {
   return (
     <View style={styles.menuCard}>
       {items.map((item, index) => (

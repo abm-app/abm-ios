@@ -157,6 +157,7 @@ export default function CreateCampaignModal({ visible, onClose, onSuccess, initi
         tier: selectedTiers,
       },
       recipientCount: reachCount || 0,
+      status: _isDraft ? 'draft' : 'pending_approval',
       metadata: {},
     };
 

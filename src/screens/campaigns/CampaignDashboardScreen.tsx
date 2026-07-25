@@ -63,14 +63,13 @@ export default function CampaignDashboardScreen() {
   const [isCreateModalVisible, setIsCreateModalVisible] = useState(false);
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
     pending: true,
+    drafts: true,
     recent: true,
   });
   const user = useAuthStore(state => state.user);
   const insets = useSafeAreaInsets();
 
   const { data: campaigns, isLoading, isError, error, refetch } = useCampaigns();
-
-  const isOwner = user?.role === 'owner';
 
   // Calculate bottom padding to ensure lists end above the floating tab bar
   const bottomPadding =
@@ -80,7 +79,9 @@ export default function CampaignDashboardScreen() {
     tokens.spacing.lg;
 
   const pendingCampaigns = campaigns?.filter(c => c.status === 'pending_approval') || [];
-  const recentCampaigns = campaigns?.filter(c => c.status !== 'pending_approval') || [];
+  const draftCampaigns = campaigns?.filter(c => c.status === 'draft') || [];
+  const recentCampaigns =
+    campaigns?.filter(c => c.status !== 'pending_approval' && c.status !== 'draft') || [];
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
@@ -121,7 +122,7 @@ export default function CampaignDashboardScreen() {
           ) : (
             <SectionList
               sections={[
-                ...(isOwner && pendingCampaigns.length > 0
+                ...(pendingCampaigns.length > 0
                   ? [
                       {
                         key: 'pending',
@@ -130,6 +131,19 @@ export default function CampaignDashboardScreen() {
                         data: expandedSections.pending ? pendingCampaigns : [],
                         renderItem: ({ item }: { item: Campaign }) => (
                           <ActionRequiredCard action={mapCampaignToPendingAction(item)} />
+                        ),
+                      },
+                    ]
+                  : []),
+                ...(draftCampaigns.length > 0
+                  ? [
+                      {
+                        key: 'drafts',
+                        title: 'Drafts',
+                        count: draftCampaigns.length,
+                        data: expandedSections.drafts ? draftCampaigns : [],
+                        renderItem: ({ item }: { item: Campaign }) => (
+                          <RecentBroadcastCard broadcast={mapCampaignToBroadcast(item)} />
                         ),
                       },
                     ]

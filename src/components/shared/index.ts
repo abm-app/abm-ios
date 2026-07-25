@@ -17,4 +17,4 @@ export { default as FilterSection } from './FilterSection';
 export { default as TrendChart } from './TrendChart';
 export { default as PropertyBreakdown } from './PropertyBreakdown';
 export { default as UserCard } from './UserCard';
-export { default as AdminMenuList } from './AdminMenuList';
+export { default as MenuList } from './MenuList';

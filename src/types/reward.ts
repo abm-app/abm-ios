@@ -2,14 +2,16 @@ export interface RewardItem {
   id: string;
   name: string;
   pointsCost: number;
-  type: string;
+  type?: string;
+  canAfford?: boolean;
 }
 
 export interface IssuedReward {
-  _id: string;
+  id: string;
   rewardId: string;
-  name: string;
+  rewardName: string;
   pointsCost: number;
-  issuedAt: string;
-  status: 'active' | 'redeemed' | 'expired';
+  redeemedById: string;
+  redeemedByName: string;
+  redeemedAt: string;
 }

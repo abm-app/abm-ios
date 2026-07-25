@@ -1,32 +1,8 @@
-import type { LoyaltyConfig } from '@/types/loyalty';
+import apiClient from '../client';
+import type { LoyaltyConfig, UpdateLoyaltyConfigPayload } from '@/types/loyalty';
 
-const mockLoyaltyConfig: LoyaltyConfig = {
-  rewardCatalog: [
-    { id: 'room_upgrade', name: 'Room Upgrade', cost: 2000 },
-    { id: 'late_checkout', name: 'Late Checkout', cost: 2000 },
-    { id: 'discount', name: 'Next-Stay Discount', cost: 2000 },
-    { id: 'complimentary_meal', name: 'Complimentary Meal', cost: 2000 },
-  ],
-  tierThresholds: {
-    bronze: 50,
-    silver: 100,
-    gold: 200,
-  },
-  pointsPerNight: {
-    Standard: 50,
-    Deluxe: 100,
-    Suite: 200,
-  },
-};
+export const getLoyaltyConfig = (): Promise<LoyaltyConfig> =>
+  apiClient.get('/loyalty/config/').then(r => r.data);
 
-// import apiClient from '../client';
-//
-// When the real endpoint is ready, use apiClient like this:
-// export const getLoyaltyConfig = (): Promise<LoyaltyConfig> =>
-//   apiClient.get('/loyalty/config').then((r) => r.data);
-
-export const getLoyaltyConfig = async (): Promise<LoyaltyConfig> => {
-  // Simulate network delay
-  await new Promise(resolve => setTimeout(resolve, 500));
-  return mockLoyaltyConfig;
-};
+export const updateLoyaltyConfig = (payload: UpdateLoyaltyConfigPayload): Promise<LoyaltyConfig> =>
+  apiClient.patch('/loyalty/config/update/', payload).then(r => r.data);

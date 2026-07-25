@@ -4,30 +4,39 @@ import { Feather } from '@expo/vector-icons';
 
 import tokens from '@/theme/tokens';
 import { SharedFormModal, LoadingSpinner, ErrorState } from '@/components/shared';
-import { useRewardCatalogue } from '@/hooks/rewards/useRewardCatalogue';
+import { useGuestRewardCatalogue } from '@/hooks/rewards/useRewardCatalogue';
 
 interface IssueRewardModalProps {
   visible: boolean;
   onClose: () => void;
   spendableBalance: number;
-  onIssueReward: (rewardId: string, cost: number) => void;
+  guestId: string;
+  onIssueReward: (
+    rewardId: string,
+    cost: number,
+    callbacks: { onSuccess: () => void; onError: (error: Error) => void },
+  ) => void;
+  isSubmitting?: boolean;
 }
 
 export default function IssueRewardModal({
   visible,
   onClose,
   spendableBalance,
+  guestId,
   onIssueReward,
+  isSubmitting,
 }: IssueRewardModalProps) {
   const [selectedRewardId, setSelectedRewardId] = useState<string | null>(null);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
-  const { data: catalogue, isLoading, isError, refetch } = useRewardCatalogue();
+  const { data: catalogue, isLoading, isError, refetch } = useGuestRewardCatalogue(guestId);
 
   const sortedRewards = useMemo(() => {
     if (!catalogue) return [];
     return [...catalogue].sort((a, b) => {
-      const aAffordable = a.pointsCost <= spendableBalance;
-      const bAffordable = b.pointsCost <= spendableBalance;
+      const aAffordable = a.canAfford ?? a.pointsCost <= spendableBalance;
+      const bAffordable = b.canAfford ?? b.pointsCost <= spendableBalance;
       if (aAffordable && !bAffordable) return -1;
       if (!aAffordable && bAffordable) return 1;
       return a.pointsCost - b.pointsCost;
@@ -38,18 +47,27 @@ export default function IssueRewardModal({
     if (!selectedRewardId || !catalogue) return;
     const reward = catalogue.find(r => r.id === selectedRewardId);
     if (reward) {
-      onIssueReward(reward.id, reward.pointsCost);
-      handleClose();
+      setSubmitError(null);
+      onIssueReward(reward.id, reward.pointsCost, {
+        onSuccess: () => {
+          handleClose();
+        },
+        onError: (error: Error) => {
+          setSubmitError(error.message || 'Failed to issue reward');
+        },
+      });
     }
   };
 
   const handleClose = () => {
     setSelectedRewardId(null);
+    setSubmitError(null);
     onClose();
   };
 
   const selectedReward = catalogue?.find(r => r.id === selectedRewardId);
-  const isValidSelection = !!selectedReward && selectedReward.pointsCost <= spendableBalance;
+  const isValidSelection =
+    !!selectedReward && (selectedReward.canAfford ?? selectedReward.pointsCost <= spendableBalance);
 
   return (
     <SharedFormModal
@@ -59,13 +77,19 @@ export default function IssueRewardModal({
       onClose={handleClose}
       onSubmit={handleSubmit}
       submitDisabled={!isValidSelection}
+      isSubmitting={isSubmitting}
     >
       {isLoading && <LoadingSpinner />}
       {isError && <ErrorState message="Failed to load rewards" onRetry={refetch} />}
       {!isLoading && !isError && catalogue && (
         <View style={styles.listContainer}>
+          {submitError && (
+            <View style={styles.errorContainer}>
+              <Text style={styles.errorText}>{submitError}</Text>
+            </View>
+          )}
           {sortedRewards.map(reward => {
-            const isAffordable = reward.pointsCost <= spendableBalance;
+            const isAffordable = reward.canAfford ?? reward.pointsCost <= spendableBalance;
             const isSelected = selectedRewardId === reward.id;
 
             return (
@@ -174,5 +198,17 @@ const styles = StyleSheet.create({
   },
   checkIcon: {
     marginLeft: tokens.spacing.sm,
+  },
+  errorContainer: {
+    padding: tokens.spacing.md,
+    backgroundColor: tokens.colors.badgeHighBg,
+    borderRadius: tokens.borderRadius.md,
+    marginBottom: tokens.spacing.md,
+  },
+  errorText: {
+    color: tokens.colors.badgeHighText,
+    fontFamily: tokens.typography.fontFamily.sub,
+    fontSize: tokens.typography.fontSize.subhead,
+    textAlign: 'center',
   },
 });

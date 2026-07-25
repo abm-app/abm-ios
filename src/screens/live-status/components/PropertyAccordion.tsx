@@ -88,17 +88,17 @@ export default function PropertyAccordion({
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.header} onPress={toggleExpand} activeOpacity={0.8}>
-        <View style={styles.headerContent}>
-          <Text style={styles.propertyName}>{property.name}</Text>
-          <Text style={styles.propertyStats}>
-            {property.totalRooms} Rooms • {property.occupied} Occupied
+      <TouchableOpacity onPress={toggleExpand} style={styles.header} activeOpacity={0.7}>
+        <View style={styles.titleRow}>
+          <Text style={styles.title}>{property.name}</Text>
+          <Text style={styles.count}>
+            (occupied: {property.occupied}, total: {property.totalRooms})
           </Text>
         </View>
         <Feather
           name={expanded ? 'chevron-up' : 'chevron-down'}
-          size={20}
-          color={tokens.colors.textPrimary}
+          size={tokens.iconSizes.content}
+          color={tokens.colors.textSecondary}
         />
       </TouchableOpacity>
 
@@ -144,37 +144,32 @@ function getOrdinal(n: number) {
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: tokens.spacing.lg,
-    backgroundColor: tokens.colors.surfaceLight,
-    borderRadius: tokens.borderRadius.lg,
-    overflow: 'hidden',
-    borderWidth: tokens.borderWidth.hairline,
-    borderColor: tokens.colors.border,
+    marginBottom: tokens.spacing.mdLg,
   },
   header: {
     flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'space-between',
-    padding: tokens.spacing.lg,
-    backgroundColor: tokens.colors.white,
+    alignItems: 'center',
+    paddingVertical: tokens.spacing.sm,
   },
-  headerContent: {
-    flex: 1,
+  titleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: tokens.spacing.xs,
   },
-  propertyName: {
+  title: {
     fontFamily: tokens.typography.fontFamily.sub,
-    fontSize: tokens.typography.fontSize.h2,
+    fontSize: tokens.typography.fontSize.subhead,
     fontWeight: '600',
-    color: tokens.colors.textPrimary,
-    marginBottom: tokens.spacing.xs,
+    color: tokens.colors.textSecondary,
   },
-  propertyStats: {
+  count: {
     fontFamily: tokens.typography.fontFamily.sub,
-    fontSize: tokens.typography.fontSize.caption,
-    color: tokens.colors.textHint,
+    fontSize: tokens.typography.fontSize.subhead,
+    color: tokens.colors.textMuted,
   },
   content: {
-    padding: tokens.spacing.md,
+    marginTop: tokens.spacing.sm,
   },
   emptyText: {
     fontFamily: tokens.typography.fontFamily.sub,
