@@ -35,6 +35,14 @@ export default function MenuScreen() {
 
   const rootContainerStyle = useMemo(() => [styles.root, { paddingTop: insets.top }], [insets.top]);
 
+  const visibleMenuItems = useMemo(() => {
+    if (!user || user.role === 'staff') return [];
+    if (user.role === 'manager') {
+      return MENU_ITEMS.filter(item => item.route !== 'UserManagement');
+    }
+    return MENU_ITEMS; // owner
+  }, [user]);
+
   return (
     <View style={rootContainerStyle}>
       <Backdrop />
@@ -61,7 +69,7 @@ export default function MenuScreen() {
 
       {/* Menu List */}
       <MenuList
-        items={MENU_ITEMS}
+        items={visibleMenuItems}
         onNavigate={route => navigation.navigate(route as keyof MenuStackParamList)}
       />
 
