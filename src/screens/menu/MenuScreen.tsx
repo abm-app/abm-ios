@@ -9,20 +9,12 @@ import tokens from '@/theme/tokens';
 import { useAuthStore } from '@/store/authStore';
 import { useLogout } from '@/hooks/auth/useLogout';
 import { Backdrop, ConfirmationModal, UserCard, MenuList } from '@/components/shared';
-import type { MenuItem } from '@/components/shared/MenuList';
 import type { MenuStackParamList } from '@/navigation/types';
+import { useMenuItems } from '@/hooks/menu/useMenuItems';
 
 // ─── Navigation type ─────────────────────────────────────────────────────────
 
 type MenuNavProp = NativeStackNavigationProp<MenuStackParamList>;
-
-// ─── Menu items ──────────────────────────────────────────────────────────────
-
-const MENU_ITEMS: MenuItem[] = [
-  { label: 'Revenue Analytics', icon: 'bar-chart-2', route: 'RevenueAnalytics' },
-  { label: 'User Management', icon: 'users', route: 'UserManagement' },
-  { label: 'Loyalty Configuration', icon: 'award', route: 'LoyaltyConfiguration' },
-];
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
@@ -35,13 +27,7 @@ export default function MenuScreen() {
 
   const rootContainerStyle = useMemo(() => [styles.root, { paddingTop: insets.top }], [insets.top]);
 
-  const visibleMenuItems = useMemo(() => {
-    if (!user || user.role === 'staff') return [];
-    if (user.role === 'manager') {
-      return MENU_ITEMS.filter(item => item.route !== 'UserManagement');
-    }
-    return MENU_ITEMS; // owner
-  }, [user]);
+  const visibleMenuItems = useMenuItems();
 
   return (
     <View style={rootContainerStyle}>

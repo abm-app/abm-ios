@@ -72,8 +72,19 @@ export default function GuestProfileScreen({ route }: Props) {
     setDncModalVisible(false);
   };
 
-  const handleIssueReward = (_rewardId: string, _cost: number) => {
-    issueRewardMutation.mutate(_rewardId);
+  const handleIssueReward = (
+    _rewardId: string,
+    _cost: number,
+    callbacks?: { onSuccess: () => void; onError: (error: Error) => void },
+  ) => {
+    issueRewardMutation.mutate(_rewardId, {
+      onSuccess: () => {
+        callbacks?.onSuccess();
+      },
+      onError: error => {
+        callbacks?.onError(error as Error);
+      },
+    });
   };
 
   return (
@@ -152,6 +163,7 @@ export default function GuestProfileScreen({ route }: Props) {
         spendableBalance={spendableBalance}
         guestId={id}
         onIssueReward={handleIssueReward}
+        isSubmitting={issueRewardMutation.isPending}
       />
     </SafeAreaView>
   );

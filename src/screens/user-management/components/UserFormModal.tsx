@@ -43,23 +43,24 @@ export default function UserFormModal({
   const [password, setPassword] = useState('');
   const [role, setRole] = useState<UserRole>(initialUser?.role || 'staff');
   const [property, setProperty] = useState<UserProperty>(initialUser?.property || 'both');
+  const [prevVisible, setPrevVisible] = useState(visible);
 
-  const [prevInitialUser, setPrevInitialUser] = useState(initialUser);
-
-  if (initialUser !== prevInitialUser) {
-    setPrevInitialUser(initialUser);
-    if (initialUser) {
-      setName(initialUser.name);
-      setEmail(initialUser.email);
-      setRole(initialUser.role);
-      setProperty(initialUser.property);
-      setPassword('');
-    } else {
-      setName('');
-      setEmail('');
-      setRole('staff');
-      setProperty('both');
-      setPassword('');
+  if (visible !== prevVisible) {
+    setPrevVisible(visible);
+    if (visible) {
+      if (initialUser) {
+        setName(initialUser.name);
+        setEmail(initialUser.email);
+        setRole(initialUser.role);
+        setProperty(initialUser.property);
+        setPassword('');
+      } else {
+        setName('');
+        setEmail('');
+        setRole('staff');
+        setProperty('both');
+        setPassword('');
+      }
     }
   }
 

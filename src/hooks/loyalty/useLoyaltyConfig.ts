@@ -20,6 +20,7 @@ export function useUpdateLoyaltyConfig() {
     mutationFn: (payload: UpdateLoyaltyConfigPayload) => updateLoyaltyConfig(payload),
     onSuccess: updatedConfig => {
       queryClient.setQueryData(loyaltyKeys.config(), updatedConfig);
+      queryClient.invalidateQueries({ queryKey: loyaltyKeys.config() });
     },
   });
 }

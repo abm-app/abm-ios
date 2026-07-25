@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useImperativeHandle } from 'react';
+import React, { useState, useCallback, useImperativeHandle, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 
@@ -21,6 +21,10 @@ const TiersTab = React.forwardRef<
 >(({ tiers, onSave, onEditItem }, ref) => {
   const [items, setItems] = useState<TierThreshold[]>(tiers);
   const [deletingIndex, setDeletingIndex] = useState<number | null>(null);
+
+  useEffect(() => {
+    setItems(tiers);
+  }, [tiers]);
 
   useImperativeHandle(ref, () => ({
     addItem: (name: string, minPoints: number) => {
@@ -96,7 +100,7 @@ const TiersTab = React.forwardRef<
           </View>
         )}
         {items.map((item, index) => (
-          <View key={item.name + index} style={styles.row}>
+          <View key={item.name} style={styles.row}>
             <View style={styles.reorderBtns}>
               <TouchableOpacity
                 onPress={() => moveUp(index)}

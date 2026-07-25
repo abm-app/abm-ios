@@ -5,6 +5,7 @@ import type { CreateUserPayload, UpdateUserPayload } from '@/api/endpoints/userM
 export const userKeys = {
   all: ['users'] as const,
   list: () => [...userKeys.all, 'list'] as const,
+  detail: (id: string) => [...userKeys.all, 'detail', id] as const,
 };
 
 export function useUsers() {
@@ -19,7 +20,8 @@ export function useCreateUser() {
 
   return useMutation({
     mutationFn: (data: CreateUserPayload) => createUser(data),
-    onSuccess: () => {
+    onSuccess: newUser => {
+      queryClient.setQueryData(userKeys.detail(newUser.id), newUser);
       queryClient.invalidateQueries({ queryKey: userKeys.list() });
     },
   });
@@ -30,7 +32,8 @@ export function useUpdateUser() {
 
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: UpdateUserPayload }) => updateUser(id, data),
-    onSuccess: () => {
+    onSuccess: (updatedUser, variables) => {
+      queryClient.setQueryData(userKeys.detail(variables.id), updatedUser);
       queryClient.invalidateQueries({ queryKey: userKeys.list() });
     },
   });
@@ -41,7 +44,8 @@ export function useDeleteUser() {
 
   return useMutation({
     mutationFn: (id: string) => deleteUser(id),
-    onSuccess: () => {
+    onSuccess: deletedId => {
+      queryClient.removeQueries({ queryKey: userKeys.detail(deletedId) });
       queryClient.invalidateQueries({ queryKey: userKeys.list() });
     },
   });

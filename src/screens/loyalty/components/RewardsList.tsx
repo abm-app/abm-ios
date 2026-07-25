@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useImperativeHandle } from 'react';
+import React, { useState, useCallback, useImperativeHandle, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 
@@ -21,6 +21,10 @@ const RewardsTab = React.forwardRef<
 >(({ rewards, onSave, onEditItem }, ref) => {
   const [items, setItems] = useState<RewardCatalogItem[]>(rewards);
   const [deletingIndex, setDeletingIndex] = useState<number | null>(null);
+
+  useEffect(() => {
+    setItems(rewards);
+  }, [rewards]);
 
   useImperativeHandle(ref, () => ({
     addItem: (name: string, cost: number) => {

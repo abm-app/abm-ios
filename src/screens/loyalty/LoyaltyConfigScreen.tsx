@@ -2,6 +2,8 @@ import React, { useState, useCallback, useRef } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import type { MenuStackParamList } from '@/navigation/types';
 
 import tokens from '@/theme/tokens';
 import { ScreenHeaderV2 } from '@/components/shared/ScreenHeader';
@@ -22,7 +24,7 @@ const TABS = [
 
 export default function LoyaltyConfigScreen() {
   const insets = useSafeAreaInsets();
-  const navigation = useNavigation();
+  const navigation = useNavigation<NativeStackNavigationProp<MenuStackParamList>>();
   const [activeTab, setActiveTab] = useState('rewards');
   const { data, isLoading, isError, error, refetch } = useLoyaltyConfig();
   const { mutate: updateConfig } = useUpdateLoyaltyConfig();
@@ -92,9 +94,17 @@ export default function LoyaltyConfigScreen() {
 
   const handleAutoSaveRewards = useCallback(
     (rewards: RewardCatalogItem[]) => {
-      updateConfig({
-        rewardCatalog: rewards.map(({ id, name, cost }) => ({ id: id || undefined, name, cost })),
-      });
+      updateConfig(
+        {
+          rewardCatalog: rewards.map(({ id, name, cost }) => ({ id: id || undefined, name, cost })),
+        },
+        {
+          onError: err => {
+            setErrorMessage(err.message || 'Failed to update rewards.');
+            setErrorModalVisible(true);
+          },
+        },
+      );
     },
     [updateConfig],
   );
@@ -139,7 +149,15 @@ export default function LoyaltyConfigScreen() {
 
   const handleAutoSaveTiers = useCallback(
     (tiers: TierThreshold[]) => {
-      updateConfig({ tierThresholds: tiers });
+      updateConfig(
+        { tierThresholds: tiers },
+        {
+          onError: err => {
+            setErrorMessage(err.message || 'Failed to update tiers.');
+            setErrorModalVisible(true);
+          },
+        },
+      );
     },
     [updateConfig],
   );

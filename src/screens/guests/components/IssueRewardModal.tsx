@@ -11,7 +11,12 @@ interface IssueRewardModalProps {
   onClose: () => void;
   spendableBalance: number;
   guestId: string;
-  onIssueReward: (rewardId: string, cost: number) => void;
+  onIssueReward: (
+    rewardId: string,
+    cost: number,
+    callbacks: { onSuccess: () => void; onError: (error: Error) => void },
+  ) => void;
+  isSubmitting?: boolean;
 }
 
 export default function IssueRewardModal({
@@ -20,8 +25,10 @@ export default function IssueRewardModal({
   spendableBalance,
   guestId,
   onIssueReward,
+  isSubmitting,
 }: IssueRewardModalProps) {
   const [selectedRewardId, setSelectedRewardId] = useState<string | null>(null);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const { data: catalogue, isLoading, isError, refetch } = useGuestRewardCatalogue(guestId);
 
@@ -40,13 +47,21 @@ export default function IssueRewardModal({
     if (!selectedRewardId || !catalogue) return;
     const reward = catalogue.find(r => r.id === selectedRewardId);
     if (reward) {
-      onIssueReward(reward.id, reward.pointsCost);
-      handleClose();
+      setSubmitError(null);
+      onIssueReward(reward.id, reward.pointsCost, {
+        onSuccess: () => {
+          handleClose();
+        },
+        onError: (error: Error) => {
+          setSubmitError(error.message || 'Failed to issue reward');
+        },
+      });
     }
   };
 
   const handleClose = () => {
     setSelectedRewardId(null);
+    setSubmitError(null);
     onClose();
   };
 
@@ -62,11 +77,17 @@ export default function IssueRewardModal({
       onClose={handleClose}
       onSubmit={handleSubmit}
       submitDisabled={!isValidSelection}
+      isSubmitting={isSubmitting}
     >
       {isLoading && <LoadingSpinner />}
       {isError && <ErrorState message="Failed to load rewards" onRetry={refetch} />}
       {!isLoading && !isError && catalogue && (
         <View style={styles.listContainer}>
+          {submitError && (
+            <View style={styles.errorContainer}>
+              <Text style={styles.errorText}>{submitError}</Text>
+            </View>
+          )}
           {sortedRewards.map(reward => {
             const isAffordable = reward.canAfford ?? reward.pointsCost <= spendableBalance;
             const isSelected = selectedRewardId === reward.id;
@@ -177,5 +198,17 @@ const styles = StyleSheet.create({
   },
   checkIcon: {
     marginLeft: tokens.spacing.sm,
+  },
+  errorContainer: {
+    padding: tokens.spacing.md,
+    backgroundColor: tokens.colors.badgeHighBg,
+    borderRadius: tokens.borderRadius.md,
+    marginBottom: tokens.spacing.md,
+  },
+  errorText: {
+    color: tokens.colors.badgeHighText,
+    fontFamily: tokens.typography.fontFamily.sub,
+    fontSize: tokens.typography.fontSize.subhead,
+    textAlign: 'center',
   },
 });

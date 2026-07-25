@@ -37,6 +37,8 @@ export default function UserRow({ user, onEdit, onDelete, isLast }: UserRowProps
           onPress={() => onEdit(user)}
           style={styles.iconButton}
           activeOpacity={0.7}
+          accessibilityRole="button"
+          accessibilityLabel={`Edit ${user.name}`}
         >
           <Feather name="edit-2" size={16} color={tokens.colors.textPrimary} />
         </TouchableOpacity>
@@ -45,6 +47,8 @@ export default function UserRow({ user, onEdit, onDelete, isLast }: UserRowProps
           onPress={() => onDelete(user)}
           style={[styles.iconButton, styles.deleteButton]}
           activeOpacity={0.7}
+          accessibilityRole="button"
+          accessibilityLabel={`Delete ${user.name}`}
         >
           <Feather name="trash-2" size={16} color={tokens.colors.danger} />
         </TouchableOpacity>
@@ -75,7 +79,7 @@ const styles = StyleSheet.create({
   avatar: {
     width: 40,
     height: 40,
-    borderRadius: 20,
+    borderRadius: tokens.borderRadius.xlMd,
     borderWidth: 1,
     borderColor: tokens.colors.textPrimary,
     alignItems: 'center',
@@ -104,7 +108,7 @@ const styles = StyleSheet.create({
   iconButton: {
     width: 32,
     height: 32,
-    borderRadius: 16,
+    borderRadius: tokens.borderRadius.lg,
     backgroundColor: tokens.colors.surface,
     alignItems: 'center',
     justifyContent: 'center',

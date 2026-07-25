@@ -20,6 +20,7 @@ import {
   Backdrop,
   LoadingSpinner,
   ErrorState,
+  EmptyState,
   ConfirmationModal,
 } from '@/components/shared';
 import { Card } from '@/components/ui';
@@ -115,7 +116,11 @@ export default function UserManagementScreen() {
       return (
         <View style={styles.centerContainer}>
           {/* Fallback empty state in case there are no users at all */}
-          <ErrorState message="No users found." />
+          <EmptyState
+            icon="users"
+            title="No users found"
+            subtitle="Get started by creating a new user."
+          />
         </View>
       );
     }
