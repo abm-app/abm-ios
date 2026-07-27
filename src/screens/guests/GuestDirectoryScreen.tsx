@@ -14,7 +14,7 @@ export default function GuestDirectoryScreen() {
   const [searchInput, setSearchInput] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [activeTier, setActiveTier] = useState('All');
-  const [activeLapsed, setActiveLapsed] = useState<string | null>(null);
+  const [activeLapsed, setActiveLapsed] = useState<number | null>(null);
   const [activeDoNotContact, setActiveDoNotContact] = useState<'true' | 'false' | undefined>(
     undefined,
   );
@@ -43,7 +43,7 @@ export default function GuestDirectoryScreen() {
     return {
       search: debouncedSearch ? debouncedSearch : undefined,
       tier: activeTier === 'All' ? undefined : activeTier,
-      lapsed: activeLapsed || undefined,
+      lapsedDays: activeLapsed || undefined,
       doNotContact: activeDoNotContact,
     };
   }, [debouncedSearch, activeTier, activeLapsed, activeDoNotContact]);
@@ -97,13 +97,15 @@ export default function GuestDirectoryScreen() {
       <GuestFilterSheet
         visible={isFilterVisible}
         onClose={() => setIsFilterVisible(false)}
-        activeTier={activeTier}
-        setActiveTier={setActiveTier}
-        activeLapsed={activeLapsed}
-        setActiveLapsed={setActiveLapsed}
-        activeDoNotContact={activeDoNotContact}
-        setActiveDoNotContact={setActiveDoNotContact}
+        initialTier={activeTier}
+        initialLapsed={activeLapsed}
+        initialDoNotContact={activeDoNotContact}
         tierOptions={tierOptions}
+        onApply={f => {
+          setActiveTier(f.tier);
+          setActiveLapsed(f.lapsed);
+          setActiveDoNotContact(f.doNotContact);
+        }}
       />
     </SafeAreaView>
   );
