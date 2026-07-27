@@ -25,9 +25,7 @@ export default function GuestDirectoryScreen() {
   const tierOptions = useMemo(() => {
     const baseOptions = ['All'];
     if (loyaltyConfig?.tierThresholds) {
-      const tiers = Object.keys(loyaltyConfig.tierThresholds).map(
-        tier => tier.charAt(0).toUpperCase() + tier.slice(1),
-      );
+      const tiers = loyaltyConfig.tierThresholds.map(tier => tier.name);
       baseOptions.push(...tiers);
     }
     return baseOptions;
