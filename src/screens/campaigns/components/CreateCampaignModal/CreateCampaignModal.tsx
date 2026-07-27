@@ -9,6 +9,7 @@ import {
   useEstimatedReach,
 } from '@/hooks/campaigns/useCampaigns';
 import { getCalendarDateString, parseDateString } from '@/utils/dateUtils';
+import { useLoyaltyConfig } from '@/hooks/loyalty/useLoyaltyConfig';
 import TargetAudienceStep from './TargetAudienceStep';
 import MessageContentStep from './MessageContentStep';
 
@@ -24,6 +25,13 @@ export default function CreateCampaignModal({ visible, onClose, onSuccess, initi
   const createMutation = useCreateCampaign();
   const updateMutation = useUpdateCampaign();
   const { mutateAsync: fetchReachAsync } = useEstimatedReach();
+  const { data: loyaltyConfig } = useLoyaltyConfig();
+
+  const allTiers = React.useMemo(
+    () => loyaltyConfig?.tierThresholds?.map(t => t.name) || [],
+    [loyaltyConfig?.tierThresholds],
+  );
+  const tierOptions = React.useMemo(() => ['All', ...allTiers], [allTiers]);
 
   const [currentPage, setCurrentPage] = useState<1 | 2>(1);
   const [name, setName] = useState(initialData?.name || '');
@@ -78,7 +86,8 @@ export default function CreateCampaignModal({ visible, onClose, onSuccess, initi
       setIsLoadingReach(true);
       try {
         setReachCount(null);
-        const count = await fetchReachAsync(selectedTiers);
+        const tiersToSend = selectedTiers.includes('All') ? [...allTiers, 'None'] : selectedTiers;
+        const count = await fetchReachAsync(tiersToSend);
         if (isMounted) setReachCount(count);
       } catch {
         if (isMounted) setReachCount(0);
@@ -90,7 +99,7 @@ export default function CreateCampaignModal({ visible, onClose, onSuccess, initi
     return () => {
       isMounted = false;
     };
-  }, [selectedTiers, fetchReachAsync]);
+  }, [selectedTiers, fetchReachAsync, allTiers]);
 
   useEffect(() => {
     if (templates && templates.length > 0 && !templateId) {
@@ -110,7 +119,7 @@ export default function CreateCampaignModal({ visible, onClose, onSuccess, initi
       ? selectedTiers.filter(t => t !== tier)
       : [...selectedTiers.filter(t => t !== 'All'), tier];
 
-    if (newTiers.length === 4) {
+    if (newTiers.length === allTiers.length) {
       newTiers = ['All'];
     } else if (newTiers.length === 0) {
       newTiers = ['All'];
@@ -250,6 +259,7 @@ export default function CreateCampaignModal({ visible, onClose, onSuccess, initi
             reachCount={reachCount}
             isLoadingReach={isLoadingReach}
             onOpenCalendar={handleOpenCalendar}
+            tierOptions={tierOptions}
           />
         ) : (
           <MessageContentStep
