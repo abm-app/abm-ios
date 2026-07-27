@@ -18,14 +18,17 @@ export function useRevenueSummary(period: RevenuePeriod) {
     queryKey: ['revenueSummary', period],
     queryFn: () => getRevenueSummary(period),
     select: data => {
-      const intlRev = data.international?.totalRevenue ?? 0;
-      const expRev = data.express?.totalRevenue ?? 0;
+      const intlRev = data.properties?.international?.totalRevenue ?? 0;
+      const expRev = data.properties?.express?.totalRevenue ?? 0;
       return {
         totals: {
           totalRevenue: intlRev + expRev,
-          totalTax: (data.international?.totalTax ?? 0) + (data.express?.totalTax ?? 0),
+          totalTax:
+            (data.properties?.international?.totalTax ?? 0) +
+            (data.properties?.express?.totalTax ?? 0),
           totalBookings:
-            (data.international?.bookingCount ?? 0) + (data.express?.bookingCount ?? 0),
+            (data.properties?.international?.bookingCount ?? 0) +
+            (data.properties?.express?.bookingCount ?? 0),
         },
         internationalTotal: intlRev,
         expressTotal: expRev,
@@ -48,7 +51,11 @@ export function useRevenueTrends() {
       const last6 = data.trends.slice(-6);
       const max =
         last6.length > 0
-          ? Math.max(...last6.map(t => (t.international ?? 0) + (t.express ?? 0)))
+          ? Math.max(
+              ...last6.map(
+                t => (t.international?.totalRevenue ?? 0) + (t.express?.totalRevenue ?? 0),
+              ),
+            )
           : 1;
       return {
         last6Trends: last6,

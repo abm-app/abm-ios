@@ -29,7 +29,8 @@ export default function TrendChart({ data, maxTrend }: TrendChartProps) {
       <Text style={styles.cardLabel}>Monthly Trend</Text>
       <View style={styles.chartContainer}>
         {data.map(item => {
-          const combined = (item.international ?? 0) + (item.express ?? 0);
+          const combined =
+            (item.international?.totalRevenue ?? 0) + (item.express?.totalRevenue ?? 0);
           const heightPct = maxTrend > 0 ? combined / maxTrend : 0;
           const safeHeightPct = Number.isNaN(heightPct) ? 0 : heightPct;
           return (

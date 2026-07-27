@@ -8,14 +8,16 @@ export interface RevenuePropertyData {
 
 export interface RevenueSummaryResponse {
   period: RevenuePeriod;
-  international: RevenuePropertyData;
-  express: RevenuePropertyData;
+  properties?: {
+    international?: RevenuePropertyData;
+    express?: RevenuePropertyData;
+  };
 }
 
 export interface RevenueTrendMonth {
   month: string; // e.g. "2025-01"
-  international: number;
-  express: number;
+  international?: RevenuePropertyData;
+  express?: RevenuePropertyData;
 }
 
 export interface RevenueTrendsResponse {
