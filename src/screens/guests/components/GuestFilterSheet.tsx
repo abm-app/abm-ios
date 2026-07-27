@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
 import tokens from '@/theme/tokens';
@@ -6,35 +6,63 @@ import { FilterSheet } from '@/components/shared';
 import { Button, Chip } from '@/components/ui';
 
 const LAPSED_OPTIONS = [
-  { label: 'Above 30 days', value: '30_days' },
-  { label: '3 months', value: '3_months' },
-  { label: '6 months', value: '6_months' },
-  { label: '12 months', value: '12_months' },
+  { label: '1 month', value: 30 },
+  { label: '3 months', value: 90 },
+  { label: '6 months', value: 180 },
+  { label: '12 months', value: 365 },
 ];
 
 interface GuestFilterSheetProps {
   visible: boolean;
   onClose: () => void;
-  activeTier: string;
-  setActiveTier: (tier: string) => void;
-  activeLapsed: string | null;
-  setActiveLapsed: React.Dispatch<React.SetStateAction<string | null>>;
-  activeDoNotContact: 'true' | 'false' | undefined;
-  setActiveDoNotContact: React.Dispatch<React.SetStateAction<'true' | 'false' | undefined>>;
+  initialTier: string;
+  initialLapsed: number | null;
+  initialDoNotContact: 'true' | 'false' | undefined;
   tierOptions: string[];
+  onApply: (filters: {
+    tier: string;
+    lapsed: number | null;
+    doNotContact: 'true' | 'false' | undefined;
+  }) => void;
 }
 
 export default function GuestFilterSheet({
   visible,
   onClose,
-  activeTier,
-  setActiveTier,
-  activeLapsed,
-  setActiveLapsed,
-  activeDoNotContact,
-  setActiveDoNotContact,
+  initialTier,
+  initialLapsed,
+  initialDoNotContact,
   tierOptions,
+  onApply,
 }: GuestFilterSheetProps) {
+  const [draftTier, setDraftTier] = useState(initialTier);
+  const [draftLapsed, setDraftLapsed] = useState(initialLapsed);
+  const [draftDoNotContact, setDraftDoNotContact] = useState(initialDoNotContact);
+  const [prevVisible, setPrevVisible] = useState(visible);
+
+  if (visible !== prevVisible) {
+    setPrevVisible(visible);
+    if (visible) {
+      setDraftTier(initialTier);
+      setDraftLapsed(initialLapsed);
+      setDraftDoNotContact(initialDoNotContact);
+    }
+  }
+
+  const handleApply = () => {
+    onApply({
+      tier: draftTier,
+      lapsed: draftLapsed,
+      doNotContact: draftDoNotContact,
+    });
+    onClose();
+  };
+
+  const handleClearAll = () => {
+    setDraftTier('All');
+    setDraftLapsed(null);
+    setDraftDoNotContact(undefined);
+  };
   return (
     <FilterSheet
       title="Filters"
@@ -47,14 +75,14 @@ export default function GuestFilterSheet({
             label="Clear All"
             variant="secondary"
             style={styles.filterButton}
-            onPress={() => {
-              setActiveTier('All');
-              setActiveLapsed(null);
-              setActiveDoNotContact(undefined);
-              onClose();
-            }}
+            onPress={handleClearAll}
           />
-          <Button label="Apply" variant="primary" style={styles.filterButton} onPress={onClose} />
+          <Button
+            label="Apply"
+            variant="primary"
+            style={styles.filterButton}
+            onPress={handleApply}
+          />
         </View>
       }
     >
@@ -65,9 +93,9 @@ export default function GuestFilterSheet({
             <Chip
               key={tier}
               label={tier}
-              active={activeTier === tier}
-              tone={activeTier === tier ? 'primary' : 'default'}
-              onPress={() => setActiveTier(tier)}
+              active={draftTier === tier}
+              tone={draftTier === tier ? 'primary' : 'default'}
+              onPress={() => setDraftTier(tier)}
               style={styles.filterChip}
             />
           ))}
@@ -81,9 +109,9 @@ export default function GuestFilterSheet({
             <Chip
               key={option.value}
               label={option.label}
-              active={activeLapsed === option.value}
-              tone={activeLapsed === option.value ? 'primary' : 'default'}
-              onPress={() => setActiveLapsed(prev => (prev === option.value ? null : option.value))}
+              active={draftLapsed === option.value}
+              tone={draftLapsed === option.value ? 'primary' : 'default'}
+              onPress={() => setDraftLapsed(prev => (prev === option.value ? null : option.value))}
               style={styles.filterChip}
             />
           ))}
@@ -95,16 +123,16 @@ export default function GuestFilterSheet({
         <View style={styles.chipGroup}>
           <Chip
             label="Opted In"
-            active={activeDoNotContact === 'false'}
-            tone={activeDoNotContact === 'false' ? 'primary' : 'default'}
-            onPress={() => setActiveDoNotContact(prev => (prev === 'false' ? undefined : 'false'))}
+            active={draftDoNotContact === 'false'}
+            tone={draftDoNotContact === 'false' ? 'primary' : 'default'}
+            onPress={() => setDraftDoNotContact(prev => (prev === 'false' ? undefined : 'false'))}
             style={styles.filterChip}
           />
           <Chip
             label="Opted Out"
-            active={activeDoNotContact === 'true'}
-            tone={activeDoNotContact === 'true' ? 'primary' : 'default'}
-            onPress={() => setActiveDoNotContact(prev => (prev === 'true' ? undefined : 'true'))}
+            active={draftDoNotContact === 'true'}
+            tone={draftDoNotContact === 'true' ? 'primary' : 'default'}
+            onPress={() => setDraftDoNotContact(prev => (prev === 'true' ? undefined : 'true'))}
             style={styles.filterChip}
           />
         </View>

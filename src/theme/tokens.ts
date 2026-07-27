@@ -145,6 +145,7 @@ const fontSize = {
   h1: 26,
   h2: 20,
   subhead: 15,
+  bodyLg: 16,
   body: 15,
   caption: 12,
   label: 11,
@@ -279,6 +280,7 @@ const spacing = {
 const borderRadius = {
   xs: 4,
   sm: 6,
+  smMd: 8,
   md: 10,
   lg: 16,
   xlMd: 20,
@@ -359,6 +361,7 @@ const input = {
   paddingHorizontal: 14,
   fontSize: 13,
   maxWidth: 380,
+  height: 40,
 } as const;
 
 /** Form geometry */

@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Pressable, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, Pressable } from 'react-native';
 import tokens from '@/theme/tokens';
 import { FilterSheet } from '@/components/shared/FilterSheet';
 import { Button, Chip } from '@/components/ui';
 import { CustomCalender } from '@/components/shared/CustomCalender';
-import { getCalendarDateString } from '@/utils/dateUtils';
+import { getCalendarDateString, parseDateString } from '@/utils/dateUtils';
 import type { AuditFilters } from '@/hooks/audit/useAuditEvents';
 import { PROPERTY_OPTIONS, EVENT_TYPE_OPTIONS } from '@/types/audit';
-import { useRoomTypes } from '@/hooks/rooms/useRoomTypes';
 
 interface AuditFilterSheetProps {
   visible: boolean;
@@ -25,8 +24,6 @@ export function AuditFilterSheet({
   const [draftFilters, setDraftFilters] = useState<AuditFilters>(initialFilters);
   const [isFromDateVisible, setIsFromDateVisible] = useState(false);
   const [isToDateVisible, setIsToDateVisible] = useState(false);
-
-  const { data: roomTypes, isLoading: isLoadingRooms } = useRoomTypes();
 
   const [prevVisible, setPrevVisible] = useState(visible);
 
@@ -113,33 +110,6 @@ export function AuditFilterSheet({
           </View>
         </View>
 
-        <View style={styles.fieldGroup}>
-          <Text style={styles.label}>Room Type</Text>
-          <View style={styles.chipGroup}>
-            {isLoadingRooms ? (
-              <ActivityIndicator size="small" color={tokens.colors.primary} />
-            ) : (
-              roomTypes?.map(type => (
-                <Chip
-                  key={type}
-                  label={type}
-                  tone="primary"
-                  active={draftFilters.rmCode?.includes(type)}
-                  onPress={() =>
-                    setDraftFilters(prev => {
-                      const current = prev.rmCode || [];
-                      const next = current.includes(type)
-                        ? current.filter(p => p !== type)
-                        : [...current, type];
-                      return { ...prev, rmCode: next.length > 0 ? next : undefined };
-                    })
-                  }
-                />
-              ))
-            )}
-          </View>
-        </View>
-
         <View style={styles.dateRow}>
           <View style={[styles.fieldGroup, styles.flex1]}>
             <Text style={styles.label}>From Date</Text>
@@ -164,12 +134,13 @@ export function AuditFilterSheet({
       <CustomCalender
         visible={isFromDateVisible}
         onClose={() => setIsFromDateVisible(false)}
-        selectedDate={draftFilters.from ? new Date(draftFilters.from) : undefined}
+        selectedDate={parseDateString(draftFilters.from)}
         onSelectDate={date => {
           setDraftFilters(prev => {
             const next = { ...prev, from: getCalendarDateString(date) };
             // Auto-clear 'to' date if it is now before the 'from' date
-            if (next.to && new Date(next.to) < date) {
+            const toDate = parseDateString(next.to);
+            if (toDate && toDate < date) {
               next.to = undefined;
             }
             return next;
@@ -181,8 +152,8 @@ export function AuditFilterSheet({
       <CustomCalender
         visible={isToDateVisible}
         onClose={() => setIsToDateVisible(false)}
-        selectedDate={draftFilters.to ? new Date(draftFilters.to) : undefined}
-        minDate={draftFilters.from ? new Date(draftFilters.from) : undefined}
+        selectedDate={parseDateString(draftFilters.to)}
+        minDate={parseDateString(draftFilters.from)}
         onSelectDate={date => {
           setDraftFilters(prev => ({ ...prev, to: getCalendarDateString(date) }));
           setIsToDateVisible(false);

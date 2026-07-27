@@ -46,7 +46,7 @@ export default function OperationsScreen() {
             auditTrailRef.current?.openFilters();
           }
         }}
-        showSearch={activeTab === 'live_status'}
+        showSearch={activeTab === 'live_status' && viewMode === 'list'}
         searchValue={searchQuery}
         onSearchChange={setSearchQuery}
         showViewModeToggle={activeTab === 'live_status'}

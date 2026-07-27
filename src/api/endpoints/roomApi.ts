@@ -1,8 +1,6 @@
+import apiClient from '../client';
+
 export const getRoomTypes = async (): Promise<string[]> => {
-  // Simulating an API call
-  return new Promise(resolve => {
-    setTimeout(() => {
-      resolve(['Standard', 'Deluxe', 'Suite']);
-    }, 500);
-  });
+  const response = await apiClient.get<string[]>('/status/room-types');
+  return response.data;
 };

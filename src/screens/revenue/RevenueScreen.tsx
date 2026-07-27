@@ -59,7 +59,7 @@ export default function RevenueScreen({ navigation }: Props) {
   // ─── Memoised dynamic styles ────────────────────────────────────────────
 
   const contentContainerStyle = useMemo(
-    () => [styles.content, { paddingBottom: bottomClearance }],
+    () => [styles.content, { paddingBottom: bottomClearance, flexGrow: 1 }],
     [bottomClearance],
   );
 
@@ -67,9 +67,6 @@ export default function RevenueScreen({ navigation }: Props) {
     summaryQuery.refetch();
     trendsQuery.refetch();
   };
-
-  if (isLoading) return <LoadingSpinner />;
-  if (isError) return <ErrorState message="Failed to load revenue data." onRetry={handleRetry} />;
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -93,25 +90,37 @@ export default function RevenueScreen({ navigation }: Props) {
           style={styles.segmented}
         />
 
-        {/* Total Revenue Card */}
-        <Card variant="outlined" padded style={styles.card}>
-          <Text style={styles.cardLabel}>Total Revenue</Text>
-          <Text style={styles.headline}>{formatCurrency(totalRevenue)}</Text>
-          <Text style={styles.subline}>Tax: {formatCurrency(totalTax)}</Text>
-          <View style={styles.bookingRow}>
-            <Text style={styles.bookingText}>{totalBookings} bookings</Text>
+        {isLoading ? (
+          <View style={styles.stateContainer}>
+            <LoadingSpinner />
           </View>
-        </Card>
+        ) : isError ? (
+          <View style={styles.stateContainer}>
+            <ErrorState message="Failed to load revenue data." onRetry={handleRetry} />
+          </View>
+        ) : (
+          <>
+            {/* Total Revenue Card */}
+            <Card variant="outlined" padded style={styles.card}>
+              <Text style={styles.cardLabel}>Total Revenue</Text>
+              <Text style={styles.headline}>{formatCurrency(totalRevenue)}</Text>
+              <Text style={styles.subline}>Tax: {formatCurrency(totalTax)}</Text>
+              <View style={styles.bookingRow}>
+                <Text style={styles.bookingText}>{totalBookings} bookings</Text>
+              </View>
+            </Card>
 
-        {/* Trend Chart */}
-        <TrendChart data={last6Trends} maxTrend={maxTrend} />
+            {/* Property Breakdown */}
+            <PropertyBreakdown
+              internationalTotal={internationalTotal}
+              expressTotal={expressTotal}
+              propertyMax={propertyMax}
+            />
 
-        {/* Property Breakdown */}
-        <PropertyBreakdown
-          internationalTotal={internationalTotal}
-          expressTotal={expressTotal}
-          propertyMax={propertyMax}
-        />
+            {/* Trend Chart */}
+            <TrendChart data={last6Trends} maxTrend={maxTrend} />
+          </>
+        )}
       </ScrollView>
     </SafeAreaView>
   );
@@ -127,6 +136,12 @@ const styles = StyleSheet.create({
   },
   content: {
     paddingBottom: tokens.spacing.xxl,
+  },
+  stateContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    minHeight: 200,
   },
   segmented: {
     marginHorizontal: tokens.spacing.lg,

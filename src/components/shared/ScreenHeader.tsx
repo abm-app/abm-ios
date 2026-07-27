@@ -17,15 +17,28 @@ const SearchInput = ({
   onSearchChange?: (text: string) => void;
   onBlur: () => void;
 }) => (
-  <TextInput
-    style={styles.searchInput}
-    placeholder="Search..."
-    placeholderTextColor={tokens.colors.textMuted}
-    autoFocus
-    onBlur={onBlur}
-    value={searchValue}
-    onChangeText={onSearchChange}
-  />
+  <View style={styles.searchInputContainer}>
+    <TextInput
+      style={styles.searchInput}
+      placeholder="Search..."
+      placeholderTextColor={tokens.colors.textMuted}
+      autoFocus
+      onBlur={onBlur}
+      value={searchValue}
+      onChangeText={onSearchChange}
+    />
+    {!!searchValue && (
+      <TouchableOpacity
+        style={styles.clearSearchButton}
+        onPress={() => onSearchChange?.('')}
+        activeOpacity={0.7}
+        accessibilityRole="button"
+        accessibilityLabel="Clear search"
+      >
+        <Feather name="x" size={16} color={tokens.colors.textMuted} />
+      </TouchableOpacity>
+    )}
+  </View>
 );
 
 const ActionButtons = ({
@@ -194,11 +207,16 @@ export function ScreenHeaderV2({
           </TouchableOpacity>
         )}
         <View style={styles.leftCol}>
-          {isSearching ? (
+          {showSearch && isSearching ? (
             <SearchInput
               searchValue={searchValue}
               onSearchChange={onSearchChange}
-              onBlur={() => setIsSearching(false)}
+              onBlur={() => {
+                if (!searchValue || searchValue.trim() === '') {
+                  onSearchChange?.('');
+                  setIsSearching(false);
+                }
+              }}
             />
           ) : (
             <>
@@ -305,16 +323,27 @@ const styles = StyleSheet.create({
   actionButton: {
     borderRadius: 999,
   },
-  searchInput: {
-    fontFamily: tokens.typography.fontFamily.sub,
-    fontSize: 16,
-    color: tokens.colors.textPrimary,
-    height: 40,
+  searchInputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
     backgroundColor: tokens.colors.background,
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    borderWidth: 1,
+    borderRadius: tokens.borderRadius.smMd,
+    borderWidth: tokens.borderWidth.thin,
     borderColor: tokens.colors.border,
+    height: tokens.input.height,
+  },
+  searchInput: {
+    flex: 1,
+    fontFamily: tokens.typography.fontFamily.sub,
+    fontSize: tokens.typography.fontSize.bodyLg,
+    color: tokens.colors.textPrimary,
+    height: tokens.input.height,
+    paddingHorizontal: tokens.spacing.mdLg,
+  },
+  clearSearchButton: {
+    padding: tokens.spacing.sm,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   notificationBadgeDot: {
     position: 'absolute',

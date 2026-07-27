@@ -13,9 +13,8 @@ interface TargetAudienceStepProps {
   reachCount: number | null;
   isLoadingReach: boolean;
   onOpenCalendar: (target: 'start' | 'end') => void;
+  tierOptions: string[];
 }
-
-const GUEST_TIERS = ['All', 'Standard', 'Deluxe', 'Executive', 'Suite'];
 
 export default function TargetAudienceStep({
   name,
@@ -27,6 +26,7 @@ export default function TargetAudienceStep({
   reachCount,
   isLoadingReach,
   onOpenCalendar,
+  tierOptions,
 }: TargetAudienceStepProps) {
   return (
     <View>
@@ -68,7 +68,7 @@ export default function TargetAudienceStep({
 
       <Text style={styles.subLabel}>GUEST TIERS</Text>
       <View style={styles.chipGroup}>
-        {GUEST_TIERS.map(tier => (
+        {tierOptions.map(tier => (
           <Chip
             key={tier}
             label={tier}
