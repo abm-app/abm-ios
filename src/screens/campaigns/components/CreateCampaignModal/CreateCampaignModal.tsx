@@ -25,13 +25,13 @@ export default function CreateCampaignModal({ visible, onClose, onSuccess, initi
   const createMutation = useCreateCampaign();
   const updateMutation = useUpdateCampaign();
   const { mutateAsync: fetchReachAsync } = useEstimatedReach();
-  const { data: loyaltyConfig } = useLoyaltyConfig();
+  const { data: loyaltyConfig, isSuccess: isLoyaltyConfigSuccess } = useLoyaltyConfig();
 
   const allTiers = React.useMemo(
     () => loyaltyConfig?.tierThresholds?.map(t => t.name) || [],
     [loyaltyConfig?.tierThresholds],
   );
-  const tierOptions = React.useMemo(() => ['All', ...allTiers], [allTiers]);
+  const tierOptions = React.useMemo(() => (isLoyaltyConfigSuccess && allTiers.length > 0 ? ['All', ...allTiers] : []), [allTiers, isLoyaltyConfigSuccess]);
 
   const [currentPage, setCurrentPage] = useState<1 | 2>(1);
   const [name, setName] = useState(initialData?.name || '');
@@ -83,6 +83,7 @@ export default function CreateCampaignModal({ visible, onClose, onSuccess, initi
   useEffect(() => {
     let isMounted = true;
     const fetchReach = async () => {
+      if (!isLoyaltyConfigSuccess) return;
       setIsLoadingReach(true);
       try {
         setReachCount(null);
@@ -99,7 +100,7 @@ export default function CreateCampaignModal({ visible, onClose, onSuccess, initi
     return () => {
       isMounted = false;
     };
-  }, [selectedTiers, fetchReachAsync, allTiers]);
+  }, [selectedTiers, fetchReachAsync, allTiers, isLoyaltyConfigSuccess]);
 
   useEffect(() => {
     if (templates && templates.length > 0 && !templateId) {
@@ -119,9 +120,11 @@ export default function CreateCampaignModal({ visible, onClose, onSuccess, initi
       ? selectedTiers.filter(t => t !== tier)
       : [...selectedTiers.filter(t => t !== 'All'), tier];
 
-    if (newTiers.length === allTiers.length) {
-      newTiers = ['All'];
-    } else if (newTiers.length === 0) {
+    newTiers = newTiers.filter(t => allTiers.includes(t));
+
+    const isCompleteSelection = allTiers.length > 0 && allTiers.every(t => newTiers.includes(t));
+
+    if (isCompleteSelection || newTiers.length === 0) {
       newTiers = ['All'];
     }
 
@@ -152,6 +155,10 @@ export default function CreateCampaignModal({ visible, onClose, onSuccess, initi
     }
     if (!scheduledAt) {
       showAlert('Error', 'Start date is required.');
+      return;
+    }
+    if (!isLoyaltyConfigSuccess || allTiers.length === 0) {
+      showAlert('Error', 'Loyalty configuration is not ready. Please try again later.');
       return;
     }
 

@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { getRevenueSummary, getRevenueTrends } from '@/api/endpoints/revenueApi';
 import type { RevenuePeriod, RevenueSummaryResponse, RevenueTrendsResponse } from '@/types/revenue';
+import { getCalendarDateString } from '@/utils/dateUtils';
 
 interface RevenueSummaryEnriched {
   totals: {
@@ -14,8 +15,11 @@ interface RevenueSummaryEnriched {
 }
 
 export function useRevenueSummary(period: RevenuePeriod) {
+  const dateStr = getCalendarDateString(new Date());
+  const dateParam = period === 'month' ? dateStr.substring(0, 7) : dateStr;
+
   return useQuery<RevenueSummaryResponse, Error, RevenueSummaryEnriched>({
-    queryKey: ['revenueSummary', period],
+    queryKey: ['revenueSummary', period, dateParam],
     queryFn: () => getRevenueSummary(period),
     select: data => {
       const intlRev = data.properties?.international?.totalRevenue ?? 0;
