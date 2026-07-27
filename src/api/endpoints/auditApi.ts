@@ -22,7 +22,15 @@ export const getAuditEvents = async (
     queryParams.from = filters.from;
   }
   if (filters?.to) {
-    queryParams.to = filters.to;
+    const [year, month, day] = filters.to.split('-').map(Number);
+    const dateObj = new Date(year, month - 1, day);
+    dateObj.setDate(dateObj.getDate() + 1);
+
+    const nextYear = dateObj.getFullYear();
+    const nextMonth = String(dateObj.getMonth() + 1).padStart(2, '0');
+    const nextDay = String(dateObj.getDate()).padStart(2, '0');
+
+    queryParams.to = `${nextYear}-${nextMonth}-${nextDay}`;
   }
 
   const res = await apiClient.get<AuditEventsResponse>('/audit/events', { params: queryParams });

@@ -4,7 +4,7 @@ import tokens from '@/theme/tokens';
 import { FilterSheet } from '@/components/shared/FilterSheet';
 import { Button, Chip } from '@/components/ui';
 import { CustomCalender } from '@/components/shared/CustomCalender';
-import { getCalendarDateString } from '@/utils/dateUtils';
+import { getCalendarDateString, parseDateString } from '@/utils/dateUtils';
 import type { AuditFilters } from '@/hooks/audit/useAuditEvents';
 import { PROPERTY_OPTIONS, EVENT_TYPE_OPTIONS } from '@/types/audit';
 
@@ -134,12 +134,13 @@ export function AuditFilterSheet({
       <CustomCalender
         visible={isFromDateVisible}
         onClose={() => setIsFromDateVisible(false)}
-        selectedDate={draftFilters.from ? new Date(draftFilters.from) : undefined}
+        selectedDate={parseDateString(draftFilters.from)}
         onSelectDate={date => {
           setDraftFilters(prev => {
             const next = { ...prev, from: getCalendarDateString(date) };
             // Auto-clear 'to' date if it is now before the 'from' date
-            if (next.to && new Date(next.to) < date) {
+            const toDate = parseDateString(next.to);
+            if (toDate && toDate < date) {
               next.to = undefined;
             }
             return next;
@@ -151,8 +152,8 @@ export function AuditFilterSheet({
       <CustomCalender
         visible={isToDateVisible}
         onClose={() => setIsToDateVisible(false)}
-        selectedDate={draftFilters.to ? new Date(draftFilters.to) : undefined}
-        minDate={draftFilters.from ? new Date(draftFilters.from) : undefined}
+        selectedDate={parseDateString(draftFilters.to)}
+        minDate={parseDateString(draftFilters.from)}
         onSelectDate={date => {
           setDraftFilters(prev => ({ ...prev, to: getCalendarDateString(date) }));
           setIsToDateVisible(false);
