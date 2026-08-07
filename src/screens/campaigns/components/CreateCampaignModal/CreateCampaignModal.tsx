@@ -31,7 +31,10 @@ export default function CreateCampaignModal({ visible, onClose, onSuccess, initi
     () => loyaltyConfig?.tierThresholds?.map(t => t.name) || [],
     [loyaltyConfig?.tierThresholds],
   );
-  const tierOptions = React.useMemo(() => (isLoyaltyConfigSuccess && allTiers.length > 0 ? ['All', ...allTiers] : []), [allTiers, isLoyaltyConfigSuccess]);
+  const tierOptions = React.useMemo(
+    () => (isLoyaltyConfigSuccess && allTiers.length > 0 ? ['All', ...allTiers] : []),
+    [allTiers, isLoyaltyConfigSuccess],
+  );
 
   const [currentPage, setCurrentPage] = useState<1 | 2>(1);
   const [name, setName] = useState(initialData?.name || '');
