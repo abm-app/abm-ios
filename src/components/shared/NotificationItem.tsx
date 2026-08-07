@@ -4,6 +4,7 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 
 import tokens from '@/theme/tokens';
 import type { AppNotification } from '@/types/notification';
+import { formatTimeAgo } from '@/utils/dateUtils';
 
 export interface NotificationItemProps {
   item: AppNotification;
@@ -11,29 +12,55 @@ export interface NotificationItemProps {
 }
 
 const getNotificationIconDetails = (item: AppNotification) => {
-  if (item.type === 'alert') {
+  if (item.icon && item.icon in Feather.glyphMap) {
     return {
-      name: (item.icon as keyof typeof Feather.glyphMap) || 'alert-triangle',
-      bgColor: tokens.colors.notificationIconAlertBg,
-      iconColor: tokens.colors.notificationIconAlertText,
-    };
-  }
-  if (item.type === 'upgrade') {
-    return {
-      name: (item.icon as keyof typeof Feather.glyphMap) || 'star',
-      bgColor: tokens.colors.notificationIconUpgradeBg,
-      iconColor: tokens.colors.notificationIconUpgradeText,
-    };
-  }
-  if (item.type === 'campaign') {
-    return {
-      name: (item.icon as keyof typeof Feather.glyphMap) || 'volume-2',
+      name: item.icon as keyof typeof Feather.glyphMap,
       bgColor: tokens.colors.notificationIconDefaultBg,
       iconColor: tokens.colors.notificationIconDefaultText,
     };
   }
+
+  if (item.type === 'audit_event' || item.type === 'alert') {
+    const titleLower = item.title.toLowerCase();
+    if (titleLower.includes('checkout') || titleLower.includes('cancel')) {
+      return {
+        name: 'alert-triangle' as const,
+        bgColor: tokens.colors.notificationIconAlertBg,
+        iconColor: tokens.colors.notificationIconAlertText,
+      };
+    }
+    if (titleLower.includes('extend')) {
+      return {
+        name: 'clock' as const,
+        bgColor: tokens.colors.badgeExtensionBg,
+        iconColor: tokens.colors.blue,
+      };
+    }
+    return {
+      name: 'alert-triangle' as const,
+      bgColor: tokens.colors.notificationIconAlertBg,
+      iconColor: tokens.colors.notificationIconAlertText,
+    };
+  }
+
+  if (item.type === 'upgrade') {
+    return {
+      name: 'star' as const,
+      bgColor: tokens.colors.notificationIconUpgradeBg,
+      iconColor: tokens.colors.notificationIconUpgradeText,
+    };
+  }
+
+  if (item.type === 'campaign') {
+    return {
+      name: 'volume-2' as const,
+      bgColor: tokens.colors.notificationIconDefaultBg,
+      iconColor: tokens.colors.notificationIconDefaultText,
+    };
+  }
+
   return {
-    name: (item.icon as keyof typeof Feather.glyphMap) || 'file-text',
+    name: 'file-text' as const,
     bgColor: tokens.colors.notificationIconDefaultBg,
     iconColor: tokens.colors.notificationIconDefaultText,
   };
@@ -42,6 +69,8 @@ const getNotificationIconDetails = (item: AppNotification) => {
 export function NotificationItem({ item, onPress }: NotificationItemProps) {
   const { name, bgColor, iconColor } = getNotificationIconDetails(item);
   const isUnread = !item.read;
+  const timeText = formatTimeAgo(item.createdAt || item.timestamp);
+  const bodyText = item.body || item.description || '';
 
   return (
     <TouchableOpacity
@@ -49,7 +78,7 @@ export function NotificationItem({ item, onPress }: NotificationItemProps) {
       onPress={() => onPress?.(item)}
       activeOpacity={0.7}
       accessibilityRole="button"
-      accessibilityLabel={`${item.title}, ${item.timestamp}`}
+      accessibilityLabel={`${item.title}, ${timeText}`}
     >
       <View style={styles.leftIndicatorSlot}>
         {isUnread ? <View style={styles.unreadDot} /> : null}
@@ -64,9 +93,9 @@ export function NotificationItem({ item, onPress }: NotificationItemProps) {
           <Text style={styles.title} numberOfLines={1}>
             {item.title}
           </Text>
-          <Text style={styles.timestamp}>{item.timestamp}</Text>
+          <Text style={styles.timestamp}>{timeText}</Text>
         </View>
-        <Text style={styles.description}>{item.description}</Text>
+        <Text style={styles.description}>{bodyText}</Text>
       </View>
     </TouchableOpacity>
   );
