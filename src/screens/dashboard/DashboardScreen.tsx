@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useDashboardSummary } from '../../hooks/dashboard/useDashboardSummary';
@@ -8,12 +8,15 @@ import LoadingSpinner from '../../components/shared/LoadingSpinner';
 import ErrorState from '../../components/shared/ErrorState';
 import tokens from '../../theme/tokens';
 import OccupancySection from './components/OccupancySection';
-import { Backdrop } from '@/components/shared';
+import { Backdrop, NotificationModal } from '@/components/shared';
 import { ScreenHeaderV2 } from '../../components/shared/ScreenHeader';
 import { formatDate } from '@/utils/dateUtils';
+import { useNotifications } from '@/hooks/notifications/useNotifications';
 
 export default function DashboardScreen() {
   const { data, isLoading, isError, refetch } = useDashboardSummary();
+  const { unreadCount } = useNotifications();
+  const [notificationsVisible, setNotificationsVisible] = useState(false);
   const insets = useSafeAreaInsets();
 
   if (isLoading) {
@@ -55,7 +58,8 @@ export default function DashboardScreen() {
           showFilter={false}
           showRightButton={false}
           showNotifications={true}
-          notificationCount={data.unreadNotifications}
+          notificationCount={unreadCount ?? data.unreadNotifications}
+          onNotificationsPress={() => setNotificationsVisible(true)}
         />
         <RevenueSummary todayRevenue={totalRevenue} />
         <View style={styles.gap} />
@@ -63,6 +67,11 @@ export default function DashboardScreen() {
         <View style={styles.gap} />
         <RecentActivityFeed events={data.recentEvents} />
       </ScrollView>
+
+      <NotificationModal
+        visible={notificationsVisible}
+        onClose={() => setNotificationsVisible(false)}
+      />
     </SafeAreaView>
   );
 }

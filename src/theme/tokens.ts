@@ -127,6 +127,17 @@ const colors = {
   navCapsuleBg: 'rgba(255, 255, 255, 0.65)',
   navCapsuleGradientStart: '#F7F7F7',
   navCapsuleGradientEnd: '#DDDDDD',
+
+  // Notifications
+  notificationUnreadBg: 'rgba(0, 122, 255, 0.035)',
+  notificationUnreadDot: '#007AFF',
+  notificationIconAlertBg: '#FFEDD5',
+  notificationIconAlertText: '#9A3412',
+  notificationIconUpgradeBg: '#18181B',
+  notificationIconUpgradeText: '#FFFFFF',
+  notificationIconDefaultBg: '#F1F5F9',
+  notificationIconDefaultText: '#475569',
+  notificationDragHandle: 'rgba(0, 0, 0, 0.18)',
 } as const;
 
 // ─── Typography ──────────────────────────────────────────────────────────────
@@ -536,6 +547,30 @@ const sharedFormModal = {
   footerMarginRight: 16,
 } as const;
 
+/** Notification modal geometry */
+const notificationModal = {
+  cornerRadius: 28,
+  dragHandleWidth: 36,
+  dragHandleHeight: 4,
+  dragHandleRadius: 2,
+  dragHandleMarginTop: 10,
+  paddingHorizontal: 20,
+  paddingTop: 14,
+  paddingBottom: 16,
+  minPaddingBottom: 16,
+  titleFontSize: 26,
+  markAllReadFontSize: 15,
+  itemPaddingVertical: 14,
+  itemPaddingHorizontal: 16,
+  iconSize: 44,
+  iconRadius: 22,
+  unreadDotSize: 8,
+  unreadDotRadius: 4,
+  headerMarginBottom: 12,
+  footerPaddingVertical: 24,
+  footerFontSize: 13,
+} as const;
+
 /** Calendar geometry */
 const calendar = {
   borderRadius: 24,
@@ -729,6 +764,7 @@ const tokens = {
   dsSection,
   emptyState,
   sharedFormModal,
+  notificationModal,
   calendar,
   opacity,
   shadow,

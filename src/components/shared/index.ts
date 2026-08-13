@@ -18,3 +18,5 @@ export { default as TrendChart } from './TrendChart';
 export { default as PropertyBreakdown } from './PropertyBreakdown';
 export { default as UserCard } from './UserCard';
 export { default as MenuList } from './MenuList';
+export * from './NotificationModal';
+export * from './NotificationItem';
