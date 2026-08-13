@@ -63,6 +63,15 @@ export function NotificationModal({
     }
   };
 
+  const dynamicStyles = StyleSheet.create({
+    cardTransform: {
+      transform: [{ translateY: slideAnim }],
+    },
+    scrollSafeArea: {
+      paddingBottom: Math.max(insets.bottom, tokens.notificationModal.minPaddingBottom),
+    },
+  });
+
   return (
     <Modal
       visible={visible}
@@ -76,7 +85,7 @@ export function NotificationModal({
           <View style={styles.backdrop} />
         </TouchableWithoutFeedback>
 
-        <Animated.View style={[styles.modalCard, { transform: [{ translateY: slideAnim }] }]}>
+        <Animated.View style={[styles.modalCard, dynamicStyles.cardTransform]}>
           <View style={styles.dragHandle} />
 
           <View style={styles.header}>
@@ -88,10 +97,7 @@ export function NotificationModal({
 
           <ScrollView
             style={styles.scrollArea}
-            contentContainerStyle={[
-              styles.scrollContent,
-              { paddingBottom: Math.max(insets.bottom, 16) },
-            ]}
+            contentContainerStyle={[styles.scrollContent, dynamicStyles.scrollSafeArea]}
             showsVerticalScrollIndicator={false}
           >
             {notifications.length === 0 ? (

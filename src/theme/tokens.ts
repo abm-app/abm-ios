@@ -557,6 +557,7 @@ const notificationModal = {
   paddingHorizontal: 20,
   paddingTop: 14,
   paddingBottom: 16,
+  minPaddingBottom: 16,
   titleFontSize: 26,
   markAllReadFontSize: 15,
   itemPaddingVertical: 14,

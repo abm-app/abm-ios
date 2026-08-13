@@ -1,11 +1,17 @@
 import apiClient from '../client';
 import type { AppNotification, NotificationsResponse } from '@/types/notification';
 
-export const getNotifications = (): Promise<NotificationsResponse> =>
-  apiClient.get('/notifications').then(r => r.data);
+export async function getNotifications(): Promise<NotificationsResponse> {
+  const response = await apiClient.get<NotificationsResponse>('/notifications');
+  return response.data;
+}
 
-export const markNotificationAsRead = (id: string): Promise<AppNotification> =>
-  apiClient.patch(`/notifications/${id}/read`).then(r => r.data);
+export async function markNotificationAsRead(id: string): Promise<AppNotification> {
+  const response = await apiClient.patch<AppNotification>(`/notifications/${id}/read`);
+  return response.data;
+}
 
-export const markAllNotificationsAsRead = (): Promise<{ success: boolean }> =>
-  apiClient.post('/notifications/mark-all-read').then(r => r.data);
+export async function markAllNotificationsAsRead(): Promise<{ success: boolean }> {
+  const response = await apiClient.post<{ success: boolean }>('/notifications/mark-all-read');
+  return response.data;
+}

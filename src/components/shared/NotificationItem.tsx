@@ -11,11 +11,13 @@ export interface NotificationItemProps {
   onPress?: (item: AppNotification) => void;
 }
 
+type BadgeStyleKey = 'badgeDefault' | 'badgeAlert' | 'badgeExtension' | 'badgeUpgrade';
+
 const getNotificationIconDetails = (item: AppNotification) => {
   if (item.icon && item.icon in Feather.glyphMap) {
     return {
       name: item.icon as keyof typeof Feather.glyphMap,
-      bgColor: tokens.colors.notificationIconDefaultBg,
+      badgeStyleKey: 'badgeDefault' as BadgeStyleKey,
       iconColor: tokens.colors.notificationIconDefaultText,
     };
   }
@@ -25,20 +27,20 @@ const getNotificationIconDetails = (item: AppNotification) => {
     if (titleLower.includes('checkout') || titleLower.includes('cancel')) {
       return {
         name: 'alert-triangle' as const,
-        bgColor: tokens.colors.notificationIconAlertBg,
+        badgeStyleKey: 'badgeAlert' as BadgeStyleKey,
         iconColor: tokens.colors.notificationIconAlertText,
       };
     }
     if (titleLower.includes('extend')) {
       return {
         name: 'clock' as const,
-        bgColor: tokens.colors.badgeExtensionBg,
+        badgeStyleKey: 'badgeExtension' as BadgeStyleKey,
         iconColor: tokens.colors.blue,
       };
     }
     return {
       name: 'alert-triangle' as const,
-      bgColor: tokens.colors.notificationIconAlertBg,
+      badgeStyleKey: 'badgeAlert' as BadgeStyleKey,
       iconColor: tokens.colors.notificationIconAlertText,
     };
   }
@@ -46,7 +48,7 @@ const getNotificationIconDetails = (item: AppNotification) => {
   if (item.type === 'upgrade') {
     return {
       name: 'star' as const,
-      bgColor: tokens.colors.notificationIconUpgradeBg,
+      badgeStyleKey: 'badgeUpgrade' as BadgeStyleKey,
       iconColor: tokens.colors.notificationIconUpgradeText,
     };
   }
@@ -54,20 +56,20 @@ const getNotificationIconDetails = (item: AppNotification) => {
   if (item.type === 'campaign') {
     return {
       name: 'volume-2' as const,
-      bgColor: tokens.colors.notificationIconDefaultBg,
+      badgeStyleKey: 'badgeDefault' as BadgeStyleKey,
       iconColor: tokens.colors.notificationIconDefaultText,
     };
   }
 
   return {
     name: 'file-text' as const,
-    bgColor: tokens.colors.notificationIconDefaultBg,
+    badgeStyleKey: 'badgeDefault' as BadgeStyleKey,
     iconColor: tokens.colors.notificationIconDefaultText,
   };
 };
 
 export function NotificationItem({ item, onPress }: NotificationItemProps) {
-  const { name, bgColor, iconColor } = getNotificationIconDetails(item);
+  const { name, badgeStyleKey, iconColor } = getNotificationIconDetails(item);
   const isUnread = !item.read;
   const timeText = formatTimeAgo(item.createdAt || item.timestamp);
   const bodyText = item.body || item.description || '';
@@ -84,7 +86,7 @@ export function NotificationItem({ item, onPress }: NotificationItemProps) {
         {isUnread ? <View style={styles.unreadDot} /> : null}
       </View>
 
-      <View style={[styles.iconBadge, { backgroundColor: bgColor }]}>
+      <View style={[styles.iconBadge, styles[badgeStyleKey]]}>
         <Feather name={name} size={20} color={iconColor} />
       </View>
 
@@ -133,6 +135,18 @@ const styles = StyleSheet.create({
     borderRadius: tokens.notificationModal.iconRadius,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  badgeDefault: {
+    backgroundColor: tokens.colors.notificationIconDefaultBg,
+  },
+  badgeAlert: {
+    backgroundColor: tokens.colors.notificationIconAlertBg,
+  },
+  badgeExtension: {
+    backgroundColor: tokens.colors.badgeExtensionBg,
+  },
+  badgeUpgrade: {
+    backgroundColor: tokens.colors.notificationIconUpgradeBg,
   },
   contentCol: {
     flex: 1,
