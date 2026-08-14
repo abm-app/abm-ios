@@ -3,7 +3,7 @@ import { View, Text, StyleSheet } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import tokens from '@/theme/tokens';
 import { Card } from '@/components/ui';
-import { AuditEvent, AuditEventType } from '@/types/audit';
+import { AuditEvent, AuditEventType, AuditProperty, PROPERTY_DISPLAY_NAMES } from '@/types/audit';
 
 const EVENT_CONFIG: Record<
   AuditEventType,
@@ -95,6 +95,10 @@ const formatEventTime = (isoStr?: string) => {
 export function AuditCard({ event }: AuditCardProps) {
   const config = EVENT_CONFIG[event.eventType] || EVENT_CONFIG.modification;
   const timeStr = formatEventTime(event.detectedAt);
+  const propertyName =
+    (event.property && PROPERTY_DISPLAY_NAMES[event.property as AuditProperty]) ||
+    event.property ||
+    '';
 
   const renderDetailRow = () => {
     if (event.eventType === 'new_booking') {
@@ -125,7 +129,7 @@ export function AuditCard({ event }: AuditCardProps) {
             <Text style={styles.detailBefore}>{formatShortDate(event.before.departureDate)}</Text>
             <Feather
               name="arrow-right"
-              size={14}
+              size={tokens.iconSizes.inline}
               color={tokens.colors.textMuted}
               style={styles.detailArrow}
             />
@@ -175,6 +179,12 @@ export function AuditCard({ event }: AuditCardProps) {
       <Text style={styles.headline}>
         Room {event.rmCode} • {event.guestName}
       </Text>
+      {propertyName ? (
+        <View style={styles.propertyRow}>
+          <Feather name="map-pin" size={tokens.iconSizes.inline} color={tokens.colors.textMuted} />
+          <Text style={styles.propertyText}>{propertyName}</Text>
+        </View>
+      ) : null}
       {renderDetailRow()}
     </Card>
   );
@@ -211,6 +221,18 @@ const styles = StyleSheet.create({
     color: tokens.colors.textPrimary,
     marginTop: tokens.spacing.md,
     marginBottom: tokens.spacing.xs,
+  },
+  propertyRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: tokens.spacing.xs,
+    marginBottom: tokens.spacing.xs,
+  },
+  propertyText: {
+    fontFamily: tokens.typography.fontFamily.sub,
+    fontSize: tokens.typography.fontSize.caption,
+    color: tokens.colors.textMuted,
+    fontWeight: '500',
   },
   descriptionText: {
     fontFamily: tokens.typography.fontFamily.sub,
