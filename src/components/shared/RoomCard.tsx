@@ -60,12 +60,13 @@ export default function RoomCard({ room, onPress }: RoomCardProps) {
 
 const styles = StyleSheet.create({
   container: {
+    minHeight: tokens.listCard.minHeight,
     padding: tokens.spacing.lgMd,
-    marginBottom: tokens.spacing.mdLg,
+    marginBottom: tokens.spacing.md,
+    justifyContent: 'space-between',
   },
   topSection: {
     gap: tokens.spacing.xs,
-    marginBottom: tokens.spacing.sm,
   },
   roomNumber: {
     fontFamily: tokens.typography.fontFamily.headingBold,

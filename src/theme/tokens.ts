@@ -462,6 +462,7 @@ const roomGridCard = {
 
 /** Standard uniform list card geometry */
 const listCard = {
+  minHeight: 172,
   borderRadius: 16,
   padding: 16,
   marginBottom: 12,

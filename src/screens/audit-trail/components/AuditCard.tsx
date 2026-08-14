@@ -284,21 +284,27 @@ export function AuditCard({ event }: AuditCardProps) {
 
   return (
     <Card variant="shadow-outlined" shadow="elevatedCard" style={styles.card}>
-      <View style={styles.headerRow}>
-        <View style={[styles.badge, { backgroundColor: config.colors.bg }]}>
-          <Text style={[styles.badgeText, { color: config.colors.text }]}>{config.label}</Text>
+      <View style={styles.topSection}>
+        <View style={styles.headerRow}>
+          <View style={[styles.badge, { backgroundColor: config.colors.bg }]}>
+            <Text style={[styles.badgeText, { color: config.colors.text }]}>{config.label}</Text>
+          </View>
+          {timeStr ? <Text style={styles.timeText}>{timeStr}</Text> : null}
         </View>
-        {timeStr ? <Text style={styles.timeText}>{timeStr}</Text> : null}
+        <Text style={styles.headline}>
+          Room {event.rmCode} • {event.guestName}
+        </Text>
+        {propertyName ? (
+          <View style={styles.propertyRow}>
+            <Feather
+              name="map-pin"
+              size={tokens.iconSizes.inline}
+              color={tokens.colors.textMuted}
+            />
+            <Text style={styles.propertyText}>{propertyName}</Text>
+          </View>
+        ) : null}
       </View>
-      <Text style={styles.headline}>
-        Room {event.rmCode} • {event.guestName}
-      </Text>
-      {propertyName ? (
-        <View style={styles.propertyRow}>
-          <Feather name="map-pin" size={tokens.iconSizes.inline} color={tokens.colors.textMuted} />
-          <Text style={styles.propertyText}>{propertyName}</Text>
-        </View>
-      ) : null}
       {renderDetailRow()}
     </Card>
   );
@@ -306,8 +312,13 @@ export function AuditCard({ event }: AuditCardProps) {
 
 const styles = StyleSheet.create({
   card: {
+    minHeight: tokens.listCard.minHeight,
     padding: tokens.spacing.lgMd,
-    marginBottom: tokens.spacing.mdLg,
+    marginBottom: tokens.spacing.md,
+    justifyContent: 'space-between',
+  },
+  topSection: {
+    gap: tokens.spacing.xxs,
   },
   headerRow: {
     flexDirection: 'row',
@@ -342,7 +353,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: tokens.spacing.xs,
-    marginBottom: tokens.spacing.sm,
   },
   propertyText: {
     fontFamily: tokens.typography.fontFamily.sub,
@@ -360,6 +370,7 @@ const styles = StyleSheet.create({
     borderRadius: tokens.spacing.md,
     paddingVertical: tokens.spacing.md,
     paddingHorizontal: tokens.spacing.mdLg,
+    marginTop: tokens.spacing.sm,
   },
   detailRow: {
     flexDirection: 'row',

@@ -88,8 +88,10 @@ export default function GuestCard({ guest, onPress, style }: GuestCardProps) {
 
 const styles = StyleSheet.create({
   container: {
+    minHeight: tokens.listCard.minHeight,
     padding: tokens.spacing.lgMd,
-    marginBottom: tokens.spacing.mdLg,
+    marginBottom: tokens.spacing.md,
+    justifyContent: 'space-between',
   },
   header: {
     flexDirection: 'row',
