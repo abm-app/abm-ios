@@ -252,7 +252,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingVertical: tokens.spacing.lg,
-    paddingHorizontal: tokens.spacing.lg,
+    paddingHorizontal: tokens.spacing.xlMd,
   },
   leftSection: {
     flexDirection: 'row',
@@ -273,7 +273,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontFamily: tokens.typography.fontFamily.heading,
-    fontSize: 34,
+    fontSize: tokens.typography.fontSize.display,
     fontWeight: '600',
     letterSpacing: -0.5,
     color: tokens.colors.textPrimary,
@@ -283,18 +283,18 @@ const styles = StyleSheet.create({
     fontSize: tokens.typography.fontSize.caption,
     fontWeight: '400',
     color: tokens.colors.textMuted,
-    marginTop: -2,
+    marginTop: -tokens.spacing.xxs,
   },
   rightRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
+    gap: tokens.spacing.mdLg,
   },
   iconButton: {
     width: 44,
     height: 44,
     borderRadius: 22,
-    borderWidth: 1,
+    borderWidth: tokens.borderWidth.thin,
     borderColor: tokens.colors.border,
     justifyContent: 'center',
     alignItems: 'center',
@@ -304,7 +304,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     backgroundColor: tokens.colors.surface,
     borderRadius: tokens.borderRadius.pill,
-    padding: 2,
+    padding: tokens.spacing.xxs,
     borderWidth: tokens.borderWidth.hairline,
     borderColor: tokens.colors.border,
   },
@@ -321,7 +321,7 @@ const styles = StyleSheet.create({
     elevation: 1,
   },
   actionButton: {
-    borderRadius: 999,
+    borderRadius: tokens.borderRadius.pill,
   },
   searchInputContainer: {
     flexDirection: 'row',
@@ -353,7 +353,7 @@ const styles = StyleSheet.create({
     height: 8,
     borderRadius: 4,
     backgroundColor: tokens.colors.danger,
-    borderWidth: 1.5,
+    borderWidth: tokens.borderWidth.thick,
     borderColor: tokens.colors.background,
   },
   notificationBadge: {
@@ -366,13 +366,13 @@ const styles = StyleSheet.create({
     height: 18,
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 1.5,
+    borderWidth: tokens.borderWidth.thick,
     borderColor: tokens.colors.background,
-    paddingHorizontal: 4,
+    paddingHorizontal: tokens.spacing.xs,
   },
   notificationBadgeText: {
     color: tokens.colors.white,
-    fontSize: 10,
+    fontSize: tokens.typography.fontSize.badge,
     fontWeight: 'bold',
   },
 });
