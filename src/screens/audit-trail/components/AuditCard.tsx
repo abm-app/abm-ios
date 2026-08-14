@@ -92,6 +92,69 @@ const formatEventTime = (isoStr?: string) => {
   }
 };
 
+const IGNORED_DIFF_KEYS = new Set([
+  'roomId',
+  'id',
+  '_id',
+  'idempotencyKey',
+  'regId',
+  'chCode',
+  'property',
+  'detectedAt',
+]);
+
+const FIELD_LABELS: Record<string, string> = {
+  arrivalDate: 'Arrival',
+  departureDate: 'Departure',
+  rate: 'Rate',
+  rmCode: 'Room',
+  status: 'Status',
+  adults: 'Adults',
+  children: 'Children',
+  discountPercent: 'Discount %',
+  discountAmount: 'Discount',
+  cancelReason: 'Reason',
+  cancelDate: 'Cancelled on',
+};
+
+const formatFieldValue = (key: string, value: unknown): string => {
+  if (value === undefined || value === null || value === '') return '-';
+  if (key === 'arrivalDate' || key === 'departureDate' || key === 'cancelDate') {
+    return formatShortDate(String(value));
+  }
+  if (key === 'rate' || key === 'discountAmount') {
+    return typeof value === 'number' ? `₹${value.toLocaleString('en-IN')}` : `₹${value}`;
+  }
+  if (key === 'discountPercent') {
+    return `${value}%`;
+  }
+  return String(value);
+};
+
+const getDiffEntries = (before?: Record<string, unknown>, after?: Record<string, unknown>) => {
+  const b = before || {};
+  const a = after || {};
+  const allKeys = Array.from(new Set([...Object.keys(b), ...Object.keys(a)]));
+  const diffs: { key: string; label: string; beforeVal?: string; afterVal?: string }[] = [];
+
+  for (const key of allKeys) {
+    if (IGNORED_DIFF_KEYS.has(key)) continue;
+    const bVal = b[key];
+    const aVal = a[key];
+    if (bVal !== aVal) {
+      const label =
+        FIELD_LABELS[key] || key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+      diffs.push({
+        key,
+        label,
+        beforeVal: bVal !== undefined ? formatFieldValue(key, bVal) : undefined,
+        afterVal: aVal !== undefined ? formatFieldValue(key, aVal) : undefined,
+      });
+    }
+  }
+  return diffs;
+};
+
 export function AuditCard({ event }: AuditCardProps) {
   const config = EVENT_CONFIG[event.eventType] || EVENT_CONFIG.modification;
   const timeStr = formatEventTime(event.detectedAt);
@@ -150,17 +213,68 @@ export function AuditCard({ event }: AuditCardProps) {
       );
     }
 
-    if (
-      event.eventType === 'modification' &&
-      event.before.rmCode &&
-      event.after.rmCode &&
-      event.before.rmCode !== event.after.rmCode
-    ) {
+    if (event.eventType === 'cancellation') {
+      const reason = event.after?.cancelReason || event.before?.cancelReason;
+      const cancelDate = event.after?.cancelDate || event.before?.cancelDate;
+      if (reason || cancelDate) {
+        return (
+          <View style={styles.detailContainer}>
+            {cancelDate ? (
+              <View style={styles.detailRow}>
+                <Text style={styles.detailLabel}>Cancelled on: </Text>
+                <Text style={styles.detailBefore}>{formatShortDate(cancelDate)}</Text>
+              </View>
+            ) : null}
+            {cancelDate && reason ? <View style={styles.divider} /> : null}
+            {reason ? (
+              <View style={styles.detailRow}>
+                <Text style={styles.detailLabel}>Reason: </Text>
+                <Text style={styles.detailAfter}>{reason}</Text>
+              </View>
+            ) : null}
+          </View>
+        );
+      }
+    }
+
+    if (event.eventType === 'modification') {
+      const diffs = getDiffEntries(
+        event.before as Record<string, unknown>,
+        event.after as Record<string, unknown>,
+      );
+
+      if (diffs.length === 0) {
+        return (
+          <View style={styles.detailContainer}>
+            <Text style={styles.descriptionText}>Booking details updated</Text>
+          </View>
+        );
+      }
+
       return (
         <View style={styles.detailContainer}>
-          <Text style={styles.descriptionText}>
-            Room {event.before.rmCode} → {event.after.rmCode}
-          </Text>
+          {diffs.map((diff, index) => (
+            <React.Fragment key={diff.key}>
+              {index > 0 && <View style={styles.divider} />}
+              <View style={styles.detailRow}>
+                <Text style={styles.detailLabel}>{diff.label}: </Text>
+                {diff.beforeVal !== undefined ? (
+                  <Text style={styles.detailBefore}>{diff.beforeVal}</Text>
+                ) : null}
+                {diff.beforeVal !== undefined && diff.afterVal !== undefined ? (
+                  <Feather
+                    name="arrow-right"
+                    size={tokens.iconSizes.inline}
+                    color={tokens.colors.textMuted}
+                    style={styles.detailArrow}
+                  />
+                ) : null}
+                {diff.afterVal !== undefined ? (
+                  <Text style={styles.detailAfter}>{diff.afterVal}</Text>
+                ) : null}
+              </View>
+            </React.Fragment>
+          ))}
         </View>
       );
     }
