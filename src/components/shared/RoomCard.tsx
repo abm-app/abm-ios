@@ -19,7 +19,6 @@ export default function RoomCard({ room, onPress }: RoomCardProps) {
     <Card
       variant="shadow-outlined"
       shadow="elevatedCard"
-      padded
       onPress={onPress}
       style={styles.container}
     >
@@ -61,12 +60,12 @@ export default function RoomCard({ room, onPress }: RoomCardProps) {
 
 const styles = StyleSheet.create({
   container: {
-    height: tokens.listCard.height,
+    padding: tokens.spacing.lgMd,
     marginBottom: tokens.spacing.mdLg,
-    justifyContent: 'space-between',
   },
   topSection: {
     gap: tokens.spacing.xs,
+    marginBottom: tokens.spacing.sm,
   },
   roomNumber: {
     fontFamily: tokens.typography.fontFamily.headingBold,

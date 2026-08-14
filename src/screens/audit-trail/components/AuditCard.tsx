@@ -283,7 +283,7 @@ export function AuditCard({ event }: AuditCardProps) {
   };
 
   return (
-    <Card padded variant="shadow-outlined" shadow="elevatedCard" style={styles.card}>
+    <Card variant="shadow-outlined" shadow="elevatedCard" style={styles.card}>
       <View style={styles.headerRow}>
         <View style={[styles.badge, { backgroundColor: config.colors.bg }]}>
           <Text style={[styles.badgeText, { color: config.colors.text }]}>{config.label}</Text>
@@ -306,14 +306,14 @@ export function AuditCard({ event }: AuditCardProps) {
 
 const styles = StyleSheet.create({
   card: {
-    height: tokens.listCard.height,
+    padding: tokens.spacing.lgMd,
     marginBottom: tokens.spacing.mdLg,
-    justifyContent: 'space-between',
   },
   headerRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    marginBottom: tokens.spacing.xs,
   },
   badge: {
     paddingHorizontal: tokens.spacing.sm,
@@ -335,14 +335,14 @@ const styles = StyleSheet.create({
     fontSize: tokens.typography.fontSize.body,
     fontWeight: '600',
     color: tokens.colors.textPrimary,
-    marginTop: tokens.spacing.md,
-    marginBottom: tokens.spacing.xs,
+    marginTop: tokens.spacing.xs,
+    marginBottom: tokens.spacing.xxs,
   },
   propertyRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: tokens.spacing.xs,
-    marginBottom: tokens.spacing.xs,
+    marginBottom: tokens.spacing.sm,
   },
   propertyText: {
     fontFamily: tokens.typography.fontFamily.sub,
@@ -354,14 +354,12 @@ const styles = StyleSheet.create({
     fontFamily: tokens.typography.fontFamily.sub,
     fontSize: tokens.typography.fontSize.body,
     color: tokens.colors.textMuted,
-    marginTop: tokens.spacing.xs,
   },
   detailContainer: {
     backgroundColor: tokens.colors.surfaceLight,
     borderRadius: tokens.spacing.md,
     paddingVertical: tokens.spacing.md,
     paddingHorizontal: tokens.spacing.mdLg,
-    marginTop: tokens.spacing.md,
   },
   detailRow: {
     flexDirection: 'row',
