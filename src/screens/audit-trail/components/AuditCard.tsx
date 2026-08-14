@@ -306,7 +306,9 @@ export function AuditCard({ event }: AuditCardProps) {
 
 const styles = StyleSheet.create({
   card: {
-    marginBottom: tokens.spacing.md,
+    height: tokens.listCard.height,
+    marginBottom: tokens.spacing.mdLg,
+    justifyContent: 'space-between',
   },
   headerRow: {
     flexDirection: 'row',

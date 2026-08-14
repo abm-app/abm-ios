@@ -23,29 +23,37 @@ export default function RoomCard({ room, onPress }: RoomCardProps) {
       onPress={onPress}
       style={styles.container}
     >
-      <View style={styles.roomInfoCol}>
-        <Text style={styles.roomNumber}>{room.rmCode}</Text>
-        <Text style={styles.roomType}>{room.roomType}</Text>
+      <View style={styles.topSection}>
+        <Text style={styles.roomNumber}>Room {room.rmCode}</Text>
+        <View style={styles.metaRow}>
+          <Text style={styles.roomType}>{room.roomType}</Text>
+          <Badge label={label} style={statusStyle} />
+        </View>
       </View>
-      <View style={styles.guestInfoCol}>
+
+      <View style={styles.detailContainer}>
         {room.status === 'vacant' ? (
-          <Text style={styles.vacantText}>Ready for Check-in</Text>
+          <View style={styles.detailRow}>
+            <Text style={styles.vacantText}>Ready for Check-in</Text>
+          </View>
         ) : (
           <>
-            <Text style={styles.guestName}>{room.guestName || 'Unknown Guest'}</Text>
-            {room.status === 'arriving' ? (
-              <Text style={styles.dates}>Arriving Today</Text>
-            ) : (
-              <Text style={styles.dates}>
-                {formatDateShort(room.arrivalDate ?? undefined)} -{' '}
-                {formatDateShort(room.departureDate ?? undefined)}
+            <View style={styles.detailRow}>
+              <Text style={styles.guestName}>{room.guestName || 'Unknown Guest'}</Text>
+            </View>
+            <View style={styles.divider} />
+            <View style={styles.detailRow}>
+              <Text style={styles.detailLabel}>
+                {room.status === 'arriving' ? 'Status: ' : 'Stay: '}
               </Text>
-            )}
+              <Text style={styles.detailValue}>
+                {room.status === 'arriving'
+                  ? 'Arriving Today'
+                  : `${formatDateShort(room.arrivalDate ?? undefined)} → ${formatDateShort(room.departureDate ?? undefined)}`}
+              </Text>
+            </View>
           </>
         )}
-      </View>
-      <View style={styles.statusCol}>
-        <Badge label={label} style={statusStyle} />
       </View>
     </Card>
   );
@@ -53,39 +61,55 @@ export default function RoomCard({ room, onPress }: RoomCardProps) {
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: tokens.spacing.md,
+    height: tokens.listCard.height,
+    marginBottom: tokens.spacing.mdLg,
+    justifyContent: 'space-between',
   },
-  roomInfoCol: {
-    width: tokens.spacing.xxxl * 1.5,
+  topSection: {
+    gap: tokens.spacing.xs,
   },
   roomNumber: {
     fontFamily: tokens.typography.fontFamily.headingBold,
     fontSize: tokens.typography.fontSize.h2,
     color: tokens.colors.textPrimary,
   },
+  metaRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
   roomType: {
-    fontFamily: tokens.typography.fontFamily.sub,
-    fontSize: tokens.typography.fontSize.sectionLabel,
-    color: tokens.colors.textHint,
-    marginTop: tokens.spacing.xxs,
-  },
-  guestInfoCol: {
-    flex: 1,
-    paddingHorizontal: tokens.spacing.md,
-  },
-  guestName: {
-    fontFamily: tokens.typography.fontFamily.sub,
-    fontSize: tokens.typography.fontSize.subhead,
-    fontWeight: tokens.typography.fontWeight.medium,
-    color: tokens.colors.textSecondary,
-  },
-  dates: {
     fontFamily: tokens.typography.fontFamily.sub,
     fontSize: tokens.typography.fontSize.caption,
     color: tokens.colors.textMuted,
-    marginTop: tokens.spacing.xxs,
+    fontWeight: '500',
+  },
+  detailContainer: {
+    backgroundColor: tokens.colors.surfaceLight,
+    borderRadius: tokens.spacing.md,
+    paddingVertical: tokens.spacing.md,
+    paddingHorizontal: tokens.spacing.mdLg,
+  },
+  detailRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  guestName: {
+    fontFamily: tokens.typography.fontFamily.sub,
+    fontSize: tokens.typography.fontSize.body,
+    fontWeight: '600',
+    color: tokens.colors.textPrimary,
+  },
+  detailLabel: {
+    fontFamily: tokens.typography.fontFamily.sub,
+    fontSize: tokens.typography.fontSize.caption,
+    color: tokens.colors.textMuted,
+  },
+  detailValue: {
+    fontFamily: tokens.typography.fontFamily.sub,
+    fontSize: tokens.typography.fontSize.caption,
+    fontWeight: '600',
+    color: tokens.colors.textSecondary,
   },
   vacantText: {
     fontFamily: tokens.typography.fontFamily.sub,
@@ -93,8 +117,9 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
     color: tokens.colors.textHint,
   },
-  statusCol: {
-    alignItems: 'flex-end',
-    minWidth: tokens.spacing.xxxl * 1.5,
+  divider: {
+    height: tokens.borderWidth.thin,
+    backgroundColor: tokens.colors.border,
+    marginVertical: tokens.spacing.xs,
   },
 });
