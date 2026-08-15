@@ -43,26 +43,26 @@ export function useRevenueSummary(period: RevenuePeriod) {
 }
 
 interface RevenueTrendsEnriched {
-  last6Trends: RevenueTrendsResponse['trends'];
+  trends: RevenueTrendsResponse['trends'];
   maxTrend: number;
 }
 
-export function useRevenueTrends() {
+export function useRevenueTrends(monthsBack = 12) {
   return useQuery<RevenueTrendsResponse, Error, RevenueTrendsEnriched>({
-    queryKey: ['revenueTrends'],
-    queryFn: getRevenueTrends,
+    queryKey: ['revenueTrends', monthsBack],
+    queryFn: () => getRevenueTrends(monthsBack),
     select: data => {
-      const last6 = data.trends.slice(-6);
+      const trends = data.trends;
       const max =
-        last6.length > 0
+        trends.length > 0
           ? Math.max(
-              ...last6.map(
+              ...trends.map(
                 t => (t.international?.totalRevenue ?? 0) + (t.express?.totalRevenue ?? 0),
               ),
             )
           : 1;
       return {
-        last6Trends: last6,
+        trends,
         maxTrend: max,
       };
     },
