@@ -80,6 +80,7 @@ export default function GuestDirectoryScreen() {
         showFilter
         onFilterPress={() => setIsFilterVisible(true)}
         showRightButton={false}
+        showNotifications={false}
       />
 
       <GuestList

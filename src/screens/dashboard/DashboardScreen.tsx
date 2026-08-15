@@ -8,8 +8,7 @@ import LoadingSpinner from '../../components/shared/LoadingSpinner';
 import ErrorState from '../../components/shared/ErrorState';
 import tokens from '../../theme/tokens';
 import OccupancySection from './components/OccupancySection';
-import { Backdrop, NotificationModal } from '@/components/shared';
-import { ScreenHeaderV2 } from '../../components/shared/ScreenHeader';
+import { Backdrop, NotificationModal, ScreenHeaderV2 } from '@/components/shared';
 import { formatDate } from '@/utils/dateUtils';
 import { useNotifications } from '@/hooks/notifications/useNotifications';
 
@@ -42,25 +41,25 @@ export default function DashboardScreen() {
   return (
     <SafeAreaView style={styles.safeArea}>
       <Backdrop />
+      <ScreenHeaderV2
+        title="Dashboard"
+        subtitle={
+          isToday
+            ? `Last synced: Today, ${formattedTime}`
+            : `Last synced: ${formatDate(data.lastSyncedAt)}, ${formattedTime}`
+        }
+        showSearch={false}
+        showFilter={false}
+        showRightButton={false}
+        showNotifications={true}
+        notificationCount={unreadCount ?? data.unreadNotifications}
+        onNotificationsPress={() => setNotificationsVisible(true)}
+      />
       <ScrollView
         style={styles.scroll}
         contentContainerStyle={[styles.content, { paddingBottom: bottomClearance }]}
         showsVerticalScrollIndicator={false}
       >
-        <ScreenHeaderV2
-          title="Dashboard"
-          subtitle={
-            isToday
-              ? `Last synced: Today, ${formattedTime}`
-              : `Last synced: ${formatDate(data.lastSyncedAt)}, ${formattedTime}`
-          }
-          showSearch={false}
-          showFilter={false}
-          showRightButton={false}
-          showNotifications={true}
-          notificationCount={unreadCount ?? data.unreadNotifications}
-          onNotificationsPress={() => setNotificationsVisible(true)}
-        />
         <RevenueSummary todayRevenue={totalRevenue} />
         <View style={styles.gap} />
         <OccupancySection occupancy={data.occupancy} todayRevenue={data.todayRevenue} />

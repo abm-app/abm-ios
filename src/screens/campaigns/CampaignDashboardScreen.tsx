@@ -89,6 +89,7 @@ export default function CampaignDashboardScreen() {
       <ScreenHeaderV2
         title="Campaigns"
         showFilter
+        showNotifications={false}
         showRightButton={user?.role !== 'staff'}
         rightButtonText="+ New"
         onRightButtonPress={() => setIsCreateModalVisible(true)}

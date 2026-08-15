@@ -56,6 +56,8 @@ const ActionButtons = ({
   showViewModeToggle,
   viewMode,
   onViewModeChange,
+  showLogout,
+  onLogoutPress,
 }: {
   showSearch: boolean;
   isSearching: boolean;
@@ -67,6 +69,8 @@ const ActionButtons = ({
   showViewModeToggle?: boolean;
   viewMode?: 'list' | 'grid';
   onViewModeChange?: (mode: 'list' | 'grid') => void;
+  showLogout?: boolean;
+  onLogoutPress?: () => void;
   onSearchPress: () => void;
   onFilterPress?: () => void;
   onRightButtonPress?: () => void;
@@ -129,6 +133,11 @@ const ActionButtons = ({
         )}
       </TouchableOpacity>
     )}
+    {showLogout && (
+      <TouchableOpacity style={styles.logoutPill} activeOpacity={0.7} onPress={onLogoutPress}>
+        <Text style={styles.logoutPillText}>Logout</Text>
+      </TouchableOpacity>
+    )}
     {showRightButton && (
       <Button
         label={rightButtonText}
@@ -163,6 +172,8 @@ export interface ScreenHeaderProps {
   onRightButtonPress?: () => void;
   showBackButton?: boolean;
   onBackPress?: () => void;
+  showLogout?: boolean;
+  onLogoutPress?: () => void;
 }
 
 export function ScreenHeaderV2({
@@ -185,6 +196,8 @@ export function ScreenHeaderV2({
   onRightButtonPress,
   showBackButton = false,
   onBackPress,
+  showLogout = false,
+  onLogoutPress,
 }: ScreenHeaderProps) {
   const [isSearching, setIsSearching] = useState(false);
 
@@ -241,6 +254,8 @@ export function ScreenHeaderV2({
         onFilterPress={onFilterPress}
         onNotificationsPress={onNotificationsPress}
         onRightButtonPress={onRightButtonPress}
+        showLogout={showLogout}
+        onLogoutPress={onLogoutPress}
       />
     </View>
   );
@@ -374,5 +389,19 @@ const styles = StyleSheet.create({
     color: tokens.colors.white,
     fontSize: tokens.typography.fontSize.badge,
     fontWeight: 'bold',
+  },
+  logoutPill: {
+    paddingHorizontal: tokens.spacing.lgMd,
+    paddingVertical: tokens.spacing.xs,
+    backgroundColor: tokens.colors.badgeHighBg,
+    borderRadius: tokens.borderRadius.pill,
+    borderWidth: tokens.borderWidth.thin,
+    borderColor: tokens.colors.danger,
+  },
+  logoutPillText: {
+    color: tokens.colors.danger,
+    fontFamily: tokens.typography.fontFamily.sub,
+    fontSize: tokens.typography.fontSize.caption,
+    fontWeight: tokens.typography.fontWeight.semibold,
   },
 });
