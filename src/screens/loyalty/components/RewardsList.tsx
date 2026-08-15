@@ -80,13 +80,21 @@ const RewardsTab = React.forwardRef<
               <Text style={styles.rowSub}>{item.cost} pts</Text>
             </View>
             <View style={styles.actionRow}>
-              <TouchableOpacity onPress={() => onEditItem(index, item)} activeOpacity={0.7}>
-                <Feather name="edit" size={15} color={tokens.colors.info} />
+              <TouchableOpacity
+                onPress={() => onEditItem(index, item)}
+                style={styles.iconButton}
+                activeOpacity={0.7}
+                accessibilityRole="button"
+                accessibilityLabel={`Edit ${item.name}`}
+              >
+                <Feather name="edit-2" size={16} color={tokens.colors.textPrimary} />
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => setDeletingIndex(index)}
-                style={styles.deleteBtn}
+                style={[styles.iconButton, styles.deleteButton]}
                 activeOpacity={0.7}
+                accessibilityRole="button"
+                accessibilityLabel={`Delete ${item.name}`}
               >
                 <Feather name="trash-2" size={16} color={tokens.colors.danger} />
               </TouchableOpacity>
@@ -158,7 +166,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: tokens.spacing.sm,
   },
-  deleteBtn: {
-    padding: tokens.spacing.xs,
+  iconButton: {
+    width: 32,
+    height: 32,
+    borderRadius: tokens.borderRadius.lg,
+    backgroundColor: tokens.colors.surface,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  deleteButton: {
+    backgroundColor: tokens.colors.badgeHighBg,
   },
 });
