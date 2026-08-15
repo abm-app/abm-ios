@@ -35,7 +35,7 @@ export default function OperationsScreen() {
       <Backdrop />
       <ScreenHeaderV2
         title="Operations"
-        subtitle={activeTab === 'live_status' ? lastSyncedLabel : undefined}
+        subtitle={lastSyncedLabel}
         showNotifications={false}
         showRightButton={false}
         showFilter={true}
