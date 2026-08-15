@@ -75,6 +75,10 @@ export default function UserManagementScreen() {
   };
 
   const handleFormSubmitUpdate = (id: string, data: UpdateUserPayload) => {
+    if (Object.keys(data).length === 0) {
+      setIsFormModalVisible(false);
+      return;
+    }
     updateUser.mutate(
       { id, data },
       {

@@ -67,14 +67,30 @@ export default function UserFormModal({
   const handleSubmit = () => {
     if (isEditing && initialUser) {
       const payload: UpdateUserPayload = {};
-      if (name !== initialUser.name) payload.name = name;
-      if (email !== initialUser.email) payload.email = email;
+      const trimmedName = name.trim();
+      const trimmedEmail = email.trim();
+      const trimmedPassword = password.trim();
+
+      if (trimmedName !== initialUser.name) payload.name = trimmedName;
+      if (trimmedEmail !== initialUser.email) payload.email = trimmedEmail;
       if (role !== initialUser.role) payload.role = role;
       if (property !== initialUser.property) payload.property = property;
-      if (password) payload.password = password;
+      if (trimmedPassword !== '') payload.password = trimmedPassword;
+
+      if (Object.keys(payload).length === 0) {
+        onClose();
+        return;
+      }
+
       onSubmitUpdate(initialUser.id, payload);
     } else {
-      onSubmitCreate({ name, email, role, property, password });
+      onSubmitCreate({
+        name: name.trim(),
+        email: email.trim(),
+        role,
+        property,
+        password: password.trim(),
+      });
     }
   };
 
