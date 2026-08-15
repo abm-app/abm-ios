@@ -294,16 +294,24 @@ export function AuditCard({ event }: AuditCardProps) {
         <Text style={styles.headline}>
           Room {event.rmCode} • {event.guestName}
         </Text>
-        {propertyName ? (
-          <View style={styles.propertyRow}>
-            <Feather
-              name="map-pin"
-              size={tokens.iconSizes.inline}
-              color={tokens.colors.textMuted}
-            />
-            <Text style={styles.propertyText}>{propertyName}</Text>
-          </View>
-        ) : null}
+        <View style={styles.metaRow}>
+          {propertyName ? (
+            <View style={styles.metaItem}>
+              <Feather
+                name="map-pin"
+                size={tokens.iconSizes.inline}
+                color={tokens.colors.textMuted}
+              />
+              <Text style={styles.metaText}>{propertyName}</Text>
+            </View>
+          ) : null}
+          {event.actor ? (
+            <View style={styles.metaItem}>
+              <Feather name="user" size={tokens.iconSizes.inline} color={tokens.colors.textMuted} />
+              <Text style={styles.metaText}>{event.actor}</Text>
+            </View>
+          ) : null}
+        </View>
       </View>
       {renderDetailRow()}
     </Card>
@@ -349,12 +357,18 @@ const styles = StyleSheet.create({
     marginTop: tokens.spacing.xs,
     marginBottom: tokens.spacing.xxs,
   },
-  propertyRow: {
+  metaRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    gap: tokens.spacing.md,
+  },
+  metaItem: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: tokens.spacing.xs,
   },
-  propertyText: {
+  metaText: {
     fontFamily: tokens.typography.fontFamily.sub,
     fontSize: tokens.typography.fontSize.caption,
     color: tokens.colors.textMuted,
