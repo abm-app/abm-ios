@@ -13,7 +13,7 @@ import { formatDate } from '@/utils/dateUtils';
 import { useNotifications } from '@/hooks/notifications/useNotifications';
 
 export default function DashboardScreen() {
-  const { data, isLoading, isError, refetch } = useDashboardSummary();
+  const { data, isLoading, isError, refetch, isRefetching } = useDashboardSummary();
   const { unreadCount } = useNotifications();
   const [notificationsVisible, setNotificationsVisible] = useState(false);
   const insets = useSafeAreaInsets();
@@ -54,6 +54,9 @@ export default function DashboardScreen() {
         showNotifications={true}
         notificationCount={unreadCount ?? data.unreadNotifications}
         onNotificationsPress={() => setNotificationsVisible(true)}
+        showRefresh={true}
+        isRefreshing={isRefetching}
+        onRefreshPress={() => refetch()}
       />
       <ScrollView
         style={styles.scroll}

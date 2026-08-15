@@ -1,6 +1,15 @@
 import { Feather } from '@expo/vector-icons';
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  TextInput,
+  Animated,
+  Easing,
+} from 'react-native';
+import * as Haptics from 'expo-haptics';
 
 import tokens from '@/theme/tokens';
 
@@ -41,6 +50,72 @@ const SearchInput = ({
   </View>
 );
 
+const RefreshButton = ({
+  isRefreshing,
+  onPress,
+}: {
+  isRefreshing?: boolean;
+  onPress?: () => void;
+}) => {
+  const [spinAnim] = useState(() => new Animated.Value(0));
+  const [isSpinning, setIsSpinning] = useState(false);
+
+  useEffect(() => {
+    if (isRefreshing || isSpinning) {
+      const loopAnim = Animated.loop(
+        Animated.timing(spinAnim, {
+          toValue: 1,
+          duration: 750,
+          easing: Easing.linear,
+          useNativeDriver: true,
+        }),
+      );
+      loopAnim.start();
+      return () => {
+        loopAnim.stop();
+        spinAnim.setValue(0);
+      };
+    } else {
+      spinAnim.setValue(0);
+    }
+  }, [isRefreshing, isSpinning, spinAnim]);
+
+  const spin = spinAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['0deg', '360deg'],
+  });
+
+  const dynamicStyles = StyleSheet.create({
+    spinTransform: {
+      transform: [{ rotate: spin }],
+    },
+  });
+
+  const handlePress = () => {
+    void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    setIsSpinning(true);
+    setTimeout(() => {
+      setIsSpinning(false);
+    }, 750);
+    onPress?.();
+  };
+
+  return (
+    <TouchableOpacity
+      style={styles.iconButton}
+      onPress={handlePress}
+      disabled={isRefreshing || isSpinning}
+      activeOpacity={0.7}
+      accessibilityRole="button"
+      accessibilityLabel="Refresh"
+    >
+      <Animated.View style={dynamicStyles.spinTransform}>
+        <Feather name="refresh-cw" size={18} color={tokens.colors.textPrimary} />
+      </Animated.View>
+    </TouchableOpacity>
+  );
+};
+
 const ActionButtons = ({
   showSearch,
   isSearching,
@@ -48,6 +123,9 @@ const ActionButtons = ({
   showRightButton,
   showNotifications,
   notificationCount,
+  showRefresh,
+  isRefreshing,
+  onRefreshPress,
   rightButtonText,
   onSearchPress,
   onFilterPress,
@@ -65,6 +143,9 @@ const ActionButtons = ({
   showRightButton: boolean;
   showNotifications?: boolean;
   notificationCount?: number;
+  showRefresh?: boolean;
+  isRefreshing?: boolean;
+  onRefreshPress?: () => void;
   rightButtonText: string;
   showViewModeToggle?: boolean;
   viewMode?: 'list' | 'grid';
@@ -113,6 +194,7 @@ const ActionButtons = ({
         </TouchableOpacity>
       </View>
     )}
+    {showRefresh && <RefreshButton isRefreshing={isRefreshing} onPress={onRefreshPress} />}
     {showNotifications && (
       <TouchableOpacity
         style={styles.iconButton}
@@ -159,6 +241,9 @@ export interface ScreenHeaderProps {
   showFilter?: boolean;
   showNotifications?: boolean;
   notificationCount?: number;
+  showRefresh?: boolean;
+  isRefreshing?: boolean;
+  onRefreshPress?: () => void;
   showRightButton?: boolean;
   rightButtonText?: string;
   showViewModeToggle?: boolean;
@@ -183,6 +268,9 @@ export function ScreenHeaderV2({
   showFilter = false,
   showNotifications = true,
   notificationCount,
+  showRefresh = false,
+  isRefreshing = false,
+  onRefreshPress,
   showRightButton = true,
   rightButtonText = 'New',
   showViewModeToggle = false,
@@ -245,6 +333,9 @@ export function ScreenHeaderV2({
         showFilter={showFilter}
         showNotifications={showNotifications}
         notificationCount={notificationCount}
+        showRefresh={showRefresh}
+        isRefreshing={isRefreshing}
+        onRefreshPress={onRefreshPress}
         showRightButton={showRightButton}
         rightButtonText={rightButtonText}
         showViewModeToggle={showViewModeToggle}
