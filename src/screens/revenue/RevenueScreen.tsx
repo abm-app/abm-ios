@@ -42,7 +42,7 @@ export default function RevenueScreen({ navigation }: Props) {
   const totalRevenue = summary?.totals?.totalRevenue ?? 0;
   const totalTax = summary?.totals?.totalTax ?? 0;
   const totalBookings = summary?.totals?.totalBookings ?? 0;
-  const last6Trends = trends?.last6Trends ?? [];
+  const trendData = trends?.trends ?? [];
   const maxTrend = trends?.maxTrend ?? 1;
   const internationalTotal = summary?.internationalTotal ?? 0;
   const expressTotal = summary?.expressTotal ?? 0;
@@ -118,7 +118,7 @@ export default function RevenueScreen({ navigation }: Props) {
             />
 
             {/* Trend Chart */}
-            <TrendChart data={last6Trends} maxTrend={maxTrend} />
+            <TrendChart data={trendData} maxTrend={maxTrend} />
           </>
         )}
       </ScrollView>

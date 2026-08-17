@@ -3,46 +3,49 @@ import { View, Text, StyleSheet } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import tokens from '@/theme/tokens';
 import { Card } from '@/components/ui';
-import { AuditEvent, AuditEventType } from '@/types/audit';
+import { AuditEvent, AuditEventType, AuditProperty, PROPERTY_DISPLAY_NAMES } from '@/types/audit';
 
-const EVENT_CONFIG: Record<
-  AuditEventType,
-  { label: string; colors: { bg: string; text: string } }
-> = {
+interface EventConfigItem {
+  label: string;
+  badgeStyle:
+    | 'badgeNewBooking'
+    | 'badgeCancellation'
+    | 'badgeExtension'
+    | 'badgeModification'
+    | 'badgeEarlyCheckout';
+  textStyle:
+    | 'badgeTextNewBooking'
+    | 'badgeTextCancellation'
+    | 'badgeTextExtension'
+    | 'badgeTextModification'
+    | 'badgeTextEarlyCheckout';
+}
+
+const EVENT_CONFIG: Record<AuditEventType, EventConfigItem> = {
   new_booking: {
     label: 'New Booking',
-    colors: {
-      bg: tokens.colors.badgeLowBg,
-      text: tokens.colors.badgeLowText,
-    },
+    badgeStyle: 'badgeNewBooking',
+    textStyle: 'badgeTextNewBooking',
   },
   cancellation: {
     label: 'Cancellation',
-    colors: {
-      bg: tokens.colors.badgeHighBg,
-      text: tokens.colors.danger,
-    },
+    badgeStyle: 'badgeCancellation',
+    textStyle: 'badgeTextCancellation',
   },
   extension: {
     label: 'Stay Extension',
-    colors: {
-      bg: tokens.colors.badgeExtensionBg,
-      text: tokens.colors.blue,
-    },
+    badgeStyle: 'badgeExtension',
+    textStyle: 'badgeTextExtension',
   },
   modification: {
     label: 'Modification',
-    colors: {
-      bg: tokens.colors.badgeModificationBg,
-      text: tokens.colors.purple,
-    },
+    badgeStyle: 'badgeModification',
+    textStyle: 'badgeTextModification',
   },
   early_checkout: {
     label: 'Early Checkout',
-    colors: {
-      bg: tokens.colors.badgeHighBg,
-      text: tokens.colors.danger,
-    },
+    badgeStyle: 'badgeEarlyCheckout',
+    textStyle: 'badgeTextEarlyCheckout',
   },
 };
 
@@ -92,9 +95,76 @@ const formatEventTime = (isoStr?: string) => {
   }
 };
 
+const IGNORED_DIFF_KEYS = new Set([
+  'roomId',
+  'id',
+  '_id',
+  'idempotencyKey',
+  'regId',
+  'chCode',
+  'property',
+  'detectedAt',
+]);
+
+const FIELD_LABELS: Record<string, string> = {
+  arrivalDate: 'Arrival',
+  departureDate: 'Departure',
+  rate: 'Rate',
+  rmCode: 'Room',
+  status: 'Status',
+  adults: 'Adults',
+  children: 'Children',
+  discountPercent: 'Discount %',
+  discountAmount: 'Discount',
+  cancelReason: 'Reason',
+  cancelDate: 'Cancelled on',
+};
+
+const formatFieldValue = (key: string, value: unknown): string => {
+  if (value === undefined || value === null || value === '') return '-';
+  if (key === 'arrivalDate' || key === 'departureDate' || key === 'cancelDate') {
+    return formatShortDate(String(value));
+  }
+  if (key === 'rate' || key === 'discountAmount') {
+    return typeof value === 'number' ? `₹${value.toLocaleString('en-IN')}` : `₹${value}`;
+  }
+  if (key === 'discountPercent') {
+    return `${value}%`;
+  }
+  return String(value);
+};
+
+const getDiffEntries = (before?: Record<string, unknown>, after?: Record<string, unknown>) => {
+  const b = before || {};
+  const a = after || {};
+  const allKeys = Array.from(new Set([...Object.keys(b), ...Object.keys(a)]));
+  const diffs: { key: string; label: string; beforeVal?: string; afterVal?: string }[] = [];
+
+  for (const key of allKeys) {
+    if (IGNORED_DIFF_KEYS.has(key)) continue;
+    const bVal = b[key];
+    const aVal = a[key];
+    if (bVal !== aVal) {
+      const label =
+        FIELD_LABELS[key] || key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+      diffs.push({
+        key,
+        label,
+        beforeVal: bVal !== undefined ? formatFieldValue(key, bVal) : undefined,
+        afterVal: aVal !== undefined ? formatFieldValue(key, aVal) : undefined,
+      });
+    }
+  }
+  return diffs;
+};
+
 export function AuditCard({ event }: AuditCardProps) {
   const config = EVENT_CONFIG[event.eventType] || EVENT_CONFIG.modification;
   const timeStr = formatEventTime(event.detectedAt);
+  const propertyName =
+    (event.property && PROPERTY_DISPLAY_NAMES[event.property as AuditProperty]) ||
+    event.property ||
+    '';
 
   const renderDetailRow = () => {
     if (event.eventType === 'new_booking') {
@@ -125,7 +195,7 @@ export function AuditCard({ event }: AuditCardProps) {
             <Text style={styles.detailBefore}>{formatShortDate(event.before.departureDate)}</Text>
             <Feather
               name="arrow-right"
-              size={14}
+              size={tokens.iconSizes.inline}
               color={tokens.colors.textMuted}
               style={styles.detailArrow}
             />
@@ -146,17 +216,68 @@ export function AuditCard({ event }: AuditCardProps) {
       );
     }
 
-    if (
-      event.eventType === 'modification' &&
-      event.before.rmCode &&
-      event.after.rmCode &&
-      event.before.rmCode !== event.after.rmCode
-    ) {
+    if (event.eventType === 'cancellation') {
+      const reason = event.after?.cancelReason || event.before?.cancelReason;
+      const cancelDate = event.after?.cancelDate || event.before?.cancelDate;
+      if (reason || cancelDate) {
+        return (
+          <View style={styles.detailContainer}>
+            {cancelDate ? (
+              <View style={styles.detailRow}>
+                <Text style={styles.detailLabel}>Cancelled on: </Text>
+                <Text style={styles.detailBefore}>{formatShortDate(cancelDate)}</Text>
+              </View>
+            ) : null}
+            {cancelDate && reason ? <View style={styles.divider} /> : null}
+            {reason ? (
+              <View style={styles.detailRow}>
+                <Text style={styles.detailLabel}>Reason: </Text>
+                <Text style={styles.detailAfter}>{reason}</Text>
+              </View>
+            ) : null}
+          </View>
+        );
+      }
+    }
+
+    if (event.eventType === 'modification') {
+      const diffs = getDiffEntries(
+        event.before as Record<string, unknown>,
+        event.after as Record<string, unknown>,
+      );
+
+      if (diffs.length === 0) {
+        return (
+          <View style={styles.detailContainer}>
+            <Text style={styles.descriptionText}>Booking details updated</Text>
+          </View>
+        );
+      }
+
       return (
         <View style={styles.detailContainer}>
-          <Text style={styles.descriptionText}>
-            Room {event.before.rmCode} → {event.after.rmCode}
-          </Text>
+          {diffs.map((diff, index) => (
+            <React.Fragment key={diff.key}>
+              {index > 0 && <View style={styles.divider} />}
+              <View style={styles.detailRow}>
+                <Text style={styles.detailLabel}>{diff.label}: </Text>
+                {diff.beforeVal !== undefined ? (
+                  <Text style={styles.detailBefore}>{diff.beforeVal}</Text>
+                ) : null}
+                {diff.beforeVal !== undefined && diff.afterVal !== undefined ? (
+                  <Feather
+                    name="arrow-right"
+                    size={tokens.iconSizes.inline}
+                    color={tokens.colors.textMuted}
+                    style={styles.detailArrow}
+                  />
+                ) : null}
+                {diff.afterVal !== undefined ? (
+                  <Text style={styles.detailAfter}>{diff.afterVal}</Text>
+                ) : null}
+              </View>
+            </React.Fragment>
+          ))}
         </View>
       );
     }
@@ -165,16 +286,36 @@ export function AuditCard({ event }: AuditCardProps) {
   };
 
   return (
-    <Card padded variant="shadow-outlined" shadow="elevatedCard" style={styles.card}>
-      <View style={styles.headerRow}>
-        <View style={[styles.badge, { backgroundColor: config.colors.bg }]}>
-          <Text style={[styles.badgeText, { color: config.colors.text }]}>{config.label}</Text>
+    <Card variant="shadow-outlined" shadow="elevatedCard" style={styles.card}>
+      <View style={styles.topSection}>
+        <View style={styles.headerRow}>
+          <View style={[styles.badge, styles[config.badgeStyle]]}>
+            <Text style={[styles.badgeText, styles[config.textStyle]]}>{config.label}</Text>
+          </View>
+          {timeStr ? <Text style={styles.timeText}>{timeStr}</Text> : null}
         </View>
-        {timeStr ? <Text style={styles.timeText}>{timeStr}</Text> : null}
+        <Text style={styles.headline}>
+          Room {event.rmCode} • {event.guestName}
+        </Text>
+        <View style={styles.metaRow}>
+          {propertyName ? (
+            <View style={styles.metaItem}>
+              <Feather
+                name="map-pin"
+                size={tokens.iconSizes.inline}
+                color={tokens.colors.textMuted}
+              />
+              <Text style={styles.metaText}>{propertyName}</Text>
+            </View>
+          ) : null}
+          {event.actor ? (
+            <View style={styles.metaItem}>
+              <Feather name="user" size={tokens.iconSizes.inline} color={tokens.colors.textMuted} />
+              <Text style={styles.metaText}>{event.actor}</Text>
+            </View>
+          ) : null}
+        </View>
       </View>
-      <Text style={styles.headline}>
-        Room {event.rmCode} • {event.guestName}
-      </Text>
       {renderDetailRow()}
     </Card>
   );
@@ -182,17 +323,54 @@ export function AuditCard({ event }: AuditCardProps) {
 
 const styles = StyleSheet.create({
   card: {
+    minHeight: tokens.listCard.minHeight,
+    padding: tokens.spacing.lgMd,
     marginBottom: tokens.spacing.md,
+    justifyContent: 'space-between',
+  },
+  topSection: {
+    gap: tokens.spacing.xxs,
   },
   headerRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    marginBottom: tokens.spacing.xs,
   },
   badge: {
     paddingHorizontal: tokens.spacing.sm,
     paddingVertical: tokens.spacing.xs,
     borderRadius: tokens.borderRadius.pill,
+  },
+  badgeNewBooking: {
+    backgroundColor: tokens.colors.badgeLowBg,
+  },
+  badgeTextNewBooking: {
+    color: tokens.colors.badgeLowText,
+  },
+  badgeCancellation: {
+    backgroundColor: tokens.colors.badgeHighBg,
+  },
+  badgeTextCancellation: {
+    color: tokens.colors.danger,
+  },
+  badgeExtension: {
+    backgroundColor: tokens.colors.badgeExtensionBg,
+  },
+  badgeTextExtension: {
+    color: tokens.colors.blue,
+  },
+  badgeModification: {
+    backgroundColor: tokens.colors.badgeModificationBg,
+  },
+  badgeTextModification: {
+    color: tokens.colors.purple,
+  },
+  badgeEarlyCheckout: {
+    backgroundColor: tokens.colors.badgeHighBg,
+  },
+  badgeTextEarlyCheckout: {
+    color: tokens.colors.danger,
   },
   badgeText: {
     fontSize: tokens.badge.fontSize,
@@ -209,21 +387,37 @@ const styles = StyleSheet.create({
     fontSize: tokens.typography.fontSize.body,
     fontWeight: '600',
     color: tokens.colors.textPrimary,
-    marginTop: tokens.spacing.md,
-    marginBottom: tokens.spacing.xs,
+    marginTop: tokens.spacing.xs,
+    marginBottom: tokens.spacing.xxs,
+  },
+  metaRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    gap: tokens.spacing.md,
+  },
+  metaItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: tokens.spacing.xs,
+  },
+  metaText: {
+    fontFamily: tokens.typography.fontFamily.sub,
+    fontSize: tokens.typography.fontSize.caption,
+    color: tokens.colors.textMuted,
+    fontWeight: '500',
   },
   descriptionText: {
     fontFamily: tokens.typography.fontFamily.sub,
     fontSize: tokens.typography.fontSize.body,
     color: tokens.colors.textMuted,
-    marginTop: tokens.spacing.xs,
   },
   detailContainer: {
     backgroundColor: tokens.colors.surfaceLight,
     borderRadius: tokens.spacing.md,
     paddingVertical: tokens.spacing.md,
     paddingHorizontal: tokens.spacing.mdLg,
-    marginTop: tokens.spacing.md,
+    marginTop: tokens.spacing.sm,
   },
   detailRow: {
     flexDirection: 'row',

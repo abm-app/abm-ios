@@ -6,7 +6,7 @@ import { Button, Chip } from '@/components/ui';
 import { CustomCalender } from '@/components/shared/CustomCalender';
 import { getCalendarDateString, parseDateString } from '@/utils/dateUtils';
 import type { AuditFilters } from '@/hooks/audit/useAuditEvents';
-import { PROPERTY_OPTIONS, EVENT_TYPE_OPTIONS } from '@/types/audit';
+import { EVENT_TYPE_OPTIONS } from '@/types/audit';
 
 interface AuditFilterSheetProps {
   visible: boolean;
@@ -64,29 +64,6 @@ export function AuditFilterSheet({
         showDragIndicator
         footer={renderFooter()}
       >
-        <View style={styles.fieldGroup}>
-          <Text style={styles.label}>Property</Text>
-          <View style={styles.chipGroup}>
-            {PROPERTY_OPTIONS.map(prop => (
-              <Chip
-                key={prop.value}
-                label={prop.label}
-                tone="primary"
-                active={draftFilters.property?.includes(prop.value)}
-                onPress={() =>
-                  setDraftFilters(prev => {
-                    const current = prev.property || [];
-                    const next = current.includes(prop.value)
-                      ? current.filter(p => p !== prop.value)
-                      : [...current, prop.value];
-                    return { ...prev, property: next.length > 0 ? next : undefined };
-                  })
-                }
-              />
-            ))}
-          </View>
-        </View>
-
         <View style={styles.fieldGroup}>
           <Text style={styles.label}>Event Type</Text>
           <View style={styles.chipGroup}>

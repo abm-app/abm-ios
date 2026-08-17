@@ -460,6 +460,14 @@ const roomGridCard = {
   gap: 4,
 } as const;
 
+/** Standard uniform list card geometry */
+const listCard = {
+  minHeight: 172,
+  borderRadius: 16,
+  padding: 16,
+  marginBottom: 12,
+} as const;
+
 /** Insight card geometry */
 const insight = {
   paddingVertical: 16,
@@ -584,6 +592,13 @@ const calendar = {
   dayHeight: 40,
   dayRadius: 20,
   dayFontSize: 18,
+} as const;
+
+/** Chart geometry */
+const chart = {
+  barWidth: 60,
+  height: 120,
+  minBarPercent: 4,
 } as const;
 
 // ─── Auth — Login Screen Geometry ────────────────────────────────────────────
@@ -755,6 +770,7 @@ const tokens = {
   scoreCard,
   taskCard,
   roomGridCard,
+  listCard,
   insight,
   swatch,
   typographyRow,
@@ -766,6 +782,7 @@ const tokens = {
   sharedFormModal,
   notificationModal,
   calendar,
+  chart,
   opacity,
   shadow,
 } as const;

@@ -27,6 +27,11 @@ export const PROPERTY_OPTIONS: { label: string; value: AuditProperty }[] = [
   { label: 'ABM International', value: 'international' },
 ];
 
+export const PROPERTY_DISPLAY_NAMES: Record<AuditProperty, string> = {
+  express: 'ABM Express',
+  international: 'ABM International',
+};
+
 export const EVENT_TYPE_OPTIONS: { label: string; value: AuditEventType }[] = [
   { label: 'New Booking', value: 'new_booking' },
   { label: 'Extension', value: 'extension' },
@@ -44,11 +49,14 @@ export interface NewBookingAfter {
 
 export interface AuditEventBase {
   id: string;
-  chCode: string;
+  chCode?: string;
+  regId?: number;
   rmCode: string;
   property: AuditProperty;
   guestName: string;
+  actor?: string;
   detectedAt: string;
+  idempotencyKey?: string;
 }
 
 export type AuditEvent =

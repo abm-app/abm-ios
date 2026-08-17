@@ -43,7 +43,6 @@ export default function GuestCard({ guest, onPress, style }: GuestCardProps) {
 
   return (
     <Card
-      padded
       variant="shadow-outlined"
       shadow="elevatedCard"
       onPress={handlePress}
@@ -89,13 +88,15 @@ export default function GuestCard({ guest, onPress, style }: GuestCardProps) {
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: tokens.spacing.lg,
+    minHeight: tokens.listCard.minHeight,
+    padding: tokens.spacing.lgMd,
+    marginBottom: tokens.spacing.md,
+    justifyContent: 'space-between',
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: tokens.spacing.lg,
   },
   guestInfoGroup: {
     flexDirection: 'row',
@@ -113,11 +114,10 @@ const styles = StyleSheet.create({
   divider: {
     height: tokens.borderWidth.hairline,
     backgroundColor: tokens.colors.border,
-    marginBottom: tokens.spacing.lg,
   },
   statsRow: {
     flexDirection: 'row',
-    marginBottom: tokens.spacing.xl,
+    alignItems: 'center',
   },
   statBox: {
     marginRight: tokens.spacing.xxxl,
@@ -126,7 +126,7 @@ const styles = StyleSheet.create({
     fontFamily: tokens.typography.fontFamily.sub,
     fontSize: tokens.typography.fontSize.label,
     color: tokens.colors.textMuted,
-    marginBottom: tokens.spacing.xs,
+    marginBottom: tokens.spacing.xxs,
     letterSpacing: tokens.typography.letterSpacing.label,
   },
   statValue: {

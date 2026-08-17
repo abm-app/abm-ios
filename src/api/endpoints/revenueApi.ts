@@ -12,7 +12,18 @@ export const getRevenueSummary = async (period: RevenuePeriod): Promise<RevenueS
   return res.data;
 };
 
-export const getRevenueTrends = async (): Promise<RevenueTrendsResponse> => {
-  const res = await apiClient.get<RevenueTrendsResponse>('/revenue/trends');
+export const getRevenueTrends = async (monthsBack = 12): Promise<RevenueTrendsResponse> => {
+  if (!Number.isInteger(monthsBack) || monthsBack < 1) {
+    throw new RangeError('monthsBack must be a positive integer');
+  }
+
+  const now = new Date();
+  const fromDate = new Date(now.getFullYear(), now.getMonth() - (monthsBack - 1), 1);
+  const fromParam = `${fromDate.getFullYear()}-${String(fromDate.getMonth() + 1).padStart(2, '0')}`;
+  const toParam = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+
+  const res = await apiClient.get<RevenueTrendsResponse>('/revenue/trends', {
+    params: { from: fromParam, to: toParam },
+  });
   return res.data;
 };

@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { Feather } from '@expo/vector-icons';
@@ -8,7 +8,15 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import tokens from '@/theme/tokens';
 import { useAuthStore } from '@/store/authStore';
 import { useLogout } from '@/hooks/auth/useLogout';
-import { Backdrop, ConfirmationModal, UserCard, MenuList } from '@/components/shared';
+import { useNotifications } from '@/hooks/notifications/useNotifications';
+import {
+  Backdrop,
+  ConfirmationModal,
+  UserCard,
+  MenuList,
+  NotificationModal,
+  ScreenHeaderV2,
+} from '@/components/shared';
 import type { MenuStackParamList } from '@/navigation/types';
 import { useMenuItems } from '@/hooks/menu/useMenuItems';
 
@@ -23,7 +31,9 @@ export default function MenuScreen() {
   const navigation = useNavigation<MenuNavProp>();
   const user = useAuthStore(state => state.user);
   const logoutMutation = useLogout();
+  const { unreadCount } = useNotifications();
   const [logoutModalVisible, setLogoutModalVisible] = useState(false);
+  const [notificationsVisible, setNotificationsVisible] = useState(false);
 
   const rootContainerStyle = useMemo(() => [styles.root, { paddingTop: insets.top }], [insets.top]);
 
@@ -33,22 +43,17 @@ export default function MenuScreen() {
     <View style={rootContainerStyle}>
       <Backdrop />
 
-      {/* Header Row */}
-      <View style={styles.headerRow}>
-        <Text style={styles.headerTitle}>Profile</Text>
-        <View style={styles.headerRight}>
-          <TouchableOpacity style={styles.iconButton} activeOpacity={0.7}>
-            <Feather name="search" size={tokens.iconSizes.md} color={tokens.colors.textPrimary} />
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.logoutPill}
-            activeOpacity={0.7}
-            onPress={() => setLogoutModalVisible(true)}
-          >
-            <Text style={styles.logoutPillText}>Logout</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
+      <ScreenHeaderV2
+        title="Profile"
+        showSearch={false}
+        showFilter={false}
+        showRightButton={false}
+        showNotifications={true}
+        notificationCount={unreadCount}
+        onNotificationsPress={() => setNotificationsVisible(true)}
+        showLogout={true}
+        onLogoutPress={() => setLogoutModalVisible(true)}
+      />
 
       {/* User Card */}
       <UserCard user={user} />
@@ -57,6 +62,12 @@ export default function MenuScreen() {
       <MenuList
         items={visibleMenuItems}
         onNavigate={route => navigation.navigate(route as keyof MenuStackParamList)}
+      />
+
+      {/* Notifications Modal */}
+      <NotificationModal
+        visible={notificationsVisible}
+        onClose={() => setNotificationsVisible(false)}
       />
 
       {/* Logout Confirmation Modal */}
@@ -83,39 +94,5 @@ export default function MenuScreen() {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-  },
-  headerRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: tokens.spacing.xlMd,
-    paddingTop: tokens.spacing.sm,
-  },
-  headerTitle: {
-    fontFamily: tokens.typography.fontFamily.heading,
-    fontSize: tokens.typography.fontSize.h1,
-    color: tokens.colors.textPrimary,
-  },
-  headerRight: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: tokens.spacing.sm,
-  },
-  iconButton: {
-    padding: tokens.spacing.xs,
-  },
-  logoutPill: {
-    paddingHorizontal: tokens.spacing.lgMd,
-    paddingVertical: tokens.spacing.xs,
-    backgroundColor: tokens.colors.badgeHighBg,
-    borderRadius: tokens.borderRadius.pill,
-    borderWidth: tokens.borderWidth.thin,
-    borderColor: tokens.colors.danger,
-  },
-  logoutPillText: {
-    color: tokens.colors.danger,
-    fontFamily: tokens.typography.fontFamily.sub,
-    fontSize: tokens.typography.fontSize.caption,
-    fontWeight: tokens.typography.fontWeight.semibold,
   },
 });

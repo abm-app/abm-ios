@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, StyleSheet, DimensionValue } from 'react-native';
+import React, { useRef, useEffect } from 'react';
+import { View, Text, StyleSheet, ScrollView, DimensionValue } from 'react-native';
 import Card from '@/components/ui/Card';
 import tokens from '@/theme/tokens';
 import { formatCurrency } from '@/utils/formatters';
@@ -16,34 +16,48 @@ interface TrendChartProps {
 // ─── Helper ─────────────────────────────────────────────────────────────────
 
 function getBarHeightStyle(percent: number): { height: DimensionValue } {
-  return { height: `${Math.max(percent, 4)}%` as DimensionValue };
+  return { height: `${Math.max(percent, tokens.chart.minBarPercent)}%` as DimensionValue };
 }
 
 // ─── Component ──────────────────────────────────────────────────────────────
 
 export default function TrendChart({ data, maxTrend }: TrendChartProps) {
+  const scrollRef = useRef<ScrollView>(null);
+
+  useEffect(() => {
+    scrollRef.current?.scrollToEnd({ animated: false });
+  }, [data]);
+
   if (data.length === 0) return null;
 
   return (
     <Card variant="outlined" padded style={styles.card}>
       <Text style={styles.cardLabel}>Monthly Trend</Text>
-      <View style={styles.chartContainer}>
-        {data.map(item => {
-          const combined =
-            (item.international?.totalRevenue ?? 0) + (item.express?.totalRevenue ?? 0);
-          const heightPct = maxTrend > 0 ? combined / maxTrend : 0;
-          const safeHeightPct = Number.isNaN(heightPct) ? 0 : heightPct;
-          return (
-            <View key={item.month} style={styles.barWrapper}>
-              <Text style={styles.barValue}>{formatCurrency(combined)}</Text>
-              <View style={styles.barTrack}>
-                <View style={[styles.barFill, getBarHeightStyle(safeHeightPct * 100)]} />
+      <ScrollView
+        ref={scrollRef}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.chartScrollContent}
+        onContentSizeChange={() => scrollRef.current?.scrollToEnd({ animated: false })}
+      >
+        <View style={styles.chartContainer}>
+          {data.map(item => {
+            const combined =
+              (item.international?.totalRevenue ?? 0) + (item.express?.totalRevenue ?? 0);
+            const heightPct = maxTrend > 0 ? combined / maxTrend : 0;
+            const safeHeightPct = Number.isNaN(heightPct) ? 0 : heightPct;
+            return (
+              <View key={item.month} style={styles.barWrapper}>
+                <Text style={styles.barValue}>{formatCurrency(combined)}</Text>
+                <View style={styles.barTrack}>
+                  <View style={[styles.barFill, getBarHeightStyle(safeHeightPct * 100)]} />
+                </View>
+                <Text style={styles.barLabel}>{formatMonth(item.month)}</Text>
               </View>
-              <Text style={styles.barLabel}>{formatMonth(item.month)}</Text>
-            </View>
-          );
-        })}
-      </View>
+            );
+          })}
+        </View>
+      </ScrollView>
     </Card>
   );
 }
@@ -64,15 +78,18 @@ const styles = StyleSheet.create({
     letterSpacing: tokens.typography.letterSpacing.captionCaps,
     marginBottom: tokens.spacing.sm,
   },
+  chartScrollContent: {
+    paddingVertical: tokens.spacing.xs,
+  },
   chartContainer: {
     flexDirection: 'row',
     alignItems: 'flex-end',
-    height: 120,
-    gap: tokens.spacing.sm,
+    height: tokens.chart.height,
+    gap: tokens.spacing.md,
     marginTop: tokens.spacing.sm,
   },
   barWrapper: {
-    flex: 1,
+    width: tokens.chart.barWidth,
     alignItems: 'center',
     height: '100%',
     justifyContent: 'flex-end',
