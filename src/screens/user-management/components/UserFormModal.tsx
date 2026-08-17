@@ -69,13 +69,12 @@ export default function UserFormModal({
       const payload: UpdateUserPayload = {};
       const trimmedName = name.trim();
       const trimmedEmail = email.trim();
-      const trimmedPassword = password.trim();
 
       if (trimmedName !== initialUser.name) payload.name = trimmedName;
       if (trimmedEmail !== initialUser.email) payload.email = trimmedEmail;
       if (role !== initialUser.role) payload.role = role;
       if (property !== initialUser.property) payload.property = property;
-      if (trimmedPassword !== '') payload.password = trimmedPassword;
+      if (password.trim() !== '') payload.password = password;
 
       if (Object.keys(payload).length === 0) {
         onClose();
@@ -89,7 +88,7 @@ export default function UserFormModal({
         email: email.trim(),
         role,
         property,
-        password: password.trim(),
+        password,
       });
     }
   };

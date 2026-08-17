@@ -17,46 +17,45 @@ import { Button } from '@/components/ui';
 
 // ─── Sub-Components ─────────────────────────────────────────────────────────
 
-const SearchInput = ({
-  searchValue,
-  onSearchChange,
-  onBlur,
-}: {
+interface SearchInputProps {
   searchValue?: string;
   onSearchChange?: (text: string) => void;
   onBlur: () => void;
-}) => (
-  <View style={styles.searchInputContainer}>
-    <TextInput
-      style={styles.searchInput}
-      placeholder="Search..."
-      placeholderTextColor={tokens.colors.textMuted}
-      autoFocus
-      onBlur={onBlur}
-      value={searchValue}
-      onChangeText={onSearchChange}
-    />
-    {!!searchValue && (
-      <TouchableOpacity
-        style={styles.clearSearchButton}
-        onPress={() => onSearchChange?.('')}
-        activeOpacity={0.7}
-        accessibilityRole="button"
-        accessibilityLabel="Clear search"
-      >
-        <Feather name="x" size={16} color={tokens.colors.textMuted} />
-      </TouchableOpacity>
-    )}
-  </View>
-);
+}
 
-const RefreshButton = ({
-  isRefreshing,
-  onPress,
-}: {
+function SearchInput({ searchValue, onSearchChange, onBlur }: SearchInputProps) {
+  return (
+    <View style={styles.searchInputContainer}>
+      <TextInput
+        style={styles.searchInput}
+        placeholder="Search..."
+        placeholderTextColor={tokens.colors.textMuted}
+        autoFocus
+        onBlur={onBlur}
+        value={searchValue}
+        onChangeText={onSearchChange}
+      />
+      {!!searchValue && (
+        <TouchableOpacity
+          style={styles.clearSearchButton}
+          onPress={() => onSearchChange?.('')}
+          activeOpacity={0.7}
+          accessibilityRole="button"
+          accessibilityLabel="Clear search"
+        >
+          <Feather name="x" size={16} color={tokens.colors.textMuted} />
+        </TouchableOpacity>
+      )}
+    </View>
+  );
+}
+
+interface RefreshButtonProps {
   isRefreshing?: boolean;
   onPress?: () => void;
-}) => {
+}
+
+function RefreshButton({ isRefreshing, onPress }: RefreshButtonProps) {
   const [spinAnim] = useState(() => new Animated.Value(0));
   const [isSpinning, setIsSpinning] = useState(false);
 
@@ -114,29 +113,9 @@ const RefreshButton = ({
       </Animated.View>
     </TouchableOpacity>
   );
-};
+}
 
-const ActionButtons = ({
-  showSearch,
-  isSearching,
-  showFilter,
-  showRightButton,
-  showNotifications,
-  notificationCount,
-  showRefresh,
-  isRefreshing,
-  onRefreshPress,
-  rightButtonText,
-  onSearchPress,
-  onFilterPress,
-  onRightButtonPress,
-  onNotificationsPress,
-  showViewModeToggle,
-  viewMode,
-  onViewModeChange,
-  showLogout,
-  onLogoutPress,
-}: {
+interface ActionButtonsProps {
   showSearch: boolean;
   isSearching: boolean;
   showFilter: boolean;
@@ -156,81 +135,105 @@ const ActionButtons = ({
   onFilterPress?: () => void;
   onRightButtonPress?: () => void;
   onNotificationsPress?: () => void;
-}) => (
-  <View style={styles.rightRow}>
-    {showSearch && !isSearching && (
-      <TouchableOpacity style={styles.iconButton} onPress={onSearchPress} activeOpacity={0.7}>
-        <Feather name="search" size={20} color={tokens.colors.textPrimary} />
-      </TouchableOpacity>
-    )}
-    {showFilter && (
-      <TouchableOpacity style={styles.iconButton} onPress={onFilterPress} activeOpacity={0.7}>
-        <Feather name="filter" size={20} color={tokens.colors.textPrimary} />
-      </TouchableOpacity>
-    )}
-    {showViewModeToggle && onViewModeChange && viewMode && (
-      <View style={styles.toggleContainer}>
-        <TouchableOpacity
-          style={[styles.toggleBtn, viewMode === 'list' && styles.toggleBtnActive]}
-          onPress={() => onViewModeChange('list')}
-          activeOpacity={0.8}
-        >
-          <Feather
-            name="list"
-            size={16}
-            color={viewMode === 'list' ? tokens.colors.textPrimary : tokens.colors.textHint}
-          />
+}
+
+function ActionButtons({
+  showSearch,
+  isSearching,
+  showFilter,
+  showRightButton,
+  showNotifications,
+  notificationCount,
+  showRefresh,
+  isRefreshing,
+  onRefreshPress,
+  rightButtonText,
+  showViewModeToggle,
+  viewMode,
+  onViewModeChange,
+  showLogout,
+  onLogoutPress,
+  onSearchPress,
+  onFilterPress,
+  onRightButtonPress,
+  onNotificationsPress,
+}: ActionButtonsProps) {
+  return (
+    <View style={styles.rightRow}>
+      {showSearch && !isSearching && (
+        <TouchableOpacity style={styles.iconButton} onPress={onSearchPress} activeOpacity={0.7}>
+          <Feather name="search" size={20} color={tokens.colors.textPrimary} />
         </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.toggleBtn, viewMode === 'grid' && styles.toggleBtnActive]}
-          onPress={() => onViewModeChange('grid')}
-          activeOpacity={0.8}
-        >
-          <Feather
-            name="grid"
-            size={16}
-            color={viewMode === 'grid' ? tokens.colors.textPrimary : tokens.colors.textHint}
-          />
+      )}
+      {showFilter && (
+        <TouchableOpacity style={styles.iconButton} onPress={onFilterPress} activeOpacity={0.7}>
+          <Feather name="filter" size={20} color={tokens.colors.textPrimary} />
         </TouchableOpacity>
-      </View>
-    )}
-    {showRefresh && <RefreshButton isRefreshing={isRefreshing} onPress={onRefreshPress} />}
-    {showNotifications && (
-      <TouchableOpacity
-        style={styles.iconButton}
-        onPress={onNotificationsPress || (() => console.log('Notifications pressed'))}
-        activeOpacity={0.7}
-      >
-        <Feather name="bell" size={20} color={tokens.colors.textPrimary} />
-        {notificationCount !== undefined ? (
-          notificationCount > 0 && (
-            <View style={styles.notificationBadge}>
-              <Text style={styles.notificationBadgeText}>
-                {notificationCount > 99 ? '99+' : notificationCount}
-              </Text>
-            </View>
-          )
-        ) : (
-          <View style={styles.notificationBadgeDot} />
-        )}
-      </TouchableOpacity>
-    )}
-    {showLogout && (
-      <TouchableOpacity style={styles.logoutPill} activeOpacity={0.7} onPress={onLogoutPress}>
-        <Text style={styles.logoutPillText}>Logout</Text>
-      </TouchableOpacity>
-    )}
-    {showRightButton && (
-      <Button
-        label={rightButtonText}
-        variant="primary"
-        size="md"
-        onPress={onRightButtonPress || (() => console.warn('Right button pressed'))}
-        style={styles.actionButton}
-      />
-    )}
-  </View>
-);
+      )}
+      {showViewModeToggle && onViewModeChange && viewMode && (
+        <View style={styles.toggleContainer}>
+          <TouchableOpacity
+            style={[styles.toggleBtn, viewMode === 'list' && styles.toggleBtnActive]}
+            onPress={() => onViewModeChange('list')}
+            activeOpacity={0.8}
+          >
+            <Feather
+              name="list"
+              size={16}
+              color={viewMode === 'list' ? tokens.colors.textPrimary : tokens.colors.textHint}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.toggleBtn, viewMode === 'grid' && styles.toggleBtnActive]}
+            onPress={() => onViewModeChange('grid')}
+            activeOpacity={0.8}
+          >
+            <Feather
+              name="grid"
+              size={16}
+              color={viewMode === 'grid' ? tokens.colors.textPrimary : tokens.colors.textHint}
+            />
+          </TouchableOpacity>
+        </View>
+      )}
+      {showRefresh && <RefreshButton isRefreshing={isRefreshing} onPress={onRefreshPress} />}
+      {showNotifications && (
+        <TouchableOpacity
+          style={styles.iconButton}
+          onPress={onNotificationsPress}
+          activeOpacity={0.7}
+        >
+          <Feather name="bell" size={20} color={tokens.colors.textPrimary} />
+          {notificationCount !== undefined ? (
+            notificationCount > 0 && (
+              <View style={styles.notificationBadge}>
+                <Text style={styles.notificationBadgeText}>
+                  {notificationCount > 99 ? '99+' : notificationCount}
+                </Text>
+              </View>
+            )
+          ) : (
+            <View style={styles.notificationBadgeDot} />
+          )}
+        </TouchableOpacity>
+      )}
+      {showLogout && (
+        <TouchableOpacity style={styles.logoutPill} activeOpacity={0.7} onPress={onLogoutPress}>
+          <Text style={styles.logoutPillText}>Logout</Text>
+        </TouchableOpacity>
+      )}
+      {showRightButton && (
+        <Button
+          label={rightButtonText}
+          variant="primary"
+          size="md"
+          onPress={onRightButtonPress ?? (() => {})}
+          style={styles.actionButton}
+        />
+      )}
+    </View>
+  );
+}
 
 // ─── Main Component ─────────────────────────────────────────────────────────
 

@@ -5,44 +5,47 @@ import tokens from '@/theme/tokens';
 import { Card } from '@/components/ui';
 import { AuditEvent, AuditEventType, AuditProperty, PROPERTY_DISPLAY_NAMES } from '@/types/audit';
 
-const EVENT_CONFIG: Record<
-  AuditEventType,
-  { label: string; colors: { bg: string; text: string } }
-> = {
+interface EventConfigItem {
+  label: string;
+  badgeStyle:
+    | 'badgeNewBooking'
+    | 'badgeCancellation'
+    | 'badgeExtension'
+    | 'badgeModification'
+    | 'badgeEarlyCheckout';
+  textStyle:
+    | 'badgeTextNewBooking'
+    | 'badgeTextCancellation'
+    | 'badgeTextExtension'
+    | 'badgeTextModification'
+    | 'badgeTextEarlyCheckout';
+}
+
+const EVENT_CONFIG: Record<AuditEventType, EventConfigItem> = {
   new_booking: {
     label: 'New Booking',
-    colors: {
-      bg: tokens.colors.badgeLowBg,
-      text: tokens.colors.badgeLowText,
-    },
+    badgeStyle: 'badgeNewBooking',
+    textStyle: 'badgeTextNewBooking',
   },
   cancellation: {
     label: 'Cancellation',
-    colors: {
-      bg: tokens.colors.badgeHighBg,
-      text: tokens.colors.danger,
-    },
+    badgeStyle: 'badgeCancellation',
+    textStyle: 'badgeTextCancellation',
   },
   extension: {
     label: 'Stay Extension',
-    colors: {
-      bg: tokens.colors.badgeExtensionBg,
-      text: tokens.colors.blue,
-    },
+    badgeStyle: 'badgeExtension',
+    textStyle: 'badgeTextExtension',
   },
   modification: {
     label: 'Modification',
-    colors: {
-      bg: tokens.colors.badgeModificationBg,
-      text: tokens.colors.purple,
-    },
+    badgeStyle: 'badgeModification',
+    textStyle: 'badgeTextModification',
   },
   early_checkout: {
     label: 'Early Checkout',
-    colors: {
-      bg: tokens.colors.badgeHighBg,
-      text: tokens.colors.danger,
-    },
+    badgeStyle: 'badgeEarlyCheckout',
+    textStyle: 'badgeTextEarlyCheckout',
   },
 };
 
@@ -286,8 +289,8 @@ export function AuditCard({ event }: AuditCardProps) {
     <Card variant="shadow-outlined" shadow="elevatedCard" style={styles.card}>
       <View style={styles.topSection}>
         <View style={styles.headerRow}>
-          <View style={[styles.badge, { backgroundColor: config.colors.bg }]}>
-            <Text style={[styles.badgeText, { color: config.colors.text }]}>{config.label}</Text>
+          <View style={[styles.badge, styles[config.badgeStyle]]}>
+            <Text style={[styles.badgeText, styles[config.textStyle]]}>{config.label}</Text>
           </View>
           {timeStr ? <Text style={styles.timeText}>{timeStr}</Text> : null}
         </View>
@@ -338,6 +341,36 @@ const styles = StyleSheet.create({
     paddingHorizontal: tokens.spacing.sm,
     paddingVertical: tokens.spacing.xs,
     borderRadius: tokens.borderRadius.pill,
+  },
+  badgeNewBooking: {
+    backgroundColor: tokens.colors.badgeLowBg,
+  },
+  badgeTextNewBooking: {
+    color: tokens.colors.badgeLowText,
+  },
+  badgeCancellation: {
+    backgroundColor: tokens.colors.badgeHighBg,
+  },
+  badgeTextCancellation: {
+    color: tokens.colors.danger,
+  },
+  badgeExtension: {
+    backgroundColor: tokens.colors.badgeExtensionBg,
+  },
+  badgeTextExtension: {
+    color: tokens.colors.blue,
+  },
+  badgeModification: {
+    backgroundColor: tokens.colors.badgeModificationBg,
+  },
+  badgeTextModification: {
+    color: tokens.colors.purple,
+  },
+  badgeEarlyCheckout: {
+    backgroundColor: tokens.colors.badgeHighBg,
+  },
+  badgeTextEarlyCheckout: {
+    color: tokens.colors.danger,
   },
   badgeText: {
     fontSize: tokens.badge.fontSize,

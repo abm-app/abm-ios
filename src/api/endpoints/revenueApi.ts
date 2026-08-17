@@ -13,6 +13,10 @@ export const getRevenueSummary = async (period: RevenuePeriod): Promise<RevenueS
 };
 
 export const getRevenueTrends = async (monthsBack = 12): Promise<RevenueTrendsResponse> => {
+  if (!Number.isInteger(monthsBack) || monthsBack < 1) {
+    throw new RangeError('monthsBack must be a positive integer');
+  }
+
   const now = new Date();
   const fromDate = new Date(now.getFullYear(), now.getMonth() - (monthsBack - 1), 1);
   const fromParam = `${fromDate.getFullYear()}-${String(fromDate.getMonth() + 1).padStart(2, '0')}`;

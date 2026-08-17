@@ -1,47 +1,29 @@
-import React, { useState, forwardRef, useImperativeHandle, useMemo } from 'react';
+import React, { useState, forwardRef, useImperativeHandle } from 'react';
 import {
   SectionList,
   StyleSheet,
   View,
   Text,
   TouchableOpacity,
-  LayoutAnimation,
   ActivityIndicator,
 } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import tokens from '@/theme/tokens';
-import { useAuditEvents } from '@/hooks/audit/useAuditEvents';
+import { useAuditSections } from '@/hooks/audit/useAuditSections';
+import type { PropertySection } from '@/hooks/audit/useAuditSections';
 import type { AuditFilters } from '@/hooks/audit/useAuditEvents';
 import { AuditCard } from './components/AuditCard';
 import { AuditFilterSheet } from './components/AuditFilterSheet';
-import { LoadingSpinner, ErrorState } from '@/components/shared';
-import type { AuditProperty, AuditEvent } from '@/types/audit';
+import { LoadingSpinner, ErrorState, EmptyState } from '@/components/shared';
+import type { AuditEvent } from '@/types/audit';
 
 export interface AuditTrailScreenRef {
   openFilters: () => void;
 }
 
-interface PropertySection {
-  propertyKey: AuditProperty;
-  propertyName: string;
-  total: number;
-  expanded: boolean;
-  isLoading: boolean;
-  isError: boolean;
-  refetch: () => void;
-  data: AuditEvent[];
-  hasNextPage?: boolean;
-  isFetchingNextPage: boolean;
-  fetchNextPage: () => void;
-}
-
 const AuditTrailScreen = forwardRef<AuditTrailScreenRef, unknown>((_, ref) => {
   const [isFilterVisible, setIsFilterVisible] = useState(false);
   const [activeFilters, setActiveFilters] = useState<AuditFilters>({});
-  const [expandedMap, setExpandedMap] = useState<Record<AuditProperty, boolean>>({
-    express: true,
-    international: false,
-  });
 
   useImperativeHandle(ref, () => ({
     openFilters: () => {
@@ -49,81 +31,11 @@ const AuditTrailScreen = forwardRef<AuditTrailScreenRef, unknown>((_, ref) => {
     },
   }));
 
-  const expressFilters = useMemo<AuditFilters>(
-    () => ({
-      ...activeFilters,
-      property: ['express'],
-    }),
-    [activeFilters],
-  );
-
-  const internationalFilters = useMemo<AuditFilters>(
-    () => ({
-      ...activeFilters,
-      property: ['international'],
-    }),
-    [activeFilters],
-  );
-
-  const expressQuery = useAuditEvents(expressFilters);
-  const internationalQuery = useAuditEvents(internationalFilters);
+  const { sections, toggleProperty, handleEndReached } = useAuditSections(activeFilters);
 
   const handleApplyFilters = (filters: AuditFilters) => {
     setActiveFilters(filters);
     setIsFilterVisible(false);
-  };
-
-  const toggleProperty = (propertyKey: AuditProperty) => {
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-    setExpandedMap(prev => ({
-      ...prev,
-      [propertyKey]: !prev[propertyKey],
-    }));
-  };
-
-  const sections = useMemo<PropertySection[]>(
-    () => [
-      {
-        propertyKey: 'express',
-        propertyName: 'ABM Express',
-        total: expressQuery.total,
-        expanded: expandedMap.express ?? true,
-        isLoading: expressQuery.isLoading,
-        isError: expressQuery.isError,
-        refetch: expressQuery.refetch,
-        data: (expandedMap.express ?? true) ? expressQuery.events : [],
-        hasNextPage: expressQuery.hasNextPage,
-        isFetchingNextPage: expressQuery.isFetchingNextPage,
-        fetchNextPage: expressQuery.fetchNextPage,
-      },
-      {
-        propertyKey: 'international',
-        propertyName: 'ABM International',
-        total: internationalQuery.total,
-        expanded: expandedMap.international ?? false,
-        isLoading: internationalQuery.isLoading,
-        isError: internationalQuery.isError,
-        refetch: internationalQuery.refetch,
-        data: (expandedMap.international ?? false) ? internationalQuery.events : [],
-        hasNextPage: internationalQuery.hasNextPage,
-        isFetchingNextPage: internationalQuery.isFetchingNextPage,
-        fetchNextPage: internationalQuery.fetchNextPage,
-      },
-    ],
-    [expandedMap, expressQuery, internationalQuery],
-  );
-
-  const handleEndReached = () => {
-    if (expandedMap.express && expressQuery.hasNextPage && !expressQuery.isFetchingNextPage) {
-      expressQuery.fetchNextPage();
-    }
-    if (
-      expandedMap.international &&
-      internationalQuery.hasNextPage &&
-      !internationalQuery.isFetchingNextPage
-    ) {
-      internationalQuery.fetchNextPage();
-    }
   };
 
   return (
@@ -172,7 +84,11 @@ const AuditTrailScreen = forwardRef<AuditTrailScreenRef, unknown>((_, ref) => {
           if (section.data.length === 0) {
             return (
               <View style={styles.sectionFooter}>
-                <Text style={styles.emptyText}>No audit events for this property.</Text>
+                <EmptyState
+                  icon="file-text"
+                  title="No audit events"
+                  subtitle="No audit events for this property."
+                />
               </View>
             );
           }
@@ -241,12 +157,5 @@ const styles = StyleSheet.create({
   },
   sectionSpacing: {
     height: tokens.spacing.md,
-  },
-  emptyText: {
-    fontFamily: tokens.typography.fontFamily.sub,
-    fontSize: tokens.typography.fontSize.body,
-    color: tokens.colors.textHint,
-    textAlign: 'center',
-    padding: tokens.spacing.xl,
   },
 });

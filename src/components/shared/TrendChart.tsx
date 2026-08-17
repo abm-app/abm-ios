@@ -16,7 +16,7 @@ interface TrendChartProps {
 // ─── Helper ─────────────────────────────────────────────────────────────────
 
 function getBarHeightStyle(percent: number): { height: DimensionValue } {
-  return { height: `${Math.max(percent, 4)}%` as DimensionValue };
+  return { height: `${Math.max(percent, tokens.chart.minBarPercent)}%` as DimensionValue };
 }
 
 // ─── Component ──────────────────────────────────────────────────────────────
@@ -84,12 +84,12 @@ const styles = StyleSheet.create({
   chartContainer: {
     flexDirection: 'row',
     alignItems: 'flex-end',
-    height: 120,
+    height: tokens.chart.height,
     gap: tokens.spacing.md,
     marginTop: tokens.spacing.sm,
   },
   barWrapper: {
-    width: 60,
+    width: tokens.chart.barWidth,
     alignItems: 'center',
     height: '100%',
     justifyContent: 'flex-end',

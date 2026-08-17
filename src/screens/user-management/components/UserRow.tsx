@@ -22,21 +22,21 @@ export default function UserRow({ user, onEdit, onDelete, isLast }: UserRowProps
     .toUpperCase();
 
   return (
-    <TouchableOpacity
-      onPress={() => onEdit(user)}
-      style={[styles.container, !isLast && styles.borderBottom]}
-      activeOpacity={0.7}
-      accessibilityRole="button"
-      accessibilityLabel={`Edit ${user.name}`}
-    >
-      <View style={styles.leftContent}>
+    <View style={[styles.container, !isLast && styles.borderBottom]}>
+      <TouchableOpacity
+        onPress={() => onEdit(user)}
+        style={styles.leftContent}
+        activeOpacity={0.7}
+        accessibilityRole="button"
+        accessibilityLabel={`Edit ${user.name}`}
+      >
         <View style={styles.avatar}>
           <Text style={styles.avatarText}>{initials}</Text>
         </View>
         <Text style={styles.userName} numberOfLines={1}>
           {user.name}
         </Text>
-      </View>
+      </TouchableOpacity>
 
       <View style={styles.actions}>
         <TouchableOpacity
@@ -59,7 +59,7 @@ export default function UserRow({ user, onEdit, onDelete, isLast }: UserRowProps
           <Feather name="trash-2" size={16} color={tokens.colors.danger} />
         </TouchableOpacity>
       </View>
-    </TouchableOpacity>
+    </View>
   );
 }
 

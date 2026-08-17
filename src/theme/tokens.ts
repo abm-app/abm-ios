@@ -594,6 +594,13 @@ const calendar = {
   dayFontSize: 18,
 } as const;
 
+/** Chart geometry */
+const chart = {
+  barWidth: 60,
+  height: 120,
+  minBarPercent: 4,
+} as const;
+
 // ─── Auth — Login Screen Geometry ────────────────────────────────────────────
 
 const auth = {
@@ -775,6 +782,7 @@ const tokens = {
   sharedFormModal,
   notificationModal,
   calendar,
+  chart,
   opacity,
   shadow,
 } as const;
