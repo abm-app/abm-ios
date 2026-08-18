@@ -90,8 +90,10 @@ export default function PropertyAccordion({
     <View style={styles.container}>
       <TouchableOpacity onPress={toggleExpand} style={styles.header} activeOpacity={0.7}>
         <View style={styles.titleRow}>
-          <Text style={styles.title}>{property.name}</Text>
-          <Text style={styles.count}>
+          <Text style={styles.title} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.8}>
+            {property.name}
+          </Text>
+          <Text style={styles.count} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.85}>
             (occupied: {property.occupied}, total: {property.totalRooms})
           </Text>
         </View>
@@ -155,18 +157,23 @@ const styles = StyleSheet.create({
   titleRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    flex: 1,
+    flexShrink: 1,
     gap: tokens.spacing.xs,
+    paddingRight: tokens.spacing.sm,
   },
   title: {
     fontFamily: tokens.typography.fontFamily.sub,
     fontSize: tokens.typography.fontSize.subhead,
     fontWeight: '600',
     color: tokens.colors.textSecondary,
+    flexShrink: 1,
   },
   count: {
     fontFamily: tokens.typography.fontFamily.sub,
     fontSize: tokens.typography.fontSize.subhead,
     color: tokens.colors.textMuted,
+    flexShrink: 0,
   },
   content: {
     marginTop: tokens.spacing.sm,

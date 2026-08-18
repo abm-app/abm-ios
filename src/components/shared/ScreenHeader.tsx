@@ -324,8 +324,24 @@ export function ScreenHeaderV2({
             />
           ) : (
             <>
-              <Text style={styles.title}>{title}</Text>
-              {subtitle ? <Text style={styles.subtitle}>{subtitle}</Text> : null}
+              <Text
+                style={styles.title}
+                numberOfLines={1}
+                adjustsFontSizeToFit
+                minimumFontScale={0.75}
+              >
+                {title}
+              </Text>
+              {subtitle ? (
+                <Text
+                  style={styles.subtitle}
+                  numberOfLines={1}
+                  adjustsFontSizeToFit
+                  minimumFontScale={0.85}
+                >
+                  {subtitle}
+                </Text>
+              ) : null}
             </>
           )}
         </View>

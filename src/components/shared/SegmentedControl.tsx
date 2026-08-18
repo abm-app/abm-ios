@@ -27,7 +27,14 @@ export function SegmentedControl({ tabs, activeTab, onChange, style }: Segmented
             onPress={() => onChange(tab.id)}
             activeOpacity={0.8}
           >
-            <Text style={[styles.tabText, isActive && styles.tabTextActive]}>{tab.label}</Text>
+            <Text
+              style={[styles.tabText, isActive && styles.tabTextActive]}
+              numberOfLines={1}
+              adjustsFontSizeToFit
+              minimumFontScale={0.8}
+            >
+              {tab.label}
+            </Text>
           </TouchableOpacity>
         );
       })}
