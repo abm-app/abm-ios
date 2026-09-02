@@ -699,7 +699,9 @@ const opacity = {
   buttonDisabled: 0.65,
 } as const;
 
-// ─── iOS Shadows ─────────────────────────────────────────────────────────────
+// ─── Shadows ────────────────────────────────────────────────────────────────
+// iOS uses shadowColor/Offset/Opacity/Radius. Android uses elevation.
+// Every definition must include both for cross-platform support.
 
 const shadow = {
   /** Modal card elevation */
@@ -708,6 +710,7 @@ const shadow = {
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.07,
     shadowRadius: 24,
+    elevation: 12,
   },
   /** Login card elevation */
   authCard: {
@@ -715,6 +718,7 @@ const shadow = {
     shadowOffset: { width: 0, height: 5 },
     shadowOpacity: 0.08,
     shadowRadius: 20,
+    elevation: 10,
   },
   /** Toggle thumb elevation */
   toggleThumb: {
@@ -722,6 +726,7 @@ const shadow = {
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.25,
     shadowRadius: 3,
+    elevation: 2,
   },
   /** Floating navigation bar elevation */
   navCapsule: {
@@ -729,6 +734,7 @@ const shadow = {
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.12,
     shadowRadius: 40,
+    elevation: 20,
   },
   // Chat bubble elevation
   chatBubble: {

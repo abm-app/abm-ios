@@ -1,5 +1,12 @@
 import React, { useMemo, useState } from 'react';
-import { KeyboardAvoidingView, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
+import {
+  KeyboardAvoidingView,
+  Platform,
+  StyleSheet,
+  Text,
+  useWindowDimensions,
+  View,
+} from 'react-native';
 import { Feather } from '@expo/vector-icons';
 
 import tokens from '@/theme/tokens';
@@ -54,7 +61,10 @@ export default function LoginScreen() {
     <View style={styles.root}>
       <Backdrop />
 
-      <KeyboardAvoidingView style={styles.keyboardRoot} behavior="padding">
+      <KeyboardAvoidingView
+        style={styles.keyboardRoot}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      >
         <View style={[styles.content, dynamicStyles.content]}>
           {/* ── Brand area ──────────────────────────────────────────────── */}
           <View style={[styles.brandRow, dynamicStyles.brandRow]}>

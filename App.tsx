@@ -1,10 +1,11 @@
 import React from 'react';
-import { StyleSheet, View, ActivityIndicator } from 'react-native';
+import { StatusBar, StyleSheet, View, ActivityIndicator } from 'react-native';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { useFonts } from 'expo-font';
 
 import RootNavigator from '@/navigation/RootNavigator';
 import queryClient from '@/api/queryClient';
+import tokens from '@/theme/tokens';
 
 
 
@@ -26,6 +27,7 @@ export default function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <StatusBar barStyle="dark-content" backgroundColor={tokens.colors.background} />
       <RootNavigator />
     </QueryClientProvider>
   );
