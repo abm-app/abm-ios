@@ -1,5 +1,5 @@
 {
-  "name": "abm-ios",
+  "name": "abm-app",
   "version": "1.0.0",
   "main": "expo/AppEntry.js",
   "dependencies": {
@@ -42,6 +42,7 @@
   "scripts": {
     "start": "expo start",
     "ios": "expo start --ios",
+    "android": "expo start --android",
     "web": "expo start --web",
     "lint": "eslint src --ext .ts,.tsx --max-warnings 0",
     "format": "prettier --write src/**/*.{ts,tsx}",

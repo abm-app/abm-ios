@@ -1,6 +1,6 @@
-# ABM iOS App Deployment Guide
+# ABM App Deployment Guide
 
-This document outlines how to build and deploy the ABM iOS app for both Preview (testing) and Production environments using Expo Application Services (EAS).
+This document outlines how to build and deploy the ABM app (iOS & Android) for both Preview (testing) and Production environments using Expo Application Services (EAS).
 
 ## Prerequisites
 
@@ -13,50 +13,44 @@ Before building, ensure you have the following installed:
    ```bash
    eas login
    ```
-3. **Apple Developer Account**: You must be an admin of the Apple Developer account associated with this app.
+3. **Apple Developer Account**: Required for iOS builds. You must be an admin of the Apple Developer account associated with this app.
+4. **Google Play Developer Account**: Required for Android builds. The account has been purchased.
+5. **Android SDK** (for local builds): Required if building Android locally without EAS. Android Studio provides this.
 
 ## Build Profiles
 
 The app uses `eas.json` to define build profiles.
 
-- **`development`**: Local development builds (for simulators).
-- **`preview`**: Used for internal testing and staging. It points to testing environments and distributes via TestFlight or internal store.
-- **`production`**: Used for the final release to the App Store.
+- **`development`**: Local development builds (iOS Simulator / Android emulator).
+- **`preview`**: Used for internal testing and staging. Points to testing environments. Distributes via TestFlight (iOS) or internal track (Android).
+- **`production`**: Used for the final release to the App Store (iOS) and Play Store (Android).
 
 ---
 
-## 1. Preview Build
+## 1. iOS Builds
 
-The `preview` profile is configured for testing. According to `eas.json`, it uses `distribution: "store"`, meaning it is intended to be uploaded to TestFlight for previewing.
+### Preview Build (TestFlight)
 
-To trigger a preview build for iOS:
+The `preview` profile is configured for testing. It uses `distribution: "store"`, meaning it is intended to be uploaded to TestFlight.
 
 ```bash
 eas build --profile preview --platform ios
 ```
 
-### Submitting to TestFlight
-If you want EAS to automatically submit the app to TestFlight after the build completes, run:
+To auto-submit to TestFlight after building:
 
 ```bash
 eas build --profile preview --platform ios --auto-submit
 ```
 *Note: You will be prompted to authenticate with your Apple ID during the submission process.*
 
----
-
-## 2. Production Build
-
-The `production` profile is configured for the final release. It uses the production API environments and auto-increments the build number.
-
-To trigger a production build for iOS:
+### Production Build (App Store)
 
 ```bash
 eas build --profile production --platform ios
 ```
 
-### Submitting to the App Store
-To automatically submit to the App Store (via TestFlight/App Store Connect) after building:
+To auto-submit to the App Store:
 
 ```bash
 eas build --profile production --platform ios --auto-submit
@@ -64,22 +58,69 @@ eas build --profile production --platform ios --auto-submit
 
 ---
 
-## Testing with Expo Go (Local Development)
+## 2. Android Builds
 
-If you simply want to preview the app locally during development using the **Expo Go** app on your physical device, you do not need to run an EAS build. Instead, start the local dev server:
+### Preview Build (Internal Testing)
+
+The `preview` profile produces an `.aab` (Android App Bundle) for internal testing.
 
 ```bash
-npx expo start
+eas build --profile preview --platform android
 ```
-Then, scan the QR code using the camera on your iPhone to open the app in Expo Go.
 
-### Building for iOS Simulator
-If you want to create a standalone build specifically for the iOS Simulator:
+To submit to Google Play Internal Testing track:
 
 ```bash
+eas submit --platform android --profile preview
+```
+
+### Production Build (Play Store)
+
+The `production` profile produces a release `.aab` for the Play Store.
+
+```bash
+eas build --profile production --platform android
+```
+
+To submit to Google Play:
+
+```bash
+eas submit --platform android --profile production
+```
+
+### Android Signing
+
+EAS can auto-manage the Android signing key (recommended). On first build, EAS will generate and store the keystore remotely. If you prefer to use your own keystore:
+
+```bash
+eas credentials --platform android
+```
+
+> **Important:** If not using EAS-managed signing, back up your keystore securely. Losing it blocks all future updates to the published app.
+
+---
+
+## 3. Local Development with Expo Go
+
+Start the local dev server:
+
+```bash
+pnpm start
+```
+
+Then scan the QR code:
+- **iOS:** Scan with the Camera app.
+- **Android:** Scan with the Expo Go app (install from Play Store).
+
+### Building for Simulators/Emulators
+
+```bash
+# iOS Simulator
 eas build --profile development --platform ios
+
+# Android Emulator
+eas build --profile development --platform android
 ```
-Once the build is complete, EAS CLI will prompt you to automatically install and run it on your running simulator.
 
 ---
 
