@@ -16,6 +16,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   userInterfaceStyle: 'light',
   scheme: 'abm',
   splash: {
+    image: './assets/icon.png',
     backgroundColor: '#ffffff',
     resizeMode: 'contain',
   },
@@ -35,7 +36,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       backgroundColor: '#ffffff',
     },
   },
-  owner: 'ceyxasm',
+  owner: 'lplusdevelopers',
   plugins: [
     [
       'expo-font',
@@ -52,7 +53,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   ],
   extra: {
     eas: {
-      projectId: '1bfd15cc-fae0-4808-af7c-c527934eabea',
+      projectId: 'a427f36a-865c-49f5-bbf5-2a9e4b82219c',
     },
   },
 });

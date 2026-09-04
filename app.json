@@ -7,10 +7,6 @@
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "scheme": "abm",
-    "splash": {
-      "backgroundColor": "#ffffff",
-      "resizeMode": "contain"
-    },
     "ios": {
       "bundleIdentifier": "com.ceyxasm.abm",
       "supportsTablet": false,
@@ -43,8 +39,13 @@
     ],
     "extra": {
       "eas": {
-        "projectId": "1bfd15cc-fae0-4808-af7c-c527934eabea"
+        "projectId": "a427f36a-865c-49f5-bbf5-2a9e4b82219c"
       }
+    },
+    "splash": {
+      "image": "./assets/icon.png",
+      "backgroundColor": "#ffffff",
+      "resizeMode": "contain"
     }
   }
 }

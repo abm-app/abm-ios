@@ -46,3 +46,9 @@ yarn-error.*
 *storybook.log
 storybook-static
 .fallow
+
+app_apks_extracted
+*.aab
+*.apks
+*.jar
+*.keystore
