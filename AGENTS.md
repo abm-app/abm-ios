@@ -1,4 +1,4 @@
-# AGENTS.md — ABM iOS App
+# AGENTS.md — ABM App
 
 This file is the authoritative guide for any AI agent working in this repository.
 Read it in full before writing, editing, or deleting any code.
@@ -7,9 +7,12 @@ Read it in full before writing, editing, or deleting any code.
 
 ## Project Overview
 
-**ABM** is an iOS-only hotel management app for ABM Express and ABM International.
+**ABM** is an iOS & Android hotel management app for ABM Express and ABM International.
 Built with React Native + Expo (managed workflow), TypeScript, TanStack Query, Zustand, and Axios.
 The backend is a NestJS API. The app is a rendering layer only — no business logic lives here.
+
+- **iOS bundle identifier:** `com.ceyxasm.abm`
+- **Android package name:** `com.abm.android`
 
 ---
 
@@ -17,7 +20,7 @@ The backend is a NestJS API. The app is a rendering layer only — no business l
 
 These apply to every task, no exceptions. Violating any of these is grounds to reject the output.
 
-1. **iOS only.** Never add Android-specific code, config, plugins, or `Platform.OS === 'android'` checks. Do not modify `app.json` for Android. If a library requires Android-specific setup, note it and skip that part.
+1. **Cross-platform.** This app targets both iOS and Android. Platform branching (`Platform.OS`) is allowed when needed for platform-specific behavior (e.g., `KeyboardAvoidingView` behavior, shadow `elevation` vs `shadowRadius`, Android back button). Never add platform-specific code for a platform we don't target. Always test changes on both platforms when possible.
 2. **TypeScript strict.** `noImplicitAny` and `strictNullChecks` are enabled. Never use `any` as a type. Always use proper types. Never suppress lint errors using lint comments (like `// @ts-ignore`, `// @ts-expect-error`, or `// eslint-disable`). Always resolve them correctly.
 3. **No inline styles.** Every style value must come from `StyleSheet.create()`. No style objects defined inline in JSX (`style={{ color: 'red' }}`). No hardcoded hex values, spacing numbers, or font sizes in component files — use tokens (see Design System section).
 4. **No hardcoded design values.** Colors, spacing, border radius, font sizes, and font families must always be read from `src/theme/tokens.ts`. If a value is not in tokens, add it to tokens first, then use it.
@@ -28,6 +31,19 @@ These apply to every task, no exceptions. Violating any of these is grounds to r
 9. **Tokens are stored in `expo-secure-store`.** Never in `AsyncStorage`, never in memory alone. Use the helpers in `src/api/storage.ts`.
 10. **pnpm only.** Never use `npm install` or `yarn add`. Package manager is pnpm with `node-linker=hoisted`.
 11. **Rule Enforcement.** Read this `AGENTS.md` file every time after making any changes to ensure the rules are followed.
+
+---
+
+## Cross-Platform Rules
+
+These patterns apply when writing code that runs on both iOS and Android:
+
+- **Shadows:** Always include both iOS shadow props (`shadowColor`, `shadowOffset`, `shadowOpacity`, `shadowRadius`) **and** Android `elevation` in shadow definitions. The `tokens.ts` shadow section is the canonical source — every shadow there must have an `elevation` value.
+- **Keyboard:** Use `Platform.OS` to branch `KeyboardAvoidingView` behavior: `'padding'` on iOS, `'height'` on Android.
+- **Back button:** Every `<Modal>` component must have an `onRequestClose` handler for the Android hardware/gesture back button.
+- **StatusBar:** Set `<StatusBar>` in the root component with `barStyle` and `backgroundColor` for Android.
+- **Safe area:** Use `react-native-safe-area-context` (not the deprecated React Native `SafeAreaView`). It handles both platforms correctly.
+- **Fonts:** Custom fonts loaded via `expo-font` work cross-platform, but rendering (line height, letter spacing, weight) may differ. Test on both platforms.
 
 ---
 
@@ -597,6 +613,6 @@ If any check fails, fix the issue. Do not suppress errors with ignore comments.
 | Creating a component inside a screen folder when it's already needed elsewhere | Move to `src/components/shared/`                            |
 | Defining a style object inline in JSX                                          | Move to `StyleSheet.create()` at the bottom of the file     |
 | Creating a new Zustand store for server data                                   | Use TanStack Query — it already handles loading/error/cache |
-| Using `Platform.OS === 'android'`                                              | This is an iOS-only app — remove it                         |
+| Using `Platform.OS` without a clear reason                                       | Only branch when platforms genuinely differ (keyboard, shadows, back button) |
 | Adding a token directly in a component                                         | Add to `tokens.ts` first, then import                       |
 | Using `AsyncStorage` for auth tokens                                           | Use `expo-secure-store` via `src/api/storage.ts`            |

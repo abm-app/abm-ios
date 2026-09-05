@@ -22,6 +22,7 @@ const styles = StyleSheet.create({
     shadowOffset: tokens.shadow.modal.shadowOffset,
     shadowOpacity: tokens.shadow.modal.shadowOpacity,
     shadowRadius: tokens.shadow.modal.shadowRadius,
+    elevation: tokens.shadow.modal.elevation,
     borderWidth: tokens.borderWidth.hairline,
     borderColor: tokens.colors.border,
   },

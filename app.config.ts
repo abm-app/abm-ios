@@ -3,6 +3,7 @@ import type { ExpoConfig, ConfigContext } from 'expo/config';
 const IS_PREVIEW = process.env.APP_ENV === 'preview';
 
 const bundleIdentifier = IS_PREVIEW ? 'com.ceyxasm.abm.preview' : 'com.ceyxasm.abm';
+const androidPackage = IS_PREVIEW ? 'com.abm.android.preview' : 'com.abm.android';
 const appName = IS_PREVIEW ? 'ABM Preview' : 'ABM';
 
 export default ({ config }: ConfigContext): ExpoConfig => ({
@@ -15,6 +16,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   userInterfaceStyle: 'light',
   scheme: 'abm',
   splash: {
+    image: './assets/icon.png',
     backgroundColor: '#ffffff',
     resizeMode: 'contain',
   },
@@ -26,7 +28,15 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       ITSAppUsesNonExemptEncryption: false,
     },
   },
-  owner: 'ceyxasm',
+  android: {
+    package: androidPackage,
+    versionCode: 1,
+    adaptiveIcon: {
+      foregroundImage: './assets/logos/abm-android-icon.png',
+      backgroundColor: '#ffffff',
+    },
+  },
+  owner: 'lplusdevelopers',
   plugins: [
     [
       'expo-font',
@@ -43,7 +53,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   ],
   extra: {
     eas: {
-      projectId: '1bfd15cc-fae0-4808-af7c-c527934eabea',
+      projectId: 'a427f36a-865c-49f5-bbf5-2a9e4b82219c',
     },
   },
 });

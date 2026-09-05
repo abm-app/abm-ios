@@ -1,6 +1,6 @@
-# ABM iOS
+# ABM
 
-ABM is an iOS-only hotel management app for ABM Express and ABM International. It is built with React Native, Expo managed workflow, TypeScript, TanStack Query, Zustand, and Axios.
+ABM is a cross-platform hotel management app for ABM Express and ABM International, targeting iOS and Android. It is built with React Native, Expo managed workflow, TypeScript, TanStack Query, Zustand, and Axios.
 
 The app is a rendering layer for the ABM backend API. Business logic belongs on the backend, while this repository focuses on navigation, screens, UI composition, API calls, and client-side state needed to render the mobile experience.
 
@@ -20,11 +20,12 @@ The app is a rendering layer for the ABM backend API. Business logic belongs on 
 
 - Node.js compatible with Expo SDK 54
 - pnpm
-- Xcode with an iOS Simulator
+- Xcode with an iOS Simulator (for iOS development)
+- Android Studio with an Android emulator (for Android development)
 - Expo CLI through `pnpm exec expo` or the package scripts
 - Access to the ABM backend API
 
-This project is iOS-only. Do not add Android-specific setup, configuration, code paths, or dependencies.
+This project targets both iOS and Android. Do not remove existing Android configuration or code paths.
 
 ## Local Setup
 
@@ -53,19 +54,29 @@ This project is iOS-only. Do not add Android-specific setup, configuration, code
    EXPO_PUBLIC_API_URL=https://your-api-url.example.com
    ```
 
-5. Start the app on iOS.
+5. Run the app.
+
+   For a native dev-client build (requires local iOS/Android tooling):
+
+   On iOS:
 
    ```bash
    pnpm ios
    ```
 
-   You can also start the Expo dev server manually:
+   On Android:
+
+   ```bash
+   pnpm android
+   ```
+
+   For the Expo Go workflow (no local native tooling required):
 
    ```bash
    pnpm start
    ```
 
-   Then press `i` in the Expo terminal to open the iOS Simulator.
+   Then press `i` for the iOS Simulator or `a` for an Android emulator in the Expo terminal.
 
 ## Environment Variables
 
@@ -83,7 +94,8 @@ Never read `process.env` directly outside `src/config/env.ts`.
 | Command | Description |
 | --- | --- |
 | `pnpm start` | Start the Expo development server. |
-| `pnpm ios` | Start Expo and open the iOS Simulator. |
+| `pnpm ios` | Run a native iOS build and launch it in the iOS Simulator. Requires Xcode. |
+| `pnpm android` | Run a native Android build and launch it on a connected device or emulator. Requires Android Studio / an Android SDK environment. |
 | `pnpm lint` | Run ESLint with zero warnings allowed. |
 | `pnpm type-check` | Run TypeScript checks without emitting files. |
 | `pnpm format` | Format TypeScript source files with Prettier. |
@@ -183,10 +195,38 @@ Production submission:
 eas submit --platform ios
 ```
 
+## Android Builds
+
+Development emulator build:
+
+```bash
+eas build --profile development --platform android
+```
+
+Internal testing APK (sideloading / QR install):
+
+```bash
+eas build --profile internal --platform android
+```
+
+Play Internal Testing track (AAB):
+
+```bash
+eas build --profile preview --platform android
+eas submit --platform android --profile preview
+```
+
+Production build and submission:
+
+```bash
+eas build --profile production --platform android
+eas submit --platform android --profile production
+```
+
 ## Development Rules
 
 - Use pnpm only.
-- Keep the app iOS-only.
+- Keep the app cross-platform (iOS and Android).
 - Keep TypeScript strict.
 - Do not commit `console.log` statements.
 - Do not commit commented-out code.
