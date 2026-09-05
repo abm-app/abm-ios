@@ -59,7 +59,7 @@ Upload the build to Google Play and install via the real Play Store app. Closest
 2. Click **Create new release**.
 3. Upload the `.aab` (not the sideload APK) — either drag-and-drop the downloaded file, or submit directly from EAS:
    ```bash
-   eas submit --platform android --profile production
+   eas submit --platform android --profile preview
    ```
    (requires `eas.json` submit config with your Play service account key — set up once, reused after)
 4. Fill in release notes, save, and roll out to Internal Testing.
@@ -77,11 +77,11 @@ Have EAS output an APK directly instead of an AAB, skipping the bundletool conve
 
 **Steps:**
 
-1. In `eas.json`, add or update a profile to output APK for Android:
+1. In `eas.json`, use the `internal` profile, which is configured to output an APK for Android:
    ```json
    {
      "build": {
-       "preview": {
+       "internal": {
          "android": {
            "buildType": "apk"
          }
@@ -91,7 +91,7 @@ Have EAS output an APK directly instead of an AAB, skipping the bundletool conve
    ```
 2. Run the build:
    ```bash
-   eas build --platform android --profile preview
+   eas build --platform android --profile internal
    ```
 3. Once finished, the EAS build page shows a **QR code** alongside the download link.
 4. On your Android phone, scan the QR code (via camera app or Expo Go, depending on setup) — this opens the direct APK download link on-device.

@@ -3,7 +3,7 @@ import type { ExpoConfig, ConfigContext } from 'expo/config';
 const IS_PREVIEW = process.env.APP_ENV === 'preview';
 
 const bundleIdentifier = IS_PREVIEW ? 'com.ceyxasm.abm.preview' : 'com.ceyxasm.abm';
-const androidPackage = IS_PREVIEW ? 'com.abm.android.preview' : 'com.abm.android';
+const androidPackage = 'com.abm.android';
 const appName = IS_PREVIEW ? 'ABM Preview' : 'ABM';
 
 export default ({ config }: ConfigContext): ExpoConfig => ({

@@ -60,9 +60,9 @@ eas build --profile production --platform ios --auto-submit
 
 ## 2. Android Builds
 
-### Preview Build (Internal Testing)
+### Preview Build (Play Internal Testing)
 
-The `preview` profile produces an `.aab` (Android App Bundle) for internal testing.
+The `preview` profile produces an `.aab` (Android App Bundle) for the Play Store, including the Internal Testing track.
 
 ```bash
 eas build --profile preview --platform android
@@ -73,6 +73,16 @@ To submit to Google Play Internal Testing track:
 ```bash
 eas submit --platform android --profile preview
 ```
+
+### Internal Testing Build (APK for Sideloading)
+
+If you need an APK instead of an AAB — for example to install directly on a device without the Play Store — use the `internal` profile, which produces an `.apk`.
+
+```bash
+eas build --profile internal --platform android
+```
+
+The `internal` APK cannot be submitted to the Play Store because it uses a different signing configuration path; use the `preview` AAB above for any Play Console submission.
 
 ### Production Build (Play Store)
 

@@ -26,6 +26,20 @@
       "ios": {
         "simulator": false
       },
+      "android": {}
+    },
+    "internal": {
+      "distribution": "internal",
+      "autoIncrement": true,
+      "credentialsSource": "remote",
+      "env": {
+        "APP_ENV": "preview",
+        "EXPO_PUBLIC_API_URL": "https://abm-backend.up.railway.app/api",
+        "EXPO_PUBLIC_USE_MOCK_AUTH": "false"
+      },
+      "ios": {
+        "simulator": false
+      },
       "android": {
         "buildType": "apk"
       }
@@ -41,6 +55,7 @@
   },
   "submit": {
     "preview": {},
+    "internal": {},
     "production": {}
   }
 }
