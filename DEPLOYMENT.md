@@ -22,7 +22,7 @@ Before building, ensure you have the following installed:
 The app uses `eas.json` to define build profiles.
 
 - **`development`**: Local development builds (iOS Simulator / Android emulator).
-- **`preview`**: Used for internal testing and staging. Points to testing environments. Distributes via TestFlight (iOS) or internal track (Android).
+- **`preview`**: Used for internal testing and staging. Points to testing environments. Distributes via TestFlight (iOS) and the Play Internal Testing track via an AAB (Android).
 - **`production`**: Used for the final release to the App Store (iOS) and Play Store (Android).
 
 ---
