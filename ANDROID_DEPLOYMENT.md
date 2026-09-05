@@ -8,6 +8,8 @@ This doc covers the different ways to get an Android build of `abm-ios` running 
 
 Manually install an APK file on your device without the Play Store. Best for quick one-off testing of a build you already have as an `.aab`.
 
+**Important:** This local workflow signs the APK with a generated debug keystore. If the device already has the same package installed from a Play or EAS release, the install will be rejected due to a signature mismatch unless you use the matching release keystore. For that case, either uninstall the existing app first, use the release keystore that matches the installed build, or use the `internal` APK profile (Option 3) instead.
+
 **Steps:**
 
 1. Download the `.aab` from the EAS build page (Builds → select build → **Download** next to "Build artifact").
@@ -45,7 +47,7 @@ Manually install an APK file on your device without the Play Store. Best for qui
 7. Transfer `universal.apk` to your phone (USB cable, cloud drive, email — any method).
 8. On the phone: enable **Install unknown apps** for the source app you're using (Settings → Apps → Special access → Install unknown apps), then open the file and install.
 
-**When to use:** Fast, no Play Console dependency, works for any build. Good default for personal device testing during development.
+**When to use:** Fast, no Play Console dependency, works for any build as long as you either use a clean device/emulator or understand the sign conflict above. Good default for personal device testing during development.
 
 ---
 
@@ -130,7 +132,13 @@ For active development — hot reload, live debugging — rather than testing a 
 **Steps:**
 
 ```bash
-npx expo run:android
+pnpm android
+```
+
+If the direct Expo invocation is required, use the project-standard pnpm exec wrapper:
+
+```bash
+pnpm exec expo run:android
 ```
 
 This builds a dev client and installs it on a connected device or running emulator, then connects to the Metro bundler for live reload.
@@ -149,7 +157,7 @@ Run the app on a virtual device instead of physical hardware.
 2. Start the emulator.
 3. Install the build the same way as a physical device:
    - `adb install <path-to-apk>`, or
-   - `npx expo run:android` (auto-detects the running emulator as the target)
+   - `pnpm android` (auto-detects the running emulator as the target)
 
 **When to use:** No physical Android device available, or need to quickly test across multiple Android versions/screen sizes without owning several phones.
 

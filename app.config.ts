@@ -32,7 +32,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     package: androidPackage,
     versionCode: 1,
     adaptiveIcon: {
-      foregroundImage: './assets/icon.png',
+      foregroundImage: './assets/logos/abm-android-icon.png',
       backgroundColor: '#ffffff',
     },
   },

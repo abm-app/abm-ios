@@ -49,6 +49,7 @@ storybook-static
 
 app_apks_extracted
 *.aab
+*.apk
 *.apks
 *.jar
 *.keystore

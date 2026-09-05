@@ -77,13 +77,13 @@ eas submit --platform android --profile preview
 
 ### Internal Testing Build (APK for Sideloading)
 
-If you need an APK instead of an AAB — for example to install directly on a device without the Play Store — use the `internal` profile, which produces an `.apk`.
+Use the `internal` profile when you need an APK as a sideloading artifact, for example to install directly on a device without the Play Store. This profile is configured to produce an `.apk`.
 
 ```bash
 eas build --profile internal --platform android
 ```
 
-The `internal` APK cannot be submitted to the Play Store because it uses a different signing configuration path; use the `preview` AAB above for any Play Console submission.
+For Play Internal Testing, use the `preview` AAB. Use the `preview` build for any Play Console submission:
 
 ### Production Build (Play Store)
 
@@ -111,17 +111,25 @@ eas credentials --platform android
 
 ---
 
-## 3. Local Development with Expo Go
+## 3. Local Development
 
-Start the local dev server:
+This project uses a development build (`expo-dev-client`), so local dev normally uses a development client build rather than Expo Go. Expo Go usage is still supported for quick local startup when you explicitly opt into it.
+
+### Start the dev server (Expo Go opt-in)
+
+For a temporary Expo Go workflow, pass the `--go` flag for local testing only:
 
 ```bash
-pnpm start
+pnpm start -- --go
 ```
 
 Then scan the QR code:
 - **iOS:** Scan with the Camera app.
 - **Android:** Scan with the Expo Go app (install from Play Store).
+
+### Development build workflow
+
+For the standard local workflow that matches the project's `expo-dev-client` dependency, build and run a development client instead of using Expo Go.
 
 ### Building for Simulators/Emulators
 
