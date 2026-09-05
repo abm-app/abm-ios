@@ -54,7 +54,9 @@ This project targets both iOS and Android. Do not remove existing Android config
    EXPO_PUBLIC_API_URL=https://your-api-url.example.com
    ```
 
-5. Start the app.
+5. Run the app.
+
+   For a native dev-client build (requires local iOS/Android tooling):
 
    On iOS:
 
@@ -68,7 +70,7 @@ This project targets both iOS and Android. Do not remove existing Android config
    pnpm android
    ```
 
-   You can also start the Expo dev server manually:
+   For the Expo Go workflow (no local native tooling required):
 
    ```bash
    pnpm start
@@ -92,7 +94,8 @@ Never read `process.env` directly outside `src/config/env.ts`.
 | Command | Description |
 | --- | --- |
 | `pnpm start` | Start the Expo development server. |
-| `pnpm ios` | Start Expo and open the iOS Simulator. |
+| `pnpm ios` | Run a native iOS build and launch it in the iOS Simulator. Requires Xcode. |
+| `pnpm android` | Run a native Android build and launch it on a connected device or emulator. Requires Android Studio / an Android SDK environment. |
 | `pnpm lint` | Run ESLint with zero warnings allowed. |
 | `pnpm type-check` | Run TypeScript checks without emitting files. |
 | `pnpm format` | Format TypeScript source files with Prettier. |
