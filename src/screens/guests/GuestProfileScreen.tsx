@@ -6,7 +6,7 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import tokens from '@/theme/tokens';
 import { RootStackParamList } from '@/navigation/types';
-import { useGuest, useUpdateGuestDnc } from '@/hooks/guests/useGuests';
+import { useGuest, useUpdateGuestDnc, useGuestStays } from '@/hooks/guests/useGuests';
 import { useAuthStore } from '@/store/authStore';
 import { useIssueGuestReward } from '@/hooks/rewards/useGuestRewards';
 import {
@@ -27,10 +27,14 @@ type Props = NativeStackScreenProps<RootStackParamList, 'GuestProfile'>;
 
 export default function GuestProfileScreen({ route }: Props) {
   const { id } = route.params;
-  const { data, isLoading, isError, error, refetch } = useGuest(id);
+  const { data: guestData, isLoading, isError, error, refetch } = useGuest(id);
+  const { data: staysData } = useGuestStays(id);
   const updateDncMutation = useUpdateGuestDnc();
   const issueRewardMutation = useIssueGuestReward(id);
   const [activeTab, setActiveTab] = useState('stays');
+
+  const stays = staysData?.stays ?? [];
+  const totalNightsFromStays = stays.length;
 
   const [rewardModalVisible, setRewardModalVisible] = useState(false);
 
@@ -48,7 +52,7 @@ export default function GuestProfileScreen({ route }: Props) {
     );
   }
 
-  if (isError || !data) {
+  if (isError || !guestData) {
     return (
       <SafeAreaView style={styles.safeArea}>
         <GuestProfileHeader doNotContact={false} />
@@ -57,8 +61,9 @@ export default function GuestProfileScreen({ route }: Props) {
     );
   }
 
-  const guest = data;
+  const guest = guestData;
   const spendableBalance = guest.spendableBalance || 0;
+  const totalStays = totalNightsFromStays;
 
   const isStaff = userRole === 'staff';
 
@@ -97,7 +102,7 @@ export default function GuestProfileScreen({ route }: Props) {
         <GuestSummaryCard
           spendableBalance={spendableBalance}
           tier={guest.tier}
-          totalStays={guest.totalStays}
+          totalStays={totalStays}
         />
 
         {/* Tabs */}
@@ -116,7 +121,7 @@ export default function GuestProfileScreen({ route }: Props) {
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         {/* Tab Content */}
         <View style={styles.tabContent}>
-          {activeTab === 'stays' && <GuestStayHistory bookings={[]} />}
+          {activeTab === 'stays' && <GuestStayHistory guestId={guest.id} />}
           {activeTab === 'rewards' && <GuestRewards guestId={guest.id} />}
           {activeTab === 'comms' && (
             <CommunicationLog guestId={guest.id} doNotContact={guest.doNotContact} />

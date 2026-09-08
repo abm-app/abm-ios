@@ -1,28 +1,52 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { Feather } from '@expo/vector-icons';
 
 import tokens from '@/theme/tokens';
 import { Badge, Card } from '@/components/ui';
+import { LoadingSpinner, ErrorState, EmptyState } from '@/components/shared';
 import { ROOMS_DB } from '@/types/room';
 import { formatDate } from '@/utils/dateUtils';
-import type { Booking } from '@/types/booking';
+import { useGuestStays } from '@/hooks/guests/useGuests';
 
 interface GuestStayHistoryProps {
-  bookings: Booking[];
+  guestId: string;
 }
 
-export default function GuestStayHistory({ bookings }: GuestStayHistoryProps) {
+export default function GuestStayHistory({ guestId }: GuestStayHistoryProps) {
+  const { data, isLoading, isError, refetch } = useGuestStays(guestId);
+
+  if (isLoading) {
+    return (
+      <View style={styles.stateContainer}>
+        <LoadingSpinner />
+      </View>
+    );
+  }
+
+  if (isError) {
+    return (
+      <View style={styles.stateContainer}>
+        <ErrorState message="Failed to load stay history" onRetry={refetch} />
+      </View>
+    );
+  }
+
+  const bookings = data?.stays ?? [];
+
   if (bookings.length === 0) {
     return (
-      <View style={styles.emptyContainer}>
-        <Text style={styles.emptyText}>No stay history found.</Text>
+      <View style={styles.stateContainer}>
+        <EmptyState
+          icon="calendar"
+          title="No stay history"
+          subtitle="This guest doesn't have any recorded stays yet."
+        />
       </View>
     );
   }
 
   return (
-    <View>
+    <View style={styles.listContainer}>
       {bookings.map((booking, index) => {
         const isLast = index === bookings.length - 1;
         const roomName = ROOMS_DB[booking.rmCode] || booking.rmCode;
@@ -36,20 +60,15 @@ export default function GuestStayHistory({ bookings }: GuestStayHistoryProps) {
 
             <Card variant="flat" padded style={styles.timelineContent}>
               <View style={styles.stayHeader}>
-                <Text style={styles.stayDate}>Checkout: {formatDate(booking.checkoutDate)}</Text>
-                <Badge label={`+${booking.pointsEarned} Pts`} variant="low" />
+                <View style={styles.stayDates}>
+                  <Text style={styles.stayDate}>Check-in: {formatDate(booking.checkinDate)}</Text>
+                  <Text style={styles.stayDate}>Checkout: {formatDate(booking.checkoutDate)}</Text>
+                </View>
+                {!!booking.pointsEarned && (
+                  <Badge label={`+${booking.pointsEarned} Pts`} variant="low" />
+                )}
               </View>
-              <Text style={styles.roomName}>{roomName}</Text>
-              <View style={styles.stayMeta}>
-                <Feather
-                  name={booking.notes ? 'star' : 'file-text'}
-                  size={12}
-                  color={tokens.colors.textMuted}
-                />
-                <Text style={styles.stayMetaText}>
-                  {booking.notes || `Folio ${booking.folioNumber}`}
-                </Text>
-              </View>
+              <Text style={styles.roomName}>Room No. {roomName}</Text>
             </Card>
           </View>
         );
@@ -59,14 +78,14 @@ export default function GuestStayHistory({ bookings }: GuestStayHistoryProps) {
 }
 
 const styles = StyleSheet.create({
-  emptyContainer: {
+  stateContainer: {
     padding: tokens.spacing.xl,
     alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: 200,
   },
-  emptyText: {
-    fontFamily: tokens.typography.fontFamily.sub,
-    fontSize: tokens.typography.fontSize.body,
-    color: tokens.colors.textMuted,
+  listContainer: {
+    paddingVertical: tokens.spacing.md,
   },
   timelineRow: {
     flexDirection: 'row',
@@ -99,6 +118,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: tokens.spacing.xs,
   },
+  stayDates: {
+    gap: tokens.spacing.xs,
+  },
   stayDate: {
     fontFamily: tokens.typography.fontFamily.sub,
     fontSize: tokens.typography.fontSize.caption,
@@ -110,16 +132,6 @@ const styles = StyleSheet.create({
     fontSize: tokens.typography.fontSize.body,
     fontWeight: '600',
     color: tokens.colors.textPrimary,
-    marginBottom: tokens.spacing.sm,
-  },
-  stayMeta: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  stayMetaText: {
-    fontFamily: tokens.typography.fontFamily.sub,
-    fontSize: tokens.typography.fontSize.caption,
-    color: tokens.colors.textMuted,
-    marginLeft: tokens.spacing.s,
+    marginTop: tokens.spacing.sm,
   },
 });
