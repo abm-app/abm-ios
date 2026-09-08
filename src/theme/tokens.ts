@@ -601,6 +601,11 @@ const chart = {
   minBarPercent: 4,
 } as const;
 
+/** Tooltip bubble geometry */
+const tooltip = {
+  width: 240,
+} as const;
+
 // ─── Auth — Login Screen Geometry ────────────────────────────────────────────
 
 const auth = {
@@ -789,6 +794,7 @@ const tokens = {
   notificationModal,
   calendar,
   chart,
+  tooltip,
   opacity,
   shadow,
 } as const;
