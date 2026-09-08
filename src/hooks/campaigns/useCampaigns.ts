@@ -34,6 +34,7 @@ export function useMetaTemplates() {
   return useQuery({
     queryKey: [...campaignKeys.all, 'templates'] as const,
     queryFn: () => fetchMetaTemplates(),
+    staleTime: 0,
   });
 }
 

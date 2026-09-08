@@ -17,6 +17,7 @@ export interface Guest {
   vipStatus: string | null;
   blacklisted: boolean;
   nationalityId: number;
+  lastPropertyName?: string;
 }
 
 export interface GuestResponse {

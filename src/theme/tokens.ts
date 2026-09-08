@@ -103,6 +103,9 @@ const colors = {
   occupancyMid: 'rgba(231, 139, 0, 0.76)',
   occupancyLow: 'rgba(235, 33, 33, 0.7)',
 
+  // Modal overlay
+  modalOverlay: 'rgba(0,0,0,0.5)',
+
   // Auth — Login screen
   authBackdropBase: '#F5E6D8',
   authFog1: '#FFAF96',
@@ -601,6 +604,11 @@ const chart = {
   minBarPercent: 4,
 } as const;
 
+/** Tooltip bubble geometry */
+const tooltip = {
+  width: 240,
+} as const;
+
 // ─── Auth — Login Screen Geometry ────────────────────────────────────────────
 
 const auth = {
@@ -789,6 +797,7 @@ const tokens = {
   notificationModal,
   calendar,
   chart,
+  tooltip,
   opacity,
   shadow,
 } as const;

@@ -1,4 +1,10 @@
-export type CampaignStatus = 'draft' | 'pending_approval' | 'approved' | 'sent' | 'failed';
+export type CampaignStatus =
+  | 'draft'
+  | 'pending_approval'
+  | 'approved'
+  | 'rejected'
+  | 'sent'
+  | 'failed';
 export type CampaignType = 'manual' | 'scheduled' | 'trigger';
 
 export interface Campaign {
@@ -23,9 +29,15 @@ export interface Campaign {
   };
 }
 
+export interface MetaTemplateVariable {
+  key: string;
+  label: string;
+  isCustomerName: boolean;
+}
+
 export interface MetaTemplate {
   id: string;
-  label: string;
-  vars: string[];
+  name: string;
   body: string;
+  variables: MetaTemplateVariable[];
 }

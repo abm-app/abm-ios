@@ -2,6 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { SharedFormModal, CustomCalender, AlertModal } from '@/components/shared';
 import { CreateCampaignPayload } from '@/api/endpoints/campaignApi';
 import type { Campaign } from '@/types/campaign';
+
+type VariableSource = 'guest_field' | 'custom';
+
+interface VariableConfig {
+  source: VariableSource;
+  guestField?: string;
+  customValue?: string;
+}
 import {
   useMetaTemplates,
   useCreateCampaign,
@@ -39,7 +47,35 @@ export default function CreateCampaignModal({ visible, onClose, onSuccess, initi
   const [currentPage, setCurrentPage] = useState<1 | 2>(1);
   const [name, setName] = useState(initialData?.name || '');
   const [templateId, setTemplateId] = useState(initialData?.templateId || '');
-  const [templateVars] = useState<Record<string, string>>(initialData?.templateVariables || {});
+  const [templateVars, setTemplateVars] = useState<Record<string, string>>(
+    initialData?.templateVariables || {},
+  );
+  const [variableConfigs, setVariableConfigs] = useState<Record<string, VariableConfig>>({});
+
+  // Reset variable configs whenever the template ID changes (new template selected)
+  useEffect(() => {
+    if (!templateId) {
+      setVariableConfigs({});
+      return;
+    }
+    const template = templates?.find(t => t.id === templateId);
+    if (!template?.variables) {
+      setVariableConfigs({});
+      return;
+    }
+    const next: Record<string, VariableConfig> = {};
+    template.variables.forEach(v => {
+      next[v.key] = { source: 'custom', customValue: '' };
+    });
+    setVariableConfigs(next);
+  }, [templateId, templates]);
+
+  const handleUpdateVariableConfig = (key: string, config: VariableConfig) => {
+    setVariableConfigs(prev => ({
+      ...prev,
+      [key]: config,
+    }));
+  };
 
   const [selectedTiers, setSelectedTiers] = useState<string[]>(
     (initialData?.filters?.tier as string[]) || ['All'],
@@ -73,6 +109,8 @@ export default function CreateCampaignModal({ visible, onClose, onSuccess, initi
     } else {
       setTemplateId(initialData?.templateId || '');
     }
+    setTemplateVars(initialData?.templateVariables || {});
+    setVariableConfigs({});
     setSelectedTiers((initialData?.filters?.tier as string[]) || ['All']);
     setScheduledAt(initialData?.scheduledAt ? initialData.scheduledAt.split('T')[0] : '');
     setOfferExpiry(initialData?.offerExpiry ? initialData.offerExpiry.split('T')[0] : '');
@@ -104,15 +142,6 @@ export default function CreateCampaignModal({ visible, onClose, onSuccess, initi
       isMounted = false;
     };
   }, [selectedTiers, fetchReachAsync, allTiers, isLoyaltyConfigSuccess]);
-
-  useEffect(() => {
-    if (templates && templates.length > 0 && !templateId) {
-      const timer = setTimeout(() => {
-        setTemplateId(templates[0].id);
-      }, 0);
-      return () => clearTimeout(timer);
-    }
-  }, [templates, templateId]);
 
   const toggleTier = (tier: string) => {
     if (tier === 'All') {
@@ -151,6 +180,16 @@ export default function CreateCampaignModal({ visible, onClose, onSuccess, initi
 
   const currentTemplate = templates?.find(t => t.id === templateId);
 
+  // Auto-select first template when templates load
+  useEffect(() => {
+    if (templates && templates.length > 0 && !templateId) {
+      const timer = setTimeout(() => {
+        setTemplateId(templates[0].id);
+      }, 0);
+      return () => clearTimeout(timer);
+    }
+  }, [templates, templateId]);
+
   const submitPayload = async (_isDraft: boolean = false) => {
     if (!name.trim()) {
       showAlert('Error', 'Campaign name is required.');
@@ -171,6 +210,7 @@ export default function CreateCampaignModal({ visible, onClose, onSuccess, initi
       name,
       templateId,
       templateVariables: templateVars,
+      variableConfigs,
       type: scheduledAt ? 'scheduled' : 'manual',
       filters: {
         tier: selectedTiers,
@@ -277,7 +317,8 @@ export default function CreateCampaignModal({ visible, onClose, onSuccess, initi
             isLoadingTemplates={isLoadingTemplates}
             templateId={templateId}
             onChangeTemplateId={setTemplateId}
-            templateVars={templateVars}
+            variableConfigs={variableConfigs}
+            onUpdateVariableConfig={handleUpdateVariableConfig}
             currentTemplate={currentTemplate}
             reachCount={reachCount}
           />

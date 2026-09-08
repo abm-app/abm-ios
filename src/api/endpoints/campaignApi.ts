@@ -1,15 +1,23 @@
-import type { Campaign } from '@/types/campaign';
+import type { Campaign, MetaTemplate } from '@/types/campaign';
 import apiClient from '../client';
+
+interface VariableConfig {
+  source: 'guest_field' | 'custom';
+  guestField?: string;
+  customValue?: string;
+}
 
 export interface CreateCampaignPayload {
   name: string;
   templateId: string;
   templateVariables?: Record<string, string>;
+  variableConfigs?: Record<string, VariableConfig>;
   type: 'manual' | 'scheduled' | 'trigger';
   filters: Record<string, unknown>;
   recipientCount: number;
-  status?: 'draft' | 'pending_approval';
+  status?: 'draft' | 'pending_approval' | 'approved' | 'rejected';
   scheduledAt?: string;
+  rejectionReason?: string;
   offerExpiry?: string;
   metadata?: {
     [key: string]: unknown;
@@ -57,20 +65,7 @@ export const getEstimatedReach = async (tiers: string[]): Promise<number> => {
   return response.data.count;
 };
 
-// No live templates endpoint — using static list until backend provides one.
-export const fetchMetaTemplates = async (): Promise<import('@/types/campaign').MetaTemplate[]> => {
-  return [
-    {
-      id: 'tpl_monsoon',
-      label: 'Monsoon Flash Sale',
-      vars: ['Guest_Name'],
-      body: 'Hi {{Guest_Name}}, the Monsoons are here! Enjoy an exclusive 20% off your next stay at Lamax Properties. Valid for 48 hours.',
-    },
-    {
-      id: 'tpl_weekend',
-      label: 'Weekend Upgrade',
-      vars: [],
-      body: 'Dear Guest, upgrade your weekend stay to a suite for just $50 more! Reply YES to claim this exclusive offer.',
-    },
-  ];
+export const fetchMetaTemplates = async (): Promise<MetaTemplate[]> => {
+  const response = await apiClient.get<{ templates: MetaTemplate[] }>('/campaigns/templates/');
+  return response.data.templates;
 };

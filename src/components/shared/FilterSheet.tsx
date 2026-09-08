@@ -21,6 +21,8 @@ export interface FilterSheetProps {
   showDragIndicator?: boolean;
   headerRight?: React.ReactNode;
   footer?: React.ReactNode;
+  /** Content rendered inside the modal overlay, on top of the sheet (e.g. floating tooltips). */
+  overlayContent?: React.ReactNode;
   scrollable?: boolean;
   contentStyle?: StyleProp<ViewStyle>;
   children: React.ReactNode;
@@ -33,6 +35,7 @@ export function FilterSheet({
   showDragIndicator = false,
   headerRight,
   footer,
+  overlayContent,
   scrollable = true,
   contentStyle,
   children,
@@ -95,6 +98,7 @@ export function FilterSheet({
             </View>
           )}
         </Animated.View>
+        {overlayContent}
       </View>
     </Modal>
   );

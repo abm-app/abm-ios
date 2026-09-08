@@ -54,6 +54,13 @@ function getEventDisplayInfo(eventType: RecentEvent['eventType']): EventDisplayI
         iconBg: tokens.colors.avatarWarmBg,
         label: 'Modification',
       };
+    default:
+      return {
+        iconName: 'activity',
+        iconColor: tokens.colors.textMuted,
+        iconBg: tokens.colors.chipNeutralBg,
+        label: 'Activity',
+      };
   }
 }
 

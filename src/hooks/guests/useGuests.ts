@@ -4,6 +4,7 @@ import {
   getGuestById,
   updateGuestDnc,
   getGuestCommunications,
+  getGuestStays,
 } from '@/api/endpoints/guestsApi';
 import type { GuestFilters } from '@/types/guest';
 
@@ -12,6 +13,7 @@ export const guestsKeys = {
   list: (filters: GuestFilters) => [...guestsKeys.all, 'list', filters] as const,
   detail: (id: string) => [...guestsKeys.all, 'detail', id] as const,
   communications: (id: string) => [...guestsKeys.all, 'communications', id] as const,
+  stays: (id: string) => [...guestsKeys.all, 'stays', id] as const,
 };
 
 export function useInfiniteGuests(filters: Omit<GuestFilters, 'page'>) {
@@ -51,5 +53,12 @@ export function useGuestCommunications(id: string) {
   return useQuery({
     queryKey: guestsKeys.communications(id),
     queryFn: () => getGuestCommunications(id),
+  });
+}
+
+export function useGuestStays(id: string) {
+  return useQuery({
+    queryKey: guestsKeys.stays(id),
+    queryFn: () => getGuestStays(id),
   });
 }

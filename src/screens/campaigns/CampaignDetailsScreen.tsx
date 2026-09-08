@@ -13,7 +13,12 @@ import CampaignMessageContent from './components/CampaignDetailsScreen/CampaignM
 import CampaignBottomBar from './components/CampaignDetailsScreen/CampaignBottomBar';
 import CreateCampaignModal from './components/CreateCampaignModal/CreateCampaignModal';
 import type { RootStackParamList } from '@/navigation/types';
-import { useCampaign, useMetaTemplates, useDeleteCampaign } from '@/hooks/campaigns/useCampaigns';
+import {
+  useCampaign,
+  useMetaTemplates,
+  useDeleteCampaign,
+  useUpdateCampaign,
+} from '@/hooks/campaigns/useCampaigns';
 import { Alert } from 'react-native';
 import { useAuthStore } from '@/store/authStore';
 
@@ -38,6 +43,7 @@ export default function CampaignDetailsScreen() {
   } = useCampaign(route.params.id);
   const { data: templates, isLoading: isTplLoading } = useMetaTemplates();
   const deleteMutation = useDeleteCampaign();
+  const updateMutation = useUpdateCampaign();
 
   if (isCampLoading || isTplLoading) return <LoadingSpinner />;
   if (isCampError || !campaign)
@@ -65,6 +71,35 @@ export default function CampaignDetailsScreen() {
   });
 
   const creatorName = campaign.createdBy?.name || 'Unknown';
+
+  const handleApprove = async () => {
+    if (!campaign) return;
+    try {
+      await updateMutation.mutateAsync({
+        id: campaign._id,
+        payload: { status: 'approved' },
+      });
+      Alert.alert(
+        'Campaign Approved',
+        'The campaign has been approved and will be sent at the scheduled time.',
+        [{ text: 'OK', style: 'cancel' }],
+      );
+    } catch {
+      Alert.alert('Error', 'Failed to approve campaign');
+    }
+  };
+
+  const handleReject = async () => {
+    if (!campaign) return;
+    try {
+      await updateMutation.mutateAsync({
+        id: campaign._id,
+        payload: { status: 'rejected', rejectionReason: 'Rejected by owner' },
+      });
+    } catch {
+      Alert.alert('Error', 'Failed to reject campaign');
+    }
+  };
 
   const handleDelete = async () => {
     if (!campaign) return;
@@ -140,7 +175,13 @@ export default function CampaignDetailsScreen() {
       </ScrollView>
 
       {/* Bottom Bar */}
-      {isPending && user?.role === 'owner' && <CampaignBottomBar />}
+      {isPending && user?.role === 'owner' && (
+        <CampaignBottomBar
+          campaignName={campaign.name}
+          onApprove={handleApprove}
+          onReject={handleReject}
+        />
+      )}
 
       {/* Modals */}
       {isEditModalVisible && (
