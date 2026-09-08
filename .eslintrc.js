@@ -23,6 +23,7 @@ module.exports = {
     '@typescript-eslint/no-explicit-any': 'error',
     'react-hooks/rules-of-hooks': 'error',
     'react-hooks/exhaustive-deps': 'warn',
+    'react-hooks/set-state-in-effect': 'off',
     '@typescript-eslint/ban-ts-comment': [
       'error',
       {

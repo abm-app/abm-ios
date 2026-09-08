@@ -23,9 +23,15 @@ export interface Campaign {
   };
 }
 
+export interface MetaTemplateVariable {
+  key: string;
+  label: string;
+  isCustomerName: boolean;
+}
+
 export interface MetaTemplate {
   id: string;
-  label: string;
-  vars: string[];
+  name: string;
   body: string;
+  variables: MetaTemplateVariable[];
 }
