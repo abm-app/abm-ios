@@ -1,4 +1,10 @@
-export type CampaignStatus = 'draft' | 'pending_approval' | 'approved' | 'sent' | 'failed';
+export type CampaignStatus =
+  | 'draft'
+  | 'pending_approval'
+  | 'approved'
+  | 'rejected'
+  | 'sent'
+  | 'failed';
 export type CampaignType = 'manual' | 'scheduled' | 'trigger';
 
 export interface Campaign {

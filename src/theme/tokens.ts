@@ -103,6 +103,9 @@ const colors = {
   occupancyMid: 'rgba(231, 139, 0, 0.76)',
   occupancyLow: 'rgba(235, 33, 33, 0.7)',
 
+  // Modal overlay
+  modalOverlay: 'rgba(0,0,0,0.5)',
+
   // Auth — Login screen
   authBackdropBase: '#F5E6D8',
   authFog1: '#FFAF96',
