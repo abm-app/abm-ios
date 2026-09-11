@@ -15,7 +15,7 @@ import { ListSurface } from '@/components/shared';
 export default function OperationsScreen() {
   const [activeTab, setActiveTab] = useState('live_status');
   const [searchQuery, setSearchQuery] = useState('');
-  const [viewMode, setViewMode] = useState<ViewMode>('list');
+  const [viewMode, setViewMode] = useState<ViewMode>('grid');
 
   const { data: overview } = useStatusOverview();
   const lastSyncedLabel = formatLastSynced(overview?.lastSyncedAt) ?? undefined;
