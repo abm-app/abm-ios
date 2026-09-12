@@ -21,7 +21,7 @@ const TABS = [
 ];
 
 function mapCampaignToPendingAction(c: Campaign): PendingAction {
-  let audienceStr = `${c.recipientCount} Guests`;
+  let audienceStr = `${c.recipientCount ?? 0} Guests`;
   if (c.filters?.tier) {
     audienceStr += ` • ${c.filters.tier}`;
   } else if (c.filters?.property) {
@@ -51,7 +51,7 @@ function mapCampaignToBroadcast(c: Campaign): Broadcast {
     id: c._id,
     title: c.name,
     status: c.status.replace('_', ' ').replace(/\b\w/g, char => char.toUpperCase()),
-    audienceCount: c.recipientCount,
+    audienceCount: c.recipientCount ?? 0,
     dateStr,
   };
 }

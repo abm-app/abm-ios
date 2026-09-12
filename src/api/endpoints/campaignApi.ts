@@ -1,11 +1,12 @@
-import type { Campaign, MetaTemplate } from '@/types/campaign';
+import type {
+  Campaign,
+  MetaTemplate,
+  VariableConfig,
+  Trigger,
+  SendWindow,
+  AutomationRun,
+} from '@/types/campaign';
 import apiClient from '../client';
-
-interface VariableConfig {
-  source: 'guest_field' | 'custom';
-  guestField?: string;
-  customValue?: string;
-}
 
 export interface CreateCampaignPayload {
   name: string;
@@ -15,7 +16,10 @@ export interface CreateCampaignPayload {
   type: 'manual' | 'scheduled' | 'trigger';
   filters: Record<string, unknown>;
   recipientCount: number;
-  status?: 'draft' | 'pending_approval' | 'approved' | 'rejected';
+  trigger?: Trigger;
+  priority?: number;
+  sendWindow?: SendWindow | null;
+  status?: 'draft' | 'pending_approval' | 'approved' | 'rejected' | 'active' | 'paused';
   scheduledAt?: string;
   rejectionReason?: string;
   offerExpiry?: string;
@@ -24,9 +28,26 @@ export interface CreateCampaignPayload {
   };
 }
 
-export const fetchCampaigns = async (): Promise<Campaign[]> => {
-  const response = await apiClient.get<{ campaigns: Campaign[] }>('/campaigns/');
-  return response.data.campaigns;
+export interface FetchCampaignsParams {
+  type?: string;
+  status?: string;
+  search?: string;
+  page?: number;
+  limit?: number;
+}
+
+export interface FetchCampaignsResponse {
+  campaigns: Campaign[];
+  total: number;
+  page: number;
+  limit: number;
+}
+
+export const fetchCampaigns = async (
+  params?: FetchCampaignsParams,
+): Promise<FetchCampaignsResponse> => {
+  const response = await apiClient.get<FetchCampaignsResponse>('/campaigns/', { params });
+  return response.data;
 };
 
 export const fetchCampaignById = async (id: string): Promise<Campaign> => {
@@ -68,4 +89,22 @@ export const getEstimatedReach = async (tiers: string[]): Promise<number> => {
 export const fetchMetaTemplates = async (): Promise<MetaTemplate[]> => {
   const response = await apiClient.get<{ templates: MetaTemplate[] }>('/campaigns/templates/');
   return response.data.templates;
+};
+
+export interface GetAutomationRunsResponse {
+  runs: AutomationRun[];
+  total: number;
+  page: number;
+  limit: number;
+}
+
+export const getAutomationRuns = async (
+  campaignId: string,
+  page: number,
+  limit: number,
+): Promise<GetAutomationRunsResponse> => {
+  const response = await apiClient.get<GetAutomationRunsResponse>(`/campaigns/${campaignId}/runs`, {
+    params: { page, limit },
+  });
+  return response.data;
 };

@@ -7,18 +7,39 @@ import {
   updateCampaign,
   deleteCampaign,
   getEstimatedReach,
+  getAutomationRuns,
+  type FetchCampaignsParams,
 } from '@/api/endpoints/campaignApi';
 
 export const campaignKeys = {
   all: ['campaigns'] as const,
   list: () => [...campaignKeys.all, 'list'] as const,
   detail: (id: string) => [...campaignKeys.all, 'detail', id] as const,
+  automations: (params?: FetchCampaignsParams) =>
+    [...campaignKeys.all, 'automations', params ?? {}] as const,
+  automationRuns: (campaignId: string, page: number, limit: number) =>
+    [...campaignKeys.all, 'automations', campaignId, 'runs', page, limit] as const,
 };
 
 export function useCampaigns() {
   return useQuery({
     queryKey: campaignKeys.list(),
-    queryFn: () => fetchCampaigns(),
+    queryFn: async () => (await fetchCampaigns()).campaigns,
+  });
+}
+
+export function useAutomations(params?: Omit<FetchCampaignsParams, 'type'>) {
+  return useQuery({
+    queryKey: campaignKeys.automations(params),
+    queryFn: () => fetchCampaigns({ ...params, type: 'trigger' }),
+  });
+}
+
+export function useAutomationRuns(campaignId: string, page: number, limit: number) {
+  return useQuery({
+    queryKey: campaignKeys.automationRuns(campaignId, page, limit),
+    queryFn: () => getAutomationRuns(campaignId, page, limit),
+    enabled: !!campaignId,
   });
 }
 
