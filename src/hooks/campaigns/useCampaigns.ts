@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useInfiniteQuery } from '@tanstack/react-query';
 import {
   fetchCampaigns,
   fetchCampaignById,
@@ -28,10 +28,19 @@ export function useCampaigns() {
   });
 }
 
-export function useAutomations(params?: Omit<FetchCampaignsParams, 'type'>) {
-  return useQuery({
+export function useInfiniteAutomations(
+  params?: Omit<FetchCampaignsParams, 'type' | 'page'>,
+  enabled = true,
+) {
+  return useInfiniteQuery({
     queryKey: campaignKeys.automations(params),
-    queryFn: () => fetchCampaigns({ ...params, type: 'trigger' }),
+    queryFn: ({ pageParam = 1 }) => fetchCampaigns({ ...params, type: 'trigger', page: pageParam }),
+    initialPageParam: 1,
+    getNextPageParam: lastPage => {
+      const { page, limit, total } = lastPage;
+      return page * limit < total ? page + 1 : undefined;
+    },
+    enabled,
   });
 }
 

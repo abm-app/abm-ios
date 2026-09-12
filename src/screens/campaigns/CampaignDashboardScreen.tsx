@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, SectionList, LayoutAnimation, ScrollView } from 'react-native';
+import { View, StyleSheet, SectionList, LayoutAnimation } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import tokens from '@/theme/tokens';
@@ -9,13 +9,14 @@ import { useAuthStore } from '@/store/authStore';
 
 import ActionRequiredCard, { PendingAction } from './components/ActionRequiredCard';
 import RecentBroadcastCard, { Broadcast } from './components/RecentBroadcastCard';
+import AutomationList from './components/AutomationList';
 import CreateCampaignModal from './components/CreateCampaignModal/CreateCampaignModal';
-import { useCampaigns } from '@/hooks/campaigns/useCampaigns';
+import { useCampaigns, useInfiniteAutomations } from '@/hooks/campaigns/useCampaigns';
 import { LoadingSpinner, ErrorState, Backdrop, EmptyState, ListSurface } from '@/components/shared';
 import { AccordionHeader } from './components/Accordion';
 import type { Campaign } from '@/types/campaign';
 
-const TABS = [
+const ALL_TABS = [
   { id: 'broadcasts', label: 'Broadcasts' },
   { id: 'automations', label: 'Automations' },
 ];
@@ -68,8 +69,22 @@ export default function CampaignDashboardScreen() {
   });
   const user = useAuthStore(state => state.user);
   const insets = useSafeAreaInsets();
+  const isStaff = user?.role === 'staff';
+  const tabs = isStaff ? ALL_TABS.filter(tab => tab.id !== 'automations') : ALL_TABS;
 
   const { data: campaigns, isLoading, isError, error, refetch } = useCampaigns();
+
+  const {
+    data: automationsData,
+    isLoading: isAutomationsLoading,
+    isError: isAutomationsError,
+    error: automationsError,
+    refetch: refetchAutomations,
+    hasNextPage: hasNextAutomationsPage,
+    isFetchingNextPage: isFetchingNextAutomationsPage,
+    fetchNextPage: fetchNextAutomationsPage,
+  } = useInfiniteAutomations(undefined, activeTab === 'automations' && !isStaff);
+  const automations = automationsData?.pages.flatMap(page => page.campaigns) ?? [];
 
   // Calculate bottom padding to ensure lists end above the floating tab bar
   const bottomPadding =
@@ -97,10 +112,21 @@ export default function CampaignDashboardScreen() {
       <View style={[styles.mainWrapper, { paddingBottom: bottomPadding }]}>
         <ListSurface>
           <View style={styles.tabsContainer}>
-            <SegmentedControl tabs={TABS} activeTab={activeTab} onChange={setActiveTab} />
+            <SegmentedControl tabs={tabs} activeTab={activeTab} onChange={setActiveTab} />
           </View>
 
-          {isLoading ? (
+          {activeTab === 'automations' ? (
+            <AutomationList
+              automations={automations}
+              isLoading={isAutomationsLoading}
+              isError={isAutomationsError}
+              error={automationsError}
+              refetch={refetchAutomations}
+              hasNextPage={hasNextAutomationsPage}
+              isFetchingNextPage={isFetchingNextAutomationsPage}
+              fetchNextPage={fetchNextAutomationsPage}
+            />
+          ) : isLoading ? (
             <View style={styles.centerContainer}>
               <LoadingSpinner />
             </View>
@@ -111,15 +137,6 @@ export default function CampaignDashboardScreen() {
                 onRetry={refetch}
               />
             </View>
-          ) : activeTab === 'automations' ? (
-            <ScrollView
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={styles.scrollInner}
-            >
-              <View style={styles.centerContainer}>
-                <Text style={styles.emptyText}>Coming soon</Text>
-              </View>
-            </ScrollView>
           ) : (
             <SectionList
               sections={[
@@ -222,11 +239,6 @@ const styles = StyleSheet.create({
     minHeight: tokens.emptyState.minHeight,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  emptyText: {
-    fontFamily: tokens.typography.fontFamily.sub,
-    fontSize: tokens.typography.fontSize.body,
-    color: tokens.colors.textMuted,
   },
   contentContainer: {
     paddingTop: tokens.spacing.md,
