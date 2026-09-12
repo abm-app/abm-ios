@@ -43,12 +43,30 @@ export interface GuestProfileResponse {
   bookings: import('./booking').Booking[];
 }
 
+export type CommunicationStatus = 'sent' | 'delivered' | 'read' | 'failed' | 'skipped';
+
 export interface CommunicationLogEvent {
   id: string;
   guestId: string;
   campaignId: string | null;
   templateId: string;
   triggerType: string;
-  status: 'sent' | 'delivered' | 'read' | 'failed' | string;
+  status: CommunicationStatus | string;
+  /** Template text with {{n}} placeholders, or a placeholder string when unresolvable. */
+  templateBody: string;
   sentAt: string;
+  deliveredAt: string | null;
+  readAt: string | null;
+  failedAt: string | null;
+  statusUpdatedAt: string;
+  failureReason: string | null;
+  skipReason: string | null;
+  skipReasonText: string | null;
+}
+
+export interface CommunicationLogResponse {
+  messages: CommunicationLogEvent[];
+  total: number;
+  page: number;
+  limit: number;
 }

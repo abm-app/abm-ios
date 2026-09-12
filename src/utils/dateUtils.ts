@@ -82,6 +82,41 @@ export const formatDateTime = (isoStr?: string): string | null => {
   // e.g. "8 Jul 2026, 04:30 pm"
 };
 
+// Shifted manually rather than via Intl's timeZone option, which Hermes does
+// not reliably support across platforms.
+const IST_OFFSET_MS = (5 * 60 + 30) * 60 * 1000;
+
+const toIstParts = (isoStr?: string) => {
+  if (!isoStr) return null;
+  const date = new Date(isoStr);
+  if (isNaN(date.getTime())) return null;
+
+  const ist = new Date(date.getTime() + IST_OFFSET_MS);
+  const rawHours = ist.getUTCHours();
+  return {
+    day: ist.getUTCDate(),
+    month: MONTH_NAMES[ist.getUTCMonth()],
+    year: ist.getUTCFullYear(),
+    hours: String(rawHours % 12 || 12).padStart(2, '0'),
+    minutes: String(ist.getUTCMinutes()).padStart(2, '0'),
+    meridiem: rawHours >= 12 ? 'pm' : 'am',
+  };
+};
+
+/** e.g. "12 Sep 2026, 10:30 am" — always IST, regardless of device timezone. */
+export const formatDateTimeIST = (isoStr?: string): string | null => {
+  const p = toIstParts(isoStr);
+  if (!p) return null;
+  return `${p.day} ${p.month} ${p.year}, ${p.hours}:${p.minutes} ${p.meridiem}`;
+};
+
+/** e.g. "10:30 am" — always IST. */
+export const formatTimeIST = (isoStr?: string): string | null => {
+  const p = toIstParts(isoStr);
+  if (!p) return null;
+  return `${p.hours}:${p.minutes} ${p.meridiem}`;
+};
+
 export const formatMonth = (monthStr: string): string => {
   const [year, month] = monthStr.split('-');
   const date = new Date(Number(year), Number(month) - 1, 1);

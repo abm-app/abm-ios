@@ -50,9 +50,14 @@ export function useUpdateGuestDnc() {
 }
 
 export function useGuestCommunications(id: string) {
-  return useQuery({
+  return useInfiniteQuery({
     queryKey: guestsKeys.communications(id),
-    queryFn: () => getGuestCommunications(id),
+    queryFn: ({ pageParam = 1 }) => getGuestCommunications(id, pageParam),
+    initialPageParam: 1,
+    getNextPageParam: lastPage => {
+      const { page, limit, total } = lastPage;
+      return page * limit < total ? page + 1 : undefined;
+    },
   });
 }
 
