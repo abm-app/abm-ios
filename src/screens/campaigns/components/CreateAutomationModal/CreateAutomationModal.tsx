@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { SharedFormModal, AlertModal } from '@/components/shared';
 import { CreateCampaignPayload } from '@/api/endpoints/campaignApi';
-import type { Campaign, VariableConfig } from '@/types/campaign';
+import type { Campaign, VariableConfig, TriggerType, WeekdayCode } from '@/types/campaign';
 import {
   useMetaTemplates,
   useCreateCampaign,
@@ -9,7 +9,9 @@ import {
   useEstimatedReach,
 } from '@/hooks/campaigns/useCampaigns';
 import { useLoyaltyConfig } from '@/hooks/loyalty/useLoyaltyConfig';
+import TriggerTypeStep from './TriggerTypeStep';
 import AutomationAudienceStep from './AutomationAudienceStep';
+import AutomationTimingStep from './AutomationTimingStep';
 import MessageContentStep from '../CreateCampaignModal/MessageContentStep';
 
 interface Props {
@@ -19,10 +21,12 @@ interface Props {
   initialData?: Campaign;
 }
 
-// This pass only supports the `post_checkout` trigger type — the simplest one, with no
-// send-window or priority configuration. `days_since_visit`/`tier_upgrade` (and the trigger-type
-// picker to choose between them) land in a follow-up step.
+type Step = 'trigger' | 'audience' | 'timing' | 'message';
+
+const DEFAULT_SEND_WINDOW_DAYS: WeekdayCode[] = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
+
 export default function CreateAutomationModal({ visible, onClose, onSuccess, initialData }: Props) {
+  const isEditing = !!initialData?._id;
   const { data: templates, isLoading: isLoadingTemplates } = useMetaTemplates();
   const createMutation = useCreateCampaign();
   const updateMutation = useUpdateCampaign();
@@ -38,8 +42,20 @@ export default function CreateAutomationModal({ visible, onClose, onSuccess, ini
     [allTiers, isLoyaltyConfigSuccess],
   );
 
-  const [currentPage, setCurrentPage] = useState<1 | 2>(1);
+  // The trigger-type step is skipped entirely when editing — `trigger.type` is immutable
+  // after creation.
+  const steps: Step[] = isEditing
+    ? ['audience', 'timing', 'message']
+    : ['trigger', 'audience', 'timing', 'message'];
+  const [stepIndex, setStepIndex] = useState(0);
+  const currentStep = steps[stepIndex];
+
   const [name, setName] = useState(initialData?.name || '');
+  const [triggerType, setTriggerType] = useState<TriggerType | null>(
+    initialData?.trigger?.type ?? (isEditing ? null : 'post_checkout'),
+  );
+  const [days, setDays] = useState(initialData?.trigger?.days?.toString() ?? '');
+
   const [templateId, setTemplateId] = useState(initialData?.templateId || '');
   const [templateVars, setTemplateVars] = useState<Record<string, string>>(
     initialData?.templateVariables || {},
@@ -74,6 +90,15 @@ export default function CreateAutomationModal({ visible, onClose, onSuccess, ini
     (initialData?.filters?.tier as string[]) || ['All'],
   );
 
+  const [startHour, setStartHour] = useState(
+    initialData?.sendWindow?.startHour?.toString() ?? '10',
+  );
+  const [endHour, setEndHour] = useState(initialData?.sendWindow?.endHour?.toString() ?? '20');
+  const [sendWindowDays, setSendWindowDays] = useState<WeekdayCode[]>(
+    initialData?.sendWindow?.days ?? DEFAULT_SEND_WINDOW_DAYS,
+  );
+  const [priority, setPriority] = useState(initialData?.priority?.toString() ?? '');
+
   const [reachCount, setReachCount] = useState<number | null>(null);
   const [isLoadingReach, setIsLoadingReach] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -85,8 +110,10 @@ export default function CreateAutomationModal({ visible, onClose, onSuccess, ini
   };
 
   const resetState = () => {
-    setCurrentPage(1);
+    setStepIndex(0);
     setName(initialData?.name || '');
+    setTriggerType(initialData?.trigger?.type ?? (isEditing ? null : 'post_checkout'));
+    setDays(initialData?.trigger?.days?.toString() ?? '');
     if (templates && templates.length > 0) {
       setTemplateId(initialData?.templateId || templates[0].id);
     } else {
@@ -95,6 +122,10 @@ export default function CreateAutomationModal({ visible, onClose, onSuccess, ini
     setTemplateVars(initialData?.templateVariables || {});
     setVariableConfigs({});
     setSelectedTiers((initialData?.filters?.tier as string[]) || ['All']);
+    setStartHour(initialData?.sendWindow?.startHour?.toString() ?? '10');
+    setEndHour(initialData?.sendWindow?.endHour?.toString() ?? '20');
+    setSendWindowDays(initialData?.sendWindow?.days ?? DEFAULT_SEND_WINDOW_DAYS);
+    setPriority(initialData?.priority?.toString() ?? '');
   };
 
   const handleClose = () => {
@@ -144,6 +175,10 @@ export default function CreateAutomationModal({ visible, onClose, onSuccess, ini
     setSelectedTiers(newTiers);
   };
 
+  const toggleSendWindowDay = (day: WeekdayCode) => {
+    setSendWindowDays(prev => (prev.includes(day) ? prev.filter(d => d !== day) : [...prev, day]));
+  };
+
   const currentTemplate = templates?.find(t => t.id === templateId);
 
   useEffect(() => {
@@ -155,6 +190,65 @@ export default function CreateAutomationModal({ visible, onClose, onSuccess, ini
     }
   }, [templates, templateId]);
 
+  const needsSendWindow = triggerType !== 'post_checkout';
+  const needsPriority = triggerType !== 'post_checkout';
+
+  const validateTriggerStep = (): boolean => {
+    if (!triggerType) {
+      showAlert('Error', 'Please choose when this automation should send.');
+      return false;
+    }
+    if (triggerType === 'days_since_visit') {
+      const daysNum = Number(days);
+      if (!Number.isInteger(daysNum) || daysNum < 1) {
+        showAlert('Error', 'Days after visit must be a whole number of at least 1.');
+        return false;
+      }
+    }
+    return true;
+  };
+
+  const validateTimingStep = (): boolean => {
+    if (needsSendWindow) {
+      const startNum = Number(startHour);
+      const endNum = Number(endHour);
+      if (
+        !Number.isInteger(startNum) ||
+        !Number.isInteger(endNum) ||
+        startNum < 0 ||
+        endNum > 24 ||
+        startNum >= endNum
+      ) {
+        showAlert('Error', 'Send window must have a start hour before the end hour (0–24).');
+        return false;
+      }
+      if (sendWindowDays.length === 0) {
+        showAlert('Error', 'Select at least one day for the send window.');
+        return false;
+      }
+    }
+    if (needsPriority) {
+      const priorityNum = Number(priority);
+      if (!Number.isInteger(priorityNum) || priorityNum < 1) {
+        showAlert('Error', 'Priority must be a whole number, 1 or higher.');
+        return false;
+      }
+    }
+    return true;
+  };
+
+  const goNext = () => {
+    if (currentStep === 'trigger' && !validateTriggerStep()) return;
+    if (currentStep === 'audience' && !name.trim()) {
+      showAlert('Error', 'Automation name is required.');
+      return;
+    }
+    if (currentStep === 'timing' && !validateTimingStep()) return;
+    setStepIndex(i => Math.min(i + 1, steps.length - 1));
+  };
+
+  const goBack = () => setStepIndex(i => Math.max(i - 1, 0));
+
   const submitPayload = async (isDraft: boolean) => {
     if (!name.trim()) {
       showAlert('Error', 'Automation name is required.');
@@ -164,6 +258,11 @@ export default function CreateAutomationModal({ visible, onClose, onSuccess, ini
       showAlert('Error', 'Please select a template.');
       return;
     }
+    if (!triggerType) {
+      showAlert('Error', 'Please choose when this automation should send.');
+      return;
+    }
+    if (!validateTimingStep()) return;
 
     setIsSubmitting(true);
 
@@ -173,7 +272,10 @@ export default function CreateAutomationModal({ visible, onClose, onSuccess, ini
       templateVariables: templateVars,
       variableConfigs,
       type: 'trigger',
-      trigger: { type: 'post_checkout' },
+      trigger:
+        triggerType === 'days_since_visit'
+          ? { type: triggerType, days: Number(days) }
+          : { type: triggerType },
       filters: {
         tier: selectedTiers,
       },
@@ -181,6 +283,17 @@ export default function CreateAutomationModal({ visible, onClose, onSuccess, ini
       status: isDraft ? 'draft' : 'pending_approval',
       metadata: {},
     };
+
+    if (needsSendWindow) {
+      payload.sendWindow = {
+        startHour: Number(startHour),
+        endHour: Number(endHour),
+        days: sendWindowDays,
+      };
+    }
+    if (needsPriority) {
+      payload.priority = Number(priority);
+    }
 
     try {
       if (initialData?._id) {
@@ -203,28 +316,33 @@ export default function CreateAutomationModal({ visible, onClose, onSuccess, ini
     }
   };
 
+  const stepTitles: Record<Step, string> = {
+    trigger: 'When to Send',
+    audience: 'Audience',
+    timing: 'Timing & Priority',
+    message: 'Message Content',
+  };
+
+  const isLastStep = currentStep === 'message';
+
   return (
     <>
       <SharedFormModal
         visible={visible}
-        title={currentPage === 1 ? 'Audience' : 'Message Content'}
-        buttonLabel={currentPage === 1 ? 'Select Template' : 'Submit for Approval'}
+        title={stepTitles[currentStep]}
+        buttonLabel={isLastStep ? 'Submit for Approval' : 'Continue'}
         onSubmit={() => {
-          if (currentPage === 1) {
-            if (!name.trim()) {
-              showAlert('Error', 'Automation name is required.');
-              return;
-            }
-            setCurrentPage(2);
-          } else {
+          if (isLastStep) {
             submitPayload(false);
+          } else {
+            goNext();
           }
         }}
-        secondaryButtonLabel={currentPage === 2 ? 'Save Draft' : undefined}
-        onSecondarySubmit={currentPage === 2 ? () => submitPayload(true) : undefined}
+        secondaryButtonLabel={isLastStep ? 'Save Draft' : undefined}
+        onSecondarySubmit={isLastStep ? () => submitPayload(true) : undefined}
         isSubmitting={isSubmitting}
         onClose={handleClose}
-        onBack={currentPage === 2 ? () => setCurrentPage(1) : undefined}
+        onBack={stepIndex > 0 ? goBack : undefined}
         overlay={
           <AlertModal
             visible={alertConfig.visible}
@@ -236,7 +354,16 @@ export default function CreateAutomationModal({ visible, onClose, onSuccess, ini
           />
         }
       >
-        {currentPage === 1 ? (
+        {currentStep === 'trigger' && (
+          <TriggerTypeStep
+            triggerType={triggerType}
+            onChangeTriggerType={setTriggerType}
+            days={days}
+            onChangeDays={setDays}
+            locked={isEditing}
+          />
+        )}
+        {currentStep === 'audience' && (
           <AutomationAudienceStep
             name={name}
             onChangeName={setName}
@@ -246,7 +373,22 @@ export default function CreateAutomationModal({ visible, onClose, onSuccess, ini
             isLoadingReach={isLoadingReach}
             tierOptions={tierOptions}
           />
-        ) : (
+        )}
+        {currentStep === 'timing' && (
+          <AutomationTimingStep
+            showSendWindow={needsSendWindow}
+            startHour={startHour}
+            endHour={endHour}
+            onChangeStartHour={setStartHour}
+            onChangeEndHour={setEndHour}
+            selectedDays={sendWindowDays}
+            onToggleDay={toggleSendWindowDay}
+            showPriority={needsPriority}
+            priority={priority}
+            onChangePriority={setPriority}
+          />
+        )}
+        {currentStep === 'message' && (
           <MessageContentStep
             templates={templates}
             isLoadingTemplates={isLoadingTemplates}

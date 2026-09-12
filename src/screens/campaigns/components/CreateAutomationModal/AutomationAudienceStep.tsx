@@ -32,11 +32,6 @@ export default function AutomationAudienceStep({
         style={styles.field}
       />
 
-      <Text style={styles.triggerLabel}>TRIGGER</Text>
-      <View style={styles.triggerCard}>
-        <Text style={styles.triggerText}>Right after checkout</Text>
-      </View>
-
       <Text style={styles.subLabel}>GUEST TIERS</Text>
       <View style={styles.chipGroup}>
         {tierOptions.map(tier => (
@@ -66,26 +61,6 @@ const styles = StyleSheet.create({
   field: {
     marginBottom: tokens.spacing.mdLg,
     fontFamily: tokens.typography.fontFamily.sub,
-  },
-  triggerLabel: {
-    fontFamily: tokens.typography.fontFamily.sub,
-    fontSize: tokens.typography.fontSize.label,
-    fontWeight: '500',
-    color: tokens.colors.textMuted,
-    marginBottom: tokens.spacing.sm,
-  },
-  triggerCard: {
-    backgroundColor: tokens.colors.surface,
-    borderRadius: tokens.borderRadius.md,
-    paddingVertical: tokens.spacing.md,
-    paddingHorizontal: tokens.spacing.md,
-    marginBottom: tokens.spacing.mdLg,
-  },
-  triggerText: {
-    fontFamily: tokens.typography.fontFamily.sub,
-    fontSize: tokens.typography.fontSize.body,
-    fontWeight: '600',
-    color: tokens.colors.textPrimary,
   },
   subLabel: {
     fontFamily: tokens.typography.fontFamily.sub,
