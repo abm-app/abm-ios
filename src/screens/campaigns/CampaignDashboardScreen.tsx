@@ -11,6 +11,7 @@ import ActionRequiredCard, { PendingAction } from './components/ActionRequiredCa
 import RecentBroadcastCard, { Broadcast } from './components/RecentBroadcastCard';
 import AutomationList from './components/AutomationList';
 import CreateCampaignModal from './components/CreateCampaignModal/CreateCampaignModal';
+import CreateAutomationModal from './components/CreateAutomationModal/CreateAutomationModal';
 import { useCampaigns, useInfiniteAutomations } from '@/hooks/campaigns/useCampaigns';
 import { LoadingSpinner, ErrorState, Backdrop, EmptyState, ListSurface } from '@/components/shared';
 import { AccordionHeader } from './components/Accordion';
@@ -62,6 +63,7 @@ function mapCampaignToBroadcast(c: Campaign): Broadcast {
 export default function CampaignDashboardScreen() {
   const [activeTab, setActiveTab] = useState('broadcasts');
   const [isCreateModalVisible, setIsCreateModalVisible] = useState(false);
+  const [isCreateAutomationModalVisible, setIsCreateAutomationModalVisible] = useState(false);
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
     pending: true,
     drafts: true,
@@ -107,7 +109,11 @@ export default function CampaignDashboardScreen() {
         showNotifications={false}
         showRightButton={user?.role !== 'staff'}
         rightButtonText="+ New"
-        onRightButtonPress={() => setIsCreateModalVisible(true)}
+        onRightButtonPress={() =>
+          activeTab === 'automations'
+            ? setIsCreateAutomationModalVisible(true)
+            : setIsCreateModalVisible(true)
+        }
       />
       <View style={[styles.mainWrapper, { paddingBottom: bottomPadding }]}>
         <ListSurface>
@@ -213,6 +219,12 @@ export default function CampaignDashboardScreen() {
         visible={isCreateModalVisible}
         onClose={() => setIsCreateModalVisible(false)}
         onSuccess={() => refetch()}
+      />
+
+      <CreateAutomationModal
+        visible={isCreateAutomationModalVisible}
+        onClose={() => setIsCreateAutomationModalVisible(false)}
+        onSuccess={() => refetchAutomations()}
       />
     </View>
   );
