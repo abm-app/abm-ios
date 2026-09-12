@@ -17,8 +17,8 @@ export const campaignKeys = {
   detail: (id: string) => [...campaignKeys.all, 'detail', id] as const,
   automations: (params?: FetchCampaignsParams) =>
     [...campaignKeys.all, 'automations', params ?? {}] as const,
-  automationRuns: (campaignId: string, page: number, limit: number) =>
-    [...campaignKeys.all, 'automations', campaignId, 'runs', page, limit] as const,
+  automationRuns: (campaignId: string, limit: number) =>
+    [...campaignKeys.all, 'automations', campaignId, 'runs', limit] as const,
 };
 
 export function useCampaigns() {
@@ -44,10 +44,15 @@ export function useInfiniteAutomations(
   });
 }
 
-export function useAutomationRuns(campaignId: string, page: number, limit: number) {
-  return useQuery({
-    queryKey: campaignKeys.automationRuns(campaignId, page, limit),
-    queryFn: () => getAutomationRuns(campaignId, page, limit),
+export function useInfiniteAutomationRuns(campaignId: string, limit = 20) {
+  return useInfiniteQuery({
+    queryKey: campaignKeys.automationRuns(campaignId, limit),
+    queryFn: ({ pageParam = 1 }) => getAutomationRuns(campaignId, pageParam, limit),
+    initialPageParam: 1,
+    getNextPageParam: lastPage => {
+      const { page, limit: pageLimit, total } = lastPage;
+      return page * pageLimit < total ? page + 1 : undefined;
+    },
     enabled: !!campaignId,
   });
 }

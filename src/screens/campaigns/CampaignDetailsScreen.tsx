@@ -245,6 +245,30 @@ export default function CampaignDetailsScreen() {
           <CampaignTargetAudience campaign={campaign} />
         )}
         <CampaignMessageContent messageBody={messageBody} />
+
+        {isAutomation && user?.role !== 'staff' && (
+          <TouchableOpacity
+            style={styles.runHistoryLink}
+            onPress={() =>
+              navigation.navigate('AutomationRunHistory', {
+                id: campaign._id,
+                name: campaign.name,
+              })
+            }
+          >
+            <Feather
+              name="clock"
+              size={tokens.iconSizes.content}
+              color={tokens.colors.textPrimary}
+            />
+            <Text style={styles.runHistoryLinkText}>View Run History</Text>
+            <Feather
+              name="chevron-right"
+              size={tokens.iconSizes.content}
+              color={tokens.colors.textMuted}
+            />
+          </TouchableOpacity>
+        )}
       </ScrollView>
 
       {/* Bottom Bar */}
@@ -372,5 +396,23 @@ const styles = StyleSheet.create({
     color: tokens.colors.danger,
     marginBottom: tokens.spacing.xlMd,
     marginTop: -tokens.spacing.smMd,
+  },
+  runHistoryLink: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: tokens.spacing.sm,
+    borderWidth: tokens.borderWidth.thin,
+    borderColor: tokens.colors.border,
+    borderRadius: tokens.borderRadius.lg,
+    paddingVertical: tokens.spacing.lgMd,
+    paddingHorizontal: tokens.spacing.lg,
+    marginBottom: tokens.spacing.mdLg,
+  },
+  runHistoryLinkText: {
+    flex: 1,
+    fontFamily: tokens.typography.fontFamily.sub,
+    fontSize: tokens.typography.fontSize.body,
+    fontWeight: '600',
+    color: tokens.colors.textPrimary,
   },
 });

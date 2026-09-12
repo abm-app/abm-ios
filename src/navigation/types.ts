@@ -42,6 +42,7 @@ export type RootStackParamList = {
   Auth: undefined;
   Main: undefined;
   CampaignDetails: { id: string };
+  AutomationRunHistory: { id: string; name: string };
   GuestProfile: { id: string };
 
   DesignSystemPreview: undefined;
