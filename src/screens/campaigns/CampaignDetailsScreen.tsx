@@ -11,7 +11,10 @@ import { LoadingSpinner, ErrorState, ConfirmationModal } from '@/components/shar
 import CampaignTargetAudience from './components/CampaignDetailsScreen/CampaignTargetAudience';
 import CampaignMessageContent from './components/CampaignDetailsScreen/CampaignMessageContent';
 import CampaignBottomBar from './components/CampaignDetailsScreen/CampaignBottomBar';
+import AutomationConfigCard from './components/CampaignDetailsScreen/AutomationConfigCard';
+import AutomationBottomBar from './components/CampaignDetailsScreen/AutomationBottomBar';
 import CreateCampaignModal from './components/CreateCampaignModal/CreateCampaignModal';
+import CreateAutomationModal from './components/CreateAutomationModal/CreateAutomationModal';
 import type { RootStackParamList } from '@/navigation/types';
 import {
   useCampaign,
@@ -58,8 +61,19 @@ export default function CampaignDetailsScreen() {
     });
   }
 
+  const isAutomation = campaign.type === 'trigger';
+
   // Format status for Chip
-  const statusLabel = campaign.status.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase());
+  const AUTOMATION_STATUS_LABEL: Record<string, string> = {
+    draft: 'Draft',
+    pending_approval: 'Awaiting Approval',
+    active: 'Active',
+    paused: 'Paused',
+    rejected: 'Rejected',
+  };
+  const statusLabel = isAutomation
+    ? (AUTOMATION_STATUS_LABEL[campaign.status] ?? campaign.status)
+    : campaign.status.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase());
   const isPending = campaign.status === 'pending_approval';
 
   // Format dates
@@ -72,20 +86,35 @@ export default function CampaignDetailsScreen() {
 
   const creatorName = campaign.createdBy?.name || 'Unknown';
 
+  const isOwner = user?.role === 'owner';
+  const isManager = user?.role === 'manager';
+  const isCreator = campaign.createdBy?.id === user?.id;
+
+  const canEdit = isAutomation ? isOwner || (isManager && isCreator) : user?.role !== 'staff';
+  const canDelete = isAutomation ? isOwner : user?.role !== 'staff';
+  const canApproveReject = isOwner && isPending;
+  const canPauseResume =
+    isAutomation && isOwner && (campaign.status === 'active' || campaign.status === 'paused');
+
   const handleApprove = async () => {
     if (!campaign) return;
     try {
       await updateMutation.mutateAsync({
         id: campaign._id,
-        payload: { status: 'approved' },
+        payload: { status: isAutomation ? 'active' : 'approved' },
       });
       Alert.alert(
-        'Campaign Approved',
-        'The campaign has been approved and will be sent at the scheduled time.',
+        isAutomation ? 'Automation Approved' : 'Campaign Approved',
+        isAutomation
+          ? 'The automation is now active and will start sending.'
+          : 'The campaign has been approved and will be sent at the scheduled time.',
         [{ text: 'OK', style: 'cancel' }],
       );
     } catch {
-      Alert.alert('Error', 'Failed to approve campaign');
+      Alert.alert(
+        'Error',
+        isAutomation ? 'Failed to approve automation' : 'Failed to approve campaign',
+      );
     }
   };
 
@@ -97,7 +126,34 @@ export default function CampaignDetailsScreen() {
         payload: { status: 'rejected', rejectionReason: 'Rejected by owner' },
       });
     } catch {
-      Alert.alert('Error', 'Failed to reject campaign');
+      Alert.alert(
+        'Error',
+        isAutomation ? 'Failed to reject automation' : 'Failed to reject campaign',
+      );
+    }
+  };
+
+  const handlePause = async () => {
+    if (!campaign) return;
+    try {
+      await updateMutation.mutateAsync({
+        id: campaign._id,
+        payload: { status: 'paused' },
+      });
+    } catch {
+      Alert.alert('Error', 'Failed to pause automation');
+    }
+  };
+
+  const handleResume = async () => {
+    if (!campaign) return;
+    try {
+      await updateMutation.mutateAsync({
+        id: campaign._id,
+        payload: { status: 'active' },
+      });
+    } catch {
+      Alert.alert('Error', 'Failed to resume automation');
     }
   };
 
@@ -108,7 +164,10 @@ export default function CampaignDetailsScreen() {
       setIsDeleteModalVisible(false);
       navigation.goBack();
     } catch {
-      Alert.alert('Error', 'Failed to delete campaign');
+      Alert.alert(
+        'Error',
+        isAutomation ? 'Failed to delete automation' : 'Failed to delete campaign',
+      );
       setIsDeleteModalVisible(false);
     }
   };
@@ -127,25 +186,31 @@ export default function CampaignDetailsScreen() {
           >
             <Feather name="chevron-left" size={24} color={tokens.colors.textPrimary} />
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>Campaign Details</Text>
+          <Text style={styles.headerTitle}>
+            {isAutomation ? 'Automation Details' : 'Campaign Details'}
+          </Text>
         </View>
 
-        {user?.role !== 'staff' && (
+        {(canEdit || canDelete) && (
           <View style={styles.actionsContainer}>
-            <Button
-              label="Edit"
-              variant="secondary"
-              size="sm"
-              onPress={() => setIsEditModalVisible(true)}
-              style={styles.pillButton}
-            />
-            <Button
-              label="Delete"
-              variant="danger"
-              size="sm"
-              onPress={() => setIsDeleteModalVisible(true)}
-              style={[styles.pillButton, styles.deleteButtonBorder]}
-            />
+            {canEdit && (
+              <Button
+                label="Edit"
+                variant="secondary"
+                size="sm"
+                onPress={() => setIsEditModalVisible(true)}
+                style={styles.pillButton}
+              />
+            )}
+            {canDelete && (
+              <Button
+                label="Delete"
+                variant="danger"
+                size="sm"
+                onPress={() => setIsDeleteModalVisible(true)}
+                style={[styles.pillButton, styles.deleteButtonBorder]}
+              />
+            )}
           </View>
         )}
       </View>
@@ -169,36 +234,87 @@ export default function CampaignDetailsScreen() {
           Submitted by: {creatorName} on {dateStr}
         </Text>
 
+        {campaign.status === 'rejected' && campaign.rejectionReason && (
+          <Text style={styles.rejectionText}>Reason: {campaign.rejectionReason}</Text>
+        )}
+
         {/* Content Cards */}
-        <CampaignTargetAudience campaign={campaign} />
+        {isAutomation ? (
+          <AutomationConfigCard campaign={campaign} />
+        ) : (
+          <CampaignTargetAudience campaign={campaign} />
+        )}
         <CampaignMessageContent messageBody={messageBody} />
+
+        {isAutomation && user?.role !== 'staff' && (
+          <TouchableOpacity
+            style={styles.runHistoryLink}
+            onPress={() =>
+              navigation.navigate('AutomationRunHistory', {
+                id: campaign._id,
+                name: campaign.name,
+              })
+            }
+          >
+            <Feather
+              name="clock"
+              size={tokens.iconSizes.content}
+              color={tokens.colors.textPrimary}
+            />
+            <Text style={styles.runHistoryLinkText}>View Run History</Text>
+            <Feather
+              name="chevron-right"
+              size={tokens.iconSizes.content}
+              color={tokens.colors.textMuted}
+            />
+          </TouchableOpacity>
+        )}
       </ScrollView>
 
       {/* Bottom Bar */}
-      {isPending && user?.role === 'owner' && (
+      {canApproveReject && (
         <CampaignBottomBar
           campaignName={campaign.name}
           onApprove={handleApprove}
           onReject={handleReject}
         />
       )}
-
-      {/* Modals */}
-      {isEditModalVisible && (
-        <CreateCampaignModal
-          visible={isEditModalVisible}
-          onClose={() => setIsEditModalVisible(false)}
-          initialData={campaign}
-          onSuccess={refetch}
+      {canPauseResume && (
+        <AutomationBottomBar
+          status={campaign.status as 'active' | 'paused'}
+          onPause={handlePause}
+          onResume={handleResume}
         />
       )}
+
+      {/* Modals */}
+      {isEditModalVisible &&
+        (isAutomation ? (
+          <CreateAutomationModal
+            visible={isEditModalVisible}
+            onClose={() => setIsEditModalVisible(false)}
+            initialData={campaign}
+            onSuccess={refetch}
+          />
+        ) : (
+          <CreateCampaignModal
+            visible={isEditModalVisible}
+            onClose={() => setIsEditModalVisible(false)}
+            initialData={campaign}
+            onSuccess={refetch}
+          />
+        ))}
       {isDeleteModalVisible && (
         <ConfirmationModal
           visible={isDeleteModalVisible}
           onClose={() => setIsDeleteModalVisible(false)}
           onConfirm={handleDelete}
-          title="Delete Campaign"
-          content="Are you sure you want to delete this campaign? This action cannot be undone."
+          title={isAutomation ? 'Delete Automation' : 'Delete Campaign'}
+          content={
+            isAutomation
+              ? 'This automation and its configuration will be permanently deleted — delivery history is kept.'
+              : 'Are you sure you want to delete this campaign? This action cannot be undone.'
+          }
           confirmLabel="Delete"
           iconVariant="danger"
           icon={<Feather name="trash-2" size={32} color={tokens.colors.danger} />}
@@ -273,5 +389,30 @@ const styles = StyleSheet.create({
     fontSize: tokens.typography.fontSize.body,
     color: tokens.colors.textMuted,
     marginBottom: tokens.spacing.xlMd,
+  },
+  rejectionText: {
+    fontFamily: tokens.typography.fontFamily.sub,
+    fontSize: tokens.typography.fontSize.body,
+    color: tokens.colors.danger,
+    marginBottom: tokens.spacing.xlMd,
+    marginTop: -tokens.spacing.smMd,
+  },
+  runHistoryLink: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: tokens.spacing.sm,
+    borderWidth: tokens.borderWidth.thin,
+    borderColor: tokens.colors.border,
+    borderRadius: tokens.borderRadius.lg,
+    paddingVertical: tokens.spacing.lgMd,
+    paddingHorizontal: tokens.spacing.lg,
+    marginBottom: tokens.spacing.mdLg,
+  },
+  runHistoryLinkText: {
+    flex: 1,
+    fontFamily: tokens.typography.fontFamily.sub,
+    fontSize: tokens.typography.fontSize.body,
+    fontWeight: '600',
+    color: tokens.colors.textPrimary,
   },
 });

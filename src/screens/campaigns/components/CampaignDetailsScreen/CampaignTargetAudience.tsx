@@ -20,7 +20,7 @@ export default function CampaignTargetAudience({ campaign }: Props) {
 
       <View style={styles.row}>
         <Text style={styles.rowLabel}>Estimated Reach</Text>
-        <Text style={styles.rowValue}>~{recipientCount.toLocaleString()} Guests</Text>
+        <Text style={styles.rowValue}>~{(recipientCount ?? 0).toLocaleString()} Guests</Text>
       </View>
 
       <View style={styles.divider} />

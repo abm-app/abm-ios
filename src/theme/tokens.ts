@@ -27,6 +27,7 @@ const colors = {
 
   // Status
   danger: '#C0392B',
+  dangerLight: 'rgba(192, 57, 43, 0.1)',
   warning: '#E65100',
   warningSurface: '#FFD9B2',
   success: '#27AE60',
@@ -75,6 +76,15 @@ const colors = {
   statusArrivalBg: '#E3F2FD',
   statusArrivalText: '#1565C0',
   statusArrivalBorder: '#90CAF9',
+  statusDirtyBg: '#FFF8E1',
+  statusDirtyText: '#F57F17',
+  statusDirtyBorder: '#FFE082',
+  statusMaintenanceBg: '#FFEBEE',
+  statusMaintenanceText: '#C62828',
+  statusMaintenanceBorder: '#EF9A9A',
+  statusManagementBg: '#F3E5F5',
+  statusManagementText: '#6A1B9A',
+  statusManagementBorder: '#CE93D8',
 
   // Cards
   cardDarkBg: '#0F0F0F',

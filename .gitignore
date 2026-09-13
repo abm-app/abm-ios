@@ -54,3 +54,4 @@ app_apks_extracted
 *.apks
 *.jar
 *.keystore
+.bin

@@ -1,8 +1,8 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import tokens from '@/theme/tokens';
-import { formatDate } from '@/utils/dateUtils';
+import { formatDateTimeIST, formatTimeIST } from '@/utils/dateUtils';
 
 import { useGuestCommunications } from '@/hooks/guests/useGuests';
 import { LoadingSpinner, ErrorState, EmptyState } from '@/components/shared';
@@ -13,16 +13,46 @@ interface CommunicationLogProps {
   doNotContact: boolean;
 }
 
+const TRIGGER_LABELS: Record<string, string> = {
+  campaign: 'Campaign',
+  post_checkout: 'Post checkout',
+  re_engagement: 'Re-engagement',
+  milestone: 'Milestone',
+  days_since_visit: 'Days since visit',
+  tier_upgrade: 'Tier upgrade',
+};
+
+function triggerLabel(triggerType: string): string {
+  return TRIGGER_LABELS[triggerType] || 'System';
+}
+
+/**
+ * templateId is a WhatsApp template name (post_checkout), but campaigns created
+ * before the backend resolved it store Meta's numeric id instead.
+ */
+function templateLabel(templateId: string): string {
+  if (!templateId) return 'WhatsApp message';
+  if (/^\d+$/.test(templateId)) return 'WhatsApp message';
+  return templateId
+    .split('_')
+    .filter(Boolean)
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+}
+
 export default function CommunicationLog({ guestId, doNotContact }: CommunicationLogProps) {
   const {
-    data: responseData,
+    data,
     isLoading,
     isError,
     error,
     refetch,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
   } = useGuestCommunications(guestId);
 
-  const communications = responseData?.messages;
+  const communications = data?.pages.flatMap(page => page.messages);
 
   const getStatusDisplay = (status: string) => {
     switch (status) {
@@ -32,6 +62,8 @@ export default function CommunicationLog({ guestId, doNotContact }: Communicatio
         return { label: 'DELIVERED', color: tokens.colors.textMuted, icon: 'check' as const };
       case 'failed':
         return { label: 'FAILED', color: tokens.colors.danger, icon: 'x-circle' as const };
+      case 'skipped':
+        return { label: 'SKIPPED', color: tokens.colors.warning, icon: 'slash' as const };
       case 'sent':
       default:
         return { label: 'SENT', color: tokens.colors.textMuted, icon: 'check' as const };
@@ -82,13 +114,14 @@ export default function CommunicationLog({ guestId, doNotContact }: Communicatio
       {communications.map((msg, index) => {
         const isLast = index === communications.length - 1;
         const statusDisplay = getStatusDisplay(msg.status);
-        // Fallback for body content since our mock data doesn't provide it
-        const bodyText =
-          msg.templateId === 'festival_offer_01'
-            ? 'Hi there, your special festival offer is inside...'
-            : msg.templateId === 'post_checkout_01'
-              ? 'Thank you for staying at our hotel...'
-              : 'We miss you, here is 10% off your next stay...';
+        const isSkipped = msg.status === 'skipped';
+
+        const deliveredAt = formatTimeIST(msg.deliveredAt ?? undefined);
+        const readAt = formatTimeIST(msg.readAt ?? undefined);
+        const deliveryParts = [
+          deliveredAt ? `Delivered ${deliveredAt}` : null,
+          readAt ? `Read ${readAt}` : null,
+        ].filter(Boolean);
 
         return (
           <View key={msg.id} style={styles.timelineRow}>
@@ -102,8 +135,9 @@ export default function CommunicationLog({ guestId, doNotContact }: Communicatio
             <Card variant="flat" padded style={styles.timelineContent}>
               <View style={styles.msgHeader}>
                 <Text style={styles.msgMeta}>
-                  SENT: {(formatDate(msg.sentAt) || '').toUpperCase()} •{' '}
-                  {(msg.triggerType || 'SYSTEM').toUpperCase()}
+                  {isSkipped ? 'NOT SENT' : 'SENT'}:{' '}
+                  {(formatDateTimeIST(msg.sentAt) || '').toUpperCase()} •{' '}
+                  {triggerLabel(msg.triggerType).toUpperCase()}
                 </Text>
                 <View style={styles.statusBadge}>
                   <Feather name={statusDisplay.icon} size={12} color={statusDisplay.color} />
@@ -112,14 +146,38 @@ export default function CommunicationLog({ guestId, doNotContact }: Communicatio
                   </Text>
                 </View>
               </View>
-              <Text style={styles.templateName}>{msg.templateId}</Text>
-              <Text style={styles.msgBody} numberOfLines={1}>
-                {bodyText}
+
+              <Text style={styles.templateName}>{templateLabel(msg.templateId)}</Text>
+              <Text style={styles.msgBody} numberOfLines={2}>
+                {msg.templateBody}
               </Text>
+
+              {deliveryParts.length > 0 && (
+                <Text style={styles.deliveryTimes}>{deliveryParts.join(' • ')}</Text>
+              )}
+
+              {msg.failureReason && (
+                <Text style={[styles.reasonText, styles.failureReason]}>{msg.failureReason}</Text>
+              )}
+              {isSkipped && msg.skipReasonText && (
+                <Text style={[styles.reasonText, styles.skipReason]}>{msg.skipReasonText}</Text>
+              )}
             </Card>
           </View>
         );
       })}
+
+      {hasNextPage && (
+        <Pressable
+          style={styles.loadMore}
+          onPress={() => fetchNextPage()}
+          disabled={isFetchingNextPage}
+        >
+          <Text style={styles.loadMoreText}>
+            {isFetchingNextPage ? 'LOADING…' : 'LOAD OLDER MESSAGES'}
+          </Text>
+        </Pressable>
+      )}
     </View>
   );
 }
@@ -206,6 +264,35 @@ const styles = StyleSheet.create({
   msgBody: {
     fontFamily: tokens.typography.fontFamily.sub,
     fontSize: tokens.typography.fontSize.caption,
+    color: tokens.colors.textSecondary,
+  },
+  deliveryTimes: {
+    fontFamily: tokens.typography.fontFamily.sub,
+    fontSize: 10,
+    color: tokens.colors.textMuted,
+    marginTop: tokens.spacing.xs,
+  },
+  reasonText: {
+    fontFamily: tokens.typography.fontFamily.sub,
+    fontSize: tokens.typography.fontSize.caption,
+    marginTop: tokens.spacing.xs,
+  },
+  failureReason: {
+    color: tokens.colors.danger,
+  },
+  skipReason: {
+    color: tokens.colors.warning,
+  },
+  loadMore: {
+    alignItems: 'center',
+    paddingVertical: tokens.spacing.md,
+    marginTop: tokens.spacing.xs,
+  },
+  loadMoreText: {
+    fontFamily: tokens.typography.fontFamily.sub,
+    fontSize: tokens.typography.fontSize.caption,
+    fontWeight: '700',
+    letterSpacing: 0.5,
     color: tokens.colors.textSecondary,
   },
 });

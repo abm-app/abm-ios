@@ -1,5 +1,5 @@
 import apiClient from '../client';
-import type { GuestFilters, GuestResponse, Guest, CommunicationLogEvent } from '@/types/guest';
+import type { GuestFilters, GuestResponse, Guest, CommunicationLogResponse } from '@/types/guest';
 import type { GuestStaysResponse } from '@/types/booking';
 
 export const getGuests = (filters: GuestFilters): Promise<GuestResponse> =>
@@ -16,7 +16,9 @@ export const updateGuestDnc = (guestId: string, doNotContact: boolean): Promise<
 
 export const getGuestCommunications = (
   guestId: string,
-): Promise<{ messages: CommunicationLogEvent[]; total: number }> =>
+  page = 1,
+  limit = 20,
+): Promise<CommunicationLogResponse> =>
   apiClient
-    .get<{ messages: CommunicationLogEvent[]; total: number }>(`/guests/${guestId}/messages/`)
+    .get<CommunicationLogResponse>(`/guests/${guestId}/messages/`, { params: { page, limit } })
     .then(r => r.data);

@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useInfiniteQuery } from '@tanstack/react-query';
 import {
   fetchCampaigns,
   fetchCampaignById,
@@ -7,18 +7,53 @@ import {
   updateCampaign,
   deleteCampaign,
   getEstimatedReach,
+  getAutomationRuns,
+  type FetchCampaignsParams,
 } from '@/api/endpoints/campaignApi';
 
 export const campaignKeys = {
   all: ['campaigns'] as const,
   list: () => [...campaignKeys.all, 'list'] as const,
   detail: (id: string) => [...campaignKeys.all, 'detail', id] as const,
+  automations: (params?: FetchCampaignsParams) =>
+    [...campaignKeys.all, 'automations', params ?? {}] as const,
+  automationRuns: (campaignId: string, limit: number) =>
+    [...campaignKeys.all, 'automations', campaignId, 'runs', limit] as const,
 };
 
 export function useCampaigns() {
   return useQuery({
     queryKey: campaignKeys.list(),
-    queryFn: () => fetchCampaigns(),
+    queryFn: async () => (await fetchCampaigns()).campaigns,
+  });
+}
+
+export function useInfiniteAutomations(
+  params?: Omit<FetchCampaignsParams, 'type' | 'page'>,
+  enabled = true,
+) {
+  return useInfiniteQuery({
+    queryKey: campaignKeys.automations(params),
+    queryFn: ({ pageParam = 1 }) => fetchCampaigns({ ...params, type: 'trigger', page: pageParam }),
+    initialPageParam: 1,
+    getNextPageParam: lastPage => {
+      const { page, limit, total } = lastPage;
+      return page * limit < total ? page + 1 : undefined;
+    },
+    enabled,
+  });
+}
+
+export function useInfiniteAutomationRuns(campaignId: string, limit = 20) {
+  return useInfiniteQuery({
+    queryKey: campaignKeys.automationRuns(campaignId, limit),
+    queryFn: ({ pageParam = 1 }) => getAutomationRuns(campaignId, pageParam, limit),
+    initialPageParam: 1,
+    getNextPageParam: lastPage => {
+      const { page, limit: pageLimit, total } = lastPage;
+      return page * pageLimit < total ? page + 1 : undefined;
+    },
+    enabled: !!campaignId,
   });
 }
 

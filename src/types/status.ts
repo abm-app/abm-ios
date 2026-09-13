@@ -1,6 +1,13 @@
 export type PropertyKey = 'express' | 'international';
 
-export type RoomStatusType = 'occupied' | 'vacant' | 'checking_out' | 'arriving';
+export type RoomStatusType =
+  | 'occupied'
+  | 'vacant'
+  | 'checking_out'
+  | 'arriving'
+  | 'dirty'
+  | 'maintenance'
+  | 'management';
 
 export interface PropertyStatusOverview {
   name: string;

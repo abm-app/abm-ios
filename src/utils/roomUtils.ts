@@ -30,6 +30,33 @@ export function getRoomStatusConfig(status: RoomStatusType) {
           border: tokens.colors.statusArrivalBorder,
         },
       };
+    case 'dirty':
+      return {
+        label: 'Dirty',
+        colors: {
+          bg: tokens.colors.statusDirtyBg,
+          text: tokens.colors.statusDirtyText,
+          border: tokens.colors.statusDirtyBorder,
+        },
+      };
+    case 'maintenance':
+      return {
+        label: 'Maintenance',
+        colors: {
+          bg: tokens.colors.statusMaintenanceBg,
+          text: tokens.colors.statusMaintenanceText,
+          border: tokens.colors.statusMaintenanceBorder,
+        },
+      };
+    case 'management':
+      return {
+        label: 'Management',
+        colors: {
+          bg: tokens.colors.statusManagementBg,
+          text: tokens.colors.statusManagementText,
+          border: tokens.colors.statusManagementBorder,
+        },
+      };
     case 'vacant':
     default:
       return {
