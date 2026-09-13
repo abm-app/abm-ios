@@ -3,7 +3,8 @@ import { View, Text, StyleSheet } from 'react-native';
 import tokens from '@/theme/tokens';
 import { FilterSheet } from '@/components/shared/FilterSheet';
 import { formatDate } from '@/utils/dateUtils';
-import type { LiveStatusRoom, RoomStatusType } from '@/types/status';
+import { getRoomStatusConfig } from '@/utils/roomUtils';
+import type { LiveStatusRoom } from '@/types/status';
 
 interface RoomDetailsSheetProps {
   visible: boolean;
@@ -14,37 +15,7 @@ interface RoomDetailsSheetProps {
 export function RoomDetailsSheet({ visible, onClose, room }: RoomDetailsSheetProps) {
   if (!room) return null;
 
-  const getStatusDisplay = (status: RoomStatusType) => {
-    switch (status) {
-      case 'checking_out':
-        return {
-          label: 'Checkout Today',
-          bg: tokens.colors.statusCheckoutBg,
-          text: tokens.colors.statusCheckoutText,
-        };
-      case 'arriving':
-        return {
-          label: 'Arrival Today',
-          bg: tokens.colors.statusArrivalBg,
-          text: tokens.colors.statusArrivalText,
-        };
-      case 'occupied':
-        return {
-          label: 'Occupied',
-          bg: tokens.colors.statusOccupiedBg,
-          text: tokens.colors.statusOccupiedText,
-        };
-      case 'vacant':
-      default:
-        return {
-          label: 'Vacant',
-          bg: tokens.colors.statusVacantBg,
-          text: tokens.colors.statusVacantText,
-        };
-    }
-  };
-
-  const statusDisplay = getStatusDisplay(room.status);
+  const { label, colors } = getRoomStatusConfig(room.status);
 
   return (
     <FilterSheet
@@ -57,10 +28,8 @@ export function RoomDetailsSheet({ visible, onClose, room }: RoomDetailsSheetPro
     >
       <View style={styles.content}>
         <View style={styles.badgeWrapper}>
-          <View style={[styles.badge, { backgroundColor: statusDisplay.bg }]}>
-            <Text style={[styles.badgeText, { color: statusDisplay.text }]}>
-              {statusDisplay.label}
-            </Text>
+          <View style={[styles.badge, { backgroundColor: colors.bg }]}>
+            <Text style={[styles.badgeText, { color: colors.text }]}>{label}</Text>
           </View>
         </View>
 
