@@ -14,6 +14,7 @@ import DesignSystemPreviewScreen from '@/screens/dev/DesignSystemPreview';
 import CampaignDetailsScreen from '@/screens/campaigns/CampaignDetailsScreen';
 import AutomationRunHistoryScreen from '@/screens/campaigns/AutomationRunHistoryScreen';
 import GuestProfileScreen from '@/screens/guests/GuestProfileScreen';
+import AuditTrailScreen from '@/screens/audit-trail/AuditTrailScreen';
 import { navigationRef } from './navigationRef';
 import { useNotificationListeners } from '@/hooks/notifications/useNotificationListeners';
 import { useBadgeSync } from '@/hooks/notifications/useBadgeSync';
@@ -54,6 +55,7 @@ export default function RootNavigator() {
                 <Stack.Screen name="CampaignDetails" component={CampaignDetailsScreen} />
                 <Stack.Screen name="AutomationRunHistory" component={AutomationRunHistoryScreen} />
                 <Stack.Screen name="GuestProfile" component={GuestProfileScreen} />
+                <Stack.Screen name="AuditTrail" component={AuditTrailScreen} />
                 {__DEV__ && (
                   <Stack.Screen
                     name="DesignSystemPreview"

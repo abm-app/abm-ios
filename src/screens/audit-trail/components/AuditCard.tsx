@@ -51,6 +51,9 @@ const EVENT_CONFIG: Record<AuditEventType, EventConfigItem> = {
 
 export interface AuditCardProps {
   event: AuditEvent;
+  // Set when this card is the target of a notification deep link (see AuditTrailScreen's
+  // highlightEventId) — draws attention to which event the user tapped through to find.
+  highlighted?: boolean;
 }
 
 const formatShortDate = (isoStr?: string) => {
@@ -158,7 +161,7 @@ const getDiffEntries = (before?: Record<string, unknown>, after?: Record<string,
   return diffs;
 };
 
-export function AuditCard({ event }: AuditCardProps) {
+export function AuditCard({ event, highlighted = false }: AuditCardProps) {
   const config = EVENT_CONFIG[event.eventType] || EVENT_CONFIG.modification;
   const timeStr = formatEventTime(event.detectedAt);
   const propertyName =
@@ -286,7 +289,11 @@ export function AuditCard({ event }: AuditCardProps) {
   };
 
   return (
-    <Card variant="shadow-outlined" shadow="elevatedCard" style={styles.card}>
+    <Card
+      variant="shadow-outlined"
+      shadow="elevatedCard"
+      style={[styles.card, highlighted && styles.cardHighlighted]}
+    >
       <View style={styles.topSection}>
         <View style={styles.headerRow}>
           <View style={[styles.badge, styles[config.badgeStyle]]}>
@@ -327,6 +334,11 @@ const styles = StyleSheet.create({
     padding: tokens.spacing.lgMd,
     marginBottom: tokens.spacing.md,
     justifyContent: 'space-between',
+  },
+  cardHighlighted: {
+    borderWidth: tokens.borderWidth.thick,
+    borderColor: tokens.colors.info,
+    backgroundColor: tokens.colors.infoLight,
   },
   topSection: {
     gap: tokens.spacing.xxs,

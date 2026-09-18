@@ -3,19 +3,17 @@ import { useQueryClient } from '@tanstack/react-query';
 import * as Notifications from 'expo-notifications';
 
 import { notificationKeys } from './useNotifications';
+import { navigationRef } from '@/navigation/navigationRef';
 import type { NotificationType } from '@/types/notification';
 import logger from '@/utils/logger';
 
 // Matches the `data` payload the backend sends via Expo push — see
-// abm-backend/notifications/dispatch.py send_push_notifications(). Only `notificationId`
-// and `type` are sent today; there is no `linkedEntityId`, so per-type tap destinations
-// (audit_event -> event route, report_ready -> PDF download) can't fully resolve *which*
-// entity to act on yet. Flagged for whoever builds those (steps 18/19) — either the
-// backend payload needs to start including it, or it has to be looked up client-side via
-// notificationId after the fact.
+// abm-backend/notifications/dispatch.py send_push_notifications(). `linkedEntityId` is the
+// audit event's ID for `audit_event`, or the report date string for `report_ready`.
 interface PushNotificationData {
   notificationId?: string;
   type?: NotificationType;
+  linkedEntityId?: string;
 }
 
 function getNotificationData(notification: Notifications.Notification): PushNotificationData {
@@ -23,7 +21,36 @@ function getNotificationData(notification: Notifications.Notification): PushNoti
   return {
     notificationId: typeof data.notificationId === 'string' ? data.notificationId : undefined,
     type: typeof data.type === 'string' ? data.type : undefined,
+    linkedEntityId: typeof data.linkedEntityId === 'string' ? data.linkedEntityId : undefined,
   };
+}
+
+// On a cold start (app launched by tapping a notification), this can run before
+// NavigationContainer has mounted — RootNavigator holds it back behind an async session
+// restore first. A `navigationRef.isReady()` check alone would silently drop the tap in
+// that case, so this retries briefly rather than giving up on the first miss.
+// Concrete rather than generic over navigationRef.navigate's params — its overloaded
+// signature doesn't type-check cleanly through a generic spread wrapper (confirmed by
+// tsc when this was first tried), and 'AuditTrail' is the only caller today anyway.
+function navigateToAuditTrailWhenReady(eventId: string | undefined): void {
+  const go = () => navigationRef.navigate('AuditTrail', { eventId });
+
+  if (navigationRef.isReady()) {
+    go();
+    return;
+  }
+  let attempts = 0;
+  const interval = setInterval(() => {
+    attempts += 1;
+    if (navigationRef.isReady()) {
+      clearInterval(interval);
+      go();
+    } else if (attempts >= 20) {
+      // ~2s — session restore reading from SecureStore should never take this long.
+      clearInterval(interval);
+      logger.warn('[useNotificationListeners] navigationRef never became ready, dropping tap');
+    }
+  }, 100);
 }
 
 // Routes a tapped notification to the right in-app destination. Only `audit_event`
@@ -32,9 +59,11 @@ function getNotificationData(notification: Notifications.Notification): PushNoti
 function handleNotificationTap(data: PushNotificationData) {
   switch (data.type) {
     case 'audit_event':
+      navigateToAuditTrailWhenReady(data.linkedEntityId);
+      break;
     case 'report_ready':
-      // TODO: wired up in steps 18/19 respectively.
-      logger.info(`[useNotificationListeners] Tap handling for "${data.type}" not built yet`);
+      // TODO: wired up in step 19 — downloads a PDF rather than navigating anywhere.
+      logger.info('[useNotificationListeners] Tap handling for "report_ready" not built yet');
       break;
     default:
       break;

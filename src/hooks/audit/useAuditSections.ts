@@ -18,10 +18,20 @@ export interface PropertySection {
   fetchNextPage: () => void;
 }
 
-export function useAuditSections(activeFilters: AuditFilters = {}) {
+interface UseAuditSectionsOptions {
+  // Expands both property sections on initial render instead of the usual
+  // express-open/international-collapsed default. Used when deep-linking to a specific
+  // event whose property isn't known up front — see AuditTrailScreen's `highlightEventId`.
+  forceExpandAll?: boolean;
+}
+
+export function useAuditSections(
+  activeFilters: AuditFilters = {},
+  { forceExpandAll = false }: UseAuditSectionsOptions = {},
+) {
   const [expandedMap, setExpandedMap] = useState<Record<AuditProperty, boolean>>({
     express: true,
-    international: false,
+    international: forceExpandAll,
   });
 
   const expressFilters = useMemo<AuditFilters>(
