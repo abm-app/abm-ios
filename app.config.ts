@@ -50,6 +50,27 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       },
     ],
     'expo-secure-store',
+    [
+      'expo-notifications',
+      {
+        // All distributable build profiles (preview/internal/production) sign with an
+        // Ad Hoc or App Store profile, which requires the 'production' APNs environment.
+        // The only profile that would need 'development' is `development` in eas.json,
+        // but that one targets iOS Simulator only (ios.simulator: true), and Simulator
+        // can never receive push at all — so there's no profile that actually needs
+        // 'development' here.
+        mode: 'production',
+        // FCM/local notifications default to this channel if none is specified.
+        // The channel itself still has to be created at runtime via
+        // Notifications.setNotificationChannelAsync (Android 8+ requirement) — done in
+        // the app's notification listener setup, not here.
+        defaultChannel: 'default',
+        enableBackgroundRemoteNotifications: true,
+        // No custom notification icon/color yet — Android wants a flat white/transparent
+        // silhouette (not the full-color app icon), which doesn't exist as an asset yet.
+        // Falls back to the OS default bell icon until a real one is designed.
+      },
+    ],
   ],
   extra: {
     eas: {
