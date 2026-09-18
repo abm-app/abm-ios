@@ -16,6 +16,7 @@ import AutomationRunHistoryScreen from '@/screens/campaigns/AutomationRunHistory
 import GuestProfileScreen from '@/screens/guests/GuestProfileScreen';
 import { navigationRef } from './navigationRef';
 import { useNotificationListeners } from '@/hooks/notifications/useNotificationListeners';
+import { useBadgeSync } from '@/hooks/notifications/useBadgeSync';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -28,6 +29,7 @@ export default function RootNavigator() {
   const restoreSession = useAuthStore(s => s.restoreSession);
 
   useNotificationListeners();
+  useBadgeSync();
 
   useEffect(() => {
     void restoreSession();

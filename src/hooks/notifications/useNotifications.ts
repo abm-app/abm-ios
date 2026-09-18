@@ -11,13 +11,21 @@ export const notificationKeys = {
   all: ['notifications'] as const,
 };
 
-export function useNotifications() {
+interface UseNotificationsOptions {
+  // Lets a consumer that mounts regardless of auth state (e.g. badge syncing) opt out of
+  // fetching until the user is actually logged in. Defaults to true — every existing call
+  // site is already behind the authenticated stack, so this stays a no-op for them.
+  enabled?: boolean;
+}
+
+export function useNotifications({ enabled = true }: UseNotificationsOptions = {}) {
   const queryClient = useQueryClient();
 
   const query = useQuery({
     queryKey: notificationKeys.all,
     queryFn: getNotifications,
     retry: false,
+    enabled,
   });
 
   const markAsReadMutation = useMutation({
