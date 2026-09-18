@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "531874480888",
+    "project_id": "abm-notifications-f045a",
+    "storage_bucket": "abm-notifications-f045a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:531874480888:android:5e3b6f07f1f753e850f10d",
+        "android_client_info": {
+          "package_name": "com.abm.android"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC0cVEFhbV5Uq8v2gdWqJJ7Gm3dE6y8xN4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:531874480888:android:06ee45e6900828f350f10d",
+        "android_client_info": {
+          "package_name": "com.abm.android.preview"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC0cVEFhbV5Uq8v2gdWqJJ7Gm3dE6y8xN4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

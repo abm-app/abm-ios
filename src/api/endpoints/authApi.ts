@@ -1,4 +1,5 @@
 import apiClient from '../client';
+import logger from '@/utils/logger';
 import type { LoginRequest, LoginResponse } from '@/types/auth';
 
 export const loginUser = async (payload: LoginRequest): Promise<LoginResponse> => {
@@ -20,6 +21,15 @@ export const loginUser = async (payload: LoginRequest): Promise<LoginResponse> =
 };
 
 export const logout = async (): Promise<void> => {
-  // Add backend logout endpoint call here if one exists
-  // await apiClient.post('/auth/logout');
+  // Best-effort — a device that keeps a stale token after logout would receive the next
+  // logged-in user's push notifications, but a failed clear should never block the actual
+  // local logout (session is always cleared regardless, see useLogout.ts's onSettled).
+  try {
+    await apiClient.delete('/auth/push-token');
+  } catch (error) {
+    logger.warn('[authApi] Failed to clear push token on logout', error);
+  }
 };
+
+export const registerPushToken = (pushToken: string): Promise<{ status: string }> =>
+  apiClient.patch('/auth/push-token', { pushToken }).then(r => r.data);

@@ -8,8 +8,8 @@ Read it in full before writing, editing, or deleting any code.
 ## Project Overview
 
 **ABM** is an iOS & Android hotel management app for ABM Express and ABM International.
-Built with React Native + Expo (managed workflow), TypeScript, TanStack Query, Zustand, and Axios.
-The backend is a NestJS API. The app is a rendering layer only — no business logic lives here.
+Built with React Native + Expo (bare/CNG workflow — native `ios`/`android` folders are generated via `expo prebuild` and gitignored, not committed), TypeScript, TanStack Query, Zustand, and Axios.
+The backend is a Django + Django REST Framework API (`abm-backend`, PyMongo/MongoDB — no Django ORM). The app is a rendering layer only — no business logic lives here.
 
 - **iOS bundle identifier:** `com.ceyxasm.abm`
 - **Android package name:** `com.abm.android`

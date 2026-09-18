@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { LayoutAnimation } from 'react-native';
 import { useAuditEvents } from './useAuditEvents';
 import type { AuditFilters } from './useAuditEvents';
@@ -18,11 +18,34 @@ export interface PropertySection {
   fetchNextPage: () => void;
 }
 
-export function useAuditSections(activeFilters: AuditFilters = {}) {
+interface UseAuditSectionsOptions {
+  // When set, both property sections are force-expanded — used when deep-linking to a
+  // specific event whose property isn't known up front (see AuditTrailScreen). Keyed on
+  // the event ID itself, not just a boolean: if this hook's owner stays mounted and
+  // receives a *different* target (e.g. a second audit_event notification tapped while
+  // already viewing the result of the first — React Navigation reuses the existing screen
+  // instance for a `navigate()` to the already-current route), the ID changing is what
+  // triggers re-expanding, since a boolean would already be `true` and never re-fire.
+  highlightEventId?: string;
+}
+
+export function useAuditSections(
+  activeFilters: AuditFilters = {},
+  { highlightEventId }: UseAuditSectionsOptions = {},
+) {
   const [expandedMap, setExpandedMap] = useState<Record<AuditProperty, boolean>>({
     express: true,
-    international: false,
+    international: Boolean(highlightEventId),
   });
+
+  useEffect(() => {
+    if (highlightEventId) {
+      setExpandedMap({ express: true, international: true });
+    }
+    // Intentionally does nothing when highlightEventId is absent/cleared — manual
+    // expand/collapse state from the user shouldn't be reset just because there's no
+    // longer a specific target.
+  }, [highlightEventId]);
 
   const expressFilters = useMemo<AuditFilters>(
     () => ({
