@@ -51,8 +51,18 @@ const AuditTrailScreen = forwardRef<AuditTrailScreenRef, AuditTrailScreenProps>(
     // rather than guessing — otherwise a collapsed section would just look like the event
     // doesn't exist.
     const { sections, toggleProperty, handleEndReached } = useAuditSections(activeFilters, {
-      forceExpandAll: Boolean(highlightEventId),
+      highlightEventId,
     });
+
+    // Resets when the target itself changes — e.g. a second audit_event notification
+    // tapped while this same screen instance is already showing the result of the first
+    // one (React Navigation reuses the existing screen for a `navigate()` to the
+    // already-current route rather than remounting it). Without this, the flag would still
+    // be `true` from the previous target and the effect below would never scroll to the
+    // new one.
+    useEffect(() => {
+      setHasScrolledToHighlight(false);
+    }, [highlightEventId]);
 
     // Best-effort: only scrolls to the event if it's among the already-loaded pages. Audit
     // events are sorted most-recent-first and this is specifically for recently-created

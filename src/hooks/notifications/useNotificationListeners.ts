@@ -96,12 +96,22 @@ export function useNotificationListeners() {
     });
 
     // Cold start: the app was launched by tapping a notification, rather than a listener
-    // firing while already running.
+    // firing while already running. Cleared immediately after handling — expo-notifications
+    // otherwise keeps returning this same response on a later call (e.g. a remount from
+    // Fast Refresh, or if this effect's deps ever change again), which would replay a tap
+    // that's already been handled.
     Notifications.getLastNotificationResponseAsync()
       .then(response => {
-        if (response) {
-          handleNotificationTap(getNotificationData(response.notification));
+        if (!response) {
+          return;
         }
+        handleNotificationTap(getNotificationData(response.notification));
+        Notifications.clearLastNotificationResponseAsync().catch(error => {
+          logger.error(
+            '[useNotificationListeners] Failed to clear last notification response',
+            error,
+          );
+        });
       })
       .catch(error => {
         logger.error('[useNotificationListeners] Failed to read last notification response', error);
