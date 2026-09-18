@@ -14,6 +14,8 @@ import DesignSystemPreviewScreen from '@/screens/dev/DesignSystemPreview';
 import CampaignDetailsScreen from '@/screens/campaigns/CampaignDetailsScreen';
 import AutomationRunHistoryScreen from '@/screens/campaigns/AutomationRunHistoryScreen';
 import GuestProfileScreen from '@/screens/guests/GuestProfileScreen';
+import { navigationRef } from './navigationRef';
+import { useNotificationListeners } from '@/hooks/notifications/useNotificationListeners';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -24,6 +26,8 @@ export default function RootNavigator() {
   const isAuthenticated = useAuthStore(s => s.isAuthenticated);
   const isRestoring = useAuthStore(s => s.isRestoring);
   const restoreSession = useAuthStore(s => s.restoreSession);
+
+  useNotificationListeners();
 
   useEffect(() => {
     void restoreSession();
@@ -40,7 +44,7 @@ export default function RootNavigator() {
   return (
     <SafeAreaProvider>
       <ThemeProvider>
-        <NavigationContainer>
+        <NavigationContainer ref={navigationRef}>
           <Stack.Navigator screenOptions={{ headerShown: false }}>
             {isAuthenticated ? (
               <>
