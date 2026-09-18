@@ -23,3 +23,6 @@ export const logout = async (): Promise<void> => {
   // Add backend logout endpoint call here if one exists
   // await apiClient.post('/auth/logout');
 };
+
+export const registerPushToken = (pushToken: string): Promise<{ status: string }> =>
+  apiClient.patch('/auth/push-token', { pushToken }).then(r => r.data);

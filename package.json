@@ -12,6 +12,7 @@
     "@tanstack/react-query": "^5.101.0",
     "axios": "1.6.8",
     "expo": "~54.0.35",
+    "expo-constants": "~18.0.14",
     "expo-dev-client": "sdk-54",
     "expo-device": "~8.0.10",
     "expo-file-system": "~19.0.24",
