@@ -3,6 +3,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import * as Notifications from 'expo-notifications';
 
 import { notificationKeys } from './useNotifications';
+import { useDownloadReportPdf } from './useDownloadReportPdf';
 import { navigationRef } from '@/navigation/navigationRef';
 import type { NotificationType } from '@/types/notification';
 import logger from '@/utils/logger';
@@ -53,29 +54,39 @@ function navigateToAuditTrailWhenReady(eventId: string | undefined): void {
   }, 100);
 }
 
-// Routes a tapped notification to the right in-app destination. Only `audit_event`
-// (step 18) and `report_ready` (step 19) will ever need real handling here — every other
-// type just opens the app, which the OS already does on tap regardless of this handler.
-function handleNotificationTap(data: PushNotificationData) {
-  switch (data.type) {
-    case 'audit_event':
-      navigateToAuditTrailWhenReady(data.linkedEntityId);
-      break;
-    case 'report_ready':
-      // TODO: wired up in step 19 — downloads a PDF rather than navigating anywhere.
-      logger.info('[useNotificationListeners] Tap handling for "report_ready" not built yet');
-      break;
-    default:
-      break;
-  }
-}
-
 // Subscribes to push notification events for the lifetime of the mounted component.
 // Mount this once, near the root of the app (after NavigationContainer is available).
 export function useNotificationListeners() {
   const queryClient = useQueryClient();
+  // Destructured to `mutate` specifically (not the whole mutation object) — `mutate` is
+  // referentially stable across renders in TanStack Query v5, the mutation *state* isn't.
+  // Depending on the whole object would re-subscribe the listeners below on every state
+  // change the mutation itself causes (pending -> success/error), which is wasteful.
+  const { mutate: downloadReportPdf } = useDownloadReportPdf();
 
   useEffect(() => {
+    // Routes a tapped notification to the right in-app destination. Only `audit_event`
+    // and `report_ready` need real handling — every other type just opens the app, which
+    // the OS already does on tap regardless of this handler.
+    const handleNotificationTap = (data: PushNotificationData) => {
+      switch (data.type) {
+        case 'audit_event':
+          navigateToAuditTrailWhenReady(data.linkedEntityId);
+          break;
+        case 'report_ready':
+          if (data.linkedEntityId) {
+            downloadReportPdf({ date: data.linkedEntityId });
+          } else {
+            logger.warn(
+              '[useNotificationListeners] report_ready notification missing linkedEntityId (date) — cannot download',
+            );
+          }
+          break;
+        default:
+          break;
+      }
+    };
+
     const receivedSubscription = Notifications.addNotificationReceivedListener(() => {
       queryClient.invalidateQueries({ queryKey: notificationKeys.all });
     });
@@ -100,5 +111,5 @@ export function useNotificationListeners() {
       receivedSubscription.remove();
       responseSubscription.remove();
     };
-  }, [queryClient]);
+  }, [queryClient, downloadReportPdf]);
 }
