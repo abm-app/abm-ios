@@ -55,3 +55,6 @@ app_apks_extracted
 *.jar
 *.keystore
 .bin
+# Google Play service account keys
+abm-app-*.json
+play-key*.json
