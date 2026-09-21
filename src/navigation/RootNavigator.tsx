@@ -14,6 +14,7 @@ import DesignSystemPreviewScreen from '@/screens/dev/DesignSystemPreview';
 import CampaignDetailsScreen from '@/screens/campaigns/CampaignDetailsScreen';
 import AutomationRunHistoryScreen from '@/screens/campaigns/AutomationRunHistoryScreen';
 import GuestProfileScreen from '@/screens/guests/GuestProfileScreen';
+import ReportViewerScreen from '@/screens/reports/ReportViewerScreen';
 import AuditTrailScreen from '@/screens/audit-trail/AuditTrailScreen';
 import { navigationRef } from './navigationRef';
 import { useNotificationListeners } from '@/hooks/notifications/useNotificationListeners';
@@ -56,6 +57,7 @@ export default function RootNavigator() {
                 <Stack.Screen name="AutomationRunHistory" component={AutomationRunHistoryScreen} />
                 <Stack.Screen name="GuestProfile" component={GuestProfileScreen} />
                 <Stack.Screen name="AuditTrail" component={AuditTrailScreen} />
+                <Stack.Screen name="ReportViewer" component={ReportViewerScreen} />
                 {__DEV__ && (
                   <Stack.Screen
                     name="DesignSystemPreview"

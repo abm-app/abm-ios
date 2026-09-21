@@ -3,7 +3,6 @@ import { useQueryClient } from '@tanstack/react-query';
 import * as Notifications from 'expo-notifications';
 
 import { notificationKeys } from './useNotifications';
-import { useDownloadReportPdf } from './useDownloadReportPdf';
 import { navigationRef } from '@/navigation/navigationRef';
 import type { NotificationType } from '@/types/notification';
 import logger from '@/utils/logger';
@@ -30,12 +29,9 @@ function getNotificationData(notification: Notifications.Notification): PushNoti
 // NavigationContainer has mounted — RootNavigator holds it back behind an async session
 // restore first. A `navigationRef.isReady()` check alone would silently drop the tap in
 // that case, so this retries briefly rather than giving up on the first miss.
-// Concrete rather than generic over navigationRef.navigate's params — its overloaded
-// signature doesn't type-check cleanly through a generic spread wrapper (confirmed by
-// tsc when this was first tried), and 'AuditTrail' is the only caller today anyway.
-function navigateToAuditTrailWhenReady(eventId: string | undefined): void {
-  const go = () => navigationRef.navigate('AuditTrail', { eventId });
-
+// Takes a callback rather than generic params — navigationRef.navigate's overloaded
+// signature doesn't type-check cleanly through a generic spread wrapper.
+function navigateWhenReady(go: () => void): void {
   if (navigationRef.isReady()) {
     go();
     return;
@@ -58,12 +54,6 @@ function navigateToAuditTrailWhenReady(eventId: string | undefined): void {
 // Mount this once, near the root of the app (after NavigationContainer is available).
 export function useNotificationListeners() {
   const queryClient = useQueryClient();
-  // Destructured to `mutate` specifically (not the whole mutation object) — `mutate` is
-  // referentially stable across renders in TanStack Query v5, the mutation *state* isn't.
-  // Depending on the whole object would re-subscribe the listeners below on every state
-  // change the mutation itself causes (pending -> success/error), which is wasteful.
-  const { mutate: downloadReportPdf } = useDownloadReportPdf();
-
   useEffect(() => {
     // Routes a tapped notification to the right in-app destination. Only `audit_event`
     // and `report_ready` need real handling — every other type just opens the app, which
@@ -71,14 +61,17 @@ export function useNotificationListeners() {
     const handleNotificationTap = (data: PushNotificationData) => {
       switch (data.type) {
         case 'audit_event':
-          navigateToAuditTrailWhenReady(data.linkedEntityId);
+          navigateWhenReady(() =>
+            navigationRef.navigate('AuditTrail', { eventId: data.linkedEntityId }),
+          );
           break;
         case 'report_ready':
           if (data.linkedEntityId) {
-            downloadReportPdf({ date: data.linkedEntityId });
+            const date = data.linkedEntityId;
+            navigateWhenReady(() => navigationRef.navigate('ReportViewer', { date }));
           } else {
             logger.warn(
-              '[useNotificationListeners] report_ready notification missing linkedEntityId (date) — cannot download',
+              '[useNotificationListeners] report_ready notification missing linkedEntityId (date) — cannot open',
             );
           }
           break;
@@ -121,5 +114,5 @@ export function useNotificationListeners() {
       receivedSubscription.remove();
       responseSubscription.remove();
     };
-  }, [queryClient, downloadReportPdf]);
+  }, [queryClient]);
 }

@@ -44,6 +44,7 @@ export type RootStackParamList = {
   CampaignDetails: { id: string };
   AutomationRunHistory: { id: string; name: string };
   GuestProfile: { id: string };
+  ReportViewer: { date: string };
   // eventId is optional so this screen still works when reached normally (not via a
   // notification deep link) — undefined means "just show the list, nothing to highlight."
   AuditTrail: { eventId?: string } | undefined;
