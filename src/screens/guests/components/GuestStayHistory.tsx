@@ -8,6 +8,7 @@ import { LoadingSpinner, ErrorState, EmptyState } from '@/components/shared';
 import { ROOMS_DB } from '@/types/room';
 import { formatDate } from '@/utils/dateUtils';
 import { useGuestStays } from '@/hooks/guests/useGuests';
+import { mergeConsecutiveStays } from '@/utils/mergeStays';
 
 const PROPERTY_NAMES = { express: 'ABM Express', international: 'ABM International' } as const;
 
@@ -58,7 +59,7 @@ export default function GuestStayHistory({ guestId }: GuestStayHistoryProps) {
     );
   }
 
-  const bookings = data?.stays ?? [];
+  const bookings = mergeConsecutiveStays(data?.stays ?? []);
 
   if (bookings.length === 0) {
     return (
@@ -76,7 +77,7 @@ export default function GuestStayHistory({ guestId }: GuestStayHistoryProps) {
     <View style={styles.listContainer}>
       {bookings.map((booking, index) => {
         const isLast = index === bookings.length - 1;
-        const roomName = ROOMS_DB[booking.rmCode] || booking.rmCode;
+        const roomName = booking.rooms.map(r => ROOMS_DB[r] || r).join(' → ');
 
         return (
           <View key={booking.id} style={styles.timelineRow}>
