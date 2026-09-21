@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { Feather } from '@expo/vector-icons';
 
 import tokens from '@/theme/tokens';
 import { Badge, Card } from '@/components/ui';
@@ -9,6 +10,30 @@ import { formatDate } from '@/utils/dateUtils';
 import { useGuestStays } from '@/hooks/guests/useGuests';
 
 const PROPERTY_NAMES = { express: 'ABM Express', international: 'ABM International' } as const;
+
+function StayDateRow({
+  label,
+  date,
+  staff,
+}: {
+  label: string;
+  date: string;
+  staff?: string | null;
+}) {
+  return (
+    <View style={styles.dateRow}>
+      <Text style={styles.stayDate}>
+        {label}: {formatDate(date)}
+      </Text>
+      {!!staff && (
+        <View style={styles.staffChip}>
+          <Feather name="user" size={12} color={tokens.colors.textSecondary} />
+          <Text style={styles.stayDate}>{staff}</Text>
+        </View>
+      )}
+    </View>
+  );
+}
 
 interface GuestStayHistoryProps {
   guestId: string;
@@ -63,14 +88,16 @@ export default function GuestStayHistory({ guestId }: GuestStayHistoryProps) {
             <Card variant="flat" padded style={styles.timelineContent}>
               <View style={styles.stayHeader}>
                 <View style={styles.stayDates}>
-                  <Text style={styles.stayDate}>
-                    Check-in: {formatDate(booking.checkinDate)}
-                    {booking.checkinStaffName ? ` · ${booking.checkinStaffName}` : ''}
-                  </Text>
-                  <Text style={styles.stayDate}>
-                    Checkout: {formatDate(booking.checkoutDate)}
-                    {booking.checkoutStaffName ? ` · ${booking.checkoutStaffName}` : ''}
-                  </Text>
+                  <StayDateRow
+                    label="Check-in"
+                    date={booking.checkinDate}
+                    staff={booking.checkinStaffName}
+                  />
+                  <StayDateRow
+                    label="Checkout"
+                    date={booking.checkoutDate}
+                    staff={booking.checkoutStaffName}
+                  />
                 </View>
                 {!!booking.pointsEarned && (
                   <Badge label={`+${booking.pointsEarned} Pts`} variant="low" />
@@ -132,6 +159,17 @@ const styles = StyleSheet.create({
     marginBottom: tokens.spacing.xs,
   },
   stayDates: {
+    gap: tokens.spacing.xs,
+  },
+  dateRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    columnGap: tokens.spacing.sm,
+  },
+  staffChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: tokens.spacing.xs,
   },
   stayDate: {
