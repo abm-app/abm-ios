@@ -8,6 +8,8 @@ import { ROOMS_DB } from '@/types/room';
 import { formatDate } from '@/utils/dateUtils';
 import { useGuestStays } from '@/hooks/guests/useGuests';
 
+const PROPERTY_NAMES = { express: 'ABM Express', international: 'ABM International' } as const;
+
 interface GuestStayHistoryProps {
   guestId: string;
 }
@@ -61,14 +63,25 @@ export default function GuestStayHistory({ guestId }: GuestStayHistoryProps) {
             <Card variant="flat" padded style={styles.timelineContent}>
               <View style={styles.stayHeader}>
                 <View style={styles.stayDates}>
-                  <Text style={styles.stayDate}>Check-in: {formatDate(booking.checkinDate)}</Text>
-                  <Text style={styles.stayDate}>Checkout: {formatDate(booking.checkoutDate)}</Text>
+                  <Text style={styles.stayDate}>
+                    Check-in: {formatDate(booking.checkinDate)}
+                    {booking.checkinStaffName ? ` · ${booking.checkinStaffName}` : ''}
+                  </Text>
+                  <Text style={styles.stayDate}>
+                    Checkout: {formatDate(booking.checkoutDate)}
+                    {booking.checkoutStaffName ? ` · ${booking.checkoutStaffName}` : ''}
+                  </Text>
                 </View>
                 {!!booking.pointsEarned && (
                   <Badge label={`+${booking.pointsEarned} Pts`} variant="low" />
                 )}
               </View>
-              <Text style={styles.roomName}>Room No. {roomName}</Text>
+              <View style={styles.roomRow}>
+                <Text style={styles.roomName}>Room No. {roomName}</Text>
+                {!!booking.property && (
+                  <Text style={styles.propertyName}>{PROPERTY_NAMES[booking.property]}</Text>
+                )}
+              </View>
             </Card>
           </View>
         );
@@ -127,11 +140,22 @@ const styles = StyleSheet.create({
     color: tokens.colors.textSecondary,
     fontWeight: '500',
   },
+  roomRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: tokens.spacing.sm,
+  },
   roomName: {
     fontFamily: tokens.typography.fontFamily.sub,
     fontSize: tokens.typography.fontSize.body,
     fontWeight: '600',
     color: tokens.colors.textPrimary,
-    marginTop: tokens.spacing.sm,
+  },
+  propertyName: {
+    fontFamily: tokens.typography.fontFamily.sub,
+    fontSize: tokens.typography.fontSize.caption,
+    color: tokens.colors.textSecondary,
+    fontWeight: '500',
   },
 });
