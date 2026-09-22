@@ -2,7 +2,9 @@ import { useState, useMemo, useEffect } from 'react';
 import { LayoutAnimation } from 'react-native';
 import { useAuditEvents } from './useAuditEvents';
 import type { AuditFilters } from './useAuditEvents';
-import type { AuditProperty, AuditEvent } from '@/types/audit';
+import type { AuditProperty } from '@/types/audit';
+import { groupEventsByDay } from '@/utils/auditGrouping';
+import type { AuditListRow } from '@/utils/auditGrouping';
 
 export interface PropertySection {
   propertyKey: AuditProperty;
@@ -12,7 +14,7 @@ export interface PropertySection {
   isLoading: boolean;
   isError: boolean;
   refetch: () => void;
-  data: AuditEvent[];
+  data: AuditListRow[];
   hasNextPage?: boolean;
   isFetchingNextPage: boolean;
   fetchNextPage: () => void;
@@ -84,7 +86,7 @@ export function useAuditSections(
         isLoading: expressQuery.isLoading,
         isError: expressQuery.isError,
         refetch: expressQuery.refetch,
-        data: (expandedMap.express ?? true) ? expressQuery.events : [],
+        data: (expandedMap.express ?? true) ? groupEventsByDay(expressQuery.events) : [],
         hasNextPage: expressQuery.hasNextPage,
         isFetchingNextPage: expressQuery.isFetchingNextPage,
         fetchNextPage: expressQuery.fetchNextPage,
@@ -97,7 +99,8 @@ export function useAuditSections(
         isLoading: internationalQuery.isLoading,
         isError: internationalQuery.isError,
         refetch: internationalQuery.refetch,
-        data: (expandedMap.international ?? false) ? internationalQuery.events : [],
+        data:
+          (expandedMap.international ?? false) ? groupEventsByDay(internationalQuery.events) : [],
         hasNextPage: internationalQuery.hasNextPage,
         isFetchingNextPage: internationalQuery.isFetchingNextPage,
         fetchNextPage: internationalQuery.fetchNextPage,
@@ -106,23 +109,9 @@ export function useAuditSections(
     [expandedMap, expressQuery, internationalQuery],
   );
 
-  const handleEndReached = () => {
-    if (expandedMap.express && expressQuery.hasNextPage && !expressQuery.isFetchingNextPage) {
-      expressQuery.fetchNextPage();
-    }
-    if (
-      expandedMap.international &&
-      internationalQuery.hasNextPage &&
-      !internationalQuery.isFetchingNextPage
-    ) {
-      internationalQuery.fetchNextPage();
-    }
-  };
-
   return {
     sections,
     toggleProperty,
-    handleEndReached,
     expandedMap,
   };
 }

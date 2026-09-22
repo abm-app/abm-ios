@@ -1,12 +1,5 @@
 import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
-import {
-  SectionList,
-  StyleSheet,
-  View,
-  Text,
-  TouchableOpacity,
-  ActivityIndicator,
-} from 'react-native';
+import { SectionList, StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -17,7 +10,8 @@ import type { AuditFilters } from '@/hooks/audit/useAuditEvents';
 import { AuditCard } from './components/AuditCard';
 import { AuditFilterSheet } from './components/AuditFilterSheet';
 import { LoadingSpinner, ErrorState, EmptyState } from '@/components/shared';
-import type { AuditEvent } from '@/types/audit';
+import { Button } from '@/components/ui';
+import type { AuditListRow } from '@/utils/auditGrouping';
 import type { RootStackParamList } from '@/navigation/types';
 
 export interface AuditTrailScreenRef {
@@ -38,7 +32,7 @@ const AuditTrailScreen = forwardRef<AuditTrailScreenRef, AuditTrailScreenProps>(
     const [isFilterVisible, setIsFilterVisible] = useState(false);
     const [activeFilters, setActiveFilters] = useState<AuditFilters>({});
     const [hasScrolledToHighlight, setHasScrolledToHighlight] = useState(false);
-    const sectionListRef = useRef<SectionList<AuditEvent, PropertySection>>(null);
+    const sectionListRef = useRef<SectionList<AuditListRow, PropertySection>>(null);
 
     useImperativeHandle(ref, () => ({
       openFilters: () => {
@@ -50,7 +44,7 @@ const AuditTrailScreen = forwardRef<AuditTrailScreenRef, AuditTrailScreenProps>(
     // notification payload only carries the event ID), so both sections are forced open
     // rather than guessing — otherwise a collapsed section would just look like the event
     // doesn't exist.
-    const { sections, toggleProperty, handleEndReached } = useAuditSections(activeFilters, {
+    const { sections, toggleProperty } = useAuditSections(activeFilters, {
       highlightEventId,
     });
 
@@ -73,7 +67,9 @@ const AuditTrailScreen = forwardRef<AuditTrailScreenRef, AuditTrailScreenProps>(
         return;
       }
       for (let sectionIndex = 0; sectionIndex < sections.length; sectionIndex++) {
-        const itemIndex = sections[sectionIndex].data.findIndex(e => e.id === highlightEventId);
+        const itemIndex = sections[sectionIndex].data.findIndex(
+          row => row.kind === 'event' && row.id === highlightEventId,
+        );
         if (itemIndex !== -1) {
           sectionListRef.current?.scrollToLocation({
             sectionIndex,
@@ -94,13 +90,19 @@ const AuditTrailScreen = forwardRef<AuditTrailScreenRef, AuditTrailScreenProps>(
 
     const list = (
       <>
-        <SectionList<AuditEvent, PropertySection>
+        <SectionList<AuditListRow, PropertySection>
           ref={sectionListRef}
           sections={sections}
           keyExtractor={item => item.id}
-          renderItem={({ item }) => (
-            <AuditCard event={item} highlighted={item.id === highlightEventId} />
-          )}
+          renderItem={({ item }) =>
+            item.kind === 'day' ? (
+              <View style={styles.dayHeader}>
+                <Text style={styles.dayHeaderText}>{item.label}</Text>
+              </View>
+            ) : (
+              <AuditCard event={item.event} highlighted={item.id === highlightEventId} />
+            )
+          }
           onScrollToIndexFailed={() => {
             // Variable-height cards mean SectionList can't always measure ahead of time
             // for a location it hasn't rendered yet. Retry once layout has settled rather
@@ -155,10 +157,16 @@ const AuditTrailScreen = forwardRef<AuditTrailScreenRef, AuditTrailScreenProps>(
                 </View>
               );
             }
-            if (section.isFetchingNextPage) {
+            if (section.hasNextPage) {
               return (
                 <View style={styles.sectionFooter}>
-                  <ActivityIndicator size="small" color={tokens.colors.primary} />
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    label="Load More"
+                    onPress={section.fetchNextPage}
+                    loading={section.isFetchingNextPage}
+                  />
                 </View>
               );
             }
@@ -167,8 +175,6 @@ const AuditTrailScreen = forwardRef<AuditTrailScreenRef, AuditTrailScreenProps>(
           stickySectionHeadersEnabled={true}
           contentContainerStyle={styles.listContent}
           showsVerticalScrollIndicator={false}
-          onEndReached={handleEndReached}
-          onEndReachedThreshold={0.4}
         />
         <AuditFilterSheet
           visible={isFilterVisible}
@@ -239,6 +245,18 @@ const styles = StyleSheet.create({
     fontFamily: tokens.typography.fontFamily.sub,
     fontSize: tokens.typography.fontSize.subhead,
     color: tokens.colors.textMuted,
+  },
+  dayHeader: {
+    paddingTop: tokens.spacing.sm,
+    paddingBottom: tokens.spacing.xs,
+  },
+  dayHeaderText: {
+    fontFamily: tokens.typography.fontFamily.sub,
+    fontSize: tokens.typography.fontSize.label,
+    fontWeight: '600',
+    color: tokens.colors.textMuted,
+    textTransform: 'uppercase',
+    letterSpacing: tokens.typography.letterSpacing.label,
   },
   sectionFooter: {
     paddingVertical: tokens.spacing.md,
