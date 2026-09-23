@@ -19,6 +19,7 @@ import AuditTrailScreen from '@/screens/audit-trail/AuditTrailScreen';
 import { navigationRef } from './navigationRef';
 import { useNotificationListeners } from '@/hooks/notifications/useNotificationListeners';
 import { useBadgeSync } from '@/hooks/notifications/useBadgeSync';
+import { usePushRegistration } from '@/hooks/notifications/usePushRegistration';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -33,9 +34,21 @@ export default function RootNavigator() {
   useNotificationListeners();
   useBadgeSync();
 
+  const { mutate: registerPushToken } = usePushRegistration();
+
   useEffect(() => {
     void restoreSession();
   }, [restoreSession]);
+
+  // Runs on every app open that ends up authenticated, not just a fresh login — a user who
+  // denied (or hadn't yet answered) the iOS permission prompt at login time would otherwise
+  // never get a push token, since a fresh login is the only other trigger for this and most
+  // users log in once and stay logged in indefinitely.
+  useEffect(() => {
+    if (isAuthenticated) {
+      registerPushToken();
+    }
+  }, [isAuthenticated, registerPushToken]);
 
   if (isRestoring) {
     return (

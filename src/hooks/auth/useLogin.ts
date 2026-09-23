@@ -3,20 +3,20 @@ import type { AxiosError } from 'axios';
 
 import { loginUser } from '@/api/endpoints/authApi';
 import { useAuthStore } from '@/store/authStore';
-import { usePushRegistration } from '@/hooks/notifications/usePushRegistration';
 import type { LoginRequest, LoginResponse } from '@/types/auth';
 
+// Push-token registration itself is not triggered here — it runs off `isAuthenticated`
+// in RootNavigator, which fires for this login the moment setSession flips that flag,
+// and (unlike this hook) also fires on every later app open via restoreSession. That
+// single trigger point is what lets a user who denied the iOS permission prompt once
+// get registered on a later app open, instead of only ever getting one shot at login.
 export function useLogin() {
   const setSession = useAuthStore(s => s.setSession);
-  const pushRegistration = usePushRegistration();
 
   return useMutation<LoginResponse, AxiosError<{ error: string }>, LoginRequest>({
     mutationFn: (payload: LoginRequest) => loginUser(payload),
     onSuccess: async data => {
-      // Must await — setSession only puts the token in the store once its SecureStore
-      // writes finish, and push registration needs that token for its Authorization header.
       await setSession(data.accessToken, data.refreshToken, data.user, data.modules);
-      pushRegistration.mutate();
     },
   });
 }
