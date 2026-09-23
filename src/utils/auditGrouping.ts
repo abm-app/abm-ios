@@ -5,15 +5,26 @@ export type AuditListRow =
   | { kind: 'day'; id: string; label: string }
   | { kind: 'event'; id: string; event: AuditEvent };
 
-// The day an event's `detectedAt` falls on, as a plain YYYY-MM-DD — used to spot where one
-// day ends and the next begins in an already-sorted (most-recent-first) event list.
+// The day an event's `detectedAt` falls on, as a plain YYYY-MM-DD in the *device's local*
+// calendar — used to spot where one day ends and the next begins in an already-sorted
+// (most-recent-first) event list. `detectedAt` comes off the wire as a UTC ISO string, so
+// this goes through a Date (device-local getters) rather than slicing the string directly —
+// slicing would read the UTC calendar day, which can be a different day than the viewer's
+// local "Today"/"Yesterday" this is compared against below, especially close to local
+// midnight for a property far from UTC.
 function dayKey(isoStr: string): string {
-  return isoStr.split('T')[0] ?? isoStr;
+  return getCalendarDateString(new Date(isoStr));
 }
 
 function dayLabel(dayKeyStr: string): string {
-  const today = getCalendarDateString(new Date());
-  const yesterday = getCalendarDateString(new Date(Date.now() - 24 * 60 * 60 * 1000));
+  const now = new Date();
+  const today = getCalendarDateString(now);
+  // Built from local calendar fields (not `now.getTime() - 24h`) so it's still "yesterday"
+  // across a daylight-saving transition, where the previous local day isn't exactly 24
+  // real-time hours away.
+  const yesterday = getCalendarDateString(
+    new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1),
+  );
   if (dayKeyStr === today) return 'Today';
   if (dayKeyStr === yesterday) return 'Yesterday';
   return formatDate(dayKeyStr) ?? dayKeyStr;

@@ -4,6 +4,7 @@ import * as Notifications from 'expo-notifications';
 
 import { notificationKeys } from './useNotifications';
 import { navigationRef } from '@/navigation/navigationRef';
+import { authStore } from '@/store/authStore';
 import type { NotificationType } from '@/types/notification';
 import logger from '@/utils/logger';
 
@@ -29,23 +30,37 @@ function getNotificationData(notification: Notifications.Notification): PushNoti
 // NavigationContainer has mounted — RootNavigator holds it back behind an async session
 // restore first. A `navigationRef.isReady()` check alone would silently drop the tap in
 // that case, so this retries briefly rather than giving up on the first miss.
+//
+// isReady() alone isn't enough, though: RootNavigator only registers the authenticated
+// routes (AuditTrail, ReportViewer, ...) once `isAuthenticated` is true — the logged-out
+// stack only has 'Auth'. If the stored session is invalid/expired, isReady() goes true on
+// that logged-out navigator, and navigating to an authenticated-only route is silently
+// dropped by React Navigation rather than throwing. So this also waits for isAuthenticated,
+// which is what actually determines whether the target route exists to navigate to.
+//
 // Takes a callback rather than generic params — navigationRef.navigate's overloaded
 // signature doesn't type-check cleanly through a generic spread wrapper.
 function navigateWhenReady(go: () => void): void {
-  if (navigationRef.isReady()) {
+  const canNavigate = () => navigationRef.isReady() && authStore.getState().isAuthenticated;
+
+  if (canNavigate()) {
     go();
     return;
   }
   let attempts = 0;
   const interval = setInterval(() => {
     attempts += 1;
-    if (navigationRef.isReady()) {
+    if (canNavigate()) {
       clearInterval(interval);
       go();
     } else if (attempts >= 20) {
-      // ~2s — session restore reading from SecureStore should never take this long.
+      // ~2s — session restore reading from SecureStore should never take this long. If
+      // the session turns out to be invalid, this is also where a logged-out tap gives up
+      // rather than waiting indefinitely for a login that may never happen this session.
       clearInterval(interval);
-      logger.warn('[useNotificationListeners] navigationRef never became ready, dropping tap');
+      logger.warn(
+        '[useNotificationListeners] navigation never became ready and authenticated, dropping tap',
+      );
     }
   }, 100);
 }
