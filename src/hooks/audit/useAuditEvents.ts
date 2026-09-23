@@ -13,7 +13,7 @@ export interface AuditFilters {
 export function useAuditEvents(filters?: AuditFilters) {
   const query = useInfiniteQuery({
     queryKey: ['auditEvents', filters ?? {}],
-    queryFn: ({ pageParam }) => getAuditEvents({ page: pageParam as number, limit: 20, filters }),
+    queryFn: ({ pageParam }) => getAuditEvents({ page: pageParam as number, limit: 10, filters }),
     initialPageParam: 1,
     getNextPageParam: lastPage => {
       if (lastPage.page * lastPage.limit >= lastPage.total) {

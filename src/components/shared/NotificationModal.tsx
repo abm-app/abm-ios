@@ -15,6 +15,7 @@ import tokens from '@/theme/tokens';
 import NotificationItem from './NotificationItem';
 import EmptyState from './EmptyState';
 import { useNotifications } from '@/hooks/notifications/useNotifications';
+import { navigationRef } from '@/navigation/navigationRef';
 import type { AppNotification } from '@/types/notification';
 
 export interface NotificationModalProps {
@@ -57,6 +58,11 @@ export function NotificationModal({
   const handleItemPress = (item: AppNotification) => {
     if (!item.read) {
       markAsRead(item.id);
+    }
+    if (item.type === 'report_ready' && item.linkedEntityId && navigationRef.isReady()) {
+      onClose();
+      navigationRef.navigate('ReportViewer', { date: item.linkedEntityId });
+      return;
     }
     if (onSelectNotification) {
       onSelectNotification(item);

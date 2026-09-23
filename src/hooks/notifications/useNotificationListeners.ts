@@ -3,8 +3,8 @@ import { useQueryClient } from '@tanstack/react-query';
 import * as Notifications from 'expo-notifications';
 
 import { notificationKeys } from './useNotifications';
-import { useDownloadReportPdf } from './useDownloadReportPdf';
 import { navigationRef } from '@/navigation/navigationRef';
+import { authStore } from '@/store/authStore';
 import type { NotificationType } from '@/types/notification';
 import logger from '@/utils/logger';
 
@@ -30,26 +30,37 @@ function getNotificationData(notification: Notifications.Notification): PushNoti
 // NavigationContainer has mounted — RootNavigator holds it back behind an async session
 // restore first. A `navigationRef.isReady()` check alone would silently drop the tap in
 // that case, so this retries briefly rather than giving up on the first miss.
-// Concrete rather than generic over navigationRef.navigate's params — its overloaded
-// signature doesn't type-check cleanly through a generic spread wrapper (confirmed by
-// tsc when this was first tried), and 'AuditTrail' is the only caller today anyway.
-function navigateToAuditTrailWhenReady(eventId: string | undefined): void {
-  const go = () => navigationRef.navigate('AuditTrail', { eventId });
+//
+// isReady() alone isn't enough, though: RootNavigator only registers the authenticated
+// routes (AuditTrail, ReportViewer, ...) once `isAuthenticated` is true — the logged-out
+// stack only has 'Auth'. If the stored session is invalid/expired, isReady() goes true on
+// that logged-out navigator, and navigating to an authenticated-only route is silently
+// dropped by React Navigation rather than throwing. So this also waits for isAuthenticated,
+// which is what actually determines whether the target route exists to navigate to.
+//
+// Takes a callback rather than generic params — navigationRef.navigate's overloaded
+// signature doesn't type-check cleanly through a generic spread wrapper.
+function navigateWhenReady(go: () => void): void {
+  const canNavigate = () => navigationRef.isReady() && authStore.getState().isAuthenticated;
 
-  if (navigationRef.isReady()) {
+  if (canNavigate()) {
     go();
     return;
   }
   let attempts = 0;
   const interval = setInterval(() => {
     attempts += 1;
-    if (navigationRef.isReady()) {
+    if (canNavigate()) {
       clearInterval(interval);
       go();
     } else if (attempts >= 20) {
-      // ~2s — session restore reading from SecureStore should never take this long.
+      // ~2s — session restore reading from SecureStore should never take this long. If
+      // the session turns out to be invalid, this is also where a logged-out tap gives up
+      // rather than waiting indefinitely for a login that may never happen this session.
       clearInterval(interval);
-      logger.warn('[useNotificationListeners] navigationRef never became ready, dropping tap');
+      logger.warn(
+        '[useNotificationListeners] navigation never became ready and authenticated, dropping tap',
+      );
     }
   }, 100);
 }
@@ -58,12 +69,6 @@ function navigateToAuditTrailWhenReady(eventId: string | undefined): void {
 // Mount this once, near the root of the app (after NavigationContainer is available).
 export function useNotificationListeners() {
   const queryClient = useQueryClient();
-  // Destructured to `mutate` specifically (not the whole mutation object) — `mutate` is
-  // referentially stable across renders in TanStack Query v5, the mutation *state* isn't.
-  // Depending on the whole object would re-subscribe the listeners below on every state
-  // change the mutation itself causes (pending -> success/error), which is wasteful.
-  const { mutate: downloadReportPdf } = useDownloadReportPdf();
-
   useEffect(() => {
     // Routes a tapped notification to the right in-app destination. Only `audit_event`
     // and `report_ready` need real handling — every other type just opens the app, which
@@ -71,14 +76,17 @@ export function useNotificationListeners() {
     const handleNotificationTap = (data: PushNotificationData) => {
       switch (data.type) {
         case 'audit_event':
-          navigateToAuditTrailWhenReady(data.linkedEntityId);
+          navigateWhenReady(() =>
+            navigationRef.navigate('AuditTrail', { eventId: data.linkedEntityId }),
+          );
           break;
         case 'report_ready':
           if (data.linkedEntityId) {
-            downloadReportPdf({ date: data.linkedEntityId });
+            const date = data.linkedEntityId;
+            navigateWhenReady(() => navigationRef.navigate('ReportViewer', { date }));
           } else {
             logger.warn(
-              '[useNotificationListeners] report_ready notification missing linkedEntityId (date) — cannot download',
+              '[useNotificationListeners] report_ready notification missing linkedEntityId (date) — cannot open',
             );
           }
           break;
@@ -121,5 +129,5 @@ export function useNotificationListeners() {
       receivedSubscription.remove();
       responseSubscription.remove();
     };
-  }, [queryClient, downloadReportPdf]);
+  }, [queryClient]);
 }

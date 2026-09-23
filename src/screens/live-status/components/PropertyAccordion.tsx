@@ -94,7 +94,7 @@ export default function PropertyAccordion({
             {property.name}
           </Text>
           <Text style={styles.count} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.85}>
-            (occupied: {property.occupied}, total: {property.totalRooms})
+            ({property.occupied}/{property.totalRooms})
           </Text>
         </View>
         <Feather
