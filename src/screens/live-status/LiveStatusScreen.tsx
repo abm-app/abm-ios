@@ -4,6 +4,7 @@ import tokens from '@/theme/tokens';
 import { useStatusOverview, useStatusOverviewStats } from '@/hooks/status/useStatusOverview';
 import { LoadingSpinner, ErrorState, EmptyState } from '@/components/shared';
 import PropertyAccordion from './components/PropertyAccordion';
+import RoomStatusLegend from './components/RoomStatusLegend';
 import { LiveStatusFilterSheet } from './components/LiveStatusFilterSheet';
 import { RoomDetailsSheet } from './components/RoomDetailsSheet';
 import type { LiveStatusRoom } from '@/types/status';
@@ -47,6 +48,7 @@ const LiveStatusScreen = forwardRef<LiveStatusScreenRef, LiveStatusScreenProps>(
 
     return (
       <>
+        {viewMode === 'grid' && <RoomStatusLegend />}
         {properties.length === 0 ? (
           <EmptyState
             icon="home"

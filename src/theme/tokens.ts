@@ -65,27 +65,29 @@ const colors = {
   badgeRoomChangeBg: 'rgba(230,126,34,0.1)',
 
   // Live Status
-  statusOccupiedBg: '#E8F5E9',
-  statusOccupiedText: '#2E7D32',
-  statusOccupiedBorder: '#A5D6A7',
-  statusVacantBg: '#F5F5F5',
-  statusVacantText: '#424242',
-  statusVacantBorder: '#E0E0E0',
-  statusCheckoutBg: '#FFF3E0',
-  statusCheckoutText: '#E65100',
-  statusCheckoutBorder: '#FFCC80',
+  // Colors below are aligned to the legacy PMS room-chart convention:
+  // occupied=red, vacant=green, maintenance=amber, management=orange, dirty=purple, checkout=teal (new).
+  statusOccupiedBg: '#FFEBEE',
+  statusOccupiedText: '#C62828',
+  statusOccupiedBorder: '#EF9A9A',
+  statusVacantBg: '#E8F5E9',
+  statusVacantText: '#2E7D32',
+  statusVacantBorder: '#A5D6A7',
+  statusCheckoutBg: '#E0F7FA',
+  statusCheckoutText: '#00838F',
+  statusCheckoutBorder: '#80DEEA',
   statusArrivalBg: '#E3F2FD',
   statusArrivalText: '#1565C0',
   statusArrivalBorder: '#90CAF9',
-  statusDirtyBg: '#FFF8E1',
-  statusDirtyText: '#F57F17',
-  statusDirtyBorder: '#FFE082',
-  statusMaintenanceBg: '#FFEBEE',
-  statusMaintenanceText: '#C62828',
-  statusMaintenanceBorder: '#EF9A9A',
-  statusManagementBg: '#F3E5F5',
-  statusManagementText: '#6A1B9A',
-  statusManagementBorder: '#CE93D8',
+  statusDirtyBg: '#F3E5F5',
+  statusDirtyText: '#6A1B9A',
+  statusDirtyBorder: '#CE93D8',
+  statusMaintenanceBg: '#FFF8E1',
+  statusMaintenanceText: '#F57F17',
+  statusMaintenanceBorder: '#FFE082',
+  statusManagementBg: '#FFF3E0',
+  statusManagementText: '#E65100',
+  statusManagementBorder: '#FFCC80',
 
   // Cards
   cardDarkBg: '#0F0F0F',
@@ -474,6 +476,16 @@ const roomGridCard = {
   gap: 4,
 } as const;
 
+/** Room status legend geometry */
+const statusLegend = {
+  dotSize: 6,
+  dotBorderRadius: 3,
+  pillGap: 4,
+  pillPaddingVertical: 3,
+  pillPaddingHorizontal: 8,
+  rowGap: 6,
+} as const;
+
 /** Standard uniform list card geometry */
 const listCard = {
   minHeight: 172,
@@ -795,6 +807,7 @@ const tokens = {
   scoreCard,
   taskCard,
   roomGridCard,
+  statusLegend,
   listCard,
   insight,
   swatch,
