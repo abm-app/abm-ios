@@ -476,6 +476,16 @@ const roomGridCard = {
   gap: 4,
 } as const;
 
+/** Room status legend geometry */
+const statusLegend = {
+  dotSize: 6,
+  dotBorderRadius: 3,
+  pillGap: 4,
+  pillPaddingVertical: 3,
+  pillPaddingHorizontal: 8,
+  rowGap: 6,
+} as const;
+
 /** Standard uniform list card geometry */
 const listCard = {
   minHeight: 172,
@@ -797,6 +807,7 @@ const tokens = {
   scoreCard,
   taskCard,
   roomGridCard,
+  statusLegend,
   listCard,
   insight,
   swatch,
