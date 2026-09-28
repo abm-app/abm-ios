@@ -66,7 +66,7 @@ const colors = {
 
   // Live Status
   // Colors below are aligned to the legacy PMS room-chart convention:
-  // occupied=red, vacant=green, maintenance=amber, management=purple, dirty=orange, checkout=teal (new).
+  // occupied=red, vacant=green, maintenance=amber, management=orange, dirty=purple, checkout=teal (new).
   statusOccupiedBg: '#FFEBEE',
   statusOccupiedText: '#C62828',
   statusOccupiedBorder: '#EF9A9A',
