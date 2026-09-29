@@ -476,8 +476,8 @@ const roomGridCard = {
   gap: 4,
 } as const;
 
-/** Room status legend geometry — base (unscaled) sizes; RoomStatusLegend scales
- * these uniformly by measured-fit-ratio so every pill shares one font size. */
+/** Room status legend geometry — every pill shares these sizes uniformly;
+ * the row wraps to a second line on narrow screens rather than shrinking text. */
 const statusLegend = {
   dotSize: 6,
   dotBorderRadius: 3,
@@ -485,8 +485,6 @@ const statusLegend = {
   pillPaddingVertical: 3,
   pillPaddingHorizontal: 6,
   rowGap: 4,
-  /** Floor for the computed scale — pills won't shrink past this fraction of base size */
-  minScale: 0.55,
 } as const;
 
 /** Standard uniform list card geometry */
