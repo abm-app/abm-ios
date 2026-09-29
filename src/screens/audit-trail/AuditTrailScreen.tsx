@@ -1,4 +1,11 @@
-import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
+import React, {
+  useState,
+  useEffect,
+  useMemo,
+  useRef,
+  forwardRef,
+  useImperativeHandle,
+} from 'react';
 import { SectionList, StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
@@ -19,18 +26,22 @@ export interface AuditTrailScreenRef {
 }
 
 // Optional and partial because this component has two call sites: embedded inline inside
-// OperationsScreen's tab switcher (no props at all, driven via the ref above), and as a
-// standalone root-stack route reached from a notification deep link (full navigation/route
-// props, route.params.eventId telling it which event to scroll to and highlight).
-type AuditTrailScreenProps = Partial<NativeStackScreenProps<RootStackParamList, 'AuditTrail'>>;
+// OperationsScreen's tab switcher (searchQuery from the shared header, driven via the ref
+// above), and as a standalone root-stack route reached from a notification deep link (full
+// navigation/route props, route.params.eventId telling it which event to scroll to and
+// highlight — no search box in that case).
+type AuditTrailScreenProps = Partial<NativeStackScreenProps<RootStackParamList, 'AuditTrail'>> & {
+  searchQuery?: string;
+};
 
 const AuditTrailScreen = forwardRef<AuditTrailScreenRef, AuditTrailScreenProps>(
-  ({ navigation, route }, ref) => {
+  ({ navigation, route, searchQuery = '' }, ref) => {
     const highlightEventId = route?.params?.eventId;
     const insets = useSafeAreaInsets();
 
     const [isFilterVisible, setIsFilterVisible] = useState(false);
     const [activeFilters, setActiveFilters] = useState<AuditFilters>({});
+    const [debouncedSearch, setDebouncedSearch] = useState('');
     const [hasScrolledToHighlight, setHasScrolledToHighlight] = useState(false);
     const sectionListRef = useRef<SectionList<AuditListRow, PropertySection>>(null);
 
@@ -40,11 +51,27 @@ const AuditTrailScreen = forwardRef<AuditTrailScreenRef, AuditTrailScreenProps>(
       },
     }));
 
+    // Debounce search input — avoids firing a network request per keystroke.
+    useEffect(() => {
+      const handler = setTimeout(() => {
+        setDebouncedSearch(searchQuery);
+      }, 500);
+      return () => clearTimeout(handler);
+    }, [searchQuery]);
+
+    const filtersWithSearch = useMemo<AuditFilters>(
+      () => ({
+        ...activeFilters,
+        search: debouncedSearch || undefined,
+      }),
+      [activeFilters, debouncedSearch],
+    );
+
     // We don't know which property the linked event belongs to until it's loaded (the
     // notification payload only carries the event ID), so both sections are forced open
     // rather than guessing — otherwise a collapsed section would just look like the event
     // doesn't exist.
-    const { sections, toggleProperty } = useAuditSections(activeFilters, {
+    const { sections, toggleProperty } = useAuditSections(filtersWithSearch, {
       highlightEventId,
     });
 

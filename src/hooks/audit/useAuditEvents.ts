@@ -8,6 +8,7 @@ export interface AuditFilters {
   rmCode?: string[];
   from?: string;
   to?: string;
+  search?: string;
 }
 
 export function useAuditEvents(filters?: AuditFilters) {

@@ -87,5 +87,6 @@ export interface GetAuditEventsParams {
     rmCode?: string[];
     from?: string;
     to?: string;
+    search?: string;
   };
 }

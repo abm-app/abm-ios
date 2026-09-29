@@ -18,6 +18,9 @@ export const getAuditEvents = async (
   if (filters?.rmCode && filters.rmCode.length > 0) {
     queryParams.rmCode = filters.rmCode.join(',');
   }
+  if (filters?.search) {
+    queryParams.search = filters.search;
+  }
   if (filters?.from) {
     queryParams.from = filters.from;
   }
