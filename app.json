@@ -10,7 +10,7 @@
     "ios": {
       "bundleIdentifier": "com.ceyxasm.abm",
       "supportsTablet": false,
-      "buildNumber": "1",
+      "buildNumber": "18",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
       }
