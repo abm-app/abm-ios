@@ -1,3 +1,5 @@
+import { isAxiosError } from 'axios';
+
 import apiClient from '../client';
 import logger from '@/utils/logger';
 import type { AppNotification, NotificationsResponse } from '@/types/notification';
@@ -11,7 +13,10 @@ export async function getNotifications(): Promise<NotificationsResponse> {
     });
     return response.data;
   } catch (error) {
-    logger.error('[getNotifications] Failed to fetch notifications', error);
+    logger.error('[getNotifications] Failed to fetch notifications', {
+      message: error instanceof Error ? error.message : String(error),
+      status: isAxiosError(error) ? error.response?.status : undefined,
+    });
     throw error;
   }
 }

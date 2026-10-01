@@ -1,4 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
+import { isAxiosError } from 'axios';
 import { Platform } from 'react-native';
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
@@ -6,6 +7,13 @@ import Constants from 'expo-constants';
 
 import { registerPushToken } from '@/api/endpoints/authApi';
 import logger from '@/utils/logger';
+
+function safeErrorDetails(error: unknown) {
+  return {
+    message: error instanceof Error ? error.message : String(error),
+    status: isAxiosError(error) ? error.response?.status : undefined,
+  };
+}
 
 async function getExpoPushToken(): Promise<string | null> {
   if (!Device.isDevice) {
@@ -85,14 +93,18 @@ export function usePushRegistration() {
         });
         return token;
       } catch (error) {
-        logger.error('[usePushRegistration] Failed to register token with backend', error, {
-          platform: Platform.OS,
-        });
+        logger.error(
+          '[usePushRegistration] Failed to register token with backend',
+          safeErrorDetails(error),
+          {
+            platform: Platform.OS,
+          },
+        );
         throw error;
       }
     },
     onError: error => {
-      logger.error('[usePushRegistration] Push registration failed', error, {
+      logger.error('[usePushRegistration] Push registration failed', safeErrorDetails(error), {
         platform: Platform.OS,
       });
     },
