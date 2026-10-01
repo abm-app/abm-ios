@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { Platform } from 'react-native';
 
 import ENV from '@/config/env';
 import { authStore } from '@/store/authStore';
@@ -8,6 +9,9 @@ const apiClient = axios.create({
   baseURL: ENV.API_URL,
   withCredentials: true,
   timeout: 60_000,
+  headers: {
+    'User-Agent': `ABM-iOS/${Platform.OS}`,
+  },
 });
 
 // ─── Request interceptor — attach access token ───────────────────────────────

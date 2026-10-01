@@ -14,6 +14,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import tokens from '@/theme/tokens';
 import NotificationItem from './NotificationItem';
 import EmptyState from './EmptyState';
+import LoadingSpinner from './LoadingSpinner';
+import ErrorState from './ErrorState';
 import { useNotifications } from '@/hooks/notifications/useNotifications';
 import { navigationRef } from '@/navigation/navigationRef';
 import type { AppNotification } from '@/types/notification';
@@ -41,6 +43,8 @@ export function NotificationModal({
   const notifications = customNotifications ?? hookState.notifications;
   const markAsRead = customMarkAsRead ?? hookState.markAsRead;
   const markAllAsRead = customMarkAllAsRead ?? hookState.markAllAsRead;
+  const isLoading = customNotifications === undefined && hookState.isLoading;
+  const isError = customNotifications === undefined && hookState.isError;
 
   const [slideAnim] = useState(() => new Animated.Value(600));
 
@@ -106,7 +110,14 @@ export function NotificationModal({
             contentContainerStyle={[styles.scrollContent, dynamicStyles.scrollSafeArea]}
             showsVerticalScrollIndicator={false}
           >
-            {notifications.length === 0 ? (
+            {isLoading ? (
+              <LoadingSpinner />
+            ) : isError ? (
+              <ErrorState
+                message="Failed to load notifications. Pull to retry."
+                onRetry={() => hookState.refetch()}
+              />
+            ) : notifications.length === 0 ? (
               <EmptyState
                 icon="bell"
                 title="No notifications"
