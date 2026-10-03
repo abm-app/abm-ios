@@ -75,6 +75,14 @@
     },
     "internal": {},
     "production": {
+      "ios": {
+        "ascAppId": "6818754243",
+        "appleId": "lifestyleplus.developers@gmail.com",
+        "appleTeamId": "33P69QAZZ3",
+        "ascApiKeyPath": "./AuthKey_VHF6S3P2X2.p8",
+        "ascApiKeyId": "VHF6S3P2X2",
+        "ascApiKeyIssuerId": "a850dd55-a573-4380-bb17-226b44f16589"
+      },
       "android": {
         "track": "internal",
         "releaseStatus": "draft"
