@@ -84,6 +84,7 @@
         "ascApiKeyIssuerId": "a850dd55-a573-4380-bb17-226b44f16589"
       },
       "android": {
+        "serviceAccountKeyPath": "./abm-app-509104-6ef646112540.json",
         "track": "internal",
         "releaseStatus": "draft"
       }
