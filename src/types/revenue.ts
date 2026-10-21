@@ -1,4 +1,29 @@
+import type { AuditProperty } from './audit';
+
 export type RevenuePeriod = 'day' | 'week' | 'month';
+
+export interface CategoryTotal {
+  categoryId: string | null;
+  name: string;
+  amount: number;
+}
+
+// Owners get every field; managers only roomRevenue and cashReceived (the other keys are
+// absent, not zero). Render only what is present.
+export interface FinanceSummary {
+  roomRevenue: number;
+  cashReceived: number;
+  pettyCashSpending?: number;
+  extraExpenses?: number;
+  net?: number;
+  extraExpensesByCategory?: CategoryTotal[];
+}
+
+// Absent entirely for staff.
+export interface FinanceResponse {
+  combined: FinanceSummary;
+  properties: Partial<Record<AuditProperty, FinanceSummary>>;
+}
 
 export interface RevenuePropertyData {
   totalRevenue: number;
@@ -12,6 +37,7 @@ export interface RevenueSummaryResponse {
     international?: RevenuePropertyData;
     express?: RevenuePropertyData;
   };
+  finance?: FinanceResponse;
 }
 
 export interface RevenueTrendMonth {

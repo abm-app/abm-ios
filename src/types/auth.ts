@@ -11,7 +11,13 @@ export type UserProperty = 'express' | 'international' | 'both';
 
 export type ModuleKey =
   // | 'dashboard'
-  'campaigns' | 'live_status' | 'audit_trail' | 'revenue' | 'user_management' | 'loyalty';
+  | 'campaigns'
+  | 'live_status'
+  | 'audit_trail'
+  | 'revenue'
+  | 'user_management'
+  | 'loyalty'
+  | 'expenses';
 // | 'reports'
 // | 'notifications';
 

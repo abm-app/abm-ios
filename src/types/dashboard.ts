@@ -1,4 +1,5 @@
 import type { AuditEventType, AuditProperty } from './audit';
+import type { FinanceSummary } from './revenue';
 
 export interface OccupancyProperty {
   occupied: number;
@@ -31,6 +32,8 @@ export type DashboardOccupancy = Record<AuditProperty, OccupancyProperty>;
 export interface DashboardSummary {
   occupancy: DashboardOccupancy;
   todayRevenue: Record<AuditProperty, number>;
+  // Only the hotels the user can see; absent for staff.
+  todayFinance?: Partial<Record<AuditProperty, FinanceSummary>>;
   recentEvents: RecentEvent[];
   unreadNotifications: number;
   lastSyncedAt: string;
