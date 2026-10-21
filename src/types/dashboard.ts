@@ -1,4 +1,4 @@
-import type { AuditEventType, AuditProperty } from './audit';
+import type { AnyAuditEventType, AuditProperty } from './audit';
 import type { FinanceSummary } from './revenue';
 
 export interface OccupancyProperty {
@@ -15,13 +15,14 @@ export interface RecentEventAfter {
 
 export interface RecentEvent {
   id: string;
-  eventType: AuditEventType;
+  eventType: AnyAuditEventType;
   regId: number;
   rmCode: string;
-  property: AuditProperty;
+  // Category events carry no hotel.
+  property?: AuditProperty;
   guestName: string;
   before: Record<string, unknown>;
-  after: RecentEventAfter;
+  after: RecentEventAfter & Record<string, unknown>;
   actor: string;
   detectedAt: string;
   idempotencyKey: string;

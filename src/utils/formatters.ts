@@ -24,8 +24,9 @@ export function formatRupees(value?: number | null): string {
   const safeValue = Number(value ?? 0);
   if (Number.isNaN(safeValue)) return '₹0';
   const isWhole = Number.isInteger(safeValue);
-  return `₹${safeValue.toLocaleString('en-IN', {
+  const formatted = Math.abs(safeValue).toLocaleString('en-IN', {
     minimumFractionDigits: isWhole ? 0 : 2,
     maximumFractionDigits: 2,
-  })}`;
+  });
+  return safeValue < 0 ? `-₹${formatted}` : `₹${formatted}`;
 }

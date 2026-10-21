@@ -16,6 +16,7 @@ export * from './Avatar';
 export { default as FilterSection } from './FilterSection';
 export { default as TrendChart } from './TrendChart';
 export { default as PropertyBreakdown } from './PropertyBreakdown';
+export { default as FinanceBreakdown } from './FinanceBreakdown';
 export { default as UserCard } from './UserCard';
 export { default as MenuList } from './MenuList';
 export * from './NotificationModal';

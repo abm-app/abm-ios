@@ -13,7 +13,11 @@ import { useRevenueTrends } from '@/hooks/revenue/useRevenue';
 import type { RevenuePeriod } from '@/types/revenue';
 import type { MenuStackParamList } from '@/navigation/types';
 import { formatCurrency } from '@/utils/formatters';
-import { Backdrop, TrendChart, PropertyBreakdown } from '@/components/shared';
+import { Backdrop, TrendChart, PropertyBreakdown, FinanceBreakdown } from '@/components/shared';
+import { PROPERTY_DISPLAY_NAMES } from '@/types/audit';
+import type { AuditProperty } from '@/types/audit';
+
+const FINANCE_PROPERTY_ORDER: AuditProperty[] = ['international', 'express'];
 
 const PERIOD_TABS = [
   { id: 'day', label: 'Today' },
@@ -42,6 +46,9 @@ export default function RevenueScreen({ navigation }: Props) {
   const totalRevenue = summary?.totals?.totalRevenue ?? 0;
   const totalTax = summary?.totals?.totalTax ?? 0;
   const totalBookings = summary?.totals?.totalBookings ?? 0;
+  const finance = summary?.finance;
+  // Per-hotel cards only add information when the user can see both hotels.
+  const financeProperties = FINANCE_PROPERTY_ORDER.filter(p => finance?.properties[p]);
   const trendData = trends?.trends ?? [];
   const maxTrend = trends?.maxTrend ?? 1;
   const internationalTotal = summary?.internationalTotal ?? 0;
@@ -109,6 +116,28 @@ export default function RevenueScreen({ navigation }: Props) {
                 <Text style={styles.bookingText}>{totalBookings} bookings</Text>
               </View>
             </Card>
+
+            {/* Cash & expenses. Absent for staff; a manager only sees cash received. */}
+            {finance && (
+              <>
+                <FinanceBreakdown
+                  title="Cash & Expenses"
+                  finance={finance.combined}
+                  showCategories
+                />
+                {financeProperties.length > 1 &&
+                  financeProperties.map(property => {
+                    const propertyFinance = finance.properties[property];
+                    return propertyFinance ? (
+                      <FinanceBreakdown
+                        key={property}
+                        title={PROPERTY_DISPLAY_NAMES[property]}
+                        finance={propertyFinance}
+                      />
+                    ) : null;
+                  })}
+              </>
+            )}
 
             {/* Property Breakdown */}
             <PropertyBreakdown
