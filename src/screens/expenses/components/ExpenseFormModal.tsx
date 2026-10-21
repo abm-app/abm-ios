@@ -24,6 +24,7 @@ interface ExpenseFormModalProps {
   defaultProperty: AuditProperty | null;
   categories: ExpenseCategory[];
   errorMessage?: string;
+  onManageCategories?: () => void;
   onSubmitCreate: (data: CreateExpenseInput) => void;
   onSubmitUpdate: (id: string, data: UpdateExpenseInput) => void;
   isSubmitting: boolean;
@@ -37,6 +38,7 @@ export default function ExpenseFormModal({
   defaultProperty,
   categories,
   errorMessage,
+  onManageCategories,
   onSubmitCreate,
   onSubmitUpdate,
   isSubmitting,
@@ -169,6 +171,7 @@ export default function ExpenseFormModal({
             categories={selectableCategories}
             selectedId={categoryId}
             onSelect={setCategoryId}
+            onManage={onManageCategories}
           />
         </View>
 

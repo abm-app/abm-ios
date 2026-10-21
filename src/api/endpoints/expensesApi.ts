@@ -6,6 +6,8 @@ import type {
   ExpenseCategory,
   ExpenseCategoryListResponse,
   ExpenseListResponse,
+  PettyCashEntry,
+  PettyCashListResponse,
   UpdateExpenseCategoryInput,
   UpdateExpenseInput,
 } from '@/types/expense';
@@ -18,6 +20,18 @@ export const listExpenses = (
 ): Promise<Expense[]> =>
   apiClient
     .get<ExpenseListResponse>('/revenue/expenses', {
+      params: { from, to, ...(property ? { property } : {}) },
+    })
+    .then(r => r.data.results);
+
+// Read-only petty cash entered in Atithi, owner only. Same zero-padded YYYY-MM-DD range.
+export const listPettyCash = (
+  from: string,
+  to: string,
+  property?: AuditProperty,
+): Promise<PettyCashEntry[]> =>
+  apiClient
+    .get<PettyCashListResponse>('/revenue/petty-cash', {
       params: { from, to, ...(property ? { property } : {}) },
     })
     .then(r => r.data.results);

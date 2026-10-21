@@ -35,6 +35,25 @@ export interface ExpenseListResponse {
   results: Expense[];
 }
 
+// A read-only copy of an Atithi petty cash entry. Either `expense` (spent) or `income`
+// (cash received) is above 0.
+export interface PettyCashEntry {
+  id: string;
+  property: AuditProperty;
+  // IST calendar date, YYYY-MM-DD.
+  date: string;
+  // UTC with a trailing Z.
+  occurredAt: string | null;
+  description: string;
+  income: number;
+  expense: number;
+  userName: string | null;
+}
+
+export interface PettyCashListResponse {
+  results: PettyCashEntry[];
+}
+
 export interface ExpenseCategory {
   id: string;
   name: string;

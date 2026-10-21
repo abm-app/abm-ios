@@ -60,6 +60,7 @@ abm-app/
 │   │       ├── authApi.ts
 │   │       ├── auditApi.ts
 │   │       ├── dashboardApi.ts
+│   │       ├── expensesApi.ts
 │   │       ├── guestsApi.ts
 │   │       ├── notificationsApi.ts
 │   │       ├── revenueApi.ts
@@ -87,6 +88,7 @@ abm-app/
 │   │   ├── auth/
 │   │   ├── audit/
 │   │   ├── dashboard/
+│   │   ├── expenses/
 │   │   ├── guests/
 │   │   ├── notifications/
 │   │   ├── revenue/
@@ -103,6 +105,7 @@ abm-app/
 │   │   ├── auth/
 │   │   │   └── LoginScreen.tsx
 │   │   ├── dashboard/
+│   │   ├── expenses/               # Owner-only expenses list, entry form, category manager
 │   │   ├── live-status/
 │   │   ├── audit-trail/
 │   │   ├── revenue/

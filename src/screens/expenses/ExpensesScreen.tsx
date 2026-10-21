@@ -14,6 +14,7 @@ import {
   useDeleteExpense,
   useExpenseCategories,
   useExpenses,
+  usePettyCash,
   useUpdateExpense,
 } from '@/hooks/expenses/useExpenses';
 import { useAllowedProperties, useExpenseFilters } from '@/hooks/expenses/useExpenseFilters';
@@ -28,11 +29,19 @@ import {
   ScreenHeaderV2,
   SegmentedControl,
 } from '@/components/shared';
-import { Button, Card } from '@/components/ui';
+import { Card } from '@/components/ui';
 import ExpenseRow from './components/ExpenseRow';
 import ExpenseFormModal from './components/ExpenseFormModal';
 import CategoryManagerModal from './components/CategoryManagerModal';
 import MonthSwitcher from './components/MonthSwitcher';
+import PettyCashRow from './components/PettyCashRow';
+
+type ExpenseTab = 'expenses' | 'pettyCash';
+
+const TAB_OPTIONS = [
+  { id: 'expenses', label: 'Extra expenses' },
+  { id: 'pettyCash', label: 'Petty cash' },
+];
 
 type MenuNavProp = NativeStackNavigationProp<MenuStackParamList>;
 
@@ -49,6 +58,13 @@ export default function ExpensesScreen() {
     error,
     refetch,
   } = useExpenses(filters.from, filters.to, filters.apiProperty);
+  const [tab, setTab] = useState<ExpenseTab>('expenses');
+  const pettyCashQuery = usePettyCash(
+    filters.from,
+    filters.to,
+    filters.apiProperty,
+    tab === 'pettyCash',
+  );
   const { data: categories = [] } = useExpenseCategories(true);
   const createExpense = useCreateExpense();
   const updateExpense = useUpdateExpense();
@@ -113,7 +129,7 @@ export default function ExpensesScreen() {
     });
   };
 
-  const renderList = () => {
+  const renderExpenseList = () => {
     if (isLoading) {
       return (
         <View style={styles.centerContainer}>
@@ -164,6 +180,55 @@ export default function ExpensesScreen() {
     );
   };
 
+  const renderPettyCashList = () => {
+    if (pettyCashQuery.isLoading) {
+      return (
+        <View style={styles.centerContainer}>
+          <LoadingSpinner />
+        </View>
+      );
+    }
+
+    if (pettyCashQuery.isError) {
+      return (
+        <View style={styles.centerContainer}>
+          <ErrorState
+            message={getApiErrorMessage(pettyCashQuery.error, 'Failed to load petty cash')}
+            onRetry={() => pettyCashQuery.refetch()}
+          />
+        </View>
+      );
+    }
+
+    const entries = pettyCashQuery.data;
+    if (!entries || entries.length === 0) {
+      return (
+        <View style={styles.centerContainer}>
+          <EmptyState
+            icon="credit-card"
+            title="No petty cash"
+            subtitle={`Nothing recorded in Atithi for ${filters.monthLabel}.`}
+          />
+        </View>
+      );
+    }
+
+    return (
+      <ScrollView contentContainerStyle={styles.scrollContent}>
+        <Card variant="shadow" style={styles.listCard}>
+          {entries.map((entry, index) => (
+            <PettyCashRow
+              key={entry.id}
+              entry={entry}
+              showProperty={allowedProperties.length > 1}
+              isLast={index === entries.length - 1}
+            />
+          ))}
+        </Card>
+      </ScrollView>
+    );
+  };
+
   return (
     <View style={rootStyle}>
       <Backdrop />
@@ -172,13 +237,19 @@ export default function ExpensesScreen() {
         title="Expenses"
         showBackButton
         onBackPress={() => navigation.goBack()}
-        showRightButton
+        showRightButton={tab === 'expenses'}
         rightButtonText="+ New"
         onRightButtonPress={handleOpenCreate}
         showNotifications={false}
       />
 
       <View style={styles.controls}>
+        <SegmentedControl
+          tabs={TAB_OPTIONS}
+          activeTab={tab}
+          onChange={id => setTab(id as ExpenseTab)}
+          style={styles.segmentedControl}
+        />
         <MonthSwitcher
           label={filters.monthLabel}
           canGoNext={!filters.isCurrentMonth}
@@ -193,15 +264,9 @@ export default function ExpensesScreen() {
             style={styles.segmentedControl}
           />
         )}
-        <Button
-          label="Categories"
-          variant="secondary"
-          size="sm"
-          onPress={() => setIsCategoriesVisible(true)}
-        />
       </View>
 
-      {renderList()}
+      {tab === 'expenses' ? renderExpenseList() : renderPettyCashList()}
 
       <ExpenseFormModal
         visible={isFormVisible}
@@ -211,6 +276,10 @@ export default function ExpensesScreen() {
         defaultProperty={filters.apiProperty ?? null}
         categories={categories}
         errorMessage={formError}
+        onManageCategories={() => {
+          setIsFormVisible(false);
+          setIsCategoriesVisible(true);
+        }}
         onSubmitCreate={handleSubmitCreate}
         onSubmitUpdate={handleSubmitUpdate}
         isSubmitting={createExpense.isPending || updateExpense.isPending}

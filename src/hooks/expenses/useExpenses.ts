@@ -5,6 +5,7 @@ import {
   deleteExpense,
   listCategories,
   listExpenses,
+  listPettyCash,
   updateCategory,
   updateExpense,
 } from '@/api/endpoints/expensesApi';
@@ -26,6 +27,19 @@ export function useExpenses(from: string, to: string, property?: AuditProperty) 
   return useQuery({
     queryKey: expenseKeys.list(from, to, property),
     queryFn: () => listExpenses(from, to, property),
+  });
+}
+
+export function usePettyCash(
+  from: string,
+  to: string,
+  property: AuditProperty | undefined,
+  enabled: boolean,
+) {
+  return useQuery({
+    queryKey: ['pettyCash', from, to, property ?? 'all'],
+    queryFn: () => listPettyCash(from, to, property),
+    enabled,
   });
 }
 

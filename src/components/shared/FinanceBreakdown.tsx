@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, StyleProp, ViewStyle } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import Card from '@/components/ui/Card';
 import tokens from '@/theme/tokens';
 import type { FinanceSummary } from '@/types/revenue';
@@ -12,8 +12,6 @@ interface FinanceBreakdownProps {
   finance: FinanceSummary;
   // Lists extra expenses by category when the server sent them (owner, monthly view).
   showCategories?: boolean;
-  // Lets a screen with its own side padding drop the default card margins.
-  style?: StyleProp<ViewStyle>;
 }
 
 interface LineProps {
@@ -44,13 +42,12 @@ export default function FinanceBreakdown({
   title,
   finance,
   showCategories = false,
-  style,
 }: FinanceBreakdownProps) {
   const { roomRevenue, cashReceived, pettyCashSpending, extraExpenses, net } = finance;
   const categories = showCategories ? finance.extraExpensesByCategory : undefined;
 
   return (
-    <Card variant="outlined" padded style={[styles.card, style]}>
+    <Card variant="outlined" padded style={styles.card}>
       <Text style={styles.title}>{title}</Text>
 
       {net !== undefined && <Line label="Room revenue" value={formatRupees(roomRevenue)} />}

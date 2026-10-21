@@ -8,15 +8,15 @@ import LoadingSpinner from '../../components/shared/LoadingSpinner';
 import ErrorState from '../../components/shared/ErrorState';
 import tokens from '../../theme/tokens';
 import OccupancySection from './components/OccupancySection';
-import { Backdrop, FinanceBreakdown, NotificationModal, ScreenHeaderV2 } from '@/components/shared';
-import { PROPERTY_DISPLAY_NAMES } from '@/types/audit';
-import type { AuditProperty } from '@/types/audit';
+import { Backdrop, NotificationModal, ScreenHeaderV2 } from '@/components/shared';
 import { formatDate } from '@/utils/dateUtils';
+import { useNavigation } from '@react-navigation/native';
+import type { NavigationProp } from '@react-navigation/native';
+import type { AppTabParamList } from '@/navigation/types';
 import { useNotifications } from '@/hooks/notifications/useNotifications';
 
-const FINANCE_PROPERTY_ORDER: AuditProperty[] = ['international', 'express'];
-
 export default function DashboardScreen() {
+  const navigation = useNavigation<NavigationProp<AppTabParamList>>();
   const { data, isLoading, isError, refetch, isRefetching } = useDashboardSummary();
   const { unreadCount } = useNotifications();
   const [notificationsVisible, setNotificationsVisible] = useState(false);
@@ -39,8 +39,6 @@ export default function DashboardScreen() {
 
   const bottomClearance =
     Math.max(insets.bottom, tokens.navigation.paddingVertical) + tokens.navigation.height + 16;
-
-  const financeProperties = FINANCE_PROPERTY_ORDER.filter(p => data.todayFinance?.[p]);
 
   const totalRevenue = Object.values(data.todayRevenue).reduce((acc, curr) => acc + curr, 0);
 
@@ -70,20 +68,13 @@ export default function DashboardScreen() {
         showsVerticalScrollIndicator={false}
       >
         <RevenueSummary todayRevenue={totalRevenue} />
-        {/* Cash & expenses per hotel. Absent for staff; a manager only sees cash received. */}
-        {financeProperties.map(property => {
-          const propertyFinance = data.todayFinance?.[property];
-          return propertyFinance ? (
-            <FinanceBreakdown
-              key={property}
-              title={`${PROPERTY_DISPLAY_NAMES[property]} · Today`}
-              finance={propertyFinance}
-              style={styles.financeCard}
-            />
-          ) : null;
-        })}
         <View style={styles.gap} />
-        <OccupancySection occupancy={data.occupancy} todayRevenue={data.todayRevenue} />
+        <OccupancySection
+          occupancy={data.occupancy}
+          todayRevenue={data.todayRevenue}
+          todayFinance={data.todayFinance}
+          onBalancePress={() => navigation.navigate('Menu', { screen: 'Expenses' })}
+        />
         <View style={styles.gap} />
         <RecentActivityFeed events={data.recentEvents} />
       </ScrollView>
@@ -109,10 +100,5 @@ const styles = StyleSheet.create({
   },
   gap: {
     height: tokens.spacing.lgMd,
-  },
-  financeCard: {
-    marginHorizontal: 0,
-    marginTop: tokens.spacing.lgMd,
-    marginBottom: 0,
   },
 });

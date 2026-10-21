@@ -1,15 +1,20 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Feather, FontAwesome } from '@expo/vector-icons';
 import Svg, { Circle } from 'react-native-svg';
 import tokens from '../../../theme/tokens';
 import { Card } from '../../../components/ui';
 import type { AuditProperty } from '../../../types/audit';
-import type { DashboardOccupancy } from '../../../types/dashboard';
+import type { DashboardOccupancy, DashboardSummary } from '../../../types/dashboard';
+import { formatRupees } from '../../../utils/formatters';
 
 interface OccupancySectionProps {
   occupancy: DashboardOccupancy;
   todayRevenue: Record<AuditProperty, number>;
+  // Only the owner gets a net (the balance). Absent for staff and managers.
+  todayFinance?: DashboardSummary['todayFinance'];
+  // Tapping the balance opens the Expenses screen.
+  onBalancePress?: () => void;
 }
 
 const PROPERTY_DISPLAY_NAMES: Record<string, string> = {
@@ -74,7 +79,12 @@ function CircularProgress({ percentage }: { percentage: number }) {
 
 // ─── Main Component ─────────────────────────────────────────────────────────
 
-export default function OccupancySection({ occupancy, todayRevenue }: OccupancySectionProps) {
+export default function OccupancySection({
+  occupancy,
+  todayRevenue,
+  todayFinance,
+  onBalancePress,
+}: OccupancySectionProps) {
   return (
     <View>
       <View style={styles.cardsContainer}>
@@ -84,6 +94,7 @@ export default function OccupancySection({ occupancy, todayRevenue }: OccupancyS
           const percentage = total > 0 ? (occupied / total) * 100 : 0;
           const displayName = getPropertyDisplayName(propertyKey);
           const revenue = todayRevenue[propertyKey as AuditProperty] ?? 0;
+          const balance = todayFinance?.[propertyKey as AuditProperty]?.net;
 
           const formattedRevenue = new Intl.NumberFormat('en-IN', {
             style: 'currency',
@@ -133,6 +144,28 @@ export default function OccupancySection({ occupancy, todayRevenue }: OccupancyS
                   <Text style={styles.revenueLabel}>{"Today's Revenue"}</Text>
                   <Text style={styles.revenueAmount}>{formattedRevenue}</Text>
                 </View>
+
+                {balance !== undefined && (
+                  <TouchableOpacity
+                    style={styles.balanceButton}
+                    onPress={onBalancePress}
+                    activeOpacity={0.7}
+                    accessibilityRole="button"
+                    accessibilityLabel={`Balance ${formatRupees(Math.round(balance))}. Open expenses`}
+                  >
+                    <View style={styles.balanceLabelRow}>
+                      <Text style={styles.balanceLabel}>Balance</Text>
+                      <Feather
+                        name="chevron-right"
+                        size={tokens.iconSizes.inline}
+                        color={tokens.colors.textHint}
+                      />
+                    </View>
+                    <Text style={[styles.balanceAmount, balance < 0 && styles.balanceNegative]}>
+                      {formatRupees(Math.round(balance))}
+                    </Text>
+                  </TouchableOpacity>
+                )}
               </View>
             </Card>
           );
@@ -267,6 +300,33 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: tokens.spacing.mdLg,
+  },
+  balanceButton: {
+    marginLeft: 'auto',
+    alignItems: 'flex-end',
+    paddingVertical: tokens.spacing.sm,
+    paddingHorizontal: tokens.spacing.md,
+    borderRadius: tokens.borderRadius.lg,
+    backgroundColor: tokens.colors.chipNeutralBg,
+  },
+  balanceLabelRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: tokens.spacing.xxs,
+  },
+  balanceLabel: {
+    fontFamily: tokens.typography.fontFamily.sub,
+    fontSize: tokens.typography.fontSize.label,
+    color: tokens.colors.textHint,
+  },
+  balanceAmount: {
+    fontFamily: tokens.typography.fontFamily.sub,
+    fontSize: tokens.typography.fontSize.body,
+    fontWeight: '700',
+    color: tokens.colors.textPrimary,
+  },
+  balanceNegative: {
+    color: tokens.colors.danger,
   },
   revenueInfo: {
     flexDirection: 'column',
