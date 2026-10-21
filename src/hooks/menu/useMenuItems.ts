@@ -6,7 +6,10 @@ const MENU_ITEMS: MenuItem[] = [
   { label: 'Revenue Analytics', icon: 'bar-chart-2', route: 'RevenueAnalytics' },
   { label: 'User Management', icon: 'users', route: 'UserManagement' },
   { label: 'Loyalty Configuration', icon: 'award', route: 'LoyaltyConfiguration' },
+  { label: 'Expenses', icon: 'credit-card', route: 'Expenses' },
 ];
+
+const OWNER_ONLY_ROUTES = ['UserManagement', 'Expenses'];
 
 export function useMenuItems(): MenuItem[] {
   const user = useAuthStore(state => state.user);
@@ -14,7 +17,7 @@ export function useMenuItems(): MenuItem[] {
   return useMemo(() => {
     if (!user || user.role === 'staff') return [];
     if (user.role === 'manager') {
-      return MENU_ITEMS.filter(item => item.route !== 'UserManagement');
+      return MENU_ITEMS.filter(item => !OWNER_ONLY_ROUTES.includes(item.route));
     }
     return MENU_ITEMS; // owner
   }, [user]);

@@ -6,6 +6,7 @@ import MenuScreen from '@/screens/menu/MenuScreen';
 import RevenueScreen from '@/screens/revenue/RevenueScreen';
 import UserManagementScreen from '@/screens/user-management/UserManagementScreen';
 import LoyaltyConfigScreen from '@/screens/loyalty/LoyaltyConfigScreen';
+import ExpensesScreen from '@/screens/expenses/ExpensesScreen';
 
 // ─── Stack Navigator ─────────────────────────────────────────────────────────
 
@@ -18,6 +19,7 @@ export default function MenuNavigator() {
       <Stack.Screen name="RevenueAnalytics" component={RevenueScreen} />
       <Stack.Screen name="UserManagement" component={UserManagementScreen} />
       <Stack.Screen name="LoyaltyConfiguration" component={LoyaltyConfigScreen} />
+      <Stack.Screen name="Expenses" component={ExpensesScreen} />
     </Stack.Navigator>
   );
 }

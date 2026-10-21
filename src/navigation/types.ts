@@ -34,6 +34,7 @@ export type MenuStackParamList = {
   RevenueAnalytics: undefined;
   UserManagement: undefined;
   LoyaltyConfiguration: undefined;
+  Expenses: undefined;
 };
 
 // ─── Root Stack ──────────────────────────────────────────────────────────────
