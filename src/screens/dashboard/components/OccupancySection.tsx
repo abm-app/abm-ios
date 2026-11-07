@@ -151,7 +151,7 @@ export default function OccupancySection({
                     onPress={onBalancePress}
                     activeOpacity={0.7}
                     accessibilityRole="button"
-                    accessibilityLabel={`Balance ${formatRupees(Math.round(balance))}. Open expenses`}
+                    accessibilityLabel={`Balance ${formatRupees(balance)}. Open expenses`}
                   >
                     <View style={styles.balanceLabelRow}>
                       <Text style={styles.balanceLabel}>Balance</Text>
@@ -162,7 +162,7 @@ export default function OccupancySection({
                       />
                     </View>
                     <Text style={[styles.balanceAmount, balance < 0 && styles.balanceNegative]}>
-                      {formatRupees(Math.round(balance))}
+                      {formatRupees(balance)}
                     </Text>
                   </TouchableOpacity>
                 )}
