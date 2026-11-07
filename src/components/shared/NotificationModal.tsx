@@ -18,6 +18,7 @@ import LoadingSpinner from './LoadingSpinner';
 import ErrorState from './ErrorState';
 import { useNotifications } from '@/hooks/notifications/useNotifications';
 import { navigationRef } from '@/navigation/navigationRef';
+import { openDailyReport } from '@/navigation/openDailyReport';
 import type { AppNotification } from '@/types/notification';
 
 export interface NotificationModalProps {
@@ -65,7 +66,7 @@ export function NotificationModal({
     }
     if (item.type === 'report_ready' && item.linkedEntityId && navigationRef.isReady()) {
       onClose();
-      navigationRef.navigate('ReportViewer', { date: item.linkedEntityId });
+      openDailyReport(item.linkedEntityId);
       return;
     }
     if (onSelectNotification) {

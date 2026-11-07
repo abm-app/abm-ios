@@ -126,6 +126,8 @@ interface ActionButtonsProps {
   isRefreshing?: boolean;
   onRefreshPress?: () => void;
   rightButtonText: string;
+  rightButtonIcon?: React.ComponentProps<typeof Feather>['name'];
+  rightButtonLoading?: boolean;
   showViewModeToggle?: boolean;
   viewMode?: 'list' | 'grid';
   onViewModeChange?: (mode: 'list' | 'grid') => void;
@@ -148,6 +150,8 @@ function ActionButtons({
   isRefreshing,
   onRefreshPress,
   rightButtonText,
+  rightButtonIcon,
+  rightButtonLoading,
   showViewModeToggle,
   viewMode,
   onViewModeChange,
@@ -227,6 +231,8 @@ function ActionButtons({
           label={rightButtonText}
           variant="primary"
           size="md"
+          icon={rightButtonIcon}
+          loading={rightButtonLoading}
           onPress={onRightButtonPress ?? (() => {})}
           style={styles.actionButton}
         />
@@ -249,6 +255,8 @@ export interface ScreenHeaderProps {
   onRefreshPress?: () => void;
   showRightButton?: boolean;
   rightButtonText?: string;
+  rightButtonIcon?: React.ComponentProps<typeof Feather>['name'];
+  rightButtonLoading?: boolean;
   showViewModeToggle?: boolean;
   viewMode?: 'list' | 'grid';
   onViewModeChange?: (mode: 'list' | 'grid') => void;
@@ -276,6 +284,8 @@ export function ScreenHeaderV2({
   onRefreshPress,
   showRightButton = true,
   rightButtonText = 'New',
+  rightButtonIcon,
+  rightButtonLoading = false,
   showViewModeToggle = false,
   viewMode,
   onViewModeChange,
@@ -357,6 +367,8 @@ export function ScreenHeaderV2({
         onRefreshPress={onRefreshPress}
         showRightButton={showRightButton}
         rightButtonText={rightButtonText}
+        rightButtonIcon={rightButtonIcon}
+        rightButtonLoading={rightButtonLoading}
         showViewModeToggle={showViewModeToggle}
         viewMode={viewMode}
         onViewModeChange={onViewModeChange}

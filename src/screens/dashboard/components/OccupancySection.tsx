@@ -1,9 +1,9 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Feather, FontAwesome } from '@expo/vector-icons';
-import Svg, { Circle } from 'react-native-svg';
 import tokens from '../../../theme/tokens';
 import { Card } from '../../../components/ui';
+import OccupancyRing from '../../../components/shared/OccupancyRing';
 import type { AuditProperty } from '../../../types/audit';
 import type { DashboardOccupancy, DashboardSummary } from '../../../types/dashboard';
 import { formatRupees } from '../../../utils/formatters';
@@ -24,57 +24,6 @@ const PROPERTY_DISPLAY_NAMES: Record<string, string> = {
 
 function getPropertyDisplayName(key: string): string {
   return PROPERTY_DISPLAY_NAMES[key] ?? key;
-}
-
-// ─── Colour helper ──────────────────────────────────────────────────────────
-
-function getProgressColor(percentage: number): string {
-  if (percentage >= 80) return tokens.colors.occupancyHigh;
-  if (percentage <= 50) return tokens.colors.occupancyLow;
-  return tokens.colors.occupancyMid;
-}
-
-// ─── Local Circular Progress Component ────────────────────────────────────────
-
-function CircularProgress({ percentage }: { percentage: number }) {
-  const strokeColor = getProgressColor(percentage);
-  const size = 90;
-  const strokeWidth = 8;
-  const radius = (size - strokeWidth) / 2;
-  const circumference = radius * 2 * Math.PI;
-  const strokeDashoffset = circumference - (percentage / 100) * circumference;
-
-  return (
-    <View style={styles.progressContainer}>
-      <Svg width={size} height={size} style={styles.svg}>
-        {/* Background Circle */}
-        <Circle
-          stroke={tokens.colors.chipNeutralBg}
-          fill="none"
-          cx={size / 2}
-          cy={size / 2}
-          r={radius}
-          strokeWidth={strokeWidth}
-        />
-        {/* Progress Circle */}
-        <Circle
-          stroke={strokeColor}
-          fill="none"
-          cx={size / 2}
-          cy={size / 2}
-          r={radius}
-          strokeWidth={strokeWidth}
-          strokeDasharray={`${circumference} ${circumference}`}
-          strokeDashoffset={strokeDashoffset}
-          strokeLinecap="round"
-        />
-      </Svg>
-      <View style={styles.progressTextContainer}>
-        <Text style={styles.percentageText}>{Math.round(percentage)}%</Text>
-        <Text style={styles.progressLabel}>Occupancy</Text>
-      </View>
-    </View>
-  );
 }
 
 // ─── Main Component ─────────────────────────────────────────────────────────
@@ -120,7 +69,7 @@ export default function OccupancySection({
 
               {/* Middle Row */}
               <View style={styles.middleRow}>
-                <CircularProgress percentage={percentage} />
+                <OccupancyRing percentage={percentage} />
                 <View style={styles.chipsContainer}>
                   <View style={[styles.chip, { backgroundColor: tokens.colors.chipNeutralBg }]}>
                     <View style={styles.dotPurple} />
@@ -225,32 +174,6 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
     justifyContent: 'space-between',
     marginBottom: tokens.spacing.lgMd,
-  },
-  progressContainer: {
-    width: 90,
-    height: 90,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  svg: {
-    position: 'absolute',
-    transform: [{ rotate: '-90deg' }],
-  },
-  progressTextContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  percentageText: {
-    fontFamily: tokens.typography.fontFamily.sub,
-    fontSize: tokens.typography.fontSize.h1,
-    fontWeight: '600',
-    color: tokens.colors.textPrimary,
-  },
-  progressLabel: {
-    fontFamily: tokens.typography.fontFamily.sub,
-    fontSize: tokens.typography.fontSize.label,
-    color: tokens.colors.textHint,
-    marginTop: 2,
   },
   chipsContainer: {
     flexDirection: 'row',

@@ -24,6 +24,9 @@ import { useMenuItems } from '@/hooks/menu/useMenuItems';
 
 type MenuNavProp = NativeStackNavigationProp<MenuStackParamList>;
 
+// Routes a menu row can open: the ones that take no params.
+type MenuListRoute = Exclude<keyof MenuStackParamList, 'ReportScorecard'>;
+
 // ─── Component ───────────────────────────────────────────────────────────────
 
 export default function MenuScreen() {
@@ -61,7 +64,7 @@ export default function MenuScreen() {
       {/* Menu List */}
       <MenuList
         items={visibleMenuItems}
-        onNavigate={route => navigation.navigate(route as keyof MenuStackParamList)}
+        onNavigate={route => navigation.navigate(route as MenuListRoute)}
       />
 
       {/* Notifications Modal */}

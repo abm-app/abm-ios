@@ -8,3 +8,6 @@ export const EVENT_TYPES = [
   'modification',
   'room_change',
 ];
+
+// How far back the Reports lists go (daily, weekly and monthly).
+export const REPORT_LOOKBACK_MONTHS = 1;

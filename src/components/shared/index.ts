@@ -21,3 +21,5 @@ export { default as UserCard } from './UserCard';
 export { default as MenuList } from './MenuList';
 export * from './NotificationModal';
 export * from './NotificationItem';
+export { default as OccupancyRing } from './OccupancyRing';
+export { default as LiveBadge } from './LiveBadge';
