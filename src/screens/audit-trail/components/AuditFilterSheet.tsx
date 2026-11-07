@@ -7,6 +7,14 @@ import { CustomCalender } from '@/components/shared/CustomCalender';
 import { getCalendarDateString, parseDateString } from '@/utils/dateUtils';
 import type { AuditFilters } from '@/hooks/audit/useAuditEvents';
 import { EVENT_TYPE_OPTIONS } from '@/types/audit';
+import type { AnyAuditEventType, MoneyEventType } from '@/types/audit';
+import { useAuthStore } from '@/store/authStore';
+import { MONEY_EVENT_LABELS } from '@/utils/moneyAuditEvents';
+
+const MONEY_EVENT_OPTIONS = (Object.keys(MONEY_EVENT_LABELS) as MoneyEventType[]).map(value => ({
+  value,
+  label: MONEY_EVENT_LABELS[value],
+}));
 
 interface AuditFilterSheetProps {
   visible: boolean;
@@ -21,6 +29,11 @@ export function AuditFilterSheet({
   onApply,
   initialFilters,
 }: AuditFilterSheetProps) {
+  const isOwner = useAuthStore(state => state.user?.role === 'owner');
+  // Money events are owner-only; managers never receive them, so they get no such chips.
+  const eventTypeOptions: { value: AnyAuditEventType; label: string }[] = isOwner
+    ? [...EVENT_TYPE_OPTIONS, ...MONEY_EVENT_OPTIONS]
+    : EVENT_TYPE_OPTIONS;
   const [draftFilters, setDraftFilters] = useState<AuditFilters>(initialFilters);
   const [isFromDateVisible, setIsFromDateVisible] = useState(false);
   const [isToDateVisible, setIsToDateVisible] = useState(false);
@@ -67,7 +80,7 @@ export function AuditFilterSheet({
         <View style={styles.fieldGroup}>
           <Text style={styles.label}>Event Type</Text>
           <View style={styles.chipGroup}>
-            {EVENT_TYPE_OPTIONS.map(type => (
+            {eventTypeOptions.map(type => (
               <Chip
                 key={type.value}
                 label={type.label}

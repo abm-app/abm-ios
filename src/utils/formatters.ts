@@ -17,3 +17,16 @@ export function formatTime(isoString: string): string {
     minute: '2-digit',
   });
 }
+
+// Exact rupee amount with Indian digit grouping (₹1,23,456.50). Unlike formatCurrency, never
+// abbreviates, because an expense must show its exact value.
+export function formatRupees(value?: number | null): string {
+  const safeValue = Number(value ?? 0);
+  if (Number.isNaN(safeValue)) return '₹0';
+  const isWhole = Number.isInteger(safeValue);
+  const formatted = Math.abs(safeValue).toLocaleString('en-IN', {
+    minimumFractionDigits: isWhole ? 0 : 2,
+    maximumFractionDigits: 2,
+  });
+  return safeValue < 0 ? `-₹${formatted}` : `₹${formatted}`;
+}

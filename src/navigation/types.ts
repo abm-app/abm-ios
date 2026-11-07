@@ -1,3 +1,4 @@
+import type { NavigatorScreenParams } from '@react-navigation/native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 // ─── Auth Stack ──────────────────────────────────────────────────────────────
@@ -18,7 +19,7 @@ export type AppTabParamList = {
   Operations: undefined;
   Guests: undefined;
   Campaigns: undefined;
-  Menu: undefined;
+  Menu: NavigatorScreenParams<MenuStackParamList> | undefined;
 };
 
 // ─── Operations Stack ────────────────────────────────────────────────────────
@@ -34,6 +35,7 @@ export type MenuStackParamList = {
   RevenueAnalytics: undefined;
   UserManagement: undefined;
   LoyaltyConfiguration: undefined;
+  Expenses: undefined;
 };
 
 // ─── Root Stack ──────────────────────────────────────────────────────────────

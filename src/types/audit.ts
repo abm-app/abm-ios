@@ -20,6 +20,18 @@ export type AuditEventType =
   | 'cancellation'
   | 'modification';
 
+// Owner-only events about money. The server never sends them to managers or staff.
+export type MoneyEventType =
+  | 'expense_created'
+  | 'expense_updated'
+  | 'expense_deleted'
+  | 'expense_category_created'
+  | 'expense_category_updated'
+  | 'petty_cash_added'
+  | 'petty_cash_removed';
+
+export type AnyAuditEventType = AuditEventType | MoneyEventType;
+
 export type AuditProperty = 'express' | 'international';
 
 export const PROPERTY_OPTIONS: { label: string; value: AuditProperty }[] = [
@@ -47,16 +59,21 @@ export interface NewBookingAfter {
   rmCode: string;
 }
 
-export interface AuditEventBase {
+export interface AuditEventCore {
   id: string;
+  // Category events carry no hotel.
+  property?: AuditProperty;
+  actor?: string;
+  detectedAt: string;
+  idempotencyKey?: string;
+}
+
+export interface AuditEventBase extends AuditEventCore {
   chCode?: string;
   regId?: number;
   rmCode: string;
   property: AuditProperty;
   guestName: string;
-  actor?: string;
-  detectedAt: string;
-  idempotencyKey?: string;
 }
 
 export type AuditEvent =
@@ -69,7 +86,15 @@ export type AuditEvent =
       eventType: Exclude<AuditEventType, 'new_booking'>;
       before: AuditEventDiffFields;
       after: AuditEventDiffFields;
+    })
+  | (AuditEventCore & {
+      eventType: MoneyEventType;
+      before: Record<string, unknown>;
+      after: Record<string, unknown>;
     });
+
+export type MoneyAuditEvent = Extract<AuditEvent, { eventType: MoneyEventType }>;
+export type BookingAuditEvent = Exclude<AuditEvent, MoneyAuditEvent>;
 
 export interface AuditEventsResponse {
   events: AuditEvent[];
@@ -83,7 +108,7 @@ export interface GetAuditEventsParams {
   limit: number;
   filters?: {
     property?: AuditProperty[];
-    eventType?: AuditEventType[];
+    eventType?: AnyAuditEventType[];
     rmCode?: string[];
     from?: string;
     to?: string;

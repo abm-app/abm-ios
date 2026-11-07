@@ -3,7 +3,16 @@ import { View, Text, StyleSheet } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import tokens from '@/theme/tokens';
 import { Card } from '@/components/ui';
-import { AuditEvent, AuditEventType, AuditProperty, PROPERTY_DISPLAY_NAMES } from '@/types/audit';
+import {
+  AuditEvent,
+  AuditEventType,
+  AuditProperty,
+  BookingAuditEvent,
+  MoneyAuditEvent,
+  PROPERTY_DISPLAY_NAMES,
+} from '@/types/audit';
+import { isMoneyEventType } from '@/utils/moneyAuditEvents';
+import { MoneyAuditCard } from './MoneyAuditCard';
 
 interface EventConfigItem {
   label: string;
@@ -162,6 +171,18 @@ const getDiffEntries = (before?: Record<string, unknown>, after?: Record<string,
 };
 
 export function AuditCard({ event, highlighted = false }: AuditCardProps) {
+  if (isMoneyEventType(event.eventType)) {
+    return <MoneyAuditCard event={event as MoneyAuditEvent} highlighted={highlighted} />;
+  }
+  return <BookingAuditCard event={event as BookingAuditEvent} highlighted={highlighted} />;
+}
+
+interface BookingAuditCardProps {
+  event: BookingAuditEvent;
+  highlighted: boolean;
+}
+
+function BookingAuditCard({ event, highlighted }: BookingAuditCardProps) {
   const config = EVENT_CONFIG[event.eventType] || EVENT_CONFIG.modification;
   const timeStr = formatEventTime(event.detectedAt);
   const propertyName =

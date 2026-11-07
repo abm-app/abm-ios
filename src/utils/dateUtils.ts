@@ -171,3 +171,14 @@ export const formatTimeAgo = (isoStr?: string): string => {
 
   return formatDateShort(isoStr);
 };
+
+/** First and last calendar day (YYYY-MM-DD) of the month containing `date`. */
+export const getMonthDateRange = (date: Date): { from: string; to: string } => {
+  const first = new Date(date.getFullYear(), date.getMonth(), 1);
+  const last = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+  return { from: getCalendarDateString(first), to: getCalendarDateString(last) };
+};
+
+/** e.g. "Oct 2026" */
+export const formatMonthYear = (date: Date): string =>
+  `${MONTH_NAMES[date.getMonth()]} ${date.getFullYear()}`;

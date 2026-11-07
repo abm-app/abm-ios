@@ -5,6 +5,11 @@ import tokens from '../../../theme/tokens';
 import { Card } from '../../../components/ui';
 import { formatTime } from '../../../utils/formatters';
 import { PROPERTY_DISPLAY_NAMES } from '../../../types/audit';
+import {
+  MONEY_EVENT_LABELS,
+  getMoneyEventSummary,
+  isMoneyEventType,
+} from '../../../utils/moneyAuditEvents';
 import type { RecentEvent } from '../../../types/dashboard';
 
 interface RecentActivityFeedProps {
@@ -19,6 +24,15 @@ interface EventDisplayInfo {
 }
 
 function getEventDisplayInfo(eventType: RecentEvent['eventType']): EventDisplayInfo {
+  if (isMoneyEventType(eventType)) {
+    return {
+      iconName: 'credit-card',
+      iconColor: tokens.colors.textPrimary,
+      iconBg: tokens.colors.chipNeutralBg,
+      label: MONEY_EVENT_LABELS[eventType],
+    };
+  }
+
   switch (eventType) {
     case 'new_booking':
       return {
@@ -76,7 +90,9 @@ export default function RecentActivityFeed({ events }: RecentActivityFeedProps) 
         {visibleEvents.map(event => {
           const { iconName, iconColor, iconBg, label } = getEventDisplayInfo(event.eventType);
           const time = formatTime(event.detectedAt);
-          const propertyName = PROPERTY_DISPLAY_NAMES[event.property] ?? event.property;
+          const propertyName = event.property
+            ? (PROPERTY_DISPLAY_NAMES[event.property] ?? event.property)
+            : '';
 
           return (
             <Card
@@ -99,22 +115,40 @@ export default function RecentActivityFeed({ events }: RecentActivityFeedProps) 
                   <Text style={styles.timeText}>{time}</Text>
                 </View>
 
-                {/* Guest name */}
-                <Text style={styles.guestName}>{event.guestName}</Text>
+                {isMoneyEventType(event.eventType) ? (
+                  <>
+                    <Text style={styles.guestName}>
+                      {getMoneyEventSummary(event.eventType, event.before, event.after)}
+                    </Text>
+                    {propertyName ? (
+                      <View style={styles.metaRow}>
+                        <View style={styles.metaItem}>
+                          <Feather name="map-pin" size={11} color={tokens.colors.textHint} />
+                          <Text style={styles.metaText}>{propertyName}</Text>
+                        </View>
+                      </View>
+                    ) : null}
+                  </>
+                ) : (
+                  <>
+                    {/* Guest name */}
+                    <Text style={styles.guestName}>{event.guestName}</Text>
 
-                {/* Room + property */}
-                <View style={styles.metaRow}>
-                  <View style={styles.metaItem}>
-                    <Feather name="home" size={11} color={tokens.colors.textHint} />
-                    <Text style={styles.metaText}>Room {event.rmCode}</Text>
-                  </View>
-                  {propertyName ? (
-                    <View style={styles.metaItem}>
-                      <Feather name="map-pin" size={11} color={tokens.colors.textHint} />
-                      <Text style={styles.metaText}>{propertyName}</Text>
+                    {/* Room + property */}
+                    <View style={styles.metaRow}>
+                      <View style={styles.metaItem}>
+                        <Feather name="home" size={11} color={tokens.colors.textHint} />
+                        <Text style={styles.metaText}>Room {event.rmCode}</Text>
+                      </View>
+                      {propertyName ? (
+                        <View style={styles.metaItem}>
+                          <Feather name="map-pin" size={11} color={tokens.colors.textHint} />
+                          <Text style={styles.metaText}>{propertyName}</Text>
+                        </View>
+                      ) : null}
                     </View>
-                  ) : null}
-                </View>
+                  </>
+                )}
               </View>
             </Card>
           );

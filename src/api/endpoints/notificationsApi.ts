@@ -6,7 +6,7 @@ import type { AppNotification, NotificationsResponse } from '@/types/notificatio
 
 export async function getNotifications(): Promise<NotificationsResponse> {
   try {
-    const response = await apiClient.get<NotificationsResponse>('/notifications');
+    const response = await apiClient.get<NotificationsResponse>('/notifications/');
     logger.info('[getNotifications] Retrieved notifications', {
       count: response.data.notifications.length,
       unreadCount: response.data.unreadCount,

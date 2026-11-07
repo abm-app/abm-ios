@@ -10,9 +10,13 @@ import tokens from '../../theme/tokens';
 import OccupancySection from './components/OccupancySection';
 import { Backdrop, NotificationModal, ScreenHeaderV2 } from '@/components/shared';
 import { formatDate } from '@/utils/dateUtils';
+import { useNavigation } from '@react-navigation/native';
+import type { NavigationProp } from '@react-navigation/native';
+import type { AppTabParamList } from '@/navigation/types';
 import { useNotifications } from '@/hooks/notifications/useNotifications';
 
 export default function DashboardScreen() {
+  const navigation = useNavigation<NavigationProp<AppTabParamList>>();
   const { data, isLoading, isError, refetch, isRefetching } = useDashboardSummary();
   const { unreadCount } = useNotifications();
   const [notificationsVisible, setNotificationsVisible] = useState(false);
@@ -65,7 +69,12 @@ export default function DashboardScreen() {
       >
         <RevenueSummary todayRevenue={totalRevenue} />
         <View style={styles.gap} />
-        <OccupancySection occupancy={data.occupancy} todayRevenue={data.todayRevenue} />
+        <OccupancySection
+          occupancy={data.occupancy}
+          todayRevenue={data.todayRevenue}
+          todayFinance={data.todayFinance}
+          onBalancePress={() => navigation.navigate('Menu', { screen: 'Expenses' })}
+        />
         <View style={styles.gap} />
         <RecentActivityFeed events={data.recentEvents} />
       </ScrollView>

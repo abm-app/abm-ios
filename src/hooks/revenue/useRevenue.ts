@@ -1,6 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
 import { getRevenueSummary, getRevenueTrends } from '@/api/endpoints/revenueApi';
-import type { RevenuePeriod, RevenueSummaryResponse, RevenueTrendsResponse } from '@/types/revenue';
+import type {
+  FinanceResponse,
+  RevenuePeriod,
+  RevenueSummaryResponse,
+  RevenueTrendsResponse,
+} from '@/types/revenue';
 import { getCalendarDateString } from '@/utils/dateUtils';
 
 interface RevenueSummaryEnriched {
@@ -12,6 +17,8 @@ interface RevenueSummaryEnriched {
   internationalTotal: number;
   expressTotal: number;
   propertyMax: number;
+  // Absent for staff; managers get only roomRevenue and cashReceived inside it.
+  finance?: FinanceResponse;
 }
 
 export function useRevenueSummary(period: RevenuePeriod) {
@@ -37,6 +44,7 @@ export function useRevenueSummary(period: RevenuePeriod) {
         internationalTotal: intlRev,
         expressTotal: expRev,
         propertyMax: Math.max(intlRev, expRev, 1),
+        finance: data.finance,
       };
     },
   });
