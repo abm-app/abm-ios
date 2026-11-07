@@ -30,3 +30,22 @@ export function formatRupees(value?: number | null): string {
   });
   return safeValue < 0 ? `-₹${formatted}` : `₹${formatted}`;
 }
+
+// Shown in place of a value the backend has not synced yet (null). Never render those as 0.
+export const EMPTY_VALUE = '—';
+
+// Whole rupees with Indian digit grouping (₹2,48,000), for report figures.
+export function formatRupeesWhole(value: number | null): string {
+  if (value === null || Number.isNaN(value)) return EMPTY_VALUE;
+  const formatted = Math.abs(Math.round(value)).toLocaleString('en-IN');
+  return value < 0 ? `-₹${formatted}` : `₹${formatted}`;
+}
+
+export function formatCount(value: number | null): string {
+  if (value === null || Number.isNaN(value)) return EMPTY_VALUE;
+  return value.toLocaleString('en-IN');
+}
+
+export function formatPercent(value: number): string {
+  return `${value.toFixed(1)}%`;
+}

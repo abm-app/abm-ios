@@ -4,6 +4,7 @@ import * as Notifications from 'expo-notifications';
 
 import { notificationKeys } from './useNotifications';
 import { navigationRef } from '@/navigation/navigationRef';
+import { openDailyReport } from '@/navigation/openDailyReport';
 import { authStore } from '@/store/authStore';
 import type { NotificationType } from '@/types/notification';
 import logger from '@/utils/logger';
@@ -32,7 +33,7 @@ function getNotificationData(notification: Notifications.Notification): PushNoti
 // that case, so this retries briefly rather than giving up on the first miss.
 //
 // isReady() alone isn't enough, though: RootNavigator only registers the authenticated
-// routes (AuditTrail, ReportViewer, ...) once `isAuthenticated` is true — the logged-out
+// routes (AuditTrail, the Menu stack, ...) once `isAuthenticated` is true — the logged-out
 // stack only has 'Auth'. If the stored session is invalid/expired, isReady() goes true on
 // that logged-out navigator, and navigating to an authenticated-only route is silently
 // dropped by React Navigation rather than throwing. So this also waits for isAuthenticated,
@@ -83,7 +84,7 @@ export function useNotificationListeners() {
         case 'report_ready':
           if (data.linkedEntityId) {
             const date = data.linkedEntityId;
-            navigateWhenReady(() => navigationRef.navigate('ReportViewer', { date }));
+            navigateWhenReady(() => openDailyReport(date));
           } else {
             logger.warn(
               '[useNotificationListeners] report_ready notification missing linkedEntityId (date) — cannot open',

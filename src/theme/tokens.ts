@@ -115,6 +115,8 @@ const colors = {
   occupancyHigh: 'rgba(4, 175, 10, 0.72)',
   occupancyMid: 'rgba(231, 139, 0, 0.76)',
   occupancyLow: 'rgba(235, 33, 33, 0.7)',
+  // Foreign-guest segment of the Reports guest-mix bar (matches the warm backdrop fog)
+  reportMixForeigner: '#FF9169',
 
   // Modal overlay
   modalOverlay: 'rgba(0,0,0,0.5)',
@@ -347,6 +349,13 @@ const iconSizes = {
   container: 48,
 } as const;
 
+// ─── Occupancy Ring ──────────────────────────────────────────────────────────
+
+const occupancyRing = {
+  dashboard: { size: 90, strokeWidth: 8 },
+  report: { size: 112, strokeWidth: 10 },
+} as const;
+
 // ─── Button Dimensions ───────────────────────────────────────────────────────
 
 const button = {
@@ -416,6 +425,8 @@ const navigation = {
   itemPaddingHorizontal: 8,
   itemBorderRadius: 100,
   height: 50,
+  /** Approximate height of the floating capsule itself, for scroll padding above it */
+  capsuleHeight: 56,
 } as const;
 
 /** Modal card geometry */
@@ -801,6 +812,7 @@ const tokens = {
   input,
   form,
   auth,
+  occupancyRing,
   taskCheckbox,
   navigation,
   modal,

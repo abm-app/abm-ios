@@ -4,6 +4,7 @@ import { useAuthStore } from '@/store/authStore';
 
 const MENU_ITEMS: MenuItem[] = [
   { label: 'Revenue Analytics', icon: 'bar-chart-2', route: 'RevenueAnalytics' },
+  { label: 'Reports', icon: 'file-text', route: 'Reports' },
   { label: 'User Management', icon: 'users', route: 'UserManagement' },
   { label: 'Loyalty Configuration', icon: 'award', route: 'LoyaltyConfiguration' },
   { label: 'Expenses', icon: 'credit-card', route: 'Expenses' },
