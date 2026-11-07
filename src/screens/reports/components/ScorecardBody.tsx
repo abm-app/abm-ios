@@ -2,12 +2,31 @@ import React from 'react';
 import { View, StyleSheet } from 'react-native';
 
 import tokens from '@/theme/tokens';
-import { FinanceBreakdown } from '@/components/shared';
-import type { ScorecardData } from '@/types/reports';
+import type { ReportFinance, ScorecardData } from '@/types/reports';
 import DetailRowsCard from './DetailRowsCard';
+import type { DetailRow } from './DetailRowsCard';
 import GuestMixCard from './GuestMixCard';
 import KpiGrid from './KpiGrid';
 import OccupancyCard from './OccupancyCard';
+
+// Only the lines the server sent: managers get two, owners five. A missing key is hidden,
+// never shown as zero.
+function buildCashRows(finance: ReportFinance): DetailRow[] {
+  const rows: DetailRow[] = [
+    { label: 'Room revenue', value: finance.roomRevenue, kind: 'rupees' },
+    { label: 'Cash received', value: finance.cashReceived, kind: 'rupees' },
+  ];
+  if (finance.pettyCashSpending !== undefined) {
+    rows.push({ label: 'Petty cash spending', value: finance.pettyCashSpending, kind: 'rupees' });
+  }
+  if (finance.extraExpenses !== undefined) {
+    rows.push({ label: 'Extra expenses', value: finance.extraExpenses, kind: 'rupees' });
+  }
+  if (finance.net !== undefined) {
+    rows.push({ label: 'Net', value: finance.net, kind: 'rupees', isNet: true });
+  }
+  return rows;
+}
 
 interface ScorecardBodyProps {
   data: ScorecardData;
@@ -70,11 +89,10 @@ export default function ScorecardBody({ data }: ScorecardBodyProps) {
         foreignerPct={block.foreignerPct}
       />
       {finance && (
-        <FinanceBreakdown
-          title={isRange ? 'Cash & expenses · period' : 'Cash & expenses · today'}
-          finance={finance}
-          alwaysShowRoomRevenue
-          style={styles.finance}
+        <DetailRowsCard
+          title="Cash & expenses"
+          unit={isRange ? 'period' : 'today'}
+          rows={buildCashRows(finance)}
         />
       )}
     </View>
@@ -84,10 +102,5 @@ export default function ScorecardBody({ data }: ScorecardBodyProps) {
 const styles = StyleSheet.create({
   stack: {
     gap: tokens.spacing.lgMd,
-  },
-  finance: {
-    marginHorizontal: 0,
-    marginBottom: 0,
-    borderRadius: tokens.borderRadius.xl,
   },
 });

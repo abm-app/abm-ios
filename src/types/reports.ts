@@ -1,6 +1,9 @@
 import type { AuditProperty } from '@/types/audit';
 import type { FinanceSummary } from '@/types/revenue';
 
+// Owner gets every key, manager only roomRevenue and cashReceived, staff no finance at all.
+export type ReportFinance = FinanceSummary;
+
 export type ReportType = 'daily' | 'weekly' | 'monthly';
 
 // Every figure of one flash-report scorecard. For a day the counts are rooms and guests; for a
@@ -64,7 +67,7 @@ export interface ScorecardData {
   // Number of days for a weekly or monthly scorecard, null for a single day.
   days: number | null;
   // Null for staff (no `finance` key). Owner-only keys are optional inside.
-  finance: FinanceSummary | null;
+  finance: ReportFinance | null;
 }
 
 export interface ReportPeriod {

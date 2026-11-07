@@ -7,7 +7,6 @@ import tokens from '@/theme/tokens';
 import {
   AlertModal,
   Backdrop,
-  ErrorState,
   LiveBadge,
   ScreenHeaderV2,
   SegmentedControl,
@@ -23,6 +22,7 @@ import { getApiErrorMessage } from '@/utils/apiError';
 import { buildPeriod, formatPeriodLabel, getScorecardTitle } from '@/utils/reportPeriods';
 import PropertyChip from './components/PropertyChip';
 import ScorecardBody from './components/ScorecardBody';
+import ScorecardError from './components/ScorecardError';
 import ScorecardSkeleton from './components/ScorecardSkeleton';
 
 type Props = NativeStackScreenProps<MenuStackParamList, 'ReportScorecard'>;
@@ -38,7 +38,7 @@ export default function ReportScorecardScreen({ route, navigation }: Props) {
   const tabBarInset = useFloatingTabBarInset();
   const period = useMemo(() => buildPeriod(type, from), [type, from]);
   const { property, setProperty, isScoped } = useReportProperty();
-  const { data, isLoading, isError, error, refetch } = useFlashReport({
+  const { data, isLoading, isError, refetch } = useFlashReport({
     type,
     property,
     from: period.from,
@@ -63,15 +63,7 @@ export default function ReportScorecardScreen({ route, navigation }: Props) {
   const renderBody = () => {
     if (isLoading) return <ScorecardSkeleton />;
     if (isError || !data) {
-      return (
-        <ErrorState
-          message={getApiErrorMessage(
-            error,
-            "Couldn't load this report. Check your connection and try again.",
-          )}
-          onRetry={() => refetch()}
-        />
-      );
+      return <ScorecardError onRetry={() => refetch()} />;
     }
     return <ScorecardBody data={data} />;
   };
