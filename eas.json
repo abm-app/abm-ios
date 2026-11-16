@@ -31,7 +31,9 @@
       "ios": {
         "simulator": false
       },
-      "android": {}
+      "android": {
+        "buildType": "app-bundle"
+      }
     },
     "internal": {
       "distribution": "internal",
@@ -55,7 +57,9 @@
         "EXPO_PUBLIC_API_URL": "https://abm-backend.up.railway.app/api",
         "EXPO_PUBLIC_USE_MOCK_AUTH": "false"
       },
-      "android": {}
+      "android": {
+        "buildType": "app-bundle"
+      }
     }
   },
   "submit": {
@@ -69,6 +73,7 @@
         "ascApiKeyIssuerId": "a850dd55-a573-4380-bb17-226b44f16589"
       },
       "android": {
+        "serviceAccountKeyPath": "./abm-app-509104-6ef646112540.json",
         "track": "internal",
         "releaseStatus": "draft"
       }
